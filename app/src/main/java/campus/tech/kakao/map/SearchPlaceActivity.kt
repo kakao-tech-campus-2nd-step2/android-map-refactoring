@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -48,6 +49,7 @@ class SearchPlaceActivity : AppCompatActivity() {
         closeIcon.setOnClickListener {
             it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)  //가벼운 진동
             search.text.clear()
+            //불필요한 서버요청이 일어나고 있다.. 수정하기
             searchPlaces(" ")    //close 누르고 recyclerView도 비우기
         }
 
@@ -94,8 +96,9 @@ class SearchPlaceActivity : AppCompatActivity() {
 
             }
 
-            override fun onFailure(call: Call<KakaoSearchResponse>, t: Throwable) { //실패 했을 때
+            override fun onFailure(call: Call<KakaoSearchResponse>, t: Throwable) { //실패 했을 때 (네트워크 문제, 비행기 모드...)
                 Log.d("seyoung", "Failure: ${t.message}")
+                Toast.makeText(this@SearchPlaceActivity,"네트워크를 확인해주세요",Toast.LENGTH_SHORT).show()
             }
         })
     }
