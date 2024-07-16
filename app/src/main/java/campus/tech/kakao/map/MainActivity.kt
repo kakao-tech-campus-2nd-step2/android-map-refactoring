@@ -34,10 +34,6 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //키 해시 받기
-        //var keyHash = Utility.getKeyHash(this)
-        //Log.d("keyHash", keyHash)
-
         etKeywords = findViewById(R.id.etKeywords)
         rvSearchResult = findViewById(R.id.rvSearchResult)
         rvKeywords = findViewById(R.id.rvKeywords)
