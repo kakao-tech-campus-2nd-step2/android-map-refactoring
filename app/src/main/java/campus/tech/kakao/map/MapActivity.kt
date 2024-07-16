@@ -60,7 +60,7 @@ class MapActivity : AppCompatActivity() {
                 if (latitude != null && longitude != null) {
                     val labelManager = kakaoMap.labelManager
                     val iconAndTextStyle = LabelStyles.from(
-                        LabelStyle.from(R.drawable.location).setTextStyles(20, Color.BLACK)
+                        LabelStyle.from(R.drawable.location).setTextStyles(25, Color.BLACK)
                     )
                     val options = LabelOptions.from(LatLng.from(latitude, longitude))
                         .setStyles(iconAndTextStyle)
