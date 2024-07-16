@@ -9,7 +9,7 @@ object RetrofitClient {
 
     private val client = OkHttpClient.Builder().build()
 
-    val instance: Retrofit by lazy {
+    private val instance: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
