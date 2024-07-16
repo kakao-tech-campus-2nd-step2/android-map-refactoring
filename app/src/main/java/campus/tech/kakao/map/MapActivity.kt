@@ -70,17 +70,16 @@ class MapActivity : AppCompatActivity() {
                     savedLatitude = latitude
                     savedLongitude = longitude
 
+                    val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
+                    val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
+                    bottomSheetDialog.setContentView(bottomSheetLayout)
+                    val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
+                    val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
+                    bottomName.text= name
+                    bottomAddress.text = address
+                    bottomSheetDialog.show()
+
                 }
-
-                val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
-                val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
-                bottomSheetDialog.setContentView(bottomSheetLayout)
-                val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
-                val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
-                bottomName.text= name
-                bottomAddress.text = address
-                bottomSheetDialog.show()
-
             }
         })
 
