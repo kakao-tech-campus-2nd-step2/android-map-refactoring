@@ -25,6 +25,7 @@ data class KakaoSearchResponse(
     val meta: Meta
 )
 
+//변수명 카멜케이스로 고치기! @SerializedName 활용
 data class Document(
     val id: String, //장소ID
     val place_name: String, //장소명, 업체명
