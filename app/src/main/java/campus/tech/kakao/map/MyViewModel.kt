@@ -16,13 +16,17 @@ class MyViewModel : ViewModel() {
     var placeAdapterUpdateData = MutableLiveData<List<Place>>()
     var savedSearchAdapterUpdateData = MutableLiveData<List<SavedSearch>>()
 
+    var itemClick =MutableLiveData<Place>() //Place의 item
+
+    var nameClick =MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
+    var closeClick =MutableLiveData<SavedSearch>() // savedSearch의 x부분
+
     fun intentSearchPlace() {
         isIntent.value = true
     }
 
     fun clickCloseIcon(){
         searchText.value =" " //editText빈칸으로 만들기
-//        placeAdapterUpdateData.value= emptyList() //리사이클러뷰 비우기
     }
 
     fun searchPlaces(query: String) {
@@ -45,7 +49,6 @@ class MyViewModel : ViewModel() {
                             kind = document.category_name
                         )
                     } ?: emptyList()
-//                    placeAdapter.updateData(places)
                     placeAdapterUpdateData.value = places //검색결과
                 } else {  //실패했을 때
                     Log.d("seyoung", "Error: ${response.errorBody()?.string()}")

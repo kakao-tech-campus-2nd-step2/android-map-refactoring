@@ -28,21 +28,32 @@ class SearchPlaceActivity : AppCompatActivity() {
         //Place 리사이클러뷰 설정
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        placeAdapter = PlaceAdapter(emptyList()) { place ->  //리사이클러뷰의 아이템을 누르면
-            dbManager.insertSavedPlace(place.id, place.name)
-            viewModel.updateSavedSearch(dbManager)
-        }
+        placeAdapter = PlaceAdapter(emptyList(), viewModel)
         binding.recyclerView.adapter = placeAdapter
+
+        viewModel.itemClick.observe(this, Observer {
+            dbManager.insertSavedPlace(it.id, it.name)
+            viewModel.updateSavedSearch(dbManager)
+        })
 
 
         //savedSearch 저장된 검색어 설정
         val savedSearch = binding.savedSearch
         savedSearch.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        savedSearchAdapter = SavedSearchAdapter(emptyList()) { savedSearch -> //x를 누르면
-            dbManager.deleteSavedPlace(savedSearch.id)
-            viewModel.updateSavedSearch(dbManager)
-        }
+        savedSearchAdapter = SavedSearchAdapter(emptyList(),viewModel)
         binding.savedSearch.adapter = savedSearchAdapter
+
+        //savedSearch의 closeIcon 클릭 이벤트
+        viewModel.closeClick.observe(this, Observer {
+            dbManager.deleteSavedSearch(it.id)
+            viewModel.updateSavedSearch(dbManager)
+        })
+
+        //savedSearch의 name 클릭 이벤트
+        viewModel.nameClick.observe(this, Observer {
+            binding.search.setText(it.name)
+            viewModel.searchText.value = it.name
+        })
 
 
         //Place 리사이클러뷰 업데이트 관찰

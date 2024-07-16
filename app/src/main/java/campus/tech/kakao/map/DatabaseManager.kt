@@ -81,7 +81,7 @@ class DatabaseManager(context: Context) {
         return result
     }
 
-    fun deleteSavedPlace(id: Int) {
+    fun deleteSavedSearch(id: Int) {
         db.delete("SavedSearch", "id = ?", arrayOf(id.toString()))
     }
 
