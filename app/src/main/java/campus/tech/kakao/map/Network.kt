@@ -18,4 +18,8 @@ object Network {
     fun searchCategory(categoryGroupCode: String, callback: Callback<KakaoResponse>) {
         retrofitService.getSearchCategory(API_KEY, categoryGroupCode).enqueue(callback)
     }
+
+    fun searchKeyword(query: String, callback: Callback<KakaoResponse>) {
+        retrofitService.getSearchKeyword(API_KEY, query).enqueue(callback)
+    }
 }

@@ -62,9 +62,10 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
+                    searchKeyword(search)  // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
                         searchCategory(categoryCode)
-                    }
+                    }  // 카테고리
                 }
             }
         })
@@ -91,6 +92,26 @@ class MainActivity : AppCompatActivity() {
         loadSavedItems()
     }
 
+    // 키워드로 검색
+    fun searchKeyword(query: String) {
+        Network.searchKeyword(query, object : Callback<KakaoResponse> {
+            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
+                if (response.isSuccessful) {
+                    searchProfiles(response.body())
+                } else {
+                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
+                    Log.e("MainActivity", "응답 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
+                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "요청 실패", t)
+            }
+        })
+    }
+
+    // 카테고리로 검색
     fun searchCategory(categoryGroupCode: String) {
         Network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
             override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {

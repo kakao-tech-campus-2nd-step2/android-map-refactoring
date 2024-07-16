@@ -125,7 +125,7 @@ class MapActivity : AppCompatActivity() {
         bottomSheet(name, address)
     }
 
-    // name과 address bottonSheet
+    // name과 address bottomSheet
     fun bottomSheet(name: String, address: String) {
         val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
         val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
