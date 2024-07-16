@@ -11,8 +11,8 @@ data class Document(
 //    val phone: String,
 //    val address_name: String,
     @SerializedName("road_address_name") val address: String,
-//    val x: String,
-//    val y: String,
+    @SerializedName("x") val longitude: String, // 경도
+    @SerializedName("y") val latitude: String,  // 위도
 //    val place_url: String,
 //    val distance: String
 )

@@ -1,6 +1,7 @@
 package campus.tech.kakao.map
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -69,11 +70,18 @@ class MainActivity : AppCompatActivity() {
         })
 
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
-            override fun onItemClick(name: String) {
+            override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
                 if (isProfileInSearchSave(name)) {
                     removeSavedItem(name)
                 }
                 addSavedItem(name)
+                val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
+                    putExtra("name", name)
+                    putExtra("address", address)
+                    putExtra("latitude", latitude)
+                    putExtra("longitude", longitude)
+                }
+                startActivity(intent)
             }
         })
 
@@ -107,7 +115,7 @@ class MainActivity : AppCompatActivity() {
                 showNoResults()
             } else {
                 val profiles = documents.map { document ->
-                    Profile(document.name, document.address, document.type)
+                    Profile(document.name, document.address, document.type, document.latitude, document.longitude)
                 }
                 adapter.updateProfiles(profiles)
                 tvNoResult.visibility = View.GONE
