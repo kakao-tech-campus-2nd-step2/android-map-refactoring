@@ -2,6 +2,7 @@ package campus.tech.kakao.map
 
 import android.util.Log
 import android.widget.Toast
+import androidx.core.view.ViewCompat.performHapticFeedback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -26,6 +27,7 @@ class MyViewModel : ViewModel() {
     }
 
     fun clickCloseIcon(){
+        //햅틱 진동 기능 추가하고 싶다..
         searchText.value =" " //editText빈칸으로 만들기
     }
 

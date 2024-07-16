@@ -11,8 +11,10 @@ import campus.tech.kakao.map.databinding.ActivityMainBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.KakaoMapSdk
+import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,8 +57,12 @@ class MainActivity : AppCompatActivity() {
                     // 정상적으로 인증이 완료되었을 때 호출
                     // KakaoMap 객체를 얻어 옵니다.
                     kakaoMap = map
+
+                    var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(37.867121366974516, 127.73603679782136))
+                    kakaoMap?.moveCamera(cameraUpdate)
                 }
-            })  //mapView.start
+            }
+        )  //mapView.start
 
     }   //onCreate
 
