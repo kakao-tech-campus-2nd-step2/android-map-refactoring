@@ -31,7 +31,7 @@ class Search_Activity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        KakaoSdk.init(this, "e6a7c826ae7a55df129b8be2c636e213")
+        //KakaoSdk.init(this, "e6a7c826ae7a55df129b8be2c636e213")
         setContentView(R.layout.activity_search)
         kakaoApiService = createKakaoApiService()
 
