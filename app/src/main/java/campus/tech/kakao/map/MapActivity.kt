@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -58,7 +59,21 @@ class MapActivity : AppCompatActivity() {
                     label?.changeText(name ?: "Unknown")
                     val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
                     kakaoMap.moveCamera(cameraUpdate)
+
+                    savedLatitude = latitude
+                    savedLongitude = longitude
+
                 }
+
+                val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
+                val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
+                bottomSheetDialog.setContentView(bottomSheetLayout)
+                val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
+                val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
+                bottomName.text= name
+                bottomAddress.text = address
+                bottomSheetDialog.show()
+
             }
         })
 
