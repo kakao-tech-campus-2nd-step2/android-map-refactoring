@@ -39,7 +39,10 @@ class MapActivity : AppCompatActivity() {
             }
 
             override fun onMapError(error: Exception) {
-                Log.e("KakaoMap", "onMapError", error)
+                val intent = Intent(this@MapActivity, ErrorActivity::class.java).apply{
+                    putExtra("errorMessage",error.toString())
+                }
+                startActivity(intent)
             }
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
