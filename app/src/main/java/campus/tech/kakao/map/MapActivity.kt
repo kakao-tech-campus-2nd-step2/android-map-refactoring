@@ -49,39 +49,15 @@ class MapActivity : AppCompatActivity() {
                 Log.d("KakaoMap", "onMapReady")
                 map = kakaoMap
 
-                val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(savedLatitude, savedLongitude))
-                kakaoMap.moveCamera(cameraUpdate)
+                camera(kakaoMap, savedLatitude, savedLongitude)
 
-                // 지도 위치
+                // 장소 정보 받아옴
                 val name = intent.getStringExtra("name")
                 val address = intent.getStringExtra("address")
                 val latitude = intent.getStringExtra("latitude")?.toDouble()
                 val longitude = intent.getStringExtra("longitude")?.toDouble()
                 if (latitude != null && longitude != null) {
-                    val labelManager = kakaoMap.labelManager
-                    val iconAndTextStyle = LabelStyles.from(
-                        LabelStyle.from(R.drawable.location).setTextStyles(25, Color.BLACK)
-                    )
-                    val options = LabelOptions.from(LatLng.from(latitude, longitude))
-                        .setStyles(iconAndTextStyle)
-                    val layer = labelManager?.layer
-                    val label = layer?.addLabel(options)
-                    label?.changeText(name ?: "Unknown")
-                    val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-                    kakaoMap.moveCamera(cameraUpdate)
-
-                    savedLatitude = latitude
-                    savedLongitude = longitude
-
-                    val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
-                    val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
-                    bottomSheetDialog.setContentView(bottomSheetLayout)
-                    val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
-                    val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
-                    bottomName.text= name
-                    bottomAddress.text = address
-                    bottomSheetDialog.show()
-
+                    addMarker(kakaoMap, latitude, longitude, name.toString(), address.toString())
                 }
             }
         })
@@ -108,6 +84,7 @@ class MapActivity : AppCompatActivity() {
         saveData(savedLatitude.toString(), savedLongitude.toString())
     }
 
+    // 위도와 경도 저장, 가져오기
     fun saveData(latitude: String, longitude: String){
         val pref = getSharedPreferences("pref", 0)
         val edit = pref.edit()
@@ -120,5 +97,43 @@ class MapActivity : AppCompatActivity() {
         val pref = getSharedPreferences("pref", 0)
         savedLatitude = pref.getString("latitude", "37.5642")?.toDouble() ?: 37.5642
         savedLongitude = pref.getString("longitude", "127.00")?.toDouble() ?: 127.00
+    }
+
+    // 지도의 어느 부분이 보이는가!
+    fun camera(kakaoMap: KakaoMap, latitude: Double, longitude: Double) {
+        val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+        kakaoMap.moveCamera(cameraUpdate)
+    }
+
+    // 지도에 마커 추가
+    fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude: Double, name: String, address: String) {
+        val labelManager = kakaoMap.labelManager
+        val iconAndTextStyle = LabelStyles.from(
+            LabelStyle.from(R.drawable.location).setTextStyles(25, Color.BLACK)
+        )
+        val options = LabelOptions.from(LatLng.from(latitude, longitude))
+            .setStyles(iconAndTextStyle)
+        val layer = labelManager?.layer
+        val label = layer?.addLabel(options)
+        label?.changeText(name)
+
+        camera(kakaoMap, latitude, longitude)
+
+        savedLatitude = latitude
+        savedLongitude = longitude
+
+        bottomSheet(name, address)
+    }
+
+    // name과 address bottonSheet
+    fun bottomSheet(name: String, address: String) {
+        val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
+        val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
+        bottomSheetDialog.setContentView(bottomSheetLayout)
+        val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
+        val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
+        bottomName.text= name
+        bottomAddress.text = address
+        bottomSheetDialog.show()
     }
 }
