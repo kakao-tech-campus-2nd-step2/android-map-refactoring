@@ -167,6 +167,13 @@ class MainActivity : AppCompatActivity() {
         val ivDelete = savedView.findViewById<ImageView>(R.id.ivDelete)
 
         tvSaveName.text = name
+
+        // 저장된 검색어를 누르면 검색어가 입력됨
+        val etSearch = findViewById<EditText>(R.id.etSearch)
+        tvSaveName.setOnClickListener {
+            etSearch.setText(name)
+        }
+
         ivDelete.setOnClickListener {
             llSave.removeView(savedView)
         }
