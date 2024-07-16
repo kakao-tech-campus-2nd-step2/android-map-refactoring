@@ -40,7 +40,11 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.multidex:multidex:2.0.1")
+    implementation("com.kakao.maps.open:android:2.9.5")
+    implementation("com.kakao.sdk:v2-all:2.20.3")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
@@ -51,6 +55,7 @@ dependencies {
     implementation("com.kakao.maps.open:android:2.9.5")
     implementation("androidx.activity:activity:1.8.0")
     implementation("androidx.test:core-ktx:1.5.0")
+    implementation("com.google.android.gms:play-services-maps:19.0.0")
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk-android:1.13.11")
     testImplementation("io.mockk:mockk-agent:1.13.11")
