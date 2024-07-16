@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.startActivity
@@ -74,6 +75,12 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
                 tvNoResults.visibility = TextView.GONE
                 rvSearchResult.visibility = RecyclerView.VISIBLE
                 searchResultAdapter.submitList(results)
+            }
+        })
+
+        mapViewModel.errorMessage.observe(this, Observer { message ->
+            message?.let {
+                Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             }
         })
 

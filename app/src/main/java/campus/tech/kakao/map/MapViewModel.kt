@@ -13,6 +13,9 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
     private val _searchResults = MutableLiveData<List<MapItem>>()
     val searchResults: LiveData<List<MapItem>> get() = _searchResults
 
+    private val _errorMessage = MutableLiveData<String>()
+    val errorMessage: LiveData<String> get() = _errorMessage
+
     fun searchPlaces(keyword: String) {
         val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
         RetrofitClient.apiService.searchPlaces(apiKey, keyword).enqueue(object :
@@ -24,11 +27,13 @@ class MapViewModel(application: Application) : AndroidViewModel(application) {
                     _searchResults.postValue(results)
                 } else {
                     _searchResults.postValue(emptyList())
+                    _errorMessage.postValue("Error: ${response.message()}")
                 }
             }
 
             override fun onFailure(call: Call<KakaoMapProductResponse>, t: Throwable) {
                 _searchResults.postValue(emptyList())
+                _errorMessage.postValue("네트워크 요청 실패: ${t.message}")
             }
         })
     }
