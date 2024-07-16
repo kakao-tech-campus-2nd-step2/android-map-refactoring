@@ -13,6 +13,7 @@ import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
@@ -55,6 +56,8 @@ class MapActivity : AppCompatActivity() {
                     val layer = labelManager?.layer
                     val label = layer?.addLabel(options)
                     label?.changeText(name ?: "Unknown")
+                    val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+                    kakaoMap.moveCamera(cameraUpdate)
                 }
             }
         })
