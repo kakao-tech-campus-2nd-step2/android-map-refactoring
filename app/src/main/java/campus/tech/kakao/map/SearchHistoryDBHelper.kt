@@ -45,16 +45,16 @@ class SearchHistoryDBHelper(context: Context) : SQLiteOpenHelper(context, "Searc
     fun insertSearchHistory(place: Place): Long {
         val db = writableDatabase
         val values = ContentValues().apply {
-            put("address_name", place.addressName)
-            put("category_group_code", place.categoryGroupCode)
-            put("category_group_name", place.categoryGroupName)
-            put("category_name", place.categoryName)
+            put("address_name", place.address_name)
+            put("category_group_code", place.category_group_code)
+            put("category_group_name", place.category_group_name)
+            put("category_name", place.category_name)
             put("distance", place.distance)
             put("id", place.id)
             put("phone", place.phone)
-            put("place_name", place.placeName)
-            put("place_url", place.placeUrl)
-            put("road_address_name", place.roadAddressName)
+            put("place_name", place.place_name)
+            put("place_url", place.place_url)
+            put("road_address_name", place.road_address_name)
             put("x", place.x)
             put("y", place.y)
         }

@@ -33,7 +33,7 @@ class SearchHistoryRecyclerViewAdapter(
         private val searchHistoryDeleteBtn: ImageView = itemView.findViewById(R.id.search_history_delete_button)
 
         fun bind(place: Place, position: Int) {
-            searchHistoryBtn.text = place.placeName
+            searchHistoryBtn.text = place.place_name
             searchHistoryBtn.setOnClickListener { onItemClick(position) }
             searchHistoryDeleteBtn.setOnClickListener {
                 onItemDelete(position)

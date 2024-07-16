@@ -26,9 +26,9 @@ class ResultRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         val place = places[position]
-        holder.placeName.text = place.placeName
-        holder.placeCategory.text = place.categoryGroupName
-        holder.placeAddress.text = place.addressName
+        holder.placeName.text = place.place_name
+        holder.placeCategory.text = place.category_group_name
+        holder.placeAddress.text = place.address_name
         holder.itemView.setOnClickListener { onItemClick(place) }
     }
 

@@ -53,13 +53,13 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
             searchHistory = searchHistoryList,
             onItemClick = { index ->
-                searchView.setQuery(searchHistoryList[index].placeName, true)
+                searchView.setQuery(searchHistoryList[index].place_name, true)
                 searchView.clearFocus()
                 searchView.isIconified = false
             },
             onItemDelete = { index ->
                 if (index >= 0 && index < searchHistoryList.size) {
-                    val deletedItemName = searchHistoryList[index].placeName
+                    val deletedItemName = searchHistoryList[index].place_name
                     searchHistoryList.removeAt(index)
                     searchHistoryDB.deleteSearchHistoryByName(deletedItemName)
                     searchHistoryRecyclerViewAdapter.notifyItemRemoved(index)
