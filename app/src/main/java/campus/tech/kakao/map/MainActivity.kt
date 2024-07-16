@@ -3,9 +3,11 @@ package campus.tech.kakao.map
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.EditText
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.KakaoMapSdk
@@ -13,15 +15,31 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var binding : ActivityMainBinding
+    lateinit var viewModel : MyViewModel
     var mapView: MapView? = null
     var kakaoMap: KakaoMap? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val search = findViewById<TextView>(R.id.main_search)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
+        binding.viewModel = viewModel
+
+//        setContentView(R.layout.activity_main)
+//        val search = findViewById<TextView>(R.id.main_search)
         val appKey = BuildConfig.KAKAO_API_KEY
         KakaoMapSdk.init(this, appKey)
-        mapView = findViewById(R.id.map_view)
+
+        viewModel.isIntent.observe(this, Observer {
+            if(it) {
+                val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
+                startActivity(intent)
+            }
+        })
+
+        mapView = binding.mapView
+//        mapView = findViewById(R.id.map_view)
         mapView?.start(
             object : MapLifeCycleCallback() {
                 override fun onMapDestroy() {
@@ -42,11 +60,11 @@ class MainActivity : AppCompatActivity() {
                 }
             })  //mapView.start
 
-        search.setOnClickListener {
-            it.playSoundEffect(android.view.SoundEffectConstants.CLICK) //클릭 시 소리
-            val intent = Intent(this, SearchPlaceActivity::class.java)
-            startActivity(intent)
-        }
+//        search.setOnClickListener {
+//            it.playSoundEffect(android.view.SoundEffectConstants.CLICK) //클릭 시 소리
+//            val intent = Intent(this, SearchPlaceActivity::class.java)
+//            startActivity(intent)
+//        }
 
     }   //onCreate
 

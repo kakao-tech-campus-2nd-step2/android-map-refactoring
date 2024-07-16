@@ -1,28 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.MyViewModel" />
 
+    </data>
 
-    <com.kakao.vectormap.MapView
-        android:id="@+id/map_view"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/main_search"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="40dp"
-        android:hint="검색어를 입력해 주세요"
-        android:background="@android:color/white"
-        android:padding="15dp"
-        android:elevation="4dp"
-        android:layout_gravity="top"
-        android:soundEffectsEnabled="true"/>
 
-</FrameLayout>
+        <com.kakao.vectormap.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <TextView
+            android:id="@+id/main_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="40dp"
+            android:hint="검색어를 입력해 주세요"
+            android:background="@android:color/white"
+            android:padding="15dp"
+            android:elevation="4dp"
+            android:layout_gravity="top"
+            android:soundEffectsEnabled="true"
+            android:onClick="@{() -> viewModel.intentSearchPlace()}"/>
+    </FrameLayout>
+</layout>

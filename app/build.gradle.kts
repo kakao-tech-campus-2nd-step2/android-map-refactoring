@@ -41,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        dataBinding = true
     }
 }
 
@@ -64,4 +65,7 @@ dependencies {
 
     implementation ("com.kakao.sdk:v2-all:2.11.2")
     implementation ("com.kakao.maps.open:android:2.9.5")
+
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
 }
