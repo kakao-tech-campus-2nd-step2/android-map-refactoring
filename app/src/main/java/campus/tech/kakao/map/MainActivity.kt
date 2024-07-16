@@ -26,11 +26,10 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MyViewModel::class.java)
         binding.viewModel = viewModel
 
-//        setContentView(R.layout.activity_main)
-//        val search = findViewById<TextView>(R.id.main_search)
         val appKey = BuildConfig.KAKAO_API_KEY
         KakaoMapSdk.init(this, appKey)
 
+        //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
             if(it) {
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
@@ -39,7 +38,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         mapView = binding.mapView
-//        mapView = findViewById(R.id.map_view)
         mapView?.start(
             object : MapLifeCycleCallback() {
                 override fun onMapDestroy() {
@@ -59,12 +57,6 @@ class MainActivity : AppCompatActivity() {
                     kakaoMap = map
                 }
             })  //mapView.start
-
-//        search.setOnClickListener {
-//            it.playSoundEffect(android.view.SoundEffectConstants.CLICK) //클릭 시 소리
-//            val intent = Intent(this, SearchPlaceActivity::class.java)
-//            startActivity(intent)
-//        }
 
     }   //onCreate
 
