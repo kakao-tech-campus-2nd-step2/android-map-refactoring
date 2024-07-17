@@ -30,8 +30,8 @@
         </activity>
 
         <meta-data
-            android:name="com.kakao.sdk.AppKey"
-            android:value="e6a7c826ae7a55df129b8be2c636e213" />
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4U" />
     </application>
 
 </manifest>

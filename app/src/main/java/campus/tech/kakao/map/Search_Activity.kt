@@ -1,70 +1,46 @@
 package campus.tech.kakao.map
 
-import android.content.ContentValues
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.sdk.common.KakaoSdk
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import androidx.appcompat.widget.SearchView
+import kotlinx.coroutines.tasks.await
 
 class Search_Activity : AppCompatActivity() {
-    //Binding만 추가하면 됨
     private lateinit var searchView: SearchView
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var savedSearchRecyclerView: RecyclerView
     private lateinit var searchResultAdapter: PlaceAdapter
     private lateinit var savedSearchAdapter: SavedSearchAdapter
-    private lateinit var databaseHelper: MyDatabaseHelper
-    private lateinit var kakaoApiService: KakaoApiService
+    private lateinit var placesClient: PlacesClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //KakaoSdk.init(this, "e6a7c826ae7a55df129b8be2c636e213")
         setContentView(R.layout.activity_search)
-        kakaoApiService = createKakaoApiService()
+
+        // Initialize the SDK
+        Places.initialize(applicationContext, "AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4U")
+        // Create a new PlacesClient instance
+        placesClient = Places.createClient(this)
 
         initViews()
-        databaseHelper = MyDatabaseHelper(this)
-
         initAdapters()
         setupRecyclerViews()
         setupSearchView()
-        //searchAndDisplayResults("")
-    }
-    private fun createKakaoApiService(): KakaoApiService {
-        val logging = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BASIC
-        }
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(logging)
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .addHeader("Authorization", "KakaoAK 13c6b4e1c003d0f42b3b07888391c355")
-                    .build()
-                chain.proceed(request)
-            }
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://dapi.kakao.com")
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        return retrofit.create(KakaoApiService::class.java)
     }
 
     private fun initViews() {
@@ -72,7 +48,6 @@ class Search_Activity : AppCompatActivity() {
         searchRecyclerView = findViewById(R.id.RecyclerVer)
         savedSearchRecyclerView = findViewById(R.id.recyclerHor)
     }
-
 
     private fun initAdapters() {
         searchResultAdapter = PlaceAdapter(emptyList())
@@ -110,7 +85,6 @@ class Search_Activity : AppCompatActivity() {
         })
     }
 
-
     private fun searchAndDisplayResults(searchText: String) {
         if (searchText.isBlank()) {
             searchRecyclerView.visibility = RecyclerView.GONE
@@ -119,14 +93,17 @@ class Search_Activity : AppCompatActivity() {
 
         lifecycleScope.launch(Dispatchers.Main) {
             try {
-                val response = kakaoApiService.searchAddress(searchText)
-                val documents = response.documents ?: emptyList()
+                val request = FindAutocompletePredictionsRequest.builder()
+                    .setQuery(searchText)
+                    .build()
 
-                val places = documents.map { document ->
+                val response = placesClient.findAutocompletePredictions(request).await()
+
+                val places = response.autocompletePredictions.map { prediction ->
                     mapOf(
-                        MapContract.COLUMN_NAME to (document.placeName ?: "No Name"),
-                        MapContract.COLUMN_ADDRESS to (document.addressName ?: "No Address"),
-                        MapContract.COLUMN_CATEGORY to (document.categoryName ?: "No Category")
+                        "name" to prediction.getPrimaryText(null).toString(),
+                        "address" to prediction.getSecondaryText(null).toString(),
+                        "id" to prediction.placeId
                     )
                 }
 
@@ -139,16 +116,6 @@ class Search_Activity : AppCompatActivity() {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
-
-
-
-    private fun getContentValues(place: Map<String, String>): ContentValues {
-        return ContentValues().apply {
-            put(MapContract.COLUMN_NAME, place[MapContract.COLUMN_NAME])
-            put(MapContract.COLUMN_ADDRESS, place[MapContract.COLUMN_ADDRESS])
-            put(MapContract.COLUMN_CATEGORY, place[MapContract.COLUMN_CATEGORY])
         }
     }
 
@@ -170,18 +137,16 @@ class Search_Activity : AppCompatActivity() {
 
         fun updateData(newData: List<Map<String, String>>) {
             data = newData
-            notifyDataSetChanged() //성능 안좋음 고칠 필요가 있음
+            notifyDataSetChanged() // 성능이 안 좋음, 고칠 필요가 있음
         }
 
         inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val nameTextView: TextView = itemView.findViewById(R.id.name)
             private val addressTextView: TextView = itemView.findViewById(R.id.place)
-            private val categoryTextView: TextView = itemView.findViewById(R.id.category)
 
             fun bind(place: Map<String, String>) {
-                nameTextView.text = place[MapContract.COLUMN_NAME] ?: "No Name"
-                addressTextView.text = place[MapContract.COLUMN_ADDRESS] ?: "No Address"
-                categoryTextView.text = place[MapContract.COLUMN_CATEGORY] ?: "No Category"
+                nameTextView.text = place["name"] ?: "No Name"
+                addressTextView.text = place["address"] ?: "No Address"
             }
         }
     }

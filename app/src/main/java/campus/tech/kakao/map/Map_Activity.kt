@@ -6,18 +6,16 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.kakao.vectormap.KakaoMap
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
-import java.lang.Exception
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.model.LatLng
 
-class Map_Activity : AppCompatActivity() {
+class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
     private lateinit var searchView: SearchView
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    private lateinit var googleMap: GoogleMap
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,26 +24,8 @@ class Map_Activity : AppCompatActivity() {
         mapView = findViewById(R.id.map_view)
         searchView = findViewById(R.id.search_text)
 
-        mapView = MapView(this)
-        mapView.start(
-            object : MapLifeCycleCallback() {
-                override fun onMapDestroy() {
-                    Log.d("map", "Map Destroy")
-                }
-
-                override fun onMapError(error: Exception) {
-                    Log.d("map", "지도가 정상적으로 호출되지 않음")
-                }
-            },
-            object : KakaoMapReadyCallback() {
-                override fun onMapReady(kakaoMap: KakaoMap) {
-                    val mapCenter = com.google.android.gms.maps.model.LatLng(
-                        37.5665,
-                        126.9780
-                    ) // 예시: 서울의 위도, 경도
-                }
-            }
-        )
+        mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync(this)
 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
@@ -55,14 +35,35 @@ class Map_Activity : AppCompatActivity() {
         }
     }
 
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        val seoul = LatLng(37.5665, 126.9780) // 서울의 위도와 경도
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 10f))
+    }
+
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        mapView.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        mapView.onPause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView.onLowMemory()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState)
     }
 }
 

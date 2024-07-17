@@ -51,6 +51,8 @@ android {
 }
 
 dependencies {
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.1")
+    implementation ("com.google.android.gms:play-services-location:19.0.0")
     implementation ("androidx.multidex:multidex:2.0.1")
     // Kakao Map SDK - 최신 버전 사용
     implementation("com.kakao.maps.open:android:2.9.5")
@@ -74,6 +76,7 @@ dependencies {
     implementation("com.google.ar.sceneform:core:1.17.1") // ARCore 관련 라이브러리 수정
     // Google Maps 서비스 라이브러리
     implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation("com.google.android.libraries.places:places:3.5.0")
 
     // 테스트 라이브러리
     testImplementation("junit:junit:4.13.2")
