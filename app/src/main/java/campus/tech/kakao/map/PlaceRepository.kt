@@ -7,18 +7,18 @@ import retrofit2.Response
 
 class PlaceRepository {
 
-    private val retrofitLocalService: RetrofitLocalService = RetrofitInstance.retrofitLocalService
+    private val retrofitLocalKeywordService: RetrofitLocalKeywordService = RetrofitInstance.retrofitLocalKeywordService
 
     fun searchPlace(
-        categoryName: String,
+        keyword: String,
         onSuccess: (List<PlaceDataModel>) -> Unit,
         onFailure: (Throwable) -> Unit
     ) {
-        val call = retrofitLocalService.searchPlaceByCategory("KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}", CategoryGroupCodes.getCodeByName(categoryName) ?: "")
+        val call = retrofitLocalKeywordService.searchPlaceByKeyword("KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}", keyword)
         call.enqueue(object : Callback<SearchResult> {
             override fun onResponse(call: Call<SearchResult>, response: Response<SearchResult>) {
                 if (response.isSuccessful) {
-                    val categoryList: MutableList<PlaceDataModel> = mutableListOf()
+                    val keywordList: MutableList<PlaceDataModel> = mutableListOf()
                     val places = response.body()?.documents
                     places?.let {
                         for (placeInfo in places) {
@@ -27,12 +27,13 @@ class PlaceRepository {
                                 category = placeInfo.categoryGroupName,
                                 address = placeInfo.addressName
                             )
-                            categoryList.add(place)
+                            keywordList.add(place)
                         }
                     }
-                    onSuccess(categoryList)
+                    onSuccess(keywordList)
                     Log.d("API response", "Success: $places")
-                } else {
+                }
+                else {
                     val errorBody = response.errorBody()?.string()
                     Log.d("API response", "Error response: $errorBody")
                 }

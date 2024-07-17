@@ -5,7 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
-interface RetrofitLocalService {
+interface RetrofitLocalCategoryService {
     @GET("/v2/local/search/category.json")
     fun searchPlaceByCategory(
         @Header("Authorization") key: String,

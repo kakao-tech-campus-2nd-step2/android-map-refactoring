@@ -63,15 +63,9 @@ class PlaceActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val category = s.toString()
-                if (category.isNotEmpty()) {
-                    searchPlace(category)
-                }
-                else {
-                    keywordList.clear()
-                    placeAdapter.updateData(keywordList)
-                    controlPlaceVisibility(keywordList)
-                }
+                val keyword = s.toString()
+                Log.d("API response", "$keyword")
+                searchPlace(keyword)
             }
 
             override fun afterTextChanged(s: Editable?) {
@@ -83,6 +77,7 @@ class PlaceActivity : AppCompatActivity() {
         placeRepository.searchPlace(categoryName,
             onSuccess = { categoryList ->
                 placeAdapter.updateData(categoryList)
+                placeAdapter.notifyDataSetChanged()
                 controlPlaceVisibility(categoryList)
             },
             onFailure = { throwable ->
