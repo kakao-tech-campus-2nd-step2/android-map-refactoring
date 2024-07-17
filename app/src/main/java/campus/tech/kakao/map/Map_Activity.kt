@@ -3,6 +3,9 @@ package campus.tech.kakao.map
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -10,6 +13,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
 
 class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -37,9 +42,65 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
-        val seoul = LatLng(37.5665, 126.9780) // 서울의 위도와 경도
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(seoul, 10f))
+        placeViewModel.getLastKnownLocation()?.let { lastLocation ->
+            val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        }
+
+        googleMap.setOnMapClickListener { latLng ->
+            // 지도 클릭 시 처리 로직 추가
+            // 예: 마커 추가
+            googleMap.clear()
+            googleMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
+        }
     }
+    private fun setupSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let { placeViewModel.searchAddress(it) }
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+    }
+
+    private fun observeViewModel() {
+        placeViewModel.searchResult.observe(this, { place ->
+            place?.let {
+                val latLng = LatLng(it.latitude, it.longitude)
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            }
+        })
+
+        placeViewModel.errorMessage.observe(this, { errorMessage ->
+            errorMessage?.let {
+                // 에러 처리 로직 추가
+                // 예: Snackbar 또는 AlertDialog로 사용자에게 에러 메시지 표시
+                Snackbar.make(mapView, errorMessage, Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+    private fun showMapErrorLayout() {
+        // Hide the map view
+        mapView.visibility = View.GONE
+
+        // Show the error layout
+        val errorLayout = findViewById<LinearLayout>(R.id.error_layout)
+        errorLayout.visibility = View.VISIBLE
+
+        // Retry button click listener
+        val retryButton = findViewById<Button>(R.id.retry_button)
+        retryButton.setOnClickListener {
+            // Retry logic here, for example:
+            mapView.visibility = View.VISIBLE
+            errorLayout.visibility = View.GONE
+            mapView.onResume() // Resume map operations
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
