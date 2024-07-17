@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SearchRecyclerViewAdapter(
     private val places: MutableList<PlaceDataModel>,
-    private val onItemClick: (PlaceDataModel) -> Unit
+    private val onItemClick: (PlaceDataModel) -> Unit,
+    private val onCloseButtonClick: (PlaceDataModel) -> Unit
 ) : ListAdapter<PlaceDataModel, SearchRecyclerViewAdapter.SearchViewHolder>(
     object : DiffUtil.ItemCallback<PlaceDataModel>() {
         override fun areItemsTheSame(oldItem: PlaceDataModel, newItem: PlaceDataModel): Boolean {
@@ -29,10 +30,16 @@ class SearchRecyclerViewAdapter(
         val btnClose: ImageButton = itemView.findViewById(R.id.btnClose)
 
         init {
-            btnClose.setOnClickListener {
+            placeName.setOnClickListener {
                 val position: Int = bindingAdapterPosition
                 val place = places[position]
                 onItemClick(place)
+            }
+
+            btnClose.setOnClickListener {
+                val position: Int = bindingAdapterPosition
+                val place = places[position]
+                onCloseButtonClick(place)
             }
         }
     }

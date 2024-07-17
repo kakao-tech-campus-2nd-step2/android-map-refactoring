@@ -96,10 +96,17 @@ class PlaceActivity : AppCompatActivity() {
         })
 
     private fun searchRecyclerViewAdapter(searchList: MutableList<PlaceDataModel>) =
-        SearchRecyclerViewAdapter(searchList, onItemClick = { place ->
-            removePlaceRecord(searchList, place)
-            controlSearchVisibility(searchList)
-        })
+        SearchRecyclerViewAdapter(
+            searchList,
+            onItemClick = { place ->
+                etSearch.setText(place.name)
+                etSearch.setSelection(place.name.length)
+            },
+            onCloseButtonClick = { place ->
+                removePlaceRecord(searchList, place)
+                controlSearchVisibility(searchList)
+            }
+        )
 
     // 검색 저장 기록 조작
     private fun addPlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
