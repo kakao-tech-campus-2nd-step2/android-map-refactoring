@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -99,6 +100,16 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
         // 검색어 결과 항목 클릭시 검색창 자동완성 (요구된 기능 외 추가 기능, 필요시 주석 제거)
         // etKeywords.setText(item.name)
         // mapViewModel.searchPlaces(item.name)
+
+        val intent = Intent(this, MapActivity::class.java).apply {
+            putExtra("name", item.name)
+            putExtra("address", item.address)
+            putExtra("longitude", item.longitude)
+            putExtra("latitude", item.latitude)
+            //Log.d("putLatitude: ", item.latitude.toString())
+            //Log.d("putLongitude: ", item.longitude.toString())
+        }
+        startActivity(intent)
     }
 
     override fun onKeywordRemove(keyword: String) {
