@@ -54,8 +54,6 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         }
 
         googleMap.setOnMapClickListener { latLng ->
-            // 지도 클릭 시 처리 로직 추가
-            // 예: 마커 추가
             googleMap.clear()
             googleMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
         }
