@@ -99,9 +99,9 @@ class MapActivity : AppCompatActivity() {
 
     private fun loadSavedLocation() {
         val preferences = getSharedPreferences("location_prefs", MODE_PRIVATE)
-        savedLatitude = preferences.getString("latitude", "37.3957122")?.toDouble() ?: 37.5642
-        savedLongitude = preferences.getString("longitude", "127.1105181")?.toDouble() ?: 127.00
-        Log.d("MapActivity", "Loaded Latitude: $savedLatitude, Longitude: $savedLongitude")
+        savedLatitude = preferences.getString("latitude", "37.3957122")?.toDouble() ?: 37.3957122
+        savedLongitude = preferences.getString("longitude", "127.1105181")?.toDouble() ?: 127.1105181
+        //Log.d("MapActivity", "Loaded Latitude: $savedLatitude, Longitude: $savedLongitude")
     }
 
     private fun updateCameraPosition(latitude: Double, longitude: Double) {
