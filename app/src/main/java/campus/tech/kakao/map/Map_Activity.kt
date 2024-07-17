@@ -45,9 +45,12 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap) {
         googleMap = map
+
+        val selectedPlace = intent.getParcelableExtra<Place>("selectedPlace")
+
         placeViewModel.getLastKnownLocation()?.let { lastLocation ->
             val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
         }
 
         googleMap.setOnMapClickListener { latLng ->
@@ -80,8 +83,6 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
         placeViewModel.errorMessage.observe(this, { errorMessage ->
             errorMessage?.let {
-                // 에러 처리 로직 추가
-                // 예: Snackbar 또는 AlertDialog로 사용자에게 에러 메시지 표시
                 Snackbar.make(mapView, errorMessage, Snackbar.LENGTH_LONG).show()
             }
         })

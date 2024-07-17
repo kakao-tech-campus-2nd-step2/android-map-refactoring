@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,10 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.coroutines.tasks.await
 
 class Search_Activity : AppCompatActivity() {
@@ -137,20 +142,56 @@ class Search_Activity : AppCompatActivity() {
 
         fun updateData(newData: List<Map<String, String>>) {
             data = newData
-            notifyDataSetChanged() // 성능이 안 좋음, 고칠 필요가 있음
+            notifyDataSetChanged()
         }
 
         inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             private val nameTextView: TextView = itemView.findViewById(R.id.name)
             private val addressTextView: TextView = itemView.findViewById(R.id.place)
 
+            init {
+                itemView.setOnClickListener {
+                    val position = adapterPosition
+                    if (position != RecyclerView.NO_POSITION) {
+                        val placeId = data[position]["id"]
+                        if (!placeId.isNullOrBlank()) {
+                            fetchPlaceDetails(placeId)
+                        }
+                    }
+                }
+            }
+
             fun bind(place: Map<String, String>) {
                 nameTextView.text = place["name"] ?: "No Name"
                 addressTextView.text = place["address"] ?: "No Address"
             }
+
+            private fun fetchPlaceDetails(placeId: String) {
+                val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+                val request = FetchPlaceRequest.builder(placeId, placeFields).build()
+                placesClient.fetchPlace(request).addOnSuccessListener { response ->
+                    val place = response.place
+                    val latLng = place.latLng
+
+                    if (latLng != null) {
+                        val intent = Intent(itemView.context, Map_Activity::class.java)
+                        intent.putExtra(
+                            "selectedPlace",
+                            Place(place.name!!, place.address!!, "", latLng.latitude, latLng.longitude)
+                        )
+                        itemView.context.startActivity(intent)
+                    }
+                }.addOnFailureListener { exception ->
+                    exception.printStackTrace()
+                }
+            }
         }
+
+
     }
 }
+
 
 
 
