@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var viewModel : MyViewModel
     var mapView: MapView? = null
     var kakaoMap: KakaoMap? = null
+    val KAKAO_LATITUDE : Double =37.39571538711179
+    val KAKAO_LONGITUDE : Double = 127.11051285266876
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -38,6 +40,14 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+        
+        //sharedPreference에서 name,address,longitude,latitude 받아서 변수에 저장하기
+        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
+        val name = sharedPreferences.getString("name", "")
+        val address = sharedPreferences.getString("address", "")
+        val longitude = sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
+        val latitude = sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE
+
 
         mapView = binding.mapView
         mapView?.start(
@@ -49,6 +59,7 @@ class MainActivity : AppCompatActivity() {
 
                 override fun onMapError(error: Exception) {
                     // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출
+                    Log.d("KakaoMap", "onMapError")
                     Log.e("KakaoMap", "onMapError: ", error)
                 }
             },
@@ -58,8 +69,19 @@ class MainActivity : AppCompatActivity() {
                     // KakaoMap 객체를 얻어 옵니다.
                     kakaoMap = map
 
-                    var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(37.867121366974516, 127.73603679782136))
+
+
+                    // 마지막 위치 받아와서 카메라 이동하기 구현하기!!
+
+
+                    var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+
                     kakaoMap?.moveCamera(cameraUpdate)
+                    Log.d("KakaoMap", "onMapReady")
+                    Log.d("KakaoMap", "name : $name")
+                    Log.d("KakaoMap", "address : $address")
+                    Log.d("KakaoMap", "longitude : $longitude")
+                    Log.d("KakaoMap", "latitude : $latitude")
                 }
             }
         )  //mapView.start
@@ -69,11 +91,13 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mapView?.resume()
+        Log.d("KakaoMap", "onMapResume")
     }
 
     override fun onPause() {
         super.onPause()
         mapView?.pause()
+        Log.d("KakaoMap", "onMapPause")
     }
 
 }

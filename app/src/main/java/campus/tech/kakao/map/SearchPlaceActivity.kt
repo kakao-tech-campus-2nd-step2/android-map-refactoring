@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -46,9 +47,21 @@ class SearchPlaceActivity : AppCompatActivity() {
         with(viewModel){
 
             //PlaceAdapter
-            itemClick.observe(activity, Observer {
+            itemClick.observe(activity, Observer {  //Place 클릭 이벤트
                 dbManager.insertSavedPlace(it.id, it.name)
                 viewModel.updateSavedSearch(dbManager)
+
+                //sharedPreference를 이용해서 name,address,latitude,longitude 저장하기
+                val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString("name", it.name)
+                editor.putString("address", it.address)
+                editor.putString("longitude", it.longitude)
+                editor.putString("latitude", it.latitude)
+                editor.apply()
+
+                val intent = Intent(activity, MainActivity::class.java)
+                startActivity(intent)
             })
 
             //SavedSearchAdapter

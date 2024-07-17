@@ -15,17 +15,20 @@ class PlaceAdapter(private var items : List<Place>, private val viewModel: MyVie
         val name: TextView = view.findViewById(R.id.name)
         val address: TextView = view.findViewById(R.id.address)
         val kind: TextView = view.findViewById(R.id.kind)
+        var longitude : Double? = null
+        var latitude : Double? = null
 
         fun bind(item: Place) {
             itemView.setOnClickListener {
                 it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)  //진동
-
                 viewModel.itemClick.value = item
             }
             id.text = item.id.toString()
             name.text = item.name
             address.text = item.address
             kind.text = item.kind
+            longitude = item.longitude.toDouble()
+            latitude = item.latitude.toDouble()
         }
     }
 

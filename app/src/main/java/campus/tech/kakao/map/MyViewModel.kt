@@ -48,7 +48,9 @@ class MyViewModel : ViewModel() {
                             id = document.id.toInt(),
                             name = document.place_name,
                             address = document.address_name,
-                            kind = document.category_name
+                            kind = document.category_name,
+                            longitude = document.x, //경도
+                            latitude = document.y   //위도
                         )
                     } ?: emptyList()
                     placeAdapterUpdateData.value = places //검색결과
