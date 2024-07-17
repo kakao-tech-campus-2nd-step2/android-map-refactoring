@@ -1,6 +1,7 @@
 package campus.tech.kakao.map
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.widget.ImageButton
@@ -26,6 +27,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var backButton: ImageButton
     private lateinit var mapX: String
     private lateinit var mapY: String
+    private lateinit var name: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -120,6 +122,7 @@ class SearchActivity : AppCompatActivity() {
         val searchToMapIntent = Intent(this, MapActivity::class.java)
         searchToMapIntent.putExtra("mapX",mapX.toDouble())
         searchToMapIntent.putExtra("mapY",mapY.toDouble())
+        searchToMapIntent.putExtra("name",name)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
         startActivity(searchToMapIntent)
     }
@@ -127,6 +130,7 @@ class SearchActivity : AppCompatActivity() {
     private fun updateMapPosition(place: Place) {
         mapX = place.x
         mapY = place.y
+        name = place.place_name
         Log.d("goBackToMap", "updateMapPosition: $mapX, $mapY")
     }
 }
