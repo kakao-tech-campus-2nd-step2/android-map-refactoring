@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -88,8 +89,10 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         mapView.visibility = View.GONE
 
         // Show the error layout
-        val errorLayout = findViewById<LinearLayout>(R.id.error_layout)
+        val errorLayout = findViewById<TextView>(R.id.error_message)
+        val errorLayout1 = findViewById<TextView>(R.id.error_message1)
         errorLayout.visibility = View.VISIBLE
+        errorLayout1.visibility = View.VISIBLE
 
         // Retry button click listener
         val retryButton = findViewById<Button>(R.id.retry_button)

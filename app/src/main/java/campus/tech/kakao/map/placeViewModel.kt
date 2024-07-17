@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.maps.model.LatLng
 
-class placeViewModel : ViewModel() {
+
+class PlaceViewModel : ViewModel() {
 
     private val _searchResult = MutableLiveData<LatLng>()
     val searchResult: LiveData<LatLng>
@@ -19,8 +20,7 @@ class placeViewModel : ViewModel() {
     private var lastKnownLocation: Location? = null
 
     fun searchAddress(query: String) {
-        // 검색 로직을 구현하고, 결과를 _searchResult LiveData에 업데이트합니다.
-        // 예제에서는 간단히 임의의 좌표로 대체
+        //임의의 좌표로 대체
         val randomLatLng = LatLng(37.5665, 126.9780)
         _searchResult.value = randomLatLng
     }
