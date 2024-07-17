@@ -120,8 +120,8 @@ class SearchActivity : AppCompatActivity() {
 
     private fun goBackToMap() {
         val searchToMapIntent = Intent(this, MapActivity::class.java)
-        searchToMapIntent.putExtra("mapX",mapX.toDouble())
-        searchToMapIntent.putExtra("mapY",mapY.toDouble())
+        searchToMapIntent.putExtra("mapX",mapX)
+        searchToMapIntent.putExtra("mapY",mapY)
         searchToMapIntent.putExtra("name",name)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
         startActivity(searchToMapIntent)

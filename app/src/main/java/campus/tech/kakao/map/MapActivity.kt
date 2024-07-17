@@ -19,12 +19,11 @@ class MapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var searchButton: LinearLayout
-    private lateinit var startPosition: LatLng
 
-    private var latitude: Double = 35.231627
-    private var longitude: Double = 129.084020
     private var name: String? = null
     private var kakaoMap: KakaoMap? = null
+    private var latitude: String? = null
+    private var longitude: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,12 +32,22 @@ class MapActivity : AppCompatActivity() {
         mapView = findViewById(R.id.map_view)
         searchButton = findViewById(R.id.search_button)
 
+        val defLat = "35.231627"
+        val defLng = "129.084020"
+        val lastLatLng = getSharedPreferences("lastLatLng", MODE_PRIVATE)
+        latitude = lastLatLng.getString("lastLat", defLat) // 기본 위치: 부산대.
+        longitude = lastLatLng.getString("lastLng", defLng) // 기본 위치: 부산대.
+        Log.d("sharedPreference", "saveLatLng밖에꺼: $latitude")
+        Log.d("sharedPreference", "saveLatLng밖에꺼: $longitude")
+
+        // Intent에서 값을 가져옴
         intent?.let {
-            latitude = it.getDoubleExtra("mapY", latitude)
-            longitude = it.getDoubleExtra("mapX", longitude)
+            latitude = it.getStringExtra("mapY") ?: latitude
+            longitude = it.getStringExtra("mapX") ?: longitude
             name = it.getStringExtra("name")
-            startPosition = LatLng.from(latitude, longitude)
         }
+
+        Log.d("latlngcheck1", "Intent에서 가져온 값: $latitude, $longitude, $name")
 
         mapView.start(
             object : MapLifeCycleCallback() {
@@ -51,14 +60,19 @@ class MapActivity : AppCompatActivity() {
             },
             object : KakaoMapReadyCallback() {
                 override fun onMapReady(kakaoMap: KakaoMap) {
+                    Log.d("latlngcheck2", "onMapReady에서: $latitude, $longitude")
                     this@MapActivity.kakaoMap = kakaoMap
                     name?.let {
-                        addMarker(kakaoMap, latitude, longitude, it)
+                        addMarker(kakaoMap, latitude ?: defLat, longitude ?: defLng, it)
+                        saveLatLng(latitude ?: defLat, longitude ?: defLng) // 마커 찍은 위치를 sharedPreference에 저장
                     }
                 }
 
                 override fun getPosition(): LatLng {
-                    return startPosition
+                    Log.d("latlngcheck3", "getPosition에서: $latitude, $longitude")
+                    val lat = (latitude ?: defLat).toDouble()
+                    val lng = (longitude ?: defLng).toDouble()
+                    return LatLng.from(lat, lng)
                 }
             }
         )
@@ -69,14 +83,24 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude:Double, name: String) {
+    private fun addMarker(kakaoMap: KakaoMap, latitude: String, longitude: String, name: String) {
         Log.d("addMarker", "addMarker: $latitude, $longitude, $name")
-        val styles = kakaoMap.labelManager?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.location_marker).setTextStyles(25,
-            Color.BLACK)))
-        val options = LabelOptions.from(LatLng.from(latitude, longitude)).setStyles(styles)
+        val styles = kakaoMap.labelManager?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.location_marker).setTextStyles(25, Color.BLACK)))
+        val options = LabelOptions.from(LatLng.from(latitude.toDouble(), longitude.toDouble())).setStyles(styles)
         val layer = kakaoMap.labelManager?.layer
         val label = layer?.addLabel(options)
         label?.changeText(name)
+    }
+
+    private fun saveLatLng(latitude: String, longitude: String) {
+        val sharedPreference = getSharedPreferences("lastLatLng", MODE_PRIVATE)
+        sharedPreference.edit().apply {
+            putString("lastLat", latitude)
+            putString("lastLng", longitude)
+            apply()
+        }
+        Log.d("sharedPreference", "saveLatLng: ${sharedPreference.getString("lastLat", "default_lat")}")
+        Log.d("sharedPreference", "saveLatLng: ${sharedPreference.getString("lastLng", "default_lng")}")
     }
 
     override fun onResume() {
