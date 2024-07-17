@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -24,12 +25,16 @@ class MapActivity : AppCompatActivity() {
     private var kakaoMap: KakaoMap? = null
     private var savedLatitude: Double = 37.3957122
     private var savedLongitude: Double = 127.1105181
+    private lateinit var errorLayout: View
+    private lateinit var searchLayout: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
         mapView = findViewById(R.id.mapView)
+        errorLayout = findViewById(R.id.errorLayout)
+        searchLayout = findViewById(R.id.searchLayout)
         loadSavedLocation()
 
         mapView.start(mapLifeCycleCallback, kakaoMapReadyCallback)
@@ -59,6 +64,7 @@ class MapActivity : AppCompatActivity() {
 
         override fun onMapError(error: Exception) {
             Log.e("MapActivity", getString(R.string.onMapErrorLog))
+            showErrorLayout(error.message)
         }
     }
 
@@ -138,5 +144,13 @@ class MapActivity : AppCompatActivity() {
         tvPlaceAddress.text = address
 
         bottomSheetDialog.show()
+    }
+
+    private fun showErrorLayout(message: String?) {
+        val errorMessage = errorLayout.findViewById<TextView>(R.id.tvErrorMessage)
+        errorMessage.text="$message"
+        errorLayout.visibility = View.VISIBLE
+        searchLayout.visibility = View.GONE
+        mapView.visibility = View.GONE
     }
 }
