@@ -2,6 +2,7 @@ package campus.tech.kakao.map
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistoryList: MutableList<Place>
     private lateinit var kakaoRepository: KakaoRepository
     private lateinit var backButton: ImageButton
+    private lateinit var mapX: String
+    private lateinit var mapY: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +48,7 @@ class SearchActivity : AppCompatActivity() {
             onItemClick = { place ->
                 searchHistoryDB.insertSearchHistory(place)
                 updateSearchHistoryRecyclerView(place)
+                updateMapPosition(place)
             }
         )
         resultRecyclerView.adapter = resultRecyclerViewAdapter
@@ -113,7 +117,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun goBackToMap() {
-        val intent = Intent(this, MapActivity::class.java)
-        startActivity(intent)
+        val searchToMapIntent = Intent(this, MapActivity::class.java)
+        searchToMapIntent.putExtra("mapX",mapX.toDouble())
+        searchToMapIntent.putExtra("mapY",mapY.toDouble())
+        Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
+        startActivity(searchToMapIntent)
+    }
+
+    private fun updateMapPosition(place: Place) {
+        mapX = place.x
+        mapY = place.y
+        Log.d("goBackToMap", "updateMapPosition: $mapX, $mapY")
     }
 }
