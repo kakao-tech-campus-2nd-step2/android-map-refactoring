@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -22,6 +23,7 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mapView: MapView
     private lateinit var searchView: SearchView
     private lateinit var googleMap: GoogleMap
+    val placeViewModel: PlaceViewModel by viewModels() //이걸 추가를 안해줘서 에러가 난거였음!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
