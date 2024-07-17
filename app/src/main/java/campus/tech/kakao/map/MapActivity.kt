@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -74,6 +76,7 @@ class MapActivity : AppCompatActivity() {
             if (latitude != 0.0 && longitude != 0.0) {
                 addMarker(latitude, longitude, name ?: "")
                 saveLocation(latitude, longitude)
+                showBottomSheet(name ?: "", address ?: "")
             }
         }
     }
@@ -121,5 +124,19 @@ class MapActivity : AppCompatActivity() {
         label?.changeText(name)
 
         updateCameraPosition(latitude, longitude)
+    }
+
+    private fun showBottomSheet(name: String, address: String) {
+        val bottomSheetDialog = BottomSheetDialog(this)
+        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
+        bottomSheetDialog.setContentView(bottomSheetView)
+
+        val tvPlaceName = bottomSheetView.findViewById<TextView>(R.id.tvPlaceName)
+        val tvPlaceAddress = bottomSheetView.findViewById<TextView>(R.id.tvPlaceAddress)
+
+        tvPlaceName.text = name
+        tvPlaceAddress.text = address
+
+        bottomSheetDialog.show()
     }
 }
