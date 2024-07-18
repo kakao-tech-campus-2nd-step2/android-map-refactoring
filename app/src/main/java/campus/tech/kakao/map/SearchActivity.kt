@@ -1,139 +1,133 @@
 package campus.tech.kakao.map
 
 import android.content.Intent
-import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.dto.Place
-import campus.tech.kakao.map.repository.KakaoRepository
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.kakao.vectormap.KakaoMap
+import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.LatLng
+import com.kakao.vectormap.MapLifeCycleCallback
+import com.kakao.vectormap.MapView
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
 
-class SearchActivity : AppCompatActivity() {
+class MapActivity : AppCompatActivity() {
 
-    private lateinit var searchView: SearchView
-    private lateinit var resultRecyclerView: RecyclerView
-    private lateinit var searchHistoryRecyclerView: RecyclerView
-    private lateinit var noResults: TextView
-    private lateinit var resultRecyclerViewAdapter: ResultRecyclerViewAdapter
-    private lateinit var searchHistoryRecyclerViewAdapter: SearchHistoryRecyclerViewAdapter
-    private lateinit var placeList: List<Place>
-    private lateinit var searchHistoryList: MutableList<Place>
-    private lateinit var kakaoRepository: KakaoRepository
-    private lateinit var backButton: ImageButton
-    private lateinit var mapX: String
-    private lateinit var mapY: String
-    private lateinit var name: String
-    private lateinit var address: String
+    private lateinit var mapView: MapView
+    private lateinit var searchButton: LinearLayout
+    private lateinit var bottomSheet: BottomSheetDialog
+
+    private var name: String? = null
+    private var address: String? = null
+    private var kakaoMap: KakaoMap? = null
+    private var latitude: String? = null
+    private var longitude: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        setContentView(R.layout.activity_map)
 
-        searchView = findViewById(R.id.search_view)
-        resultRecyclerView = findViewById(R.id.recycler_view)
-        searchHistoryRecyclerView = findViewById(R.id.horizontal_recycler_view)
-        noResults = findViewById(R.id.no_results)
-        backButton = findViewById(R.id.back_button)
+        mapView = findViewById(R.id.map_view)
+        searchButton = findViewById(R.id.search_button)
+        val bottomSheetLayout = layoutInflater.inflate(R.layout.layout_map_bottom_sheet_dialog, null)
+        bottomSheet = BottomSheetDialog(this)
 
-        placeList = emptyList()
-        kakaoRepository = (application as KyleMaps).kakaoRepository
+        val defLat = "35.231627"
+        val defLng = "129.084020"
+        val lastLatLng = getSharedPreferences("lastLatLng", MODE_PRIVATE)
+        latitude = lastLatLng.getString("lastLat", defLat) // 기본 위치: 부산대.
+        longitude = lastLatLng.getString("lastLng", defLng) // 기본 위치: 부산대.
+        Log.d("sharedPreference", "saveLatLng밖에꺼: $latitude")
+        Log.d("sharedPreference", "saveLatLng밖에꺼: $longitude")
 
-        val searchHistoryDB = SearchHistoryDBHelper(this)
-        searchHistoryList = searchHistoryDB.getAllSearchHistory()
+        // Intent에서 값을 가져옴
+        intent?.let {
+            latitude = it.getStringExtra("mapY") ?: latitude
+            longitude = it.getStringExtra("mapX") ?: longitude
+            name = it.getStringExtra("name")
+            address = it.getStringExtra("address")
+        }
 
-        resultRecyclerViewAdapter = ResultRecyclerViewAdapter(
-            places = emptyList(),
-            onItemClick = { place ->
-                searchHistoryDB.insertSearchHistory(place)
-                updateSearchHistoryRecyclerView(place)
-                updateMapPosition(place)
-            }
-        )
-        resultRecyclerView.adapter = resultRecyclerViewAdapter
-        resultRecyclerView.layoutManager = LinearLayoutManager(this)
+        Log.d("latlngcheck1", "Intent에서 가져온 값: $latitude, $longitude, $name")
 
-        searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
-            searchHistory = searchHistoryList,
-            onItemClick = { index ->
-                searchView.setQuery(searchHistoryList[index].place_name, true)
-                searchView.clearFocus()
-                searchView.isIconified = false
+        mapView.start(
+            object : MapLifeCycleCallback() {
+                override fun onMapDestroy() {
+                }
+
+                override fun onMapError(error: Exception) {
+                    Log.e("MapActivity", "Map error: ${error.message}")
+                    val errorIntent = Intent(this@MapActivity, AuthenticationErrorActivity::class.java)
+                    startActivity(errorIntent)
+                    finish()
+                }
+
             },
-            onItemDelete = { index ->
-                if (index >= 0 && index < searchHistoryList.size) {
-                    val deletedItemName = searchHistoryList[index].place_name
-                    searchHistoryList.removeAt(index)
-                    searchHistoryDB.deleteSearchHistoryByName(deletedItemName)
-                    searchHistoryRecyclerViewAdapter.notifyItemRemoved(index)
+            object : KakaoMapReadyCallback() {
+                override fun onMapReady(kakaoMap: KakaoMap) {
+                    Log.d("latlngcheck2", "onMapReady에서: $latitude, $longitude")
+                    this@MapActivity.kakaoMap = kakaoMap
+                    name?.let {
+                        addMarker(kakaoMap, latitude ?: defLat, longitude ?: defLng, it)
+                        saveLatLng(latitude ?: defLat, longitude ?: defLng) // 마커 찍은 위치를 sharedPreference에 저장
+                        val tvBottomSheetPlaceName = bottomSheetLayout.findViewById<TextView>(R.id.bottomSheetPlaceName)
+                        val tvBottomSheetPlaceAddress = bottomSheetLayout.findViewById<TextView>(R.id.bottomsheetPlaceAddress)
+                        tvBottomSheetPlaceName.text = name
+                        tvBottomSheetPlaceAddress.text = address
+                        bottomSheet.setContentView(bottomSheetLayout)
+                        bottomSheet.show()
+                    }
+                }
+
+                override fun getPosition(): LatLng {
+                    Log.d("latlngcheck3", "getPosition에서: $latitude, $longitude")
+                    val lat = (latitude ?: defLat).toDouble()
+                    val lng = (longitude ?: defLng).toDouble()
+                    return LatLng.from(lat, lng)
                 }
             }
         )
-        searchHistoryRecyclerView.adapter = searchHistoryRecyclerViewAdapter
-        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let { searchPlaces(it) }
-                return true
-            }
-        })
-
-        backButton.setOnClickListener {
-            goBackToMap()
+        searchButton.setOnClickListener {
+            val mapToSearchIntent = Intent(this@MapActivity, SearchActivity::class.java)
+            startActivity(mapToSearchIntent)
         }
     }
 
-    private fun searchPlaces(query: String) {
+    private fun addMarker(kakaoMap: KakaoMap, latitude: String, longitude: String, name: String) {
+        Log.d("addMarker", "addMarker: $latitude, $longitude, $name")
+        val styles = kakaoMap.labelManager?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.location_marker).setTextStyles(25, Color.BLACK)))
+        val options = LabelOptions.from(LatLng.from(latitude.toDouble(), longitude.toDouble())).setStyles(styles)
+        val layer = kakaoMap.labelManager?.layer
+        val label = layer?.addLabel(options)
+        label?.changeText(name)
+    }
 
-        kakaoRepository.searchPlaces(query) { places ->
-            runOnUiThread {
-                placeList = places
-                resultRecyclerViewAdapter.setPlaces(places)
-                showNoResultsMessage(places.isEmpty())
-            }
+    private fun saveLatLng(latitude: String, longitude: String) {
+        val sharedPreference = getSharedPreferences("lastLatLng", MODE_PRIVATE)
+        sharedPreference.edit().apply {
+            putString("lastLat", latitude)
+            putString("lastLng", longitude)
+            apply()
         }
+        Log.d("sharedPreference", "saveLatLng: ${sharedPreference.getString("lastLat", "default_lat")}")
+        Log.d("sharedPreference", "saveLatLng: ${sharedPreference.getString("lastLng", "default_lng")}")
     }
 
-
-    private fun showNoResultsMessage(show: Boolean) {
-        if (show) {
-            noResults.visibility = TextView.VISIBLE
-            resultRecyclerView.visibility = RecyclerView.GONE
-        } else {
-            noResults.visibility = TextView.GONE
-            resultRecyclerView.visibility = RecyclerView.VISIBLE
-        }
+    override fun onResume() {
+        super.onResume()
+        mapView.resume()
     }
 
-    private fun updateSearchHistoryRecyclerView(place: Place) {
-        searchHistoryList.add(place)
-        searchHistoryRecyclerViewAdapter.notifyDataSetChanged()
+    override fun onPause() {
+        super.onPause()
+        mapView.pause()
     }
 
-    private fun goBackToMap() {
-        val searchToMapIntent = Intent(this, MapActivity::class.java)
-        searchToMapIntent.putExtra("mapX",mapX)
-        searchToMapIntent.putExtra("mapY",mapY)
-        searchToMapIntent.putExtra("name",name)
-        searchToMapIntent.putExtra("address", address)
-        Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
-        startActivity(searchToMapIntent)
-    }
-
-    private fun updateMapPosition(place: Place) {
-        mapX = place.x
-        mapY = place.y
-        name = place.place_name
-        address = place.address_name
-        Log.d("goBackToMap", "updateMapPosition: $mapX, $mapY")
-    }
 }
