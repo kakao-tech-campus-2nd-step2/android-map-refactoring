@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity() {
                     // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출
                     Log.d("KakaoMap", "onMapError")
                     Log.e("KakaoMap", "onMapError: ", error)
+                    val intent = Intent(this@MainActivity, MapErrorActivity::class.java)
+                    intent.putExtra("error",error.toString().substring(20))
+                    startActivity(intent)
+                    finish()
                 }
             },
             object : KakaoMapReadyCallback() {

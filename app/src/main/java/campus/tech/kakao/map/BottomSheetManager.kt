@@ -27,23 +27,23 @@ class BottomSheetManager(
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
                     BottomSheetBehavior.STATE_COLLAPSED -> { // 접힘
-                        // 상태가 접힘으로 변경될 때 처리할 코드
+
                     }
 
                     BottomSheetBehavior.STATE_DRAGGING -> { // 드래그 하는 중
-                        // 상태가 드래그 중으로 변경될 때 처리할 코드
+
                     }
 
                     BottomSheetBehavior.STATE_EXPANDED -> { // 펼쳐짐
-                        // 상태가 펼쳐짐으로 변경될 때 처리할 코드
+
                     }
 
                     BottomSheetBehavior.STATE_HIDDEN -> { // 숨겨짐
-                        // 상태가 숨겨짐으로 변경될 때 처리할 코드
+
                     }
 
                     BottomSheetBehavior.STATE_SETTLING -> { // 안정화되는 중
-                        // 상태가 안정화되는 중으로 변경될 때 처리할 코드
+
                     }
                 }
             }
