@@ -28,6 +28,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var mapX: String
     private lateinit var mapY: String
     private lateinit var name: String
+    private lateinit var address: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,6 +124,7 @@ class SearchActivity : AppCompatActivity() {
         searchToMapIntent.putExtra("mapX",mapX)
         searchToMapIntent.putExtra("mapY",mapY)
         searchToMapIntent.putExtra("name",name)
+        searchToMapIntent.putExtra("address", address)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
         startActivity(searchToMapIntent)
     }
@@ -131,6 +133,7 @@ class SearchActivity : AppCompatActivity() {
         mapX = place.x
         mapY = place.y
         name = place.place_name
+        address = place.address_name
         Log.d("goBackToMap", "updateMapPosition: $mapX, $mapY")
     }
 }

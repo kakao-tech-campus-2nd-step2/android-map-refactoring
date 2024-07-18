@@ -5,7 +5,9 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -19,8 +21,10 @@ class MapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var searchButton: LinearLayout
+    private lateinit var bottomSheet: BottomSheetDialog
 
     private var name: String? = null
+    private var address: String? = null
     private var kakaoMap: KakaoMap? = null
     private var latitude: String? = null
     private var longitude: String? = null
@@ -31,6 +35,8 @@ class MapActivity : AppCompatActivity() {
 
         mapView = findViewById(R.id.map_view)
         searchButton = findViewById(R.id.search_button)
+        val bottomSheetLayout = layoutInflater.inflate(R.layout.layout_map_bottom_sheet_dialog, null)
+        bottomSheet = BottomSheetDialog(this)
 
         val defLat = "35.231627"
         val defLng = "129.084020"
@@ -45,6 +51,7 @@ class MapActivity : AppCompatActivity() {
             latitude = it.getStringExtra("mapY") ?: latitude
             longitude = it.getStringExtra("mapX") ?: longitude
             name = it.getStringExtra("name")
+            address = it.getStringExtra("address")
         }
 
         Log.d("latlngcheck1", "Intent에서 가져온 값: $latitude, $longitude, $name")
@@ -69,6 +76,12 @@ class MapActivity : AppCompatActivity() {
                     name?.let {
                         addMarker(kakaoMap, latitude ?: defLat, longitude ?: defLng, it)
                         saveLatLng(latitude ?: defLat, longitude ?: defLng) // 마커 찍은 위치를 sharedPreference에 저장
+                        val tvBottomSheetPlaceName = bottomSheetLayout.findViewById<TextView>(R.id.bottomSheetPlaceName)
+                        val tvBottomSheetPlaceAddress = bottomSheetLayout.findViewById<TextView>(R.id.bottomsheetPlaceAddress)
+                        tvBottomSheetPlaceName.text = name
+                        tvBottomSheetPlaceAddress.text = address
+                        bottomSheet.setContentView(bottomSheetLayout)
+                        bottomSheet.show()
                     }
                 }
 
@@ -80,7 +93,7 @@ class MapActivity : AppCompatActivity() {
                 }
             }
         )
-        
+
         searchButton.setOnClickListener {
             val mapToSearchIntent = Intent(this@MapActivity, SearchActivity::class.java)
             startActivity(mapToSearchIntent)
@@ -116,4 +129,5 @@ class MapActivity : AppCompatActivity() {
         super.onPause()
         mapView.pause()
     }
+
 }
