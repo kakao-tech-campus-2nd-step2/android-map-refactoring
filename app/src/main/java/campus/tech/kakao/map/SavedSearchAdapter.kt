@@ -12,9 +12,9 @@ class SavedSearchAdapter(private var items : List<SavedSearch> , private val vie
 
     class ViewHolder(view: View, private val viewModel: MyViewModel) : RecyclerView.ViewHolder(view){
 
-        val close : ImageView = view.findViewById(R.id.close)
-        val id : TextView = view.findViewById(R.id.saved_search_id)
-        val name: TextView = view.findViewById(R.id.saved_search_name)
+        private val close : ImageView = view.findViewById(R.id.close)
+        private val id : TextView = view.findViewById(R.id.saved_search_id)
+        private val name: TextView = view.findViewById(R.id.saved_search_name)
 
         fun bind(item: SavedSearch) {
             close.setOnClickListener {

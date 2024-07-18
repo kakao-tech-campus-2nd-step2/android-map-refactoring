@@ -13,8 +13,8 @@ import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
 
 class SearchPlaceActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivitySearchPlaceBinding
-    lateinit var viewModel: MyViewModel
+    private lateinit var binding: ActivitySearchPlaceBinding
+    private lateinit var viewModel: MyViewModel
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var savedSearchAdapter: SavedSearchAdapter
 

@@ -25,17 +25,17 @@ import com.kakao.vectormap.shape.MapPoints
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityMainBinding
-    lateinit var viewModel: MyViewModel
-    var mapView: MapView? = null
-    var kakaoMap: KakaoMap? = null
-    val KAKAO_LATITUDE: Double = 37.39571538711179
-    val KAKAO_LONGITUDE: Double = 127.11051285266876
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MyViewModel
+    private var mapView: MapView? = null
+    private var kakaoMap: KakaoMap? = null
+    private val KAKAO_LATITUDE: Double = 37.39571538711179
+    private val KAKAO_LONGITUDE: Double = 127.11051285266876
     private val bottomSheet: LinearLayout by lazy { findViewById<LinearLayout>(R.id.bottom_sheet) }
-    var name: String = "kakao"
-    var address: String = "주소"
-    var latitude: Double = 37.39571538711179
-    var longitude: Double = 127.11051285266876
+    private var name: String = "kakao"
+    private var address: String = "주소"
+    private var latitude: Double = 37.39571538711179
+    private var longitude: Double = 127.11051285266876
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
