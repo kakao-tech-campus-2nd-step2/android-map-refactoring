@@ -25,7 +25,9 @@ class PlaceRepository {
                             val place = PlaceDataModel(
                                 name = placeInfo.placeName,
                                 category = placeInfo.categoryGroupName,
-                                address = placeInfo.addressName
+                                address = placeInfo.addressName,
+                                x = placeInfo.x,
+                                y = placeInfo.y
                             )
                             keywordList.add(place)
                         }
@@ -45,4 +47,7 @@ class PlaceRepository {
             }
         })
     }
+
+
+
 }

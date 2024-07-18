@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -73,12 +74,12 @@ class PlaceActivity : AppCompatActivity() {
         })
     }
 
-    private fun searchPlace(categoryName: String) {
-        placeRepository.searchPlace(categoryName,
-            onSuccess = { categoryList ->
-                placeAdapter.updateData(categoryList)
+    private fun searchPlace(keyword: String) {
+        placeRepository.searchPlace(keyword,
+            onSuccess = { keywordList ->
+                placeAdapter.updateData(keywordList)
                 placeAdapter.notifyDataSetChanged()
-                controlPlaceVisibility(categoryList)
+                controlPlaceVisibility(keywordList)
             },
             onFailure = { throwable ->
                 Log.w("API response", "Failure: $throwable")
@@ -87,21 +88,42 @@ class PlaceActivity : AppCompatActivity() {
     }
 
     private fun placeRecyclerViewAdapter(placeList: MutableList<PlaceDataModel>, searchList: MutableList<PlaceDataModel>) =
-        PlaceRecyclerViewAdapter(placeList, onItemClick = { place ->
-            if (place in searchList) {
-                removePlaceRecord(searchList, place)
+        PlaceRecyclerViewAdapter(
+            placeList,
+            onItemClick = { place ->
+                // 장소 목록 선택 시, 검색어 기록 저장
+                if (place in searchList) {
+                    removePlaceRecord(searchList, place)
+                }
+                addPlaceRecord(searchList, place)
+                controlSearchVisibility(searchList)
+
+                // 장소 목록 선택 시, 해당 항목의 위치를 지도에 표시 -> !!!!!!
+                Log.d("place", "${place.x}, ${place.y}")
+                val mapIntent = Intent(this, MapActivity::class.java).apply {
+                    putExtra("name", place.name)
+                    putExtra("address", place.address)
+                    putExtra("category", place.category)
+                    if (place.x != null) {
+                        putExtra("x", place.x)
+                    }
+                    if (place.y != null) {
+                        putExtra("y", place.y)
+                    }
+                }
+                startActivity(mapIntent)
             }
-            addPlaceRecord(searchList, place)
-            controlSearchVisibility(searchList)
-        })
+        )
 
     private fun searchRecyclerViewAdapter(searchList: MutableList<PlaceDataModel>) =
         SearchRecyclerViewAdapter(
             searchList,
+            // 저장 목록 선택 시, 검색칸에 장소명 표시
             onItemClick = { place ->
                 etSearch.setText(place.name)
                 etSearch.setSelection(place.name.length)
             },
+            // X 선택 시, 저장 목록에서 삭제
             onCloseButtonClick = { place ->
                 removePlaceRecord(searchList, place)
                 controlSearchVisibility(searchList)

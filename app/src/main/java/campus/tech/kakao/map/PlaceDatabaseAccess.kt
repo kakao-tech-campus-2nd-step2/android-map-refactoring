@@ -11,8 +11,10 @@ class PlaceDatabaseAccess(context: Context, databaseName: String) {
         val db = dbHelper.writableDatabase
         val values = ContentValues().apply {
             put(PlaceContract.Place.COLUMN_NAME, place.name)
-            put(PlaceContract.Place.COLUMN_ADDRESS, place.address)
-            put(PlaceContract.Place.COLUMN_CATEGORY, place.category)
+            place.address?.let { put(PlaceContract.Place.COLUMN_ADDRESS, it) }
+            place.category?.let { put(PlaceContract.Place.COLUMN_CATEGORY, it) }
+            place.x?.let { put(PlaceContract.Place.COLUMN_X, it) }
+            place.y?.let { put(PlaceContract.Place.COLUMN_Y, it) }
         }
         db.insert(PlaceContract.Place.TABLE_NAME, null, values)
     }
@@ -29,10 +31,19 @@ class PlaceDatabaseAccess(context: Context, databaseName: String) {
 
         if (cursor.moveToFirst()) {
             do {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow(PlaceContract.Place.COLUMN_NAME))
-                val address = cursor.getString(cursor.getColumnIndexOrThrow(PlaceContract.Place.COLUMN_ADDRESS))
-                val category = cursor.getString(cursor.getColumnIndexOrThrow(PlaceContract.Place.COLUMN_CATEGORY))
-                dataList.add(PlaceDataModel(name, address, category))
+                val nameIndex = cursor.getColumnIndex(PlaceContract.Place.COLUMN_NAME)
+                val addressIndex = cursor.getColumnIndex(PlaceContract.Place.COLUMN_ADDRESS)
+                val categoryIndex = cursor.getColumnIndex(PlaceContract.Place.COLUMN_CATEGORY)
+                val xIndex = cursor.getColumnIndex(PlaceContract.Place.COLUMN_X)
+                val yIndex = cursor.getColumnIndex(PlaceContract.Place.COLUMN_Y)
+
+                val name = cursor.getString(nameIndex)
+                val address = if (addressIndex != -1) cursor.getString(addressIndex) else null
+                val category = if (categoryIndex != -1) cursor.getString(categoryIndex) else null
+                val x = if (xIndex != -1) cursor.getString(xIndex) else null
+                val y = if (yIndex != -1) cursor.getString(yIndex) else null
+
+                dataList.add(PlaceDataModel(name, address, category, x, y))
             } while (cursor.moveToNext())
         }
         cursor.close()
