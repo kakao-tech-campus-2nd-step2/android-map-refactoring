@@ -56,7 +56,11 @@ class MapActivity : AppCompatActivity() {
 
                 override fun onMapError(error: Exception) {
                     Log.e("MapActivity", "Map error: ${error.message}")
+                    val errorIntent = Intent(this@MapActivity, AuthenticationErrorActivity::class.java)
+                    startActivity(errorIntent)
+                    finish()
                 }
+
             },
             object : KakaoMapReadyCallback() {
                 override fun onMapReady(kakaoMap: KakaoMap) {
@@ -76,7 +80,7 @@ class MapActivity : AppCompatActivity() {
                 }
             }
         )
-
+        
         searchButton.setOnClickListener {
             val mapToSearchIntent = Intent(this@MapActivity, SearchActivity::class.java)
             startActivity(mapToSearchIntent)
