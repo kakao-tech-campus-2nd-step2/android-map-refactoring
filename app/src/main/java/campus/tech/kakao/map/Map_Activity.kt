@@ -50,7 +50,7 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
         placeViewModel.getLastKnownLocation()?.let { lastLocation ->
             val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5f))
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
         }
 
         googleMap.setOnMapClickListener { latLng ->
@@ -86,19 +86,16 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         })
     }
     private fun showMapErrorLayout() {
-        // Hide the map view
         mapView.visibility = View.GONE
 
-        // Show the error layout
         val errorLayout = findViewById<TextView>(R.id.error_message)
         val errorLayout1 = findViewById<TextView>(R.id.error_message1)
         errorLayout.visibility = View.VISIBLE
         errorLayout1.visibility = View.VISIBLE
 
-        // Retry button click listener
         val retryButton = findViewById<Button>(R.id.retry_button)
         retryButton.setOnClickListener {
-            // Retry logic here, for example:
+
             mapView.visibility = View.VISIBLE
             errorLayout.visibility = View.GONE
             mapView.onResume() // Resume map operations

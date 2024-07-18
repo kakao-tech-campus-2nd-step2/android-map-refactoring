@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -167,7 +168,7 @@ class Search_Activity : AppCompatActivity() {
             }
 
             private fun fetchPlaceDetails(placeId: String) {
-                val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+                val placeFields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG)
 
                 val request = FetchPlaceRequest.builder(placeId, placeFields).build()
                 placesClient.fetchPlace(request).addOnSuccessListener { response ->
@@ -175,17 +176,24 @@ class Search_Activity : AppCompatActivity() {
                     val latLng = place.latLng
 
                     if (latLng != null) {
-                        val intent = Intent(itemView.context, Map_Activity::class.java)
-                        intent.putExtra(
-                            "selectedPlace",
-                            Place(place.name!!, place.address!!, "", latLng.latitude, latLng.longitude)
-                        )
+                        val placeName = place.name ?: "Unknown"
+                        val placeAddress = place.address ?: "Unknown"
+                        val intent = Intent(itemView.context, Map_Activity::class.java).apply {
+                            putExtra(
+                                "selectedPlace",
+                                Place(placeName, placeAddress, "", latLng.latitude, latLng.longitude)
+                            )
+                        }
                         itemView.context.startActivity(intent)
+                    } else {
+                        Log.e("FetchPlaceDetails", "latLng is null for placeId: $placeId")
                     }
                 }.addOnFailureListener { exception ->
                     exception.printStackTrace()
+                    Toast.makeText(itemView.context, "Failed to fetch place details", Toast.LENGTH_LONG).show()
                 }
             }
+
         }
 
 
