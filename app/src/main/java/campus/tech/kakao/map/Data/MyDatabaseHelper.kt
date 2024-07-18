@@ -1,15 +1,12 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Data
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import java.util.jar.Attributes.Name
+import campus.tech.kakao.map.R
 
 class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, "History.db", null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {

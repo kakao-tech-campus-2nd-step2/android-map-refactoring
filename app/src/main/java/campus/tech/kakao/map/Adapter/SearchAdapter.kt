@@ -1,9 +1,11 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.Data.MyDatabaseHelper
+import campus.tech.kakao.map.R
 
 class SearchAdapter(
     private val context: Context,

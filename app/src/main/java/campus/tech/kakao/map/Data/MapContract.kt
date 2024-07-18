@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Data
 
 object MapContract {
     const val TABLE_CAFE = "cafe"

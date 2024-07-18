@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Data
 
 import android.os.Parcel
 import android.os.Parcelable

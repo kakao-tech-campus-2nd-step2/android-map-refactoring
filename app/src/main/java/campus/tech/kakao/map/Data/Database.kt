@@ -1,12 +1,9 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Data
 
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class Database(context: Context) : SQLiteOpenHelper(context, "place.db", null, 1) {
 

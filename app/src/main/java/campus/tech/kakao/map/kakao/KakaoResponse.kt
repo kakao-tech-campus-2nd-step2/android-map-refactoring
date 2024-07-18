@@ -1,5 +1,6 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.kakao
 
+import campus.tech.kakao.map.Data.Document
 import com.google.gson.annotations.SerializedName
 
 data class KakaoSearchResponse(

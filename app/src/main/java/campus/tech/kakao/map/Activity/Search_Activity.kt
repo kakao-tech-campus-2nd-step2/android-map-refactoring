@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -12,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
@@ -20,9 +19,8 @@ import com.google.android.libraries.places.api.net.PlacesClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import campus.tech.kakao.map.Adapter.SavedSearchAdapter
+import campus.tech.kakao.map.R
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.coroutines.tasks.await
 
@@ -177,7 +175,13 @@ class Search_Activity : AppCompatActivity() {
                         val intent = Intent(itemView.context, Map_Activity::class.java).apply {
                             putExtra(
                                 "selectedPlace",
-                                Place(placeName, placeAddress, "", latLng.latitude, latLng.longitude)
+                                campus.tech.kakao.map.Data.Place(
+                                    placeName,
+                                    placeAddress,
+                                    "",
+                                    latLng.latitude,
+                                    latLng.longitude
+                                )
                             )
                         }
                         itemView.context.startActivity(intent)
