@@ -37,7 +37,6 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
-        // Load last known location
         val preferences = getSharedPreferences("MapPrefs", Context.MODE_PRIVATE)
         val lat = preferences.getFloat("lastLatitude", 0f).toDouble()
         val lng = preferences.getFloat("lastLongitude", 0f).toDouble()
@@ -61,7 +60,6 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
         val selectedPlace = intent.getParcelableExtra<Place>("selectedPlace")
 
-        // Move camera to last known location if available, otherwise default to selected place
         val initialLatLng = if (selectedPlace != null) {
             LatLng(selectedPlace.latitude, selectedPlace.longitude).also {
                 addMarkerAndMoveCamera(it, selectedPlace.place_name, selectedPlace.address_name)
