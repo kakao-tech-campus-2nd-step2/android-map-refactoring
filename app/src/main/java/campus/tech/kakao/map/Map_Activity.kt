@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -21,9 +23,9 @@ import com.google.android.material.snackbar.Snackbar
 class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mapView: MapView
-    private lateinit var searchView: SearchView
     private lateinit var googleMap: GoogleMap
-    val placeViewModel: PlaceViewModel by viewModels() //이걸 추가를 안해줘서 에러가 난거였음!!
+    private lateinit var searchView: SearchView
+    private lateinit var lastKnownLocation: LatLng
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,10 +37,21 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         mapView.onCreate(savedInstanceState)
         mapView.getMapAsync(this)
 
+        // Load last known location
+        val preferences = getSharedPreferences("MapPrefs", Context.MODE_PRIVATE)
+        val lat = preferences.getFloat("lastLatitude", 0f).toDouble()
+        val lng = preferences.getFloat("lastLongitude", 0f).toDouble()
+        lastKnownLocation = LatLng(lat, lng)
+
+        setupSearchView()
+    }
+
+    private fun setupSearchView() {
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 val intent = Intent(this, Search_Activity::class.java)
                 startActivity(intent)
+                searchView.clearFocus()
             }
         }
     }
@@ -48,60 +61,37 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
 
         val selectedPlace = intent.getParcelableExtra<Place>("selectedPlace")
 
-        placeViewModel.getLastKnownLocation()?.let { lastLocation ->
-            val latLng = LatLng(lastLocation.latitude, lastLocation.longitude)
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+        // Move camera to last known location if available, otherwise default to selected place
+        val initialLatLng = if (selectedPlace != null) {
+            LatLng(selectedPlace.latitude, selectedPlace.longitude).also {
+                addMarkerAndMoveCamera(it, selectedPlace.place_name, selectedPlace.address_name)
+            }
+        } else {
+            lastKnownLocation
         }
+
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLatLng, 15f))
 
         googleMap.setOnMapClickListener { latLng ->
             googleMap.clear()
             googleMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
-        }
-    }
-    private fun setupSearchView() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let { placeViewModel.searchAddress(it) }
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-    }
-
-    private fun observeViewModel() {
-        placeViewModel.searchResult.observe(this, { place ->
-            place?.let {
-                val latLng = LatLng(it.latitude, it.longitude)
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
-            }
-        })
-
-        placeViewModel.errorMessage.observe(this, { errorMessage ->
-            errorMessage?.let {
-                Snackbar.make(mapView, errorMessage, Snackbar.LENGTH_LONG).show()
-            }
-        })
-    }
-    private fun showMapErrorLayout() {
-        mapView.visibility = View.GONE
-
-        val errorLayout = findViewById<TextView>(R.id.error_message)
-        val errorLayout1 = findViewById<TextView>(R.id.error_message1)
-        errorLayout.visibility = View.VISIBLE
-        errorLayout1.visibility = View.VISIBLE
-
-        val retryButton = findViewById<Button>(R.id.retry_button)
-        retryButton.setOnClickListener {
-
-            mapView.visibility = View.VISIBLE
-            errorLayout.visibility = View.GONE
-            mapView.onResume() // Resume map operations
+            saveLastLocation(latLng.latitude, latLng.longitude)
         }
     }
 
+    private fun addMarkerAndMoveCamera(latLng: LatLng, title: String?, snippet: String?) {
+        googleMap.clear()
+        googleMap.addMarker(MarkerOptions().position(latLng).title(title).snippet(snippet))
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
+    }
+
+    private fun saveLastLocation(latitude: Double, longitude: Double) {
+        val preferences = getSharedPreferences("MapPrefs", Context.MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putFloat("lastLatitude", latitude.toFloat())
+        editor.putFloat("lastLongitude", longitude.toFloat())
+        editor.apply()
+    }
 
     override fun onResume() {
         super.onResume()

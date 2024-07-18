@@ -150,21 +150,16 @@ class Search_Activity : AppCompatActivity() {
             private val nameTextView: TextView = itemView.findViewById(R.id.name)
             private val addressTextView: TextView = itemView.findViewById(R.id.place)
 
-            init {
-                itemView.setOnClickListener {
-                    val position = adapterPosition
-                    if (position != RecyclerView.NO_POSITION) {
-                        val placeId = data[position]["id"]
-                        if (!placeId.isNullOrBlank()) {
-                            fetchPlaceDetails(placeId)
-                        }
-                    }
-                }
-            }
-
             fun bind(place: Map<String, String>) {
                 nameTextView.text = place["name"] ?: "No Name"
                 addressTextView.text = place["address"] ?: "No Address"
+
+                itemView.setOnClickListener {
+                    val placeId = place["id"]
+                    if (!placeId.isNullOrBlank()) {
+                        fetchPlaceDetails(placeId)
+                    }
+                }
             }
 
             private fun fetchPlaceDetails(placeId: String) {
@@ -178,6 +173,7 @@ class Search_Activity : AppCompatActivity() {
                     if (latLng != null) {
                         val placeName = place.name ?: "Unknown"
                         val placeAddress = place.address ?: "Unknown"
+
                         val intent = Intent(itemView.context, Map_Activity::class.java).apply {
                             putExtra(
                                 "selectedPlace",
@@ -193,11 +189,9 @@ class Search_Activity : AppCompatActivity() {
                     Toast.makeText(itemView.context, "Failed to fetch place details", Toast.LENGTH_LONG).show()
                 }
             }
-
         }
-
-
     }
+
 }
 
 
