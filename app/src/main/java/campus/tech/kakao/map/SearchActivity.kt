@@ -32,6 +32,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.d("here", "I'm in SearchActivity")
         setContentView(R.layout.activity_search)
 
         searchView = findViewById(R.id.search_view)
@@ -52,6 +53,7 @@ class SearchActivity : AppCompatActivity() {
                 searchHistoryDB.insertSearchHistory(place)
                 updateSearchHistoryRecyclerView(place)
                 updateMapPosition(place)
+                goBackToMap()
             }
         )
         resultRecyclerView.adapter = resultRecyclerViewAdapter
@@ -126,6 +128,7 @@ class SearchActivity : AppCompatActivity() {
         searchToMapIntent.putExtra("name",name)
         searchToMapIntent.putExtra("address", address)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
+        finish()
         startActivity(searchToMapIntent)
     }
 

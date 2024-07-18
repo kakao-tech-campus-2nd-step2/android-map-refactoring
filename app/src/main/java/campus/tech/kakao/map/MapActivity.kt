@@ -30,6 +30,7 @@ class MapActivity : AppCompatActivity() {
     private var longitude: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("here", "I'm in MapActivity")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
@@ -97,6 +98,7 @@ class MapActivity : AppCompatActivity() {
         searchButton.setOnClickListener {
             val mapToSearchIntent = Intent(this@MapActivity, SearchActivity::class.java)
             startActivity(mapToSearchIntent)
+            finish()
         }
     }
 
