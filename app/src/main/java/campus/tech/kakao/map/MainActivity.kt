@@ -3,6 +3,7 @@ package campus.tech.kakao.map
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     var kakaoMap: KakaoMap? = null
     val KAKAO_LATITUDE : Double =37.39571538711179
     val KAKAO_LONGITUDE : Double = 127.11051285266876
+    private val bottomSheet: LinearLayout by lazy { findViewById<LinearLayout>(R.id.bottom_sheet) }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -43,10 +45,14 @@ class MainActivity : AppCompatActivity() {
         
         //sharedPreference에서 name,address,longitude,latitude 받아서 변수에 저장하기
         val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
-        val name = sharedPreferences.getString("name", "")
-        val address = sharedPreferences.getString("address", "")
+        val name = sharedPreferences.getString("name", "") ?: ""
+        val address = sharedPreferences.getString("address", "") ?: ""
         val longitude = sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
         val latitude = sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE
+
+        val BottomSheet = BottomSheetManager(this,bottomSheet)
+        BottomSheet.setBottomSheetText(name,address)
+        
 
 
         mapView = binding.mapView
@@ -68,20 +74,10 @@ class MainActivity : AppCompatActivity() {
                     // 정상적으로 인증이 완료되었을 때 호출
                     // KakaoMap 객체를 얻어 옵니다.
                     kakaoMap = map
-
-
-
-                    // 마지막 위치 받아와서 카메라 이동하기 구현하기!!
-
-
+                    //카메라 업데이트
                     var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-
                     kakaoMap?.moveCamera(cameraUpdate)
-                    Log.d("KakaoMap", "onMapReady")
-                    Log.d("KakaoMap", "name : $name")
-                    Log.d("KakaoMap", "address : $address")
-                    Log.d("KakaoMap", "longitude : $longitude")
-                    Log.d("KakaoMap", "latitude : $latitude")
+
                 }
             }
         )  //mapView.start
