@@ -1,6 +1,7 @@
 package campus.tech.kakao.map
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
@@ -15,17 +16,27 @@ import com.kakao.vectormap.KakaoMapSdk
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.RoadViewRequest
 import com.kakao.vectormap.camera.CameraUpdateFactory
+import com.kakao.vectormap.label.LabelOptions
+import com.kakao.vectormap.label.LabelStyle
+import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.shape.MapPoints
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var binding : ActivityMainBinding
-    lateinit var viewModel : MyViewModel
+    lateinit var binding: ActivityMainBinding
+    lateinit var viewModel: MyViewModel
     var mapView: MapView? = null
     var kakaoMap: KakaoMap? = null
-    val KAKAO_LATITUDE : Double =37.39571538711179
-    val KAKAO_LONGITUDE : Double = 127.11051285266876
+    val KAKAO_LATITUDE: Double = 37.39571538711179
+    val KAKAO_LONGITUDE: Double = 127.11051285266876
     private val bottomSheet: LinearLayout by lazy { findViewById<LinearLayout>(R.id.bottom_sheet) }
+    var name: String = "kakao"
+    var address: String = "주소"
+    var latitude: Double = 37.39571538711179
+    var longitude: Double = 127.11051285266876
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -37,22 +48,24 @@ class MainActivity : AppCompatActivity() {
 
         //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
-            if(it) {
+            if (it) {
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
                 startActivity(intent)
             }
         })
-        
+
         //sharedPreference에서 name,address,longitude,latitude 받아서 변수에 저장하기
         val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
-        val name = sharedPreferences.getString("name", "") ?: ""
-        val address = sharedPreferences.getString("address", "") ?: ""
-        val longitude = sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
-        val latitude = sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE
+        name = sharedPreferences.getString("name", "") ?: ""
+        address = sharedPreferences.getString("address", "") ?: ""
+        longitude =
+            sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
+        latitude =
+            sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE
 
-        val BottomSheet = BottomSheetManager(this,bottomSheet)
-        BottomSheet.setBottomSheetText(name,address)
-        
+        val BottomSheet = BottomSheetManager(this, bottomSheet)
+        BottomSheet.setBottomSheetText(name, address)
+
 
 
         mapView = binding.mapView
@@ -68,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d("KakaoMap", "onMapError")
                     Log.e("KakaoMap", "onMapError: ", error)
                     val intent = Intent(this@MainActivity, MapErrorActivity::class.java)
-                    intent.putExtra("error",error.toString().substring(20))
+                    intent.putExtra("error", error.toString().substring(20))
                     startActivity(intent)
                     finish()
                 }
@@ -79,8 +92,10 @@ class MainActivity : AppCompatActivity() {
                     // KakaoMap 객체를 얻어 옵니다.
                     kakaoMap = map
                     //카메라 업데이트
-                    var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+                    var cameraUpdate =
+                        CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
                     kakaoMap?.moveCamera(cameraUpdate)
+                    addMarker(map, latitude, longitude, name)
 
                 }
             }
@@ -92,6 +107,7 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         mapView?.resume()
         Log.d("KakaoMap", "onMapResume")
+
     }
 
     override fun onPause() {
@@ -99,5 +115,31 @@ class MainActivity : AppCompatActivity() {
         mapView?.pause()
         Log.d("KakaoMap", "onMapPause")
     }
+
+    private fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude: Double, name: String) {
+        val labelManager = kakaoMap.labelManager
+
+        if (labelManager == null) {
+            Log.e("AddMarker", "LabelManager is null")
+            return
+        }
+
+        val iconAndTextStyle = LabelStyles.from(
+            LabelStyle.from(R.drawable.location_on_60px) // 이미지 리소스 확인
+                .setTextStyles(25, Color.BLACK) // 텍스트 스타일
+        )
+
+        val options = LabelOptions.from(LatLng.from(latitude, longitude))
+            .setStyles(iconAndTextStyle)
+
+        val layer = labelManager.layer
+        if (layer != null) {
+            val label = layer.addLabel(options)
+            label.changeText(name)
+        } else {
+            Log.e("AddMarker", "Layer is null")
+        }
+    }
+
 
 }
