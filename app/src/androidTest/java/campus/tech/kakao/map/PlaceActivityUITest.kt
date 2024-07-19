@@ -25,9 +25,9 @@ class PlaceActivityUITest {
     fun 장소_키워드_검색시_목록_조회_확인() {
 
         // 1. 검색어 입력창(etSearch)에 검색어 입력
-        val searchQuery = "D"
+        var searchQuery = "d"
         onView(withId(R.id.etSearch))
-            .perform(ViewActions.typeText(searchQuery), ViewActions.closeSoftKeyboard())
+            .perform(ViewActions.typeText(searchQuery))
 
         // 2. 장소 목록(rvPlaceList)에 검색 결과가 표시되는지 확인
         Thread.sleep(1000)
@@ -35,6 +35,7 @@ class PlaceActivityUITest {
             .check(ViewAssertions.matches(hasMinimumChildCount(1)))
     }
 
+    // 보니까 키패드가 영어로 되어있으면 영어만 쳐져서 저게 안되는 듯?
     @Test
     fun 목록_선택시_화면_전환_여부_확인() {
 
@@ -42,9 +43,9 @@ class PlaceActivityUITest {
 
         try {
             // 1. 검색어 입력창(etSearch)에 검색어 입력
-            val searchQuery = "D"
+            val searchQuery = "d"
             onView(withId(R.id.etSearch))
-                .perform(ViewActions.typeText(searchQuery), ViewActions.closeSoftKeyboard())
+                .perform(ViewActions.typeText(searchQuery))
 
             // 2. 일정 시간 대기
             Thread.sleep(1000)
