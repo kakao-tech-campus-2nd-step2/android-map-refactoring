@@ -111,7 +111,7 @@ class MapActivity : AppCompatActivity() {
         label?.changeText(name)
     }
 
-    private fun saveLatLng(latitude: String, longitude: String) {
+    fun saveLatLng(latitude: String, longitude: String) {
         val sharedPreference = getSharedPreferences("lastLatLng", MODE_PRIVATE)
         sharedPreference.edit().apply {
             putString("lastLat", latitude)
