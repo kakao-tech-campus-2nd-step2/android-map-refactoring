@@ -93,6 +93,7 @@ class SearchActivity : AppCompatActivity() {
                 placeList = places
                 resultRecyclerViewAdapter.setPlaces(places)
                 showNoResultsMessage(places.isEmpty())
+                Log.d("searchPlaces", "searchPlaces: ${resultRecyclerViewAdapter.itemCount}")
             }
         }
     }
