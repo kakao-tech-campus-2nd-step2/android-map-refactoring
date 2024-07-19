@@ -24,12 +24,12 @@ import com.kakao.vectormap.label.LabelStyles
 
 class MapActivity : AppCompatActivity() {
 
-    private lateinit var mapView: MapView
-    private lateinit var etSearch: EditText
+    lateinit var mapView: MapView
+    lateinit var etSearch: EditText
     private lateinit var labelManager: LabelManager
     private val startZoomLevel = 15
-    private var latitude: String? = "35.234"
-    private var longitude: String? = "129.0807"
+    var latitude: String? = "35.234"
+    var longitude: String? = "129.0807"
     private val startPosition = LatLng.from(latitude!!.toDouble(), longitude!!.toDouble())
 
     private val readyCallback: KakaoMapReadyCallback = object : KakaoMapReadyCallback() {
@@ -87,7 +87,7 @@ class MapActivity : AppCompatActivity() {
         return Pair(preferencesLatitude, preferencesLongitude)
     }
 
-    private fun saveLocation() {
+    fun saveLocation() {
         val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
         val editor: Editor = preferences.edit()
         editor.putString("latitude", latitude)
@@ -95,7 +95,7 @@ class MapActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun displayBottomSheet() {
+    fun displayBottomSheet() {
         val name = intent.getStringExtra("name").toString()
         val address = intent.getStringExtra("address").toString()
         val dataBundle = Bundle().apply {
@@ -104,10 +104,10 @@ class MapActivity : AppCompatActivity() {
         }
         val modal = ModalBottomSheet()
         modal.arguments = dataBundle
-        modal.show(supportFragmentManager, modal.tag)
+        modal.show(supportFragmentManager, "modalBottomSheet")
     }
 
-    private fun displayMarker() {
+    fun displayMarker() {
         val pos = LatLng.from(longitude!!.toDouble(), latitude!!.toDouble())
         val yellowMarker = labelManager.addLabelStyles(
             LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker))
