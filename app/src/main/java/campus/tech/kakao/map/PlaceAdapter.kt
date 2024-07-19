@@ -7,9 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
+
 class PlaceAdapter(private var items : List<Place>, private val viewModel: MyViewModel) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
 
     class ViewHolder(view: View, private val viewModel: MyViewModel) : RecyclerView.ViewHolder(view){
+
 
         val id : TextView = view.findViewById(R.id.id)
         val name: TextView = view.findViewById(R.id.name)
@@ -17,6 +19,7 @@ class PlaceAdapter(private var items : List<Place>, private val viewModel: MyVie
         val kind: TextView = view.findViewById(R.id.kind)
         var longitude : Double? = null
         var latitude : Double? = null
+
 
         fun bind(item: Place) {
             itemView.setOnClickListener {
@@ -40,6 +43,7 @@ class PlaceAdapter(private var items : List<Place>, private val viewModel: MyVie
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
+
     }
 
     override fun getItemCount(): Int {

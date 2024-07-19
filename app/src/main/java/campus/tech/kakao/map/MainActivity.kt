@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
     private var latitude: Double = 37.39571538711179
     private var longitude: Double = 127.11051285266876
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
@@ -48,7 +49,8 @@ class MainActivity : AppCompatActivity() {
 
         //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
-            if (it) {
+
+            if(it) {
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -67,8 +69,6 @@ class MainActivity : AppCompatActivity() {
         val BottomSheet = BottomSheetManager(this, bottomSheet)
         BottomSheet.setBottomSheetText(name, address)
 
-
-
         mapView = binding.mapView
         mapView?.start(
             object : MapLifeCycleCallback() {
@@ -85,6 +85,7 @@ class MainActivity : AppCompatActivity() {
                     intent.putExtra("error", error.toString().substring(20))
                     startActivity(intent)
                     finish()
+
                 }
             },
             object : KakaoMapReadyCallback() {
@@ -101,6 +102,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         )  //mapView.start
+
 
     }   //onCreate
 
