@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.Activity
+package campus.tech.kakao.map
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
 import campus.tech.kakao.map.Adapter.SavedSearchAdapter
-import campus.tech.kakao.map.R
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.coroutines.tasks.await
 
@@ -36,9 +35,7 @@ class Search_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        // Initialize the SDK
         Places.initialize(applicationContext, "AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4U")
-        // Create a new PlacesClient instance
         placesClient = Places.createClient(this)
 
         initViews()

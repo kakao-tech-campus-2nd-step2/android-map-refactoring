@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.Activity
+package campus.tech.kakao.map
 
 import android.content.Context
 import android.content.Intent
@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import campus.tech.kakao.map.Data.Place
-import campus.tech.kakao.map.R
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
