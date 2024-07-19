@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package campus.tech.kakao.map
 
 import androidx.recyclerview.widget.RecyclerView
@@ -6,7 +8,6 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.runner.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
