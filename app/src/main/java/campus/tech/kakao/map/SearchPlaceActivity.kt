@@ -62,6 +62,7 @@ class SearchPlaceActivity : AppCompatActivity() {
 
                 val intent = Intent(activity, MainActivity::class.java)
                 startActivity(intent)
+                finish()
             })
 
             //SavedSearchAdapter
@@ -93,15 +94,7 @@ class SearchPlaceActivity : AppCompatActivity() {
                 else viewModel.searchPlaces(it) //텍스트가 있다면 검색
             })
 
-        }
-
-
-
-
-
-
-
-
+        }   //with(viewModel)
 
     } //onCreate
 
