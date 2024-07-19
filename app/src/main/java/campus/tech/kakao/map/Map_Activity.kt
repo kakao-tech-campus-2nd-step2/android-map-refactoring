@@ -108,6 +108,16 @@ class Map_Activity : AppCompatActivity(), OnMapReadyCallback {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState)
     }
+
+    fun onMapError(errorCode: Int) {
+        if (errorCode == 401) {
+            val intent = Intent(this, ErrorActivity::class.java).apply {
+                putExtra("error_message", "401 Unauthorized Error")
+            }
+            startActivity(intent)
+        }
+    }
+
 }
 
 
