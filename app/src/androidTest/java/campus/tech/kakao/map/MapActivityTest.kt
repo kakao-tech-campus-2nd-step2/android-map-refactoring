@@ -25,13 +25,12 @@ class MapActivityTest {
 
     @Before
     fun setup() {
-        // Create a mock for SharedPreferences and its editor
+
         sharedPreferences = mock(SharedPreferences::class.java)
         editor = mock(SharedPreferences.Editor::class.java)
 
         `when`(sharedPreferences.edit()).thenReturn(editor)
 
-        // Start the activity scenario
         scenario = ActivityScenario.launch(Map_Activity::class.java)
     }
 
@@ -43,7 +42,6 @@ class MapActivityTest {
     @Test
     fun mapSuccess() {
         scenario.onActivity { activity ->
-            // Check if the map is initialized
             assertNotNull(activity.googleMap)
         }
     }
@@ -51,7 +49,7 @@ class MapActivityTest {
     @Test
     private fun '앱 종료 시 마지막 위치를 저장하여 다시 앱 실행 시 해당 위치로 포커스'() {
         scenario.onActivity { activity ->
-            val testLatLng = LatLng(37.5665, 126.9780) // Example coordinates for Seoul
+            val testLatLng = LatLng(37.5665, 126.9780)
 
             activity.saveLastLocation(testLatLng.latitude, testLatLng.longitude)
 
@@ -69,10 +67,8 @@ class MapActivityTest {
     @Test
     fun `맵이 제대로 실행되지 않을 때 401에러 화면 보여주기`() {
         scenario.onActivity { activity ->
-            // Simulate a 401 error by calling onMapError with error code 401
             activity.onMapError(401)
 
-            // Check if the error message is displayed
             onView(withId(R.id.error_view)).check(matches(isDisplayed()))
             onView(withId(R.id.error_message)).check(matches(withText("401 Unauthorized Error")))
         }
