@@ -7,4 +7,5 @@ data class Place(
     val kind : String,
     val longitude : String, //x longitude 경도
     val latitude : String  //y latitude  위도
+
 )

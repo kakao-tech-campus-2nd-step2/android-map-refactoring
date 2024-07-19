@@ -15,6 +15,7 @@ class SearchPlaceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchPlaceBinding
     private lateinit var viewModel: MyViewModel
+
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var savedSearchAdapter: SavedSearchAdapter
 
