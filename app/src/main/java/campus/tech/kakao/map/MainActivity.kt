@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListener, KeywordAdapter.OnKeywordRemoveListener {
 
-    private lateinit var mapViewModel: MapViewModel
+    lateinit var mapViewModel: MapViewModel             // 유닛 테스트를 위해 public으로 변경
     private lateinit var etKeywords: EditText
     private lateinit var rvSearchResult: RecyclerView
     private lateinit var rvKeywords: RecyclerView
