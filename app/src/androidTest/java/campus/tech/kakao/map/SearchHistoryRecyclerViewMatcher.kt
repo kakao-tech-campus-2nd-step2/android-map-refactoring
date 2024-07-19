@@ -8,7 +8,6 @@ import org.hamcrest.Description
 import org.hamcrest.Matcher
 
 class SearchHistoryRecyclerViewMatcher {
-    // 특정 위치의 리사이클러뷰 아이템의 매처를 정의합니다.
     fun atPosition(position: Int, itemMatcher: Matcher<View>): Matcher<View> {
         return object : BoundedMatcher<View, RecyclerView>(RecyclerView::class.java) {
             override fun matchesSafely(recyclerView: RecyclerView): Boolean {
@@ -23,7 +22,6 @@ class SearchHistoryRecyclerViewMatcher {
         }
     }
 
-    // 특정 TextView의 텍스트를 확인합니다.
     fun hasTextInViewWithId(viewId: Int, text: String): Matcher<View> {
         return object : BoundedMatcher<View, View>(View::class.java) {
             override fun matchesSafely(view: View): Boolean {

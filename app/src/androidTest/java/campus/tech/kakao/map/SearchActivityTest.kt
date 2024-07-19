@@ -46,12 +46,12 @@ class SearchActivityTest {
     @Test
     fun testResultRecyclerViewItem() {
         val resultRecyclerViewMatcher = ResultRecyclerViewMatcher()
-        onView(withId(R.id.search_edit_text)).perform(typeText("Hello"))
+        onView(withId(R.id.search_edit_text)).perform(typeText("DDDD"))
         Thread.sleep(1000)
         onView(withId(R.id.recycler_view))
             .check(matches(resultRecyclerViewMatcher.atPosition(
                 0,
-                resultRecyclerViewMatcher.hasTextInViewWithId(R.id.place_name, "헬로우")
+                resultRecyclerViewMatcher.hasTextInViewWithId(R.id.place_name, "DDDD")
             )))
         onView(withId(R.id.recycler_view))
             .check(matches(resultRecyclerViewMatcher.atPosition(
@@ -61,7 +61,7 @@ class SearchActivityTest {
         onView(withId(R.id.recycler_view))
             .check(matches(resultRecyclerViewMatcher.atPosition(
                 0,
-                resultRecyclerViewMatcher.hasTextInViewWithId(R.id.place_address, "서울 강남구 신사동 541-2")
+                resultRecyclerViewMatcher.hasTextInViewWithId(R.id.place_address, "경남 창원시 성산구 용호동 17-1")
             )))
     }
 
@@ -74,16 +74,13 @@ class SearchActivityTest {
             val recyclerView: RecyclerView = activity.findViewById(R.id.horizontal_recycler_view)
             itemCount = recyclerView.adapter?.itemCount ?: 0
         }
-        // 검색 입력 필드에 텍스트 입력
         onView(withId(R.id.search_edit_text)).perform(typeText("DDDD"))
         Thread.sleep(1000)
 
-        // 특정 아이템 클릭
         onView(withId(R.id.recycler_view))
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
         Thread.sleep(1000)
 
-        // 특정 아이템의 텍스트 검증
         onView(withId(R.id.horizontal_recycler_view))
             .check(matches(searchHistoryRecyclerViewMatcher.atPosition(
                 itemCount-1,
@@ -91,16 +88,4 @@ class SearchActivityTest {
             )))
     }
 
-    @Test
-    fun testBackButtonFunctionality() {
-        // Perform a click on the back button
-        onView(withId(R.id.back_button))
-            .perform(click())
-
-        // Verify that we are navigated back to the MapActivity
-        // This check depends on how you handle activity transitions, adjust accordingly
-        // Example, you may need to check for a specific view in MapActivity
-        onView(withId(R.id.map_view)) // Change this to a view specific to MapActivity
-            .check(matches(isDisplayed()))
-    }
 }

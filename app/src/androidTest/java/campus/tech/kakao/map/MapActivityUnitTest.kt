@@ -24,7 +24,6 @@ class MapActivityUnitTest {
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         sharedPreferences = context.getSharedPreferences("lastLatLng", AppCompatActivity.MODE_PRIVATE)
-        // Clear SharedPreferences before each test
         sharedPreferences.edit().clear().apply()
     }
 

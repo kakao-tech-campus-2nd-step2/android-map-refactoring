@@ -87,7 +87,7 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun searchPlaces(query: String) {
+    fun searchPlaces(query: String) {
         kakaoRepository.searchPlaces(query) { places ->
             runOnUiThread {
                 placeList = places
