@@ -105,10 +105,10 @@ class PlaceActivity : AppCompatActivity() {
                     putExtra("address", place.address)
                     putExtra("category", place.category)
                     if (place.x != null) {
-                        putExtra("x", place.x)
+                        putExtra("latitude", place.x)
                     }
                     if (place.y != null) {
-                        putExtra("y", place.y)
+                        putExtra("longitude", place.y)
                     }
                 }
                 startActivity(mapIntent)
