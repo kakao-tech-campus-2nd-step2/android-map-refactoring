@@ -13,5 +13,5 @@ object RetrofitInstance {
 
     val retrofitLocalCategoryService: RetrofitLocalCategoryService = retrofit.create(RetrofitLocalCategoryService::class.java)
     val retrofitLocalKeywordService: RetrofitLocalKeywordService = retrofit.create(RetrofitLocalKeywordService::class.java)
-
+    
 }
