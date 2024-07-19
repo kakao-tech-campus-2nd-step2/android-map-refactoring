@@ -14,19 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class PlaceActivity : AppCompatActivity() {
-
-    private lateinit var etSearch: EditText
-    private lateinit var btnErase: ImageButton
-    private lateinit var tvNoData: TextView
-    private lateinit var rvPlaceList: RecyclerView
-    private lateinit var rvSearchList: RecyclerView
-    private lateinit var placeAdapter: PlaceRecyclerViewAdapter
+    lateinit var etSearch: EditText
+    lateinit var btnErase: ImageButton
+    lateinit var tvNoData: TextView
+    lateinit var rvPlaceList: RecyclerView
+    lateinit var rvSearchList: RecyclerView
+    lateinit var placeAdapter: PlaceRecyclerViewAdapter
     private lateinit var searchAdapter: SearchRecyclerViewAdapter
-    private val searchDatabaseAccess = PlaceDatabaseAccess(this, "Search.db")
+    var searchDatabaseAccess = PlaceDatabaseAccess(this, "Search.db")
 
-    private lateinit var placeRepository: PlaceRepository
+    lateinit var placeRepository: PlaceRepository
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.search_layout)
 
@@ -127,13 +126,13 @@ class PlaceActivity : AppCompatActivity() {
         )
 
     // 검색 저장 기록 조작
-    private fun addPlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
+    fun addPlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
         searchList.add(place)
         searchDatabaseAccess.insertPlace(place)
         searchAdapter.notifyDataSetChanged()
     }
 
-    private fun removePlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
+    fun removePlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
         val index = searchList.indexOf(place)
         searchList.removeAt(index)
         searchDatabaseAccess.deletePlace(place.name)
@@ -141,7 +140,7 @@ class PlaceActivity : AppCompatActivity() {
     }
 
     // visibility 조작
-    private fun controlPlaceVisibility(placeList: List<PlaceDataModel>) {
+    fun controlPlaceVisibility(placeList: List<PlaceDataModel>) {
         if (placeList.isEmpty()) {
             rvPlaceList.visibility = View.INVISIBLE
             tvNoData.visibility = View.VISIBLE
@@ -152,7 +151,7 @@ class PlaceActivity : AppCompatActivity() {
         }
     }
 
-    private fun controlSearchVisibility(searchList: List<PlaceDataModel>) {
+    fun controlSearchVisibility(searchList: List<PlaceDataModel>) {
         if (searchList.isEmpty()) {
             rvSearchList.visibility = View.GONE
         }
