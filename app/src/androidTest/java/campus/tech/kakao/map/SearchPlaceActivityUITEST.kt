@@ -39,7 +39,7 @@ class SearchPlaceActivityUITEST {
         onView(withId(R.id.search))
             .perform(typeText("카페"), closeSoftKeyboard())
 
-        // Check if the results RecyclerView is populated with items (assuming we have some items)
+
         onView(withId(R.id.recyclerView))
             .check(matches(hasDescendant(withText("바다정원"))))
     }
