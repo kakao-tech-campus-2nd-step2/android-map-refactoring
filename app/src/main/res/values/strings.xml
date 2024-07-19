@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Map</string>
     <string name="search_hint">검색어를 입력해주세요.</string>
-    <string name="google_api">AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4</string>
 </resources>
