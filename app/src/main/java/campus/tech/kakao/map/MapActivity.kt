@@ -2,8 +2,8 @@ package campus.tech.kakao.map
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
@@ -26,47 +26,29 @@ class MapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView
     private lateinit var etSearch: EditText
-    private val startZoomLevel = 15
-    private var savedLatitude: String = "35.234"
-    private var savedLongitude: String ="129.0807"
-    private val startPosition = LatLng.from(savedLatitude.toDouble(), savedLongitude.toDouble())
-    private var latitude: String = startPosition.latitude.toString()
-    private var longitude: String = startPosition.longitude.toString()
     private lateinit var labelManager: LabelManager
+    private val startZoomLevel = 15
+    private var latitude: String? = "35.234"
+    private var longitude: String? = "129.0807"
+    private val startPosition = LatLng.from(latitude!!.toDouble(), longitude!!.toDouble())
 
-    // 지도가 정상적으로 시작된 후 수신
     private val readyCallback: KakaoMapReadyCallback = object : KakaoMapReadyCallback() {
         override fun onMapReady(kakaoMap: KakaoMap) {
             labelManager = kakaoMap.labelManager!!
 
-            // 데이터 받아오기
-            latitude = intent.getStringExtra("latitude").toString()
-            longitude = intent.getStringExtra("longitude").toString()
+            val (preferencesLatitude, preferencesLongitude) = getLocationByPreference()
+            val (intentLatitude, intentLongitude) = getLocationByIntent()
+            latitude = intentLatitude ?: preferencesLatitude
+            longitude = intentLongitude ?: preferencesLongitude
 
-            // 선택한 목록 위치 보여주기
-            val pos = LatLng.from(longitude.toDouble(), latitude.toDouble())
-            val yellowMarker = labelManager.addLabelStyles(
-                LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker))
-            )
-            labelManager.layer!!.addLabel(
-                LabelOptions.from("label", pos)
-                    .setStyles(yellowMarker)
-            )
+            displayMapLocation(kakaoMap)
 
-            val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(longitude.toDouble(), latitude.toDouble()))
-            kakaoMap.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
-
-            // 모달 창 띄우기
-            val name = intent.getStringExtra("name").toString()
-            val address = intent.getStringExtra("address").toString()
-            val dataBundle = Bundle().apply {
-                putString("name", name)
-                putString("address", address)
+            if (detectNotInitialScreen(intentLatitude, intentLongitude)) {
+                displayMarker()
+                displayBottomSheet()
             }
-            val modal = ModalBottomSheet()
-            modal.arguments = dataBundle
-            modal.show(supportFragmentManager, modal.tag)
 
+            saveLocation()
         }
 
         override fun getPosition(): LatLng {
@@ -79,7 +61,63 @@ class MapActivity : AppCompatActivity() {
 
     }
 
-    // 지도의 LifeCycle 관련 이벤트 수신
+    private fun detectNotInitialScreen(intentLatitude: String?, intentLongitude: String?) =
+        intentLatitude != null && intentLongitude != null
+
+    private fun displayMapLocation(kakaoMap: KakaoMap) {
+        val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+            LatLng.from(
+                longitude!!.toDouble(),
+                latitude!!.toDouble()
+            )
+        )
+        kakaoMap.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
+    }
+
+    private fun getLocationByIntent(): Pair<String?, String?> {
+        val intentLatitude = intent.getStringExtra("latitude")
+        val intentLongitude = intent.getStringExtra("longitude")
+        return Pair(intentLatitude, intentLongitude)
+    }
+
+    private fun getLocationByPreference(): Pair<String?, String?> {
+        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
+        val preferencesLatitude = preferences.getString("latitude", null)
+        val preferencesLongitude = preferences.getString("longitude", null)
+        return Pair(preferencesLatitude, preferencesLongitude)
+    }
+
+    private fun saveLocation() {
+        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
+        val editor: Editor = preferences.edit()
+        editor.putString("latitude", latitude)
+        editor.putString("longitude", longitude)
+        editor.apply()
+    }
+
+    private fun displayBottomSheet() {
+        val name = intent.getStringExtra("name").toString()
+        val address = intent.getStringExtra("address").toString()
+        val dataBundle = Bundle().apply {
+            putString("name", name)
+            putString("address", address)
+        }
+        val modal = ModalBottomSheet()
+        modal.arguments = dataBundle
+        modal.show(supportFragmentManager, modal.tag)
+    }
+
+    private fun displayMarker() {
+        val pos = LatLng.from(longitude!!.toDouble(), latitude!!.toDouble())
+        val yellowMarker = labelManager.addLabelStyles(
+            LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker))
+        )
+        labelManager.layer!!.addLabel(
+            LabelOptions.from("label", pos)
+                .setStyles(yellowMarker)
+        )
+    }
+
     private val lifeCycleCallback: MapLifeCycleCallback = object : MapLifeCycleCallback() {
 
         override fun onMapDestroy() {
