@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
-            if(it) {    //수정 필요!!!
+            if(it) {    //수정 필요!!! ActivityResult API사용하기
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
                 startActivity(intent)
                 finish()
