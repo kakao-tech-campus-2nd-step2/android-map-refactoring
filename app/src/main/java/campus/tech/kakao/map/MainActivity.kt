@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
 
-            if(it) {
+            if(it) {    //수정 필요!!!
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity, MapErrorActivity::class.java)
                     intent.putExtra("error", error.toString().substring(20))
                     startActivity(intent)
-                    finish()
 
                 }
             },
@@ -103,7 +102,6 @@ class MainActivity : AppCompatActivity() {
             }
         )  //mapView.start
 
-
     }   //onCreate
 
     override fun onResume() {
@@ -120,15 +118,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude: Double, name: String) {
-        val labelManager = kakaoMap.labelManager
 
-        if (labelManager == null) {
-            Log.e("AddMarker", "LabelManager is null")
-            return
-        }
+        //에러 로그가 필요 없다면 이렇게
+        val labelManager = kakaoMap.labelManager ?: return
+
 
         val iconAndTextStyle = LabelStyles.from(
-            LabelStyle.from(R.drawable.location_on_60px) // 이미지 리소스 확인
+            LabelStyle.from(R.drawable.location) // 이미지 리소스 확인
                 .setTextStyles(25, Color.BLACK) // 텍스트 스타일
         )
 

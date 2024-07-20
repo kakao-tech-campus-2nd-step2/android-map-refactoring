@@ -20,8 +20,6 @@ class MapErrorActivity : AppCompatActivity() {
 
         refresh.setOnClickListener {
             it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)
-            val intent =Intent(this, MainActivity::class.java)
-            startActivity(intent)
             finish()
         }
 
