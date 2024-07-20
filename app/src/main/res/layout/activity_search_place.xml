@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="campus.tech.kakao.map.MyViewModel" />
+            type="campus.tech.kakao.map.viewmodel.MyViewModel" />
 
     </data>
 
@@ -15,7 +15,7 @@
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".SearchPlaceActivity">
+        tools:context=".view.SearchPlaceActivity">
 
         <EditText
             android:id="@+id/search"

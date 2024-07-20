@@ -1,9 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.util
 
 import android.content.Context
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import campus.tech.kakao.map.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class BottomSheetManager(

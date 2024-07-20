@@ -1,11 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.viewmodel
 
 import android.util.Log
-import android.widget.Toast
-import androidx.core.view.ViewCompat.performHapticFeedback
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.model.data.SavedSearch
+import campus.tech.kakao.map.model.database.DatabaseManager
+import campus.tech.kakao.map.model.network.KakaoSearchResponse
+import campus.tech.kakao.map.model.network.RetrofitInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

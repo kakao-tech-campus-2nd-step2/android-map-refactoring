@@ -1,9 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.model.database
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import campus.tech.kakao.map.model.data.SavedSearch
 
 class DatabaseManager(context: Context) {
 

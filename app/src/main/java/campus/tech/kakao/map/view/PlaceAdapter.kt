@@ -1,11 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.R
 
 
 class PlaceAdapter(private var items : List<Place>, private val viewModel: MyViewModel) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {

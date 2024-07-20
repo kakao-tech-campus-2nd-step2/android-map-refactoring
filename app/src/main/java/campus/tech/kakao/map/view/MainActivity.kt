@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -9,19 +9,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.util.BottomSheetManager
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.KakaoMapSdk
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.RoadViewRequest
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
-import com.kakao.vectormap.shape.MapPoints
 
 class MainActivity : AppCompatActivity() {
 

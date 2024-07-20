@@ -1,15 +1,17 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.model.data.SavedSearch
 
 
-class SavedSearchAdapter(private var items : List<SavedSearch> , private val viewModel: MyViewModel) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
+class SavedSearchAdapter(private var items : List<SavedSearch>, private val viewModel: MyViewModel) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
 
     class ViewHolder(view: View, private val viewModel: MyViewModel) : RecyclerView.ViewHolder(view){
 
@@ -32,14 +34,14 @@ class SavedSearchAdapter(private var items : List<SavedSearch> , private val vie
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_saved_search, parent, false)
 
-        return SavedSearchAdapter.ViewHolder(view, viewModel)
+        return ViewHolder(view, viewModel)
 
     }
 
-    override fun onBindViewHolder(holder: SavedSearchAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bind(items[position])
     }
 

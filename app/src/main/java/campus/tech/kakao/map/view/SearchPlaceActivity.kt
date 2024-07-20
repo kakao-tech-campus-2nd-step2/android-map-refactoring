@@ -1,15 +1,17 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat.performHapticFeedback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
+import campus.tech.kakao.map.model.database.DatabaseManager
 
 class SearchPlaceActivity : AppCompatActivity() {
 
