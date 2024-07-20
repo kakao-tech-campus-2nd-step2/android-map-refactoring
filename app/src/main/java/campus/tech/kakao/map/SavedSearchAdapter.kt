@@ -8,19 +8,23 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class SavedSearchAdapter(private var items : List<SavedSearch> , private val onCloseClick : (SavedSearch) -> Unit) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
+class SavedSearchAdapter(private var items : List<SavedSearch> , private val viewModel: MyViewModel) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
 
-    class ViewHolder(view: View, private val onCloseClick: (SavedSearch) -> Unit) : RecyclerView.ViewHolder(view){
+    class ViewHolder(view: View, private val viewModel: MyViewModel) : RecyclerView.ViewHolder(view){
 
-        val close : ImageView = view.findViewById(R.id.close)
-        val id : TextView = view.findViewById(R.id.saved_search_id)
-        val name: TextView = view.findViewById(R.id.saved_search_name)
+        private val close : ImageView = view.findViewById(R.id.close)
+        private val id : TextView = view.findViewById(R.id.saved_search_id)
+        private val name: TextView = view.findViewById(R.id.saved_search_name)
 
         fun bind(item: SavedSearch) {
             close.setOnClickListener {
                 it.playSoundEffect(android.view.SoundEffectConstants.CLICK) //클릭 시 소리
                 it.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY)  //가벼운 진동
-                onCloseClick(item)
+                viewModel.closeClick.value = item
+            }
+            name.setOnClickListener {
+                viewModel.nameClick.value = item
+
             }
             id.text = item.id.toString()
             name.text = item.name
@@ -30,7 +34,8 @@ class SavedSearchAdapter(private var items : List<SavedSearch> , private val onC
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchAdapter.ViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_saved_search, parent, false)
 
-        return SavedSearchAdapter.ViewHolder(view, onCloseClick)
+        return SavedSearchAdapter.ViewHolder(view, viewModel)
+
     }
 
     override fun onBindViewHolder(holder: SavedSearchAdapter.ViewHolder, position: Int) {

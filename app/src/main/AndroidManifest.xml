@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <application
@@ -17,6 +18,9 @@
         android:soundEffectsEnabled="true"
         tools:targetApi="31">
         <activity
+            android:name=".MapErrorActivity"
+            android:exported="false" />
+        <activity
             android:name=".SearchPlaceActivity"
             android:exported="false" />
         <activity
@@ -29,7 +33,6 @@
             </intent-filter>
         </activity>
     </application>
-
 
 </manifest>
 
