@@ -41,7 +41,6 @@ class SearchPlaceActivityUITEST {
         onView(withId(R.id.search))
             .perform(typeText("카페"), closeSoftKeyboard())
 
-
         onView(withId(R.id.recyclerView))
             .check(matches(hasDescendant(withText("바다정원"))))
     }

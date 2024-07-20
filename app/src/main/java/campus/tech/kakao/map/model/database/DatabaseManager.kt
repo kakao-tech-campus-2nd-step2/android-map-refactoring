@@ -50,7 +50,7 @@ class DatabaseManager(context: Context) {
 //    }
 
 
-    fun insertSavedPlace(id : Int, name: String) {
+    fun insertSavedsearch(id : Int, name: String) {
         val values = ContentValues().apply {
             put("id", id)
             put("name", name)

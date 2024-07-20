@@ -17,7 +17,6 @@ class SearchPlaceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchPlaceBinding
     private lateinit var viewModel: MyViewModel
-
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var savedSearchAdapter: SavedSearchAdapter
 
@@ -99,6 +98,24 @@ class SearchPlaceActivity : AppCompatActivity() {
 
         }   //with(viewModel)
 
-    } //onCreate
+
+            //savedSearch 저장된 검색어 관찰
+            savedSearchAdapterUpdateData.observe(activity, Observer {
+                savedSearchAdapter.updateData(it)
+            })
+
+            //editText에서 변경 감지
+            searchText.observe(activity, Observer {
+                if (it == " ") { //searchText가 비어있다면 화면에서도 지우기
+                    binding.search.text.clear()
+                    placeAdapter.updateData(listOf<Place>())
+                } else viewModel.searchPlaces(it) //텍스트가 있다면 검색
+            })
+
+        }   //with(viewModel)
+
+    }//onCreate
 
 }
+
+

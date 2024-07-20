@@ -23,6 +23,11 @@ class MyViewModel : ViewModel() {
     var closeClick =MutableLiveData<SavedSearch>() // savedSearch의 x부분
 
 
+    var itemClick =MutableLiveData<Place>() //Place의 item
+
+    var nameClick =MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
+    var closeClick =MutableLiveData<SavedSearch>() // savedSearch의 x부분
+
     fun intentSearchPlace() {
         isIntent.value = true
     }
