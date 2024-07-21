@@ -146,7 +146,7 @@ class MapActivity : AppCompatActivity() {
         )
     }
 
-    private fun addMarker(place: PlaceVO) {
+    fun addMarker(place: PlaceVO) {
         var styles = LabelStyles.from(
             "marker",
             LabelStyle.from(R.drawable.marker).setZoomLevel(8)
