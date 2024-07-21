@@ -7,7 +7,8 @@ object CategoryGroupCode {
     val SCHOOL = "학교" to "SC4"
     val ACADEMY = "학원" to "AC5"
     val PARKING = "주차장" to "PK6"
-    val GAS_STATION = "주유소, 충전소" to "OL7"
+    val GAS_STATION = "주유소" to "OL7"
+    val FULL_STATION = "충전소" to "OL7"
     val SUBWAY_STATION = "지하철역" to "SW8"
     val BANK = "은행" to "BK9"
     val CULTURE_FACILITY = "문화시설" to "CT1"
@@ -29,6 +30,7 @@ object CategoryGroupCode {
         ACADEMY,
         PARKING,
         GAS_STATION,
+        FULL_STATION,
         SUBWAY_STATION,
         BANK,
         CULTURE_FACILITY,

@@ -17,4 +17,13 @@ interface RetrofitService {
         @Query("size") size: Int = 15,
         @Query("sort") sort: String = "accuracy"
     ): Call<KakaoResponse>
+
+    @GET("/v2/local/search/keyword.json")
+    fun getSearchKeyword(
+        @Header("Authorization") apiKey: String,
+        @Query("query") query: String,
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = 15,
+        @Query("sort") sort: String = "accuracy"
+    ): Call<KakaoResponse>
 }

@@ -1,6 +1,7 @@
 package campus.tech.kakao.map
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -61,19 +62,27 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
+                    searchKeyword(search)  // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
                         searchCategory(categoryCode)
-                    }
+                    }  // 카테고리
                 }
             }
         })
 
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
-            override fun onItemClick(name: String) {
+            override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
                 if (isProfileInSearchSave(name)) {
                     removeSavedItem(name)
                 }
                 addSavedItem(name)
+                val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
+                    putExtra("name", name)
+                    putExtra("address", address)
+                    putExtra("latitude", latitude)
+                    putExtra("longitude", longitude)
+                }
+                startActivity(intent)
             }
         })
 
@@ -83,6 +92,26 @@ class MainActivity : AppCompatActivity() {
         loadSavedItems()
     }
 
+    // 키워드로 검색
+    fun searchKeyword(query: String) {
+        Network.searchKeyword(query, object : Callback<KakaoResponse> {
+            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
+                if (response.isSuccessful) {
+                    searchProfiles(response.body())
+                } else {
+                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
+                    Log.e("MainActivity", "응답 실패")
+                }
+            }
+
+            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
+                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("MainActivity", "요청 실패", t)
+            }
+        })
+    }
+
+    // 카테고리로 검색
     fun searchCategory(categoryGroupCode: String) {
         Network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
             override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
@@ -107,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 showNoResults()
             } else {
                 val profiles = documents.map { document ->
-                    Profile(document.name, document.address, document.type)
+                    Profile(document.name, document.address, document.type, document.latitude, document.longitude)
                 }
                 adapter.updateProfiles(profiles)
                 tvNoResult.visibility = View.GONE
@@ -159,6 +188,13 @@ class MainActivity : AppCompatActivity() {
         val ivDelete = savedView.findViewById<ImageView>(R.id.ivDelete)
 
         tvSaveName.text = name
+
+        // 저장된 검색어를 누르면 검색어가 입력됨
+        val etSearch = findViewById<EditText>(R.id.etSearch)
+        tvSaveName.setOnClickListener {
+            etSearch.setText(name)
+        }
+
         ivDelete.setOnClickListener {
             llSave.removeView(savedView)
         }

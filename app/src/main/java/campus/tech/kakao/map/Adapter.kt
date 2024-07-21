@@ -10,7 +10,7 @@ class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter
 
 
     interface OnItemClickListener {
-        fun onItemClick(name: String)
+        fun onItemClick(name: String, address: String, latitude: String, longitude: String)
     }
 
     var listener: OnItemClickListener? = null
@@ -27,7 +27,8 @@ class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter
         init {
             itemView.setOnClickListener {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }?.let { position ->
-                    listener?.onItemClick(profiles[position].name)
+                    val profile = profiles[position]
+                    listener?.onItemClick(profile.name, profile.address, profile.latitude, profile.longitude)
                 }
             }
         }
