@@ -11,5 +11,6 @@ object RetrofitInstance {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val retrofitLocalService: RetrofitLocalService = retrofit.create(RetrofitLocalService::class.java)
+    val retrofitLocalCategoryService: RetrofitLocalCategoryService = retrofit.create(RetrofitLocalCategoryService::class.java)
+    val retrofitLocalKeywordService: RetrofitLocalKeywordService = retrofit.create(RetrofitLocalKeywordService::class.java)
 }

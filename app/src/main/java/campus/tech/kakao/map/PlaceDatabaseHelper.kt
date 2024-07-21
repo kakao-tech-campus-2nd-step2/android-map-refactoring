@@ -9,8 +9,10 @@ private const val SQL_CREATE_ENTRIES =
     "CREATE TABLE ${PlaceContract.Place.TABLE_NAME} (" +
             "  ${BaseColumns._ID} INTEGER PRIMARY KEY," +
             "  ${PlaceContract.Place.COLUMN_NAME} TEXT not null UNIQUE," +
-            "  ${PlaceContract.Place.COLUMN_ADDRESS} TEXT not null," +
-            "  ${PlaceContract.Place.COLUMN_CATEGORY} TEXT not null)"
+            "  ${PlaceContract.Place.COLUMN_ADDRESS} TEXT," +
+            "  ${PlaceContract.Place.COLUMN_CATEGORY} TEXT," +
+            "  ${PlaceContract.Place.COLUMN_X} TEXT," +
+            "  ${PlaceContract.Place.COLUMN_Y} TEXT)"
 
 private const val SQL_CREATE_TRIGGER =
     "CREATE TRIGGER IF NOT EXISTS no_duplicate_places " +
