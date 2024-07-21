@@ -21,7 +21,6 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 
-
 class MapActivity : AppCompatActivity() {
 
     lateinit var mapView: MapView
