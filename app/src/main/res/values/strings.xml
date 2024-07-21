@@ -13,4 +13,7 @@
     <string name="onMapDestroyLog">지도 API 정상 종료</string>
     <string name="onMapErrorLog">지도 API 인증 실패</string>
     <string name="onMapReadyLog">지도 API 정상 실행</string>
+    <string name="tryMessage">지도 인증을 실패했습니다.\n다시 시도해주세요.</string>
+    <string name="errorMessage">에러 메세지</string>
+    <string name="loadingImage">로딩 이미지</string>
 </resources>

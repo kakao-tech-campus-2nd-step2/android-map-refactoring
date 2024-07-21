@@ -16,7 +16,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.kakao.sdk.common.util.Utility
 
 class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListener, KeywordAdapter.OnKeywordRemoveListener {
 
@@ -98,10 +97,28 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     override fun onItemClick(item: MapItem) {
         keywordAdapter.addKeyword(item.name)
         saveKeywords()
+        // 검색어 결과 항목 클릭시 검색창 자동완성 (요구된 기능 외 추가 기능, 필요시 주석 제거)
+        // etKeywords.setText(item.name)
+        // mapViewModel.searchPlaces(item.name)
+
+        val intent = Intent(this, MapActivity::class.java).apply {
+            putExtra("name", item.name)
+            putExtra("address", item.address)
+            putExtra("longitude", item.longitude)
+            putExtra("latitude", item.latitude)
+            //Log.d("putLatitude: ", item.latitude.toString())
+            //Log.d("putLongitude: ", item.longitude.toString())
+        }
+        startActivity(intent)
     }
 
     override fun onKeywordRemove(keyword: String) {
         saveKeywords()
+    }
+
+    override fun onKeywordClick(keyword: String) {
+        etKeywords.setText(keyword)
+        mapViewModel.searchPlaces(keyword)
     }
 
     private fun loadKeywords() {

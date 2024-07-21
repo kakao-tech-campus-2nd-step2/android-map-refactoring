@@ -11,6 +11,7 @@ class KeywordAdapter(private val listener: OnKeywordRemoveListener) : RecyclerVi
 
     interface OnKeywordRemoveListener {
         fun onKeywordRemove(keyword: String)
+        fun onKeywordClick(keyword: String)
     }
 
     private val keywords = mutableListOf<String>()
@@ -60,6 +61,9 @@ class KeywordAdapter(private val listener: OnKeywordRemoveListener) : RecyclerVi
                     notifyItemRemoved(position)
                     listener.onKeywordRemove(keyword)
                 }
+            }
+            itemView.setOnClickListener {
+                listener.onKeywordClick(keyword)
             }
         }
     }
