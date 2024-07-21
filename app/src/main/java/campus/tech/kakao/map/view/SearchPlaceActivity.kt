@@ -50,7 +50,7 @@ class SearchPlaceActivity : AppCompatActivity() {
 
             //PlaceAdapter
             itemClick.observe(activity, Observer { place ->  //Place 클릭 했을 때
-                setSharedPreferences(place)
+//                setSharedPreferences(place)
                 finish()
             })
 
@@ -84,13 +84,13 @@ class SearchPlaceActivity : AppCompatActivity() {
         } //with(viewModel)
     } //onCreate
 
-    private fun setSharedPreferences(place: Place) {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("name", place.name)
-        editor.putString("address", place.address)
-        editor.putString("latitude", place.latitude)
-        editor.putString("longitude", place.longitude)
-        editor.apply()
-    }
+//    private fun setSharedPreferences(place: Place) {
+//        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//        editor.putString("name", place.name)
+//        editor.putString("address", place.address)
+//        editor.putString("latitude", place.latitude)
+//        editor.putString("longitude", place.longitude)
+//        editor.apply()
+//    }
 }

@@ -34,6 +34,7 @@ class MyViewModel(private val context: Context, private val repository: MyReposi
     val vmPlaceAdapter: PlaceAdapter = PlaceAdapter(listOf()) { place ->  //리사이클러뷰의 아이템을 누르면
         repository.insertSavedsearch(place.id, place.name)
         updateSavedSearch()
+        setSharedPreferences(place)
         itemClick.value = place
     }
 
@@ -48,19 +49,19 @@ class MyViewModel(private val context: Context, private val repository: MyReposi
         }
     )
 
-//    fun setSharedPreferences(place: Place) {
-//        //sharedPreference를 이용해서 name,address,latitude,longitude 저장하기
-//        val sharedPreferences =context.getSharedPreferences(
-//            "PlacePreferences",
-//            AppCompatActivity.MODE_PRIVATE
-//        )
-//        val editor = sharedPreferences.edit()
-//        editor.putString("name", place.name)
-//        editor.putString("address", place.address)
-//        editor.putString("longitude", place.longitude)
-//        editor.putString("latitude", place.latitude)
-//        editor.apply()
-//    }
+    fun setSharedPreferences(place: Place) {
+        //sharedPreference를 이용해서 name,address,latitude,longitude 저장하기
+        val sharedPreferences =context.getSharedPreferences(
+            "PlacePreferences",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        val editor = sharedPreferences.edit()
+        editor.putString("name", place.name)
+        editor.putString("address", place.address)
+        editor.putString("longitude", place.longitude)
+        editor.putString("latitude", place.latitude)
+        editor.apply()
+    }
 
 
     fun intentSearchPlace() {   // true일 때 SearchPlaceActivity
