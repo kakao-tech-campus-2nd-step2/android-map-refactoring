@@ -1,11 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.R
 
 
 class PlaceAdapter(private var items : List<Place>, private val viewModel: MyViewModel) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
@@ -37,20 +39,13 @@ class PlaceAdapter(private var items : List<Place>, private val viewModel: MyVie
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view: View =
-            LayoutInflater.from(parent?.context).inflate(R.layout.item_recyclerview, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.item_recyclerview, parent, false)
         return ViewHolder(view, viewModel)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        with(holder) {
-            id.text = item.id.toString()
-            name.text = item.name
-            address.text = item.address
-            kind.text = item.kind
-            bind(items[position])
-            Log.d("Testt",holder.name.text.toString())
-        }
+        holder.bind(items[position])
+
     }
 
     override fun getItemCount(): Int {

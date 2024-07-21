@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -9,19 +9,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.util.BottomSheetManager
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.KakaoMapSdk
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
-import com.kakao.vectormap.RoadViewRequest
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
-import com.kakao.vectormap.shape.MapPoints
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         //SearchPlaceActivity로 이동
         viewModel.isIntent.observe(this, Observer {
-            if (it) {
+            if(it) {    //수정 필요!!! ActivityResult API사용하기
                 val intent = Intent(this@MainActivity, SearchPlaceActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -66,9 +68,6 @@ class MainActivity : AppCompatActivity() {
 
         val BottomSheet = BottomSheetManager(this, bottomSheet)
         BottomSheet.setBottomSheetText(name, address)
-
-
-
         mapView = binding.mapView
         mapView?.start(
             object : MapLifeCycleCallback() {
@@ -84,7 +83,6 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(this@MainActivity, MapErrorActivity::class.java)
                     intent.putExtra("error", error.toString().substring(20))
                     startActivity(intent)
-                    finish()
                 }
             },
             object : KakaoMapReadyCallback() {
@@ -118,15 +116,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude: Double, name: String) {
-        val labelManager = kakaoMap.labelManager
 
-        if (labelManager == null) {
-            Log.e("AddMarker", "LabelManager is null")
-            return
-        }
+        //에러 로그가 필요 없다면 이렇게
+        val labelManager = kakaoMap.labelManager ?: return
+
 
         val iconAndTextStyle = LabelStyles.from(
-            LabelStyle.from(R.drawable.location_on_60px) // 이미지 리소스 확인
+            LabelStyle.from(R.drawable.location) // 이미지 리소스 확인
                 .setTextStyles(25, Color.BLACK) // 텍스트 스타일
         )
 

@@ -1,9 +1,9 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.model.network
 
+import campus.tech.kakao.map.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Query
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

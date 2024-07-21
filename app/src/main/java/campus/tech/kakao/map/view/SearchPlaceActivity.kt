@@ -1,18 +1,19 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat.performHapticFeedback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import campus.tech.kakao.map.viewmodel.MyViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
+import campus.tech.kakao.map.model.database.DatabaseManager
 
 class SearchPlaceActivity : AppCompatActivity() {
-
 
     private lateinit var binding: ActivitySearchPlaceBinding
     private lateinit var viewModel: MyViewModel
@@ -37,7 +38,7 @@ class SearchPlaceActivity : AppCompatActivity() {
         //savedSearch 저장된 검색어 설정
         val savedSearch = binding.savedSearch
         savedSearch.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        savedSearchAdapter = SavedSearchAdapter(emptyList(), viewModel)
+        savedSearchAdapter = SavedSearchAdapter(emptyList(),viewModel)
         binding.savedSearch.adapter = savedSearchAdapter
 
         viewModel.updateSavedSearch(dbManager)
@@ -45,7 +46,7 @@ class SearchPlaceActivity : AppCompatActivity() {
 
         //-----viewModel observe-----------------------------------------
         val activity = this
-        with(viewModel) {
+        with(viewModel){
 
             //PlaceAdapter
             itemClick.observe(activity, Observer {  //Place 클릭 이벤트
@@ -88,13 +89,15 @@ class SearchPlaceActivity : AppCompatActivity() {
 
             //editText에서 변경 감지
             searchText.observe(activity, Observer {
-                if (it == " ") { //searchText가 비어있다면 화면에서도 지우기
+                if (it == " "){ //searchText가 비어있다면 화면에서도 지우기
                     binding.search.text.clear()
                     placeAdapter.updateData(listOf<Place>())
-                } else viewModel.searchPlaces(it) //텍스트가 있다면 검색
+                }
+                else viewModel.searchPlaces(it) //텍스트가 있다면 검색
             })
 
         }   //with(viewModel)
+
 
     }//onCreate
 

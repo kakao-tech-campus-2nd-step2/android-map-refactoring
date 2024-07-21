@@ -1,11 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.viewmodel
 
 import android.util.Log
-import android.widget.Toast
-import androidx.core.view.ViewCompat.performHapticFeedback
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import campus.tech.kakao.map.model.data.Place
+import campus.tech.kakao.map.model.data.SavedSearch
+import campus.tech.kakao.map.model.database.DatabaseManager
+import campus.tech.kakao.map.model.network.KakaoSearchResponse
+import campus.tech.kakao.map.model.network.RetrofitInstance
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -16,18 +18,16 @@ class MyViewModel : ViewModel() {
     var isIntent: MutableLiveData<Boolean> = MutableLiveData(false)
     var placeAdapterUpdateData = MutableLiveData<List<Place>>()
     var savedSearchAdapterUpdateData = MutableLiveData<List<SavedSearch>>()
-
     var itemClick =MutableLiveData<Place>() //Place의 item
-
     var nameClick =MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
     var closeClick =MutableLiveData<SavedSearch>() // savedSearch의 x부분
+
 
     fun intentSearchPlace() {
         isIntent.value = true
     }
 
     fun clickCloseIcon(){
-
         //햅틱 진동 기능 추가하고 싶다..
         searchText.value =" " //editText빈칸으로 만들기
     }
@@ -54,6 +54,7 @@ class MyViewModel : ViewModel() {
                             latitude = document.y   //위도
                         )
                     } ?: emptyList()
+
                     placeAdapterUpdateData.value = places //검색결과
                 } else {  //실패했을 때
                     Log.d("seyoung", "Error: ${response.errorBody()?.string()}")

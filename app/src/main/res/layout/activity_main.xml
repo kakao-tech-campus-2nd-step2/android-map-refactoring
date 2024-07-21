@@ -7,7 +7,7 @@
 
         <variable
             name="viewModel"
-            type="campus.tech.kakao.map.MyViewModel" />
+            type="campus.tech.kakao.map.viewmodel.MyViewModel" />
 
     </data>
 
@@ -18,7 +18,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".MainActivity">
+            tools:context=".view.MainActivity">
 
 
             <com.kakao.vectormap.MapView
@@ -44,6 +44,5 @@
         <include layout="@layout/bottom_sheet_layout" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 </layout>

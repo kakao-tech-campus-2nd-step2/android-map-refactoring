@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.model.data
 
 data class SavedSearch(
     val id : Int,
