@@ -6,13 +6,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
-import campus.tech.kakao.map.model.database.DatabaseManager
 import campus.tech.kakao.map.model.repository.MyRepository
 import campus.tech.kakao.map.viewmodel.MyViewModelFactory
 
@@ -46,13 +44,13 @@ class SearchPlaceActivity : AppCompatActivity() {
 
         viewModel.updateSavedSearch()
 
-
         //-----viewModel observe-----------------------------------------
         val activity = this
-        with(viewModel){
+        with(viewModel) {
 
             //PlaceAdapter
-            itemClick.observe(activity, Observer {  //Place 클릭 했을 때
+            itemClick.observe(activity, Observer { place ->  //Place 클릭 했을 때
+                setSharedPreferences(place)
                 finish()
             })
 
@@ -76,18 +74,23 @@ class SearchPlaceActivity : AppCompatActivity() {
 
             //editText에서 변경 감지
             searchText.observe(activity, Observer {
-                if (it == " "){ //searchText가 비어있다면 화면에서도 지우기
+                if (it == " ") { //searchText가 비어있다면 화면에서도 지우기
                     binding.search.text.clear()
                     placeAdapter.updateData(listOf<Place>())
+                } else {
+                    this.searchPlace(it) //텍스트가 있다면 검색
                 }
-                else this.searchPlace(it) //텍스트가 있다면 검색
             })
+        } //with(viewModel)
+    } //onCreate
 
-        }   //with(viewModel)
-
-
-    }//onCreate
-
+    private fun setSharedPreferences(place: Place) {
+        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("name", place.name)
+        editor.putString("address", place.address)
+        editor.putString("latitude", place.latitude)
+        editor.putString("longitude", place.longitude)
+        editor.apply()
+    }
 }
-
-
