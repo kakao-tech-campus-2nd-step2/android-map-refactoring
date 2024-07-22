@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.PlaceDataModel
+import campus.tech.kakao.map.domain.PlaceDataModel
 import campus.tech.kakao.map.R
 
 class PlaceRecyclerViewAdapter(

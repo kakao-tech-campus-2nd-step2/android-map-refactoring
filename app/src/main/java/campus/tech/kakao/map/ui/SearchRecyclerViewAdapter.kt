@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.PlaceDataModel
+import campus.tech.kakao.map.domain.PlaceDataModel
 import campus.tech.kakao.map.R
 
 class SearchRecyclerViewAdapter(

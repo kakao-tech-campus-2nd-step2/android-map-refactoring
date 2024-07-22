@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,11 +13,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.PlaceDataModel
+import campus.tech.kakao.map.domain.PlaceDataModel
 import campus.tech.kakao.map.data.PlaceDatabaseAccess
 import campus.tech.kakao.map.data.PlaceRepository
-import campus.tech.kakao.map.ui.PlaceRecyclerViewAdapter
-import campus.tech.kakao.map.ui.SearchRecyclerViewAdapter
 
 class PlaceActivity : AppCompatActivity() {
     lateinit var etSearch: EditText
@@ -103,7 +101,7 @@ class PlaceActivity : AppCompatActivity() {
                 addPlaceRecord(searchList, place)
                 controlSearchVisibility(searchList)
 
-                // 장소 목록 선택 시, 해당 항목의 위치를 지도에 표시 -> !!!!!!
+                // 장소 목록 선택 시, 해당 항목의 위치를 지도에 표시
                 Log.d("place", "${place.x}, ${place.y}")
                 val mapIntent = Intent(this, MapActivity::class.java).apply {
                     putExtra("name", place.name)
