@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.utility.MapUtility
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -20,8 +21,16 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import com.kakao.vectormap.utils.MapUtils
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var mapUtility: MapUtility
+
     lateinit var mapView: MapView
     lateinit var startMainActivityForResult: ActivityResultLauncher<Intent>
     var map: KakaoMap? = null
@@ -69,7 +78,7 @@ class MapActivity : AppCompatActivity() {
                 Log.d("KakaoMap", "onMapReady")
                 map = kakaoMap
 
-                camera(kakaoMap, savedLatitude, savedLongitude)
+                mapUtility.camera(kakaoMap, savedLatitude, savedLongitude)
 
                 // 장소 정보 받아옴
                 val name = intent.getStringExtra("name")
@@ -77,7 +86,13 @@ class MapActivity : AppCompatActivity() {
                 val latitude = intent.getStringExtra("latitude")?.toDouble()
                 val longitude = intent.getStringExtra("longitude")?.toDouble()
                 if (latitude != null && longitude != null) {
-                    addMarker(kakaoMap, latitude, longitude, name.toString(), address.toString())
+                    mapUtility.addMarker(kakaoMap, latitude, longitude, name.toString())
+                    mapUtility.camera(kakaoMap, latitude, longitude)
+
+                    savedLatitude = latitude
+                    savedLongitude = longitude
+
+                    bottomSheet(name.toString(), address.toString())
                 }
             }
         })
@@ -106,32 +121,6 @@ class MapActivity : AppCompatActivity() {
         val pref = getSharedPreferences("pref", 0)
         savedLatitude = pref.getString("latitude", "37.5642")?.toDouble() ?: 37.5642
         savedLongitude = pref.getString("longitude", "127.00")?.toDouble() ?: 127.00
-    }
-
-    // 지도의 어느 부분이 보이는가!
-    fun camera(kakaoMap: KakaoMap, latitude: Double, longitude: Double) {
-        val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        kakaoMap.moveCamera(cameraUpdate)
-    }
-
-    // 지도에 마커 추가
-    fun addMarker(kakaoMap: KakaoMap, latitude: Double, longitude: Double, name: String, address: String) {
-        val labelManager = kakaoMap.labelManager
-        val iconAndTextStyle = LabelStyles.from(
-            LabelStyle.from(R.drawable.location).setTextStyles(25, Color.BLACK)
-        )
-        val options = LabelOptions.from(LatLng.from(latitude, longitude))
-            .setStyles(iconAndTextStyle)
-        val layer = labelManager?.layer
-        val label = layer?.addLabel(options)
-        label?.changeText(name)
-
-        camera(kakaoMap, latitude, longitude)
-
-        savedLatitude = latitude
-        savedLongitude = longitude
-
-        bottomSheet(name, address)
     }
 
     // name과 address bottomSheet
