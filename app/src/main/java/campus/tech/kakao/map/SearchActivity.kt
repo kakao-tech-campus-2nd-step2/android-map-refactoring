@@ -124,10 +124,10 @@ class SearchActivity : AppCompatActivity() {
         searchToMapIntent.putExtra("address", address)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
 
-        if (!(application as KyleMaps).isTestMode) {
-            finish()
-            startActivity(Intent(this, MapActivity::class.java))
-        }
+//        if (!(application as KyleMaps).isTestMode) {
+        finish()
+        startActivity(searchToMapIntent)
+//        }
     }
 
     private fun updateMapPosition(place: Place) {

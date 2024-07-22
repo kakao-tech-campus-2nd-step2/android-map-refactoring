@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class KyleMaps : Application() {
 
     lateinit var kakaoRepository: KakaoRepository
-    var isTestMode: Boolean = false
+//    var isTestMode: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
