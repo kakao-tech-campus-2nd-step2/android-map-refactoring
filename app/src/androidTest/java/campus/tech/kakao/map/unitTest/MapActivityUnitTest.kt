@@ -1,9 +1,11 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.unitTest
 
 import android.content.Context
 import android.view.View
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.ui.MapActivity
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertNotNull
 import org.junit.After

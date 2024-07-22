@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.graphics.Color
@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import campus.tech.kakao.map.R
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
