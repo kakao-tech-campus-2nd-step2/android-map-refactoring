@@ -10,8 +10,9 @@ import campus.tech.kakao.map.Domain.PlaceRepository
 import campus.tech.kakao.map.Domain.Model.Place
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class PlaceRepositoryImpl(
+class PlaceRepositoryImpl @Inject constructor(
     private val placeDao: PlaceDao,
     private val favoriteDao: FavoriteDao,
     private val retrofitService: RetrofitService,

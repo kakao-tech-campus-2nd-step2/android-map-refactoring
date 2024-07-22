@@ -14,6 +14,7 @@ import campus.tech.kakao.map.Base.ErrorEnum
 import campus.tech.kakao.map.R
 import java.io.Serializable
 
+
 class ErrorActivity : AppCompatActivity() {
     private lateinit var errorText : TextView
     private lateinit var errorMsg : TextView

@@ -8,9 +8,13 @@ import android.os.Bundle
 import android.view.View.VISIBLE
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.Base.ErrorEnum
+import campus.tech.kakao.map.Base.ViewModelFactory
+import campus.tech.kakao.map.MyApplication
 import campus.tech.kakao.map.Presenter.ViewModel.MapViewModel
 import campus.tech.kakao.map.R
 import com.kakao.vectormap.KakaoMap
@@ -21,11 +25,12 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    private lateinit var repository: PlaceRepository
-    private lateinit var viewModel: MapViewModel
+    private val viewModel: MapViewModel by viewModels()
     private lateinit var mapView: MapView
     private lateinit var searchText: TextView
     private lateinit var bottomSheet : ConstraintLayout
@@ -36,15 +41,11 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        repository = (application as MyApplication).appContainer.repository
         mapView = findViewById<MapView>(R.id.mapView)
         searchText = findViewById<TextView>(R.id.search)
         bottomSheet = findViewById<ConstraintLayout>(R.id.bottomSheet)
         placeName = findViewById<TextView>(R.id.placeName)
         placeAddress = findViewById<TextView>(R.id.placeAddress)
-
-        viewModel =
-            ViewModelProvider(this, ViewModelFactory(repository))[MapViewModel::class.java]
 
         initViewModel()
         settingMap()

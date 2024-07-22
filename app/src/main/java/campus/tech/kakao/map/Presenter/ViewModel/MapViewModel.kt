@@ -5,8 +5,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import campus.tech.kakao.map.Domain.Model.Place
 import campus.tech.kakao.map.Domain.PlaceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MapViewModel(private val repository: PlaceRepository) : ViewModel() {
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    private val repository: PlaceRepository
+) : ViewModel() {
     private val _currentPlace : MutableLiveData<Place?> = MutableLiveData()
     val currentPlace : LiveData<Place?> = _currentPlace
 
