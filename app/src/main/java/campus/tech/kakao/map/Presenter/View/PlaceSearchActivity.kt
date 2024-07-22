@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout.VERTICAL
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.ViewModelProvider
@@ -24,27 +25,24 @@ import campus.tech.kakao.map.Presenter.View.Adapter.FavoriteAdapter
 import campus.tech.kakao.map.Presenter.View.Adapter.SearchResultAdapter
 import campus.tech.kakao.map.Presenter.View.Observer.EmptyPlaceObserver
 import campus.tech.kakao.map.ViewModel.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class PlaceSearchActivity : AppCompatActivity() {
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels()
+
     private lateinit var searchResult: RecyclerView
     private lateinit var noItem: TextView
     private lateinit var etSearchPlace: EditText
     private lateinit var deleteSearch: ImageView
     private lateinit var favorite: RecyclerView
-    private lateinit var sqliteDB: SqliteDB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_place_search)
-
-        val repository = (application as MyApplication).appContainer.repository
-
-        viewModel =
-            ViewModelProvider(this, ViewModelFactory(repository))[SearchViewModel::class.java]
 
         searchResult = findViewById<RecyclerView>(R.id.searchResult)
         etSearchPlace = findViewById<EditText>(R.id.etSearchPlace)

@@ -6,6 +6,9 @@ import campus.tech.kakao.map.Data.Datasource.Remote.Response.Meta
 import campus.tech.kakao.map.Data.Datasource.Remote.Response.Response
 import campus.tech.kakao.map.Data.Datasource.Remote.Response.SameName
 import campus.tech.kakao.map.Data.Datasource.Remote.Response.SearchResponse
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.BufferedReader
@@ -14,7 +17,6 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
-
 
 class HttpUrlConnect : RemoteService{
 
