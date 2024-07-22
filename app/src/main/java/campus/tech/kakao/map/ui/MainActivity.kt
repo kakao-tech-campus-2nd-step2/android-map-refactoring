@@ -18,32 +18,37 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.adapter.Adapter
-import campus.tech.kakao.map.utility.CategoryGroupCode
-import campus.tech.kakao.map.utility.Document
-import campus.tech.kakao.map.network.Network
-import campus.tech.kakao.map.utility.Profile
+import androidx.room.Room
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.KakaoResponse
+import campus.tech.kakao.map.adapter.Adapter
+import campus.tech.kakao.map.data.AppDatabase
+import campus.tech.kakao.map.data.Profile
+import campus.tech.kakao.map.network.Document
+import campus.tech.kakao.map.network.KakaoResponse
+import campus.tech.kakao.map.network.Network
+import campus.tech.kakao.map.ui.MapActivity
+import campus.tech.kakao.map.utility.CategoryGroupCode
 import org.json.JSONArray
 import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
     lateinit var adapter: Adapter
-
     lateinit var tvNoResult: TextView
     lateinit var llSave: LinearLayoutCompat
     lateinit var hScrollView: HorizontalScrollView
+    lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        키 해시 받기
-//        var keyHash = Utility.getKeyHash(this)
-//        Log.d("keyHash", keyHash)
-
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "profiles"
+        ).build()
 
         val etSearch = findViewById<EditText>(R.id.etSearch)
         tvNoResult = findViewById(R.id.tvNoResult)
@@ -140,15 +145,20 @@ class MainActivity : AppCompatActivity() {
             if (documents.isEmpty()) {
                 showNoResults()
             } else {
-                val profiles = documents.map { it.toProfile()}
+                val profiles = documents.map { it.toProfile() }
                 adapter.updateProfiles(profiles)
+
+                thread {
+                    db.profileDao().insertAll(*profiles.toTypedArray())
+                }
+
                 tvNoResult.visibility = View.GONE
             }
         } ?: showNoResults()
     }
 
     fun Document.toProfile(): Profile {
-        return Profile(this.name, this.address, this.type, this.latitude, this.longitude)
+        return Profile(name = this.name, address = this.address, type = this.type, latitude = this.latitude, longitude = this.longitude)
     }
 
     fun showNoResults() {
