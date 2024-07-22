@@ -22,6 +22,7 @@ import androidx.room.Room
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.Adapter
 import campus.tech.kakao.map.data.AppDatabase
+import campus.tech.kakao.map.data.AppDatabase.Companion.MIGRATION_1_2
 import campus.tech.kakao.map.data.Profile
 import campus.tech.kakao.map.network.Document
 import campus.tech.kakao.map.network.KakaoResponse
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "profiles"
-        ).build()
+        ).addMigrations(MIGRATION_1_2).build()
 
         val etSearch = findViewById<EditText>(R.id.etSearch)
         tvNoResult = findViewById(R.id.tvNoResult)
