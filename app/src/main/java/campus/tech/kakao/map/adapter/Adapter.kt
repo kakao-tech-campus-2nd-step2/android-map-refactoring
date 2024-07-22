@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.utility.Profile
+import campus.tech.kakao.map.data.Profile
 
 class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter<Adapter.ProfileViewHolder>() {
 

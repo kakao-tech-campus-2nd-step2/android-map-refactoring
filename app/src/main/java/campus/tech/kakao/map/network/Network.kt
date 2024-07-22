@@ -1,7 +1,6 @@
 package campus.tech.kakao.map.network
 
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.data.KakaoResponse
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
