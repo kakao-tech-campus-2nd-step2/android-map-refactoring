@@ -29,12 +29,18 @@ import campus.tech.kakao.map.network.KakaoResponse
 import campus.tech.kakao.map.network.Network
 import campus.tech.kakao.map.ui.MapActivity
 import campus.tech.kakao.map.utility.CategoryGroupCode
+import dagger.hilt.android.AndroidEntryPoint
 import org.json.JSONArray
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 import kotlin.concurrent.thread
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var network: Network
 
     lateinit var adapter: Adapter
     lateinit var tvNoResult: TextView
@@ -105,7 +111,7 @@ class MainActivity : AppCompatActivity() {
 
     // 키워드로 검색
     fun searchKeyword(query: String) {
-        Network.searchKeyword(query, object : Callback<KakaoResponse> {
+        network.searchKeyword(query, object : Callback<KakaoResponse> {
             override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
                 if (response.isSuccessful) {
                     searchProfiles(response.body())
@@ -124,7 +130,7 @@ class MainActivity : AppCompatActivity() {
 
     // 카테고리로 검색
     fun searchCategory(categoryGroupCode: String) {
-        Network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
+        network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
             override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
                 if (response.isSuccessful) {
                     searchProfiles(response.body())
