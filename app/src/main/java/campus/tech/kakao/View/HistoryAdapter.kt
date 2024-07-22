@@ -8,7 +8,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 
-class HistoryAdapter(private var historyList: MutableList<Pair<Int, String>>, private val itemClickListener: (Int) -> Unit, private val itemViewClickListener: (String) -> Unit
+class HistoryAdapter(
+    private var historyList: MutableList<Pair<Long, String>>,
+    private val itemClickListener: (Long) -> Unit,
+    private val itemViewClickListener: (String) -> Unit
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
@@ -33,18 +36,10 @@ class HistoryAdapter(private var historyList: MutableList<Pair<Int, String>>, pr
         return historyList.size
     }
 
-    fun updateData(newHistoryList: List<Pair<Int, String>>) {
+    fun updateData(newHistoryList: List<Pair<Long, String>>) {
         historyList.clear()
         historyList.addAll(newHistoryList)
         notifyDataSetChanged()
-    }
-
-    fun removeItemById(id: Int) {
-        val index = historyList.indexOfFirst { it.first == id }
-        if (index != -1) {
-            historyList.removeAt(index)
-            notifyItemRemoved(index)
-        }
     }
 
     inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
