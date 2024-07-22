@@ -3,7 +3,7 @@ package campus.tech.kakao.map
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import campus.tech.kakao.map.data.PlaceRepositoryImpl
+import campus.tech.kakao.map.data.PlaceDBHelper
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.util.PlaceContract
 import org.junit.After
@@ -15,14 +15,14 @@ import org.junit.runner.RunWith
 @RunWith(AndroidJUnit4::class)
 class RepositoryImplTest {
 
-    private lateinit var repository: PlaceRepositoryImpl
+    private lateinit var repository: PlaceDBHelper
     private lateinit var context: Context
 
     @Before
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         context.deleteDatabase(PlaceContract.DATABASE_NAME)
-        repository = PlaceRepositoryImpl.getInstance(context)
+        repository = PlaceDBHelper.getInstance(context)
     }
 
     @After
