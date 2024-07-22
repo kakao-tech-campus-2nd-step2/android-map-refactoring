@@ -17,8 +17,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/")
+        maven("https://devrepo.kakao.com/nexus/content/groups/public/") //카카오 sdk
     }
 }
 
 rootProject.name = "android-map-refactoring"
 include(":app")
+

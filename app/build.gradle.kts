@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +21,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "KAKAO_API_KEY", getApiKey("KAKAO_API_KEY"))
+        buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
     }
 
     buildTypes {
@@ -41,11 +46,13 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig = true
+        dataBinding = true
     }
 }
 
-dependencies {
+fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
 
+dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -61,7 +68,6 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("com.google.dagger:hilt-android:2.48.1")
     kapt("com.google.dagger:hilt-compiler:2.48.1")
-    implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("androidx.room:room-testing:2.6.1")
     testImplementation("junit:junit:4.13.2")
@@ -77,4 +83,15 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation("org.mockito:mockito-core:4.8.0")
+    implementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    implementation("org.mockito:mockito-android:4.8.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.4.0")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    androidTestImplementation("androidx.test:runner:1.4.0")
+    androidTestImplementation("androidx.test:rules:1.4.0")
+    implementation("com.kakao.sdk:v2-all:2.20.3")
 }
