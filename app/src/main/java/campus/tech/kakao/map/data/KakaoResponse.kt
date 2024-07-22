@@ -1,4 +1,6 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.data
+
+import campus.tech.kakao.map.utility.Document
 
 data class KakaoResponse(
 //    val meta: Meta,

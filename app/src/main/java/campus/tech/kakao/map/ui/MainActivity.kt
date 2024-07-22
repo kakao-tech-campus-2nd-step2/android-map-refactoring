@@ -1,6 +1,5 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -19,9 +18,15 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.adapter.Adapter
+import campus.tech.kakao.map.utility.CategoryGroupCode
+import campus.tech.kakao.map.utility.Document
+import campus.tech.kakao.map.network.Network
+import campus.tech.kakao.map.utility.Profile
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.KakaoResponse
 import org.json.JSONArray
 import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 

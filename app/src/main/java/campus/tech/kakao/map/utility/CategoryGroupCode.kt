@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.utility
 object CategoryGroupCode {
     val MART = "대형마트" to "MT1"
     val CONVENIENCE_STORE = "편의점" to "CS2"

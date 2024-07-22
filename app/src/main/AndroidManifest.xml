@@ -9,7 +9,7 @@
 
 
     <application
-        android:name=".MapApplication"
+        android:name=".utility.MapApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -26,14 +26,14 @@
             android:name="com.kakao.vectormap.APP_KEY"
             android:value="${KAKAO_API_KEY}"/>
         <activity
-            android:name=".ErrorActivity"
+            android:name=".ui.ErrorActivity"
             android:exported="false" />
 
         <meta-data
             android:name="com.kakao.vectormap.APP_KEY"
             android:value="${KAKAO_API_KEY}"/>
         <activity
-            android:name=".MapActivity"
+            android:name=".ui.MapActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +43,7 @@
         </activity>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="false">
         </activity>
     </application>

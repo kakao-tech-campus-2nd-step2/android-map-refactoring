@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
+import campus.tech.kakao.map.ui.MapActivity
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
