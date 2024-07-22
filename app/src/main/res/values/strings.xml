@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Map</string>
+    <string name="enterKeywords">검색어를 입력해 주세요.</string>
+    <string name="noKeywords">검색 결과가 없습니다.</string>
+    <string name="keywordsClear">검색어 초기화 버튼</string>
+    <string name="ivKeywordCancle">keywordCancle</string>
+    <string name="keyword">keyword</string>
+    <string name="locationmarker">locationMarker</string>
+    <string name="place_name">place name</string>
+    <string name="place_address">place address</string>
+    <string name="category">category</string>
+    <string name="searchImage">검색어 돋보기 이미지</string>
+    <string name="onMapDestroyLog">지도 API 정상 종료</string>
+    <string name="onMapErrorLog">지도 API 인증 실패</string>
+    <string name="onMapReadyLog">지도 API 정상 실행</string>
+    <string name="tryMessage">지도 인증을 실패했습니다.\n다시 시도해주세요.</string>
+    <string name="errorMessage">에러 메세지</string>
+    <string name="loadingImage">로딩 이미지</string>
 </resources>
