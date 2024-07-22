@@ -1,3 +1,12 @@
+import java.util.Properties
+
+fun getApiKey(key: String): String {
+    val properties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties")
+    localPropertiesFile.inputStream().use { properties.load(it) }
+    return properties.getProperty(key)
+}
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +28,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        resValue("string", "KAKAO_API_KEY", getApiKey("kakaoApiKey"))
+        buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("kakaoRestApiKey"))
+        buildConfigField("String", "KAKAO_BASE_URL", getApiKey("kakaoBaseUrl"))
     }
 
     buildTypes {
@@ -39,13 +52,13 @@ android {
     }
 
     buildFeatures {
+        viewBinding = true
         dataBinding = true
         buildConfig = true
     }
 }
 
 dependencies {
-
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -77,4 +90,12 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation("com.kakao.sdk:v2-user:2.9.0")
+    testImplementation("androidx.test.ext:junit:1.1.5")
+    implementation("androidx.fragment:fragment-ktx:1.3.6")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.3.1")
 }
