@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.data.net.KakaoApiClient
+import campus.tech.kakao.map.data.net.KakaoApiClient.api
 import campus.tech.kakao.map.util.PlaceContract
 import campus.tech.kakao.map.domain.model.Place
 import kotlinx.coroutines.Dispatchers
@@ -25,24 +26,13 @@ class PlaceDBHelper(context: Context):
         onCreate(db)
     }
 
-    suspend fun getPlaces(keyword: String): List<Place> =
-        withContext(Dispatchers.IO){
-            val resultPlaces = mutableListOf<Place>()
-            for (page in 1..3) {
-                val response = KakaoApiClient.api.getSearchKeyword(
-                    key = BuildConfig.KAKAO_REST_API_KEY,
-                    query = keyword,
-                    size = 15,
-                    page = page
-                )
-                if (response.isSuccessful) {
-                    response.body()?.documents?.let { resultPlaces.addAll(it) }
-                } else throw RuntimeException("통신 에러 발생")
-            }
-            updatePlaces(resultPlaces)
-            resultPlaces
-        }
-    suspend fun updatePlaces(places: List<Place>) {
+    suspend fun getPlaces(keyword: String): List<Place> {
+        val places = KakaoApiClient.getPlaces(keyword)
+        updatePlaces(places)
+        return places
+    }
+
+    fun updatePlaces(places: List<Place>) {
         val db = writableDatabase
 
         db.execSQL(PlaceContract.DELETE_QUERY)
