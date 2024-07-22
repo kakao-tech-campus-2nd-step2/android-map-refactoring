@@ -5,8 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import ksc.campus.tech.kakao.map.models.SearchKakaoHelper
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import ksc.campus.tech.kakao.map.models.repositories.SearchResultRepository
+import javax.inject.Inject
 
-class SearchResultRepositoryImpl(): SearchResultRepository {
+class SearchResultRepositoryImpl @Inject constructor(): SearchResultRepository {
     private val _searchResult: MutableLiveData<List<SearchResult>> = MutableLiveData(emptyList())
     override val searchResult: LiveData<List<SearchResult>>
         get() = _searchResult

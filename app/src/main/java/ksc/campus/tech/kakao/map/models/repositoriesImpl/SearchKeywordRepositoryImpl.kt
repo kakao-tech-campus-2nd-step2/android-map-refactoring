@@ -8,8 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.models.SearchDbHelper
 import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
+import javax.inject.Inject
 
-class SearchKeywordRepositoryImpl(context: Context): SearchKeywordRepository {
+class SearchKeywordRepositoryImpl @Inject constructor(context: Context): SearchKeywordRepository {
     private val _keywords: MutableLiveData<List<String>> = MutableLiveData(listOf())
     override val keywords: LiveData<List<String>>
         get() = _keywords

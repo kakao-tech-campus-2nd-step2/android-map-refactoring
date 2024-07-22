@@ -1,4 +1,4 @@
-package ksc.campus.tech.kakao.map.models.repositoriesImpl
+package ksc.campus.tech.kakao.map.repositoriesImpl
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

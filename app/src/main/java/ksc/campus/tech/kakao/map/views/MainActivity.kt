@@ -16,11 +16,13 @@ import ksc.campus.tech.kakao.map.R
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordAdapter
 import com.kakao.vectormap.KakaoMapSdk
+import dagger.hilt.android.AndroidEntryPoint
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordClickCallback
 import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
 import ksc.campus.tech.kakao.map.views.fragments.SearchActivityFragmentFactory
 import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var locationInfoNameView: TextView
     private lateinit var locationInfoAddressView: TextView
@@ -32,7 +34,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchResultFragmentContainer: FragmentContainerView
     private lateinit var searchInput: SearchView
     private lateinit var keywordRecyclerView: RecyclerView
-    private val searchViewModel: SearchActivityViewModel by viewModels()
+
+    val searchViewModel: SearchActivityViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

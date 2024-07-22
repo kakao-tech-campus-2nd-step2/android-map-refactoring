@@ -11,12 +11,15 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import ksc.campus.tech.kakao.map.R
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.adapters.SearchResultAdapter
+import javax.inject.Inject
 
-class SearchResultFragment(val viewModel: SearchActivityViewModel) : Fragment() {
+@AndroidEntryPoint
+class SearchResultFragment @Inject constructor(val viewModel: SearchActivityViewModel) : Fragment() {
     private lateinit var searchResultRecyclerView: RecyclerView
     private lateinit var noResultHelpText: View
 

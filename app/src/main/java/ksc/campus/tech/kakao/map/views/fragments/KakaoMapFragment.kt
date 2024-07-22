@@ -20,12 +20,15 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import ksc.campus.tech.kakao.map.R
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import java.lang.Exception
+import javax.inject.Inject
 
-class KakaoMapFragment(val viewModel: SearchActivityViewModel) : Fragment() {
+@AndroidEntryPoint
+class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivityViewModel) : Fragment() {
     private lateinit var errorTextView: TextView
     private lateinit var retryButton: ImageButton
     private lateinit var errorMessageGroup: Group

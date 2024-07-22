@@ -8,9 +8,10 @@ import kotlinx.serialization.Serializable
 import ksc.campus.tech.kakao.map.models.datasources.MapPreferenceLocalDataSource
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
+import javax.inject.Inject
 
 
-class MapViewRepositoryImpl(): MapViewRepository {
+class MapViewRepositoryImpl @Inject constructor() : MapViewRepository {
     private val _selectedLocation: MutableLiveData<LocationInfo?> = MutableLiveData<LocationInfo?>(null)
     private val _cameraPosition: MutableLiveData<CameraPosition> = MutableLiveData(initialCameraPosition)
 
