@@ -35,3 +35,6 @@ google-services.json
 *.hprof
 /keyStore
 /app/release
+
+# Mac OS
+.DS_Store
