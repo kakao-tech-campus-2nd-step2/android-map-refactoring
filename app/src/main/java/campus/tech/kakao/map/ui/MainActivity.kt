@@ -94,6 +94,8 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
                 finish()
             }
         })
+
+        mapViewModel.getSavedMapItems()
     }
 
     override fun onItemClick(item: MapItem) {
