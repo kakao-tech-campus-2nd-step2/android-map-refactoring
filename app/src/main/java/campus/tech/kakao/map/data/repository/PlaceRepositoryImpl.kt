@@ -41,7 +41,7 @@ class PlaceRepositoryImpl @Inject constructor(
     }
 
     override fun getSearchHistory(): List<String> {
-        return searchQueryDao.getAll().map { it.query }
+        return searchQueryDao.getAll().map { it.query }.reversed()
     }
 
     override fun removeSearchQuery(query: String) {
