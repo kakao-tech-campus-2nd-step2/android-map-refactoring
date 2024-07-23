@@ -1,7 +1,10 @@
-package campus.tech.kakao.Model;
+package campus.tech.kakao.Model
 
 import com.google.gson.annotations.SerializedName
 
+data class ResultSearchKeyword(
+    @SerializedName("documents") val documents: List<Place>
+)
 
 data class Place(
     @SerializedName("place_name") val placeName: String,
