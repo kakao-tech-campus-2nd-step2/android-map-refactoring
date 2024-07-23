@@ -1,5 +1,6 @@
-package campus.tech.kakao.map.utility
+package campus.tech.kakao.map.di
 
+import campus.tech.kakao.map.utility.MapUtility
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +12,7 @@ import javax.inject.Singleton
 object MapModule {
     @Provides
     @Singleton
-    fun singletonMapUtiliy(): MapUtility{
+    fun singletonMapUtiliy(): MapUtility {
         return MapUtility
     }
 }

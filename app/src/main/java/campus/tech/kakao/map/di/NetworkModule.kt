@@ -1,6 +1,9 @@
-package campus.tech.kakao.map.network
+package campus.tech.kakao.map.di
 
 import android.content.Context
+import campus.tech.kakao.map.network.Network
+import campus.tech.kakao.map.network.RetrofitService
+import campus.tech.kakao.map.network.SearchService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +28,7 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun singletonNetwork(retrofitService: RetrofitService): Network{
+    fun singletonNetwork(retrofitService: RetrofitService): Network {
         return Network(retrofitService)
     }
 
