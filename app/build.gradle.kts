@@ -18,6 +18,10 @@ android {
     namespace = "campus.tech.kakao.map"
     compileSdk = 34
 
+    dataBinding {
+        enable = true
+    }
+
     defaultConfig {
         applicationId = "campus.tech.kakao.map"
         minSdk = 26
@@ -70,6 +74,7 @@ android {
 
 dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.3")
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.room:room-ktx:2.6.1")
