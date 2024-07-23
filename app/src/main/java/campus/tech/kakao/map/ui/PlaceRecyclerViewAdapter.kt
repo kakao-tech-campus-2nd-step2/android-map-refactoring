@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.domain.Place
 
 class PlaceRecyclerViewAdapter(
     private val places: MutableList<Place>,

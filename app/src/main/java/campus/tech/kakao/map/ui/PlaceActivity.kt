@@ -12,9 +12,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.NetworkRepository
-import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.PlaceEntity
 import campus.tech.kakao.map.data.PlaceRepository
 import campus.tech.kakao.map.databinding.SearchLayoutBinding
+import campus.tech.kakao.map.domain.Place
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,7 +53,8 @@ class PlaceActivity : AppCompatActivity() {
 
         // DAO로 데이터 접근
         lifecycleScope.launch {
-            val places: MutableList<Place> = placeRepository.getAllPlaces()
+            val placeEntities: MutableList<PlaceEntity> = placeRepository.getAllPlaces()
+            val places: MutableList<Place> = placeEntities.map { it.toDomain() }.toMutableList()
             withContext(Dispatchers.Main) {
                 searchList.clear()
                 searchList.addAll(places)
@@ -99,7 +101,7 @@ class PlaceActivity : AppCompatActivity() {
     private fun placeRecyclerViewAdapter(placeList: MutableList<Place>, searchList: MutableList<Place>) =
         PlaceRecyclerViewAdapter(
             placeList,
-            onItemClick = { place ->
+            onItemClick = { place: Place ->
                 // 장소 목록 선택 시, 검색어 기록 저장
                 if (place in searchList) {
                     removePlaceRecord(searchList, place)
@@ -124,12 +126,12 @@ class PlaceActivity : AppCompatActivity() {
         SearchRecyclerViewAdapter(
             searchList,
             // 저장 목록 선택 시, 검색칸에 장소명 표시
-            onItemClick = { place ->
+            onItemClick = { place: Place ->
                 placeBinding.etSearch.setText(place.name)
                 placeBinding.etSearch.setSelection(place.name.length)
             },
             // X 선택 시, 저장 목록에서 삭제
-            onCloseButtonClick = { place ->
+            onCloseButtonClick = { place: Place ->
                 removePlaceRecord(searchList, place)
                 controlSearchVisibility(searchList)
             }
@@ -139,7 +141,7 @@ class PlaceActivity : AppCompatActivity() {
     fun addPlaceRecord(searchList: MutableList<Place>, place: Place) {
         searchList.add(place)
         lifecycleScope.launch {
-            placeRepository.insertPlace(place)
+            placeRepository.insertPlace(place.toEntity())
         }
         searchAdapter.notifyDataSetChanged()
     }
@@ -148,7 +150,7 @@ class PlaceActivity : AppCompatActivity() {
         val index = searchList.indexOf(place)
         searchList.removeAt(index)
         lifecycleScope.launch {
-            placeRepository.deletePlace(place)
+            placeRepository.deletePlace(place.toEntity())
         }
         searchAdapter.notifyDataSetChanged()
     }
@@ -173,4 +175,5 @@ class PlaceActivity : AppCompatActivity() {
             placeBinding.rvSearchList.visibility = View.VISIBLE
         }
     }
+
 }

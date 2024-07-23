@@ -2,6 +2,7 @@ package campus.tech.kakao.map.data
 
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.domain.Place
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

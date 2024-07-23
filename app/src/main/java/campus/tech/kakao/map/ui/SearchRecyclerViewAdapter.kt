@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.domain.Place
 
 class SearchRecyclerViewAdapter(
     private val places: MutableList<Place>,
