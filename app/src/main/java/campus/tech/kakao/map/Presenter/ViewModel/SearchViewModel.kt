@@ -1,12 +1,13 @@
 package campus.tech.kakao.map.ViewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.map.Domain.Model.Place
+import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.Domain.VO.Place
 import campus.tech.kakao.map.Domain.PlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,11 +22,13 @@ class SearchViewModel @Inject constructor(
 
     init {
         _currentResult.value = listOf<Place>()
-        _favoritePlace.value = repository.getCurrentFavorite()
+        viewModelScope.launch{
+            _favoritePlace.value = repository.getCurrentFavorite()
+        }
     }
 
-    fun searchPlace(string: String) {
-        _currentResult.value = repository.getSimilarPlacesByName(string)
+    suspend fun searchPlace(string: String) {
+        _currentResult.postValue(repository.getSimilarPlacesByName(string))
     }
 
     suspend fun searchPlaceRemote(name: String) {
@@ -36,15 +39,19 @@ class SearchViewModel @Inject constructor(
         val place = findPlaceById(id)
 
         place?.let {
-            repository.addFavorite(it).run {
-                _favoritePlace.value = this
+            viewModelScope.launch {
+                repository.addFavorite(it).run {
+                    _favoritePlace.value = this
+                }
             }
         }
     }
 
     fun deleteFromFavorite(id : Int) {
-        repository.deleteFavorite(id).run {
-            _favoritePlace.value = this
+        viewModelScope.launch{
+            repository.deleteFavorite(id).run {
+                _favoritePlace.value = this
+            }
         }
     }
 
@@ -52,9 +59,5 @@ class SearchViewModel @Inject constructor(
         return currentResult.value?.find{
             it.id == id
         }
-    }
-
-    fun findFavoriteById(id:Int) : Place?{
-        return repository.getFavoriteById(id)
     }
 }

@@ -3,9 +3,11 @@ package campus.tech.kakao.map.Presenter.ViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.map.Domain.Model.Place
+import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.Domain.VO.Place
 import campus.tech.kakao.map.Domain.PlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,7 +18,9 @@ class MapViewModel @Inject constructor(
     val currentPlace : LiveData<Place?> = _currentPlace
 
     fun initPlace(id : Int){
-        _currentPlace.value = repository.getFavoriteById(id)
+        viewModelScope.launch{
+            _currentPlace.value = repository.getFavoriteById(id)
+        }
     }
 
 }

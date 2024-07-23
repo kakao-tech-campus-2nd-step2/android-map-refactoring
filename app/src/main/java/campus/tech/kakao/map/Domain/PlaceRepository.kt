@@ -1,14 +1,16 @@
 package campus.tech.kakao.map.Domain
 
-import campus.tech.kakao.map.Domain.Model.Place
+import campus.tech.kakao.map.Domain.VO.Place
 
 interface PlaceRepository {
-    fun getCurrentFavorite() : List<Place>
-    fun getSimilarPlacesByName(name: String) : List<Place>
-    fun addFavorite(place : Place) : List<Place>
-    fun getPlaceById(id : Int): Place?
-    fun getFavoriteById(id: Int) : Place?
-    fun deleteFavorite(id : Int) : List<Place>
+    suspend fun getCurrentFavorite() : List<Place>
+    suspend fun getSimilarPlacesByName(name: String) : List<Place>
+    suspend fun addFavorite(place : Place) : List<Place>
+    suspend fun getPlaceById(id : Int): Place?
+    suspend fun getFavoriteById(id: Int) : Place?
+    suspend fun deleteFavorite(id : Int) : List<Place>
     suspend fun searchPlaceRemote(name : String) : List<Place>
     fun getPlaceByNameHTTP(name : String) : List<Place>
+
+
 }

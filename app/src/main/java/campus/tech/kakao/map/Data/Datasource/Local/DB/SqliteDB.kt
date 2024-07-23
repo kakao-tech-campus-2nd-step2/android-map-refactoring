@@ -1,9 +1,9 @@
-package campus.tech.kakao.map.Data.Datasource.Local
+package campus.tech.kakao.map.Data.Datasource.Local.DB
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import campus.tech.kakao.map.Domain.Model.PlaceContract
+import campus.tech.kakao.map.Data.Datasource.Local.PlaceContract
 
 
 class SqliteDB(
