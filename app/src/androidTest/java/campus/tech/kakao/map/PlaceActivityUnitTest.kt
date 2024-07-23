@@ -31,7 +31,6 @@ class PlaceActivityTest {
         val scenario = ActivityScenario.launch(PlaceActivity::class.java)
         scenario.onActivity { activity ->
             placeActivity = activity
-
             rvPlaceList = placeActivity.findViewById(R.id.rvPlaceList)
             rvSearchList = placeActivity.findViewById(R.id.rvPlaceList)
         }
