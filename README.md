@@ -18,7 +18,7 @@
 
 ## 프로젝트 구조도
 
-![카카오맵_구조도](https://github.com/user-attachments/assets/9b1a7c82-a33f-42af-9a1f-cd2c3fea679f)
+![카카오맵_구조도](https://github.com/user-attachments/assets/b0330d76-cd25-419c-8823-ceae2a779571)
 
 ## feature
 
