@@ -1,4 +1,4 @@
-package ksc.campus.tech.kakao.map.models
+package ksc.campus.tech.kakao.map.models.datasources
 
 import android.content.Context
 import android.util.Log
@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import ksc.campus.tech.kakao.map.BuildConfig
 import ksc.campus.tech.kakao.map.models.dto.KeywordSearchResponse
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import retrofit2.Call
@@ -29,7 +30,7 @@ interface KakaoSearchRetrofitService {
 }
 
 class KakaoSearchService @Inject constructor(
-    private val retrofitService:KakaoSearchRetrofitService
+    private val retrofitService: KakaoSearchRetrofitService
 ) {
     /**
      * 요청이 유효한지 검증하기 위해 사용.
@@ -173,7 +174,7 @@ object SearchKakaoRetrofitService{
         @ApplicationContext context: Context
     ): KakaoSearchRetrofitService {
         return Retrofit.Builder()
-            .baseUrl("https://dapi.kakao.com/")
+            .baseUrl(BuildConfig.KAKAO_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(KakaoSearchRetrofitService::class.java)

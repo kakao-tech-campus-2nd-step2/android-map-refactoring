@@ -2,7 +2,7 @@ package ksc.campus.tech.kakao.map.models.repositoriesImpl
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ksc.campus.tech.kakao.map.models.KakaoSearchService
+import ksc.campus.tech.kakao.map.models.datasources.KakaoSearchService
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import ksc.campus.tech.kakao.map.models.repositories.SearchResultRepository
 import javax.inject.Inject

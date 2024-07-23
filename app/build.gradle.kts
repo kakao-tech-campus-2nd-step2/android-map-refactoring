@@ -25,6 +25,7 @@ android {
 
         resValue("string", "KAKAO_API_KEY", getApiKey("KAKAO_API_KEY"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
+        buildConfigField("String", "KAKAO_API_URL", getApiKey("KAKAO_API_URL"))
 
     }
 
