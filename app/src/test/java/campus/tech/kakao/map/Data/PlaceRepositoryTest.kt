@@ -1,11 +1,9 @@
 package campus.tech.kakao.map.Data
 
-import android.app.Application
 import androidx.test.runner.AndroidJUnit4
-import campus.tech.kakao.map.Domain.Model.PlaceCategory
+import campus.tech.kakao.map.Domain.VO.PlaceCategory
 import campus.tech.kakao.map.Domain.PlaceRepository
 import campus.tech.kakao.map.MyApplication
-import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.CoroutineScope
@@ -16,7 +14,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 import org.robolectric.annotation.Config
 import javax.inject.Inject
 @RunWith(AndroidJUnit4::class)

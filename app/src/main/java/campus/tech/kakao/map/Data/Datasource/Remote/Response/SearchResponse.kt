@@ -1,12 +1,8 @@
 package campus.tech.kakao.map.Data.Datasource.Remote.Response
 
-import android.util.Log
-import campus.tech.kakao.map.Domain.Model.Place
-import campus.tech.kakao.map.Domain.Model.PlaceCategory
-import campus.tech.kakao.map.Domain.Model.PlaceCategory.Companion.groupCodeToPlaceCategory
+import campus.tech.kakao.map.Domain.VO.Place
+import campus.tech.kakao.map.Domain.VO.PlaceCategory.Companion.groupCodeToPlaceCategory
 import com.google.gson.annotations.SerializedName
-import org.json.JSONArray
-import org.json.JSONObject
 
 data class SearchResponse(
     val documents: List<Document>?,
