@@ -28,12 +28,9 @@ import campus.tech.kakao.map.network.Document
 import campus.tech.kakao.map.network.KakaoResponse
 import campus.tech.kakao.map.network.Network
 import campus.tech.kakao.map.network.SearchService
-import campus.tech.kakao.map.ui.MapActivity
 import campus.tech.kakao.map.utility.CategoryGroupCode
+import campus.tech.kakao.map.utility.SaveHelper
 import dagger.hilt.android.AndroidEntryPoint
-import org.json.JSONArray
-import retrofit2.*
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
@@ -45,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var searchService: SearchService
+
+    @Inject
+    lateinit var searchSave: SaveHelper
 
     lateinit var adapter: Adapter
     lateinit var tvNoResult: TextView
@@ -97,10 +97,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
             override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
-                if (isProfileInSearchSave(name)) {
-                    removeSavedItem(name)
+                if (searchSave.isProfileInSearchSave(name, llSave)) {
+                    searchSave.removeSavedItem(name, llSave)
                 }
-                addSavedItem(name)
+                searchSave.addSavedItem(name, llSave, hScrollView, LayoutInflater.from(this@MainActivity), etSearch)
                 val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
                     putExtra("name", name)
                     putExtra("address", address)
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         btnClose.setOnClickListener {
             etSearch.text.clear()
         }
-        loadSavedItems()
+        searchSave.loadSavedItems(llSave, hScrollView, LayoutInflater.from(this), etSearch)
     }
 
     fun searchProfiles(searchResult: KakaoResponse?) {
@@ -145,84 +145,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        saveSavedItems()
-    }
-
-    fun saveSavedItems() {
-        val sharedPreferences = getSharedPreferences("SavedItems", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val savedNames = JSONArray()
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName != null) {
-                savedNames.put(tvSaveName.text.toString())
-            }
-        }
-        editor.putString("savedNames", savedNames.toString())
-        editor.apply()
-    }
-
-    fun loadSavedItems() {
-        val sharedPreferences = getSharedPreferences("SavedItems", MODE_PRIVATE)
-        val savedNamesString = sharedPreferences.getString("savedNames", "[]")
-        val savedNames = JSONArray(savedNamesString)
-        for (i in 0 until savedNames.length()) {
-            val name = savedNames.getString(i)
-            addSavedItem(name)
-        }
-    }
-
-
-    fun addSavedItem(name: String) {
-        val savedView = LayoutInflater.from(this)
-            .inflate(R.layout.search_save, llSave, false) as ConstraintLayout
-
-        val tvSaveName = savedView.findViewById<TextView>(R.id.tvSaveName)
-        val ivDelete = savedView.findViewById<ImageView>(R.id.ivDelete)
-
-        tvSaveName.text = name
-
-        // 저장된 검색어를 누르면 검색어가 입력됨
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        tvSaveName.setOnClickListener {
-            etSearch.setText(name)
-        }
-
-        ivDelete.setOnClickListener {
-            llSave.removeView(savedView)
-        }
-
-        llSave.addView(savedView)
-        hScrollView.visibility = View.VISIBLE
-        scrollToEndOfSearchSave()
-    }
-
-    fun removeSavedItem(name: String) {
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName?.text.toString() == name) {
-                llSave.removeViewAt(i)
-                break
-            }
-        }
-    }
-
-    fun isProfileInSearchSave(name: String): Boolean {
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName?.text.toString() == name) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun scrollToEndOfSearchSave() {
-        hScrollView.post {
-            hScrollView.fullScroll(View.FOCUS_RIGHT)
-        }
+        searchSave.saveSavedItems(llSave)
     }
 }
