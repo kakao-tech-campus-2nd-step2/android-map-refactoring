@@ -7,7 +7,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class PlaceRepository @Inject constructor(private val retrofitLocalKeywordService: RetrofitLocalKeywordService) {
+class NetworkRepository @Inject constructor(private val retrofitLocalKeywordService: RetrofitLocalKeywordService) {
 
     fun searchPlace(
         keyword: String,

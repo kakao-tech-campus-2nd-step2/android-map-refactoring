@@ -10,8 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.data.PlaceRepository
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.NetworkRepository
 import campus.tech.kakao.map.data.Place
 import campus.tech.kakao.map.data.PlaceDBClient
 import campus.tech.kakao.map.data.PlaceDao
@@ -30,7 +30,7 @@ class PlaceActivity : AppCompatActivity() {
     private lateinit var placeDao: PlaceDao
 
     @Inject
-    lateinit var placeRepository: PlaceRepository
+    lateinit var networkRepository: NetworkRepository
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -87,7 +87,7 @@ class PlaceActivity : AppCompatActivity() {
     }
 
     private fun searchPlace(keyword: String) {
-        placeRepository.searchPlace(keyword,
+        networkRepository.searchPlace(keyword,
             onSuccess = { keywordList ->
                 placeAdapter.updateData(keywordList)
                 placeAdapter.notifyDataSetChanged()
