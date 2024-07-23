@@ -106,7 +106,7 @@ class KakaoSearchService @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
-    private suspend fun batchSearchByKeyword(
+    private fun batchSearchByKeyword(
         query: String,
         apiKey: String,
         page: Int,

@@ -79,13 +79,11 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-        lifecycle.coroutineScope.launch{
+        lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                while(true) {
-                    searchViewModel.keywords.collectLatest {
-                        (keywordRecyclerView.adapter as? SearchKeywordAdapter)?.submitList(it.asReversed())
-                        setKeywordRecyclerViewActive(it.isNotEmpty())
-                    }
+                searchViewModel.keywords.collectLatest {
+                    (keywordRecyclerView.adapter as? SearchKeywordAdapter)?.submitList(it.asReversed())
+                    setKeywordRecyclerViewActive(it.isNotEmpty())
                 }
             }
         }
@@ -137,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateText(name:String, address:String){
+    private fun updateText(name: String, address: String) {
         locationInfoNameView.text = name
         locationInfoAddressView.text = address
     }
