@@ -17,9 +17,9 @@ import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
-import campus.tech.kakao.map.ui.interfaces.OnPlaceItemClickListener
-import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordClearImageViewClickListener
-import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordTextViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
 import campus.tech.kakao.map.ui.search.adapters.ResultRecyclerViewAdapter
 import campus.tech.kakao.map.ui.search.adapters.SavedSearchWordRecyclerViewAdapter
 import dagger.hilt.android.AndroidEntryPoint

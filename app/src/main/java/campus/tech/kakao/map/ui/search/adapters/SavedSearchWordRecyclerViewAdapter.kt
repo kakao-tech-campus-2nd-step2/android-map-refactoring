@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.databinding.ItemSavedSearchWordBinding
-import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordClearImageViewClickListener
-import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordTextViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
 
 class SavedSearchWordRecyclerViewAdapter(
     private val savedSearchWordClearImageViewClickListener: OnSavedSearchWordClearImageViewClickListener,

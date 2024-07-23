@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.ui.interfaces
+package campus.tech.kakao.map.ui.search.interfaces
 
 import campus.tech.kakao.map.data.model.SavedSearchWord
 
