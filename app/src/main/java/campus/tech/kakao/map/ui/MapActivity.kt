@@ -22,9 +22,13 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
     private val startZoomLevel = 15
@@ -81,15 +85,13 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun getLocationByPreference(): Pair<String?, String?> {
-        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
-        val preferencesLatitude = preferences.getString("latitude", null)
-        val preferencesLongitude = preferences.getString("longitude", null)
+        val preferencesLatitude = sharedPreferences.getString("latitude", null)
+        val preferencesLongitude = sharedPreferences.getString("longitude", null)
         return Pair(preferencesLatitude, preferencesLongitude)
     }
 
     fun saveLocation() {
-        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
-        val editor: Editor = preferences.edit()
+        val editor: Editor = sharedPreferences.edit()
         editor.putString("latitude", latitude)
         editor.putString("longitude", longitude)
         editor.apply()

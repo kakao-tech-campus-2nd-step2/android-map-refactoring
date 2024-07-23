@@ -41,7 +41,6 @@ class PlaceActivity : AppCompatActivity() {
 
         // Search 어댑터
         searchAdapter = searchRecyclerViewAdapter(searchList)
-        searchAdapter = searchRecyclerViewAdapter(searchList)
         placeBinding.rvSearchList.adapter = searchAdapter
         placeBinding.rvSearchList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
