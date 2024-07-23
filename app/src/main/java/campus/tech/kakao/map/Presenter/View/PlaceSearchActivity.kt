@@ -2,7 +2,6 @@ package campus.tech.kakao.map.Presenter.View
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.EditText
@@ -12,18 +11,13 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.Data.Datasource.Local.SqliteDB
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.Base.ViewModelFactory
-import campus.tech.kakao.map.Domain.Model.Place
-import campus.tech.kakao.map.MyApplication
+import campus.tech.kakao.map.Domain.VO.Place
 import campus.tech.kakao.map.Presenter.View.Adapter.FavoriteAdapter
 import campus.tech.kakao.map.Presenter.View.Adapter.SearchResultAdapter
-import campus.tech.kakao.map.Presenter.View.Observer.EmptyPlaceObserver
 import campus.tech.kakao.map.ViewModel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -49,9 +43,6 @@ class PlaceSearchActivity : AppCompatActivity() {
         noItem = findViewById<TextView>(R.id.noItem)
         deleteSearch = findViewById<ImageView>(R.id.deleteSearch)
         favorite = findViewById<RecyclerView>(R.id.favorite)
-
-
-
 
         settingSearchRecyclerView()
         settingFavoriteRecyclerView()
@@ -104,20 +95,21 @@ class PlaceSearchActivity : AppCompatActivity() {
     private fun setSearchAdapter() {
         val adapter = SearchResultAdapter(
             onClickAdd = {
-//                viewModel.myFun(it)
                 viewModel.addFavorite(it)
-                val intent = Intent(this,MapActivity ::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                intent.putExtra(INTENT_ID,it)
-                startActivity(intent)
-                finish()
-
+                moveToMapActivity(it)
             })
         viewModel.currentResult.observe(this) {
             adapter.submitList(it)
             handleVisibility(it)
         }
         searchResult.adapter = adapter
+    }
+
+    private fun moveToMapActivity(id:Int){
+        val intent = Intent(this,MapActivity::class.java)
+        intent.putExtra(INTENT_ID,id)
+        setResult(RESULT_OK,intent)
+        finish()
     }
 
     private fun handleVisibility(places : List<Place>){
