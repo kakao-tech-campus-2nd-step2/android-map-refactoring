@@ -8,49 +8,65 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.domain.PlaceDataModel
-import campus.tech.kakao.map.data.PlaceDatabaseAccess
 import campus.tech.kakao.map.data.PlaceRepository
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.PlaceDBClient
+import campus.tech.kakao.map.data.PlaceDao
 import campus.tech.kakao.map.databinding.SearchLayoutBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PlaceActivity : AppCompatActivity() {
-    lateinit var binding: SearchLayoutBinding
-    lateinit var placeAdapter: PlaceRecyclerViewAdapter
+    private lateinit var placeAdapter: PlaceRecyclerViewAdapter
     private lateinit var searchAdapter: SearchRecyclerViewAdapter
-    var searchDatabaseAccess = PlaceDatabaseAccess(this, "Search.db")
-
-    lateinit var placeRepository: PlaceRepository
+    private lateinit var placeBinding: SearchLayoutBinding
+    private lateinit var placeDao: PlaceDao
+    private lateinit var placeRepository: PlaceRepository
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.search_layout)
-
-        val searchList: MutableList<PlaceDataModel> = searchDatabaseAccess.getAllPlace()
-        val keywordList: MutableList<PlaceDataModel> = mutableListOf()
-
+        placeBinding = DataBindingUtil.setContentView(this, R.layout.search_layout)
+        placeDao = PlaceDBClient.getInstance(applicationContext).placeDao()
         placeRepository = PlaceRepository()
+
+        val searchList: MutableList<Place> = mutableListOf()
+        val keywordList: MutableList<Place> = mutableListOf()
 
         // Search 어댑터
         searchAdapter = searchRecyclerViewAdapter(searchList)
-        binding.rvSearchList.adapter = searchAdapter
-        binding.rvSearchList.layoutManager =
+        searchAdapter = searchRecyclerViewAdapter(searchList)
+        placeBinding.rvSearchList.adapter = searchAdapter
+        placeBinding.rvSearchList.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Place 어댑터
         placeAdapter = placeRecyclerViewAdapter(keywordList, searchList)
-        binding.rvPlaceList.adapter = placeAdapter
-        binding.rvPlaceList.layoutManager = LinearLayoutManager(this)
+        placeBinding.rvPlaceList.adapter = placeAdapter
+        placeBinding.rvPlaceList.layoutManager = LinearLayoutManager(this)
 
-        controlPlaceVisibility(keywordList)
-        controlSearchVisibility(searchList)
-
-        binding.btnErase.setOnClickListener {
-            binding.etSearch.setText("")
+        // DAO로 데이터 접근
+        lifecycleScope.launch {
+            val places = placeDao.getAllPlaces()
+            withContext(Dispatchers.Main) {
+                searchList.clear()
+                searchList.addAll(places)
+                searchAdapter.notifyDataSetChanged()
+                controlPlaceVisibility(keywordList)
+                controlSearchVisibility(searchList)
+            }
         }
 
-        binding.etSearch.addTextChangedListener(object : TextWatcher {
+        placeBinding.btnErase.setOnClickListener {
+            val emptyKeyword = " "
+            placeBinding.etSearch.setText(emptyKeyword)
+            searchPlace(emptyKeyword)
+        }
+
+        placeBinding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
             }
 
@@ -78,7 +94,7 @@ class PlaceActivity : AppCompatActivity() {
         )
     }
 
-    private fun placeRecyclerViewAdapter(placeList: MutableList<PlaceDataModel>, searchList: MutableList<PlaceDataModel>) =
+    private fun placeRecyclerViewAdapter(placeList: MutableList<Place>, searchList: MutableList<Place>) =
         PlaceRecyclerViewAdapter(
             placeList,
             onItemClick = { place ->
@@ -102,13 +118,13 @@ class PlaceActivity : AppCompatActivity() {
             }
         )
 
-    private fun searchRecyclerViewAdapter(searchList: MutableList<PlaceDataModel>) =
+    private fun searchRecyclerViewAdapter(searchList: MutableList<Place>) =
         SearchRecyclerViewAdapter(
             searchList,
             // 저장 목록 선택 시, 검색칸에 장소명 표시
             onItemClick = { place ->
-                binding.etSearch.setText(place.name)
-                binding.etSearch.setSelection(place.name.length)
+                placeBinding.etSearch.setText(place.name)
+                placeBinding.etSearch.setSelection(place.name.length)
             },
             // X 선택 시, 저장 목록에서 삭제
             onCloseButtonClick = { place ->
@@ -118,37 +134,41 @@ class PlaceActivity : AppCompatActivity() {
         )
 
     // 검색 저장 기록 조작
-    fun addPlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
+    fun addPlaceRecord(searchList: MutableList<Place>, place: Place) {
         searchList.add(place)
-        searchDatabaseAccess.insertPlace(place)
+        lifecycleScope.launch {
+            placeDao.insertPlace(place)
+        }
         searchAdapter.notifyDataSetChanged()
     }
 
-    fun removePlaceRecord(searchList: MutableList<PlaceDataModel>, place: PlaceDataModel) {
+    fun removePlaceRecord(searchList: MutableList<Place>, place: Place) {
         val index = searchList.indexOf(place)
         searchList.removeAt(index)
-        searchDatabaseAccess.deletePlace(place.name)
+        lifecycleScope.launch {
+            placeDao.deletePlace(place)
+        }
         searchAdapter.notifyDataSetChanged()
     }
 
     // visibility 조작
-    fun controlPlaceVisibility(placeList: List<PlaceDataModel>) {
+    fun controlPlaceVisibility(placeList: List<Place>) {
         if (placeList.isEmpty()) {
-            binding.rvPlaceList.visibility = View.INVISIBLE
-            binding.tvNoData.visibility = View.VISIBLE
+            placeBinding.rvPlaceList.visibility = View.INVISIBLE
+            placeBinding.tvNoData.visibility = View.VISIBLE
         }
         else {
-            binding.rvPlaceList.visibility = View.VISIBLE
-            binding.tvNoData.visibility = View.GONE
+            placeBinding.rvPlaceList.visibility = View.VISIBLE
+            placeBinding.tvNoData.visibility = View.GONE
         }
     }
 
-    fun controlSearchVisibility(searchList: List<PlaceDataModel>) {
+    fun controlSearchVisibility(searchList: List<Place>) {
         if (searchList.isEmpty()) {
-            binding.rvSearchList.visibility = View.GONE
+            placeBinding.rvSearchList.visibility = View.GONE
         }
         else {
-            binding.rvSearchList.visibility = View.VISIBLE
+            placeBinding.rvSearchList.visibility = View.VISIBLE
         }
     }
 }

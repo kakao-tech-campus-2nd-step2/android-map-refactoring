@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.databinding.MapLayoutBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -24,8 +23,7 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 
 class MapActivity : AppCompatActivity() {
-    lateinit var mapBinding: MapLayoutBinding
-    lateinit var errorBinding: ErrorLayoutBinding
+    private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
     private val startZoomLevel = 15
     var latitude: String? = "35.234"

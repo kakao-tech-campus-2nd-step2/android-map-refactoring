@@ -2,7 +2,6 @@ package campus.tech.kakao.map.data
 
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.domain.PlaceDataModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,18 +13,18 @@ class PlaceRepository {
 
     fun searchPlace(
         keyword: String,
-        onSuccess: (List<PlaceDataModel>) -> Unit,
+        onSuccess: (List<Place>) -> Unit,
         onFailure: (Throwable) -> Unit
     ) {
         val call = retrofitLocalKeywordService.searchPlaceByKeyword("KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}", keyword)
         call.enqueue(object : Callback<SearchResult> {
             override fun onResponse(call: Call<SearchResult>, response: Response<SearchResult>) {
                 if (response.isSuccessful) {
-                    val keywordList: MutableList<PlaceDataModel> = mutableListOf()
+                    val keywordList: MutableList<Place> = mutableListOf()
                     val places = response.body()?.documents
                     places?.let {
                         for (placeInfo in places) {
-                            val place = PlaceDataModel(
+                            val place = Place(
                                 name = placeInfo.placeName,
                                 category = placeInfo.categoryGroupName,
                                 address = placeInfo.addressName,
