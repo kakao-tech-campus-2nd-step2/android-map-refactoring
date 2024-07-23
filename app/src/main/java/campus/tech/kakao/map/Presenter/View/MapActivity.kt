@@ -6,15 +6,14 @@ import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View.VISIBLE
-import android.widget.Button
 import android.widget.TextView
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.Base.ErrorEnum
-import campus.tech.kakao.map.Base.ViewModelFactory
-import campus.tech.kakao.map.MyApplication
+import campus.tech.kakao.map.Domain.VO.Place
 import campus.tech.kakao.map.Presenter.ViewModel.MapViewModel
 import campus.tech.kakao.map.R
 import com.kakao.vectormap.KakaoMap
@@ -22,6 +21,7 @@ import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.MapView
+import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
@@ -47,9 +47,15 @@ class MapActivity : AppCompatActivity() {
         placeName = findViewById<TextView>(R.id.placeName)
         placeAddress = findViewById<TextView>(R.id.placeAddress)
 
-        initViewModel()
-        settingMap()
-        setSearchListener()
+        loadStateFromSharedPreference()
+        startMap()
+        setSearchListener(makeResultLauncher())
+        viewModel.currentPlace.observe(this){
+            it?.let{
+                settingBottomSheet(it)
+                saveStateOnSharedPreference(it.id)
+            }
+        }
     }
 
     override fun onResume() {
@@ -61,30 +67,14 @@ class MapActivity : AppCompatActivity() {
         super.onPause()
         mapView.pause()
     }
-    private fun save(id: Int){
+
+    private fun loadStateFromSharedPreference(){
         val sharedPreferences = getSharedPreferences(CURRENT_PLACE, Context.MODE_PRIVATE)
-        val editor : SharedPreferences.Editor = sharedPreferences.edit()
-
-        editor.putInt(COLUMN_ID,id)
-        editor.commit()
+        val id = sharedPreferences.getInt(COLUMN_ID, NO_ID)
+        if(id != NO_ID) viewModel.initPlace(id)
     }
-    private fun settingMap(){
-        var latLng = LatLng.from(0.0,0.0)
-        var name = ""
 
-        viewModel.currentPlace.observe(this@MapActivity){
-           it?.let{
-               latLng = LatLng.from(it.y,it.x)
-               name = it.name
-
-               bottomSheet.visibility = VISIBLE
-               placeName.text = it.name
-               placeAddress.text = it.address
-
-               save(it.id)
-           }
-        }
-
+    private fun startMap(){
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
             }
@@ -100,17 +90,38 @@ class MapActivity : AppCompatActivity() {
         }, object : KakaoMapReadyCallback() {
 
             override fun onMapReady(kakaoMap: KakaoMap) {
-                makeMark(kakaoMap,latLng,name)
+                handleViewOnStateChanged(kakaoMap)
             }
-
-            override fun getPosition(): LatLng {
-                return latLng
-            }
-
         })
     }
 
-    private fun makeMark(kakaoMap: KakaoMap, latLng: LatLng, name : String?) {
+    private fun handleViewOnStateChanged(kakaoMap: KakaoMap){
+        viewModel.currentPlace.observe(this@MapActivity){
+            it?.let{
+                val latLng = LatLng.from(it.y,it.x)
+                addPinOnMap(kakaoMap,latLng,it.name)
+                kakaoMap.moveCamera(
+                    CameraUpdateFactory.newCenterPosition(latLng)
+                )
+            }
+        }
+    }
+
+    private fun settingBottomSheet(place: Place){
+        bottomSheet.visibility = VISIBLE
+        placeName.text = place.name
+        placeAddress.text = place.address
+    }
+
+    private fun saveStateOnSharedPreference(id: Int){
+        val sharedPreferences = getSharedPreferences(CURRENT_PLACE, Context.MODE_PRIVATE)
+        val editor : SharedPreferences.Editor = sharedPreferences.edit()
+
+        editor.putInt(COLUMN_ID,id)
+        editor.commit()
+    }
+
+    private fun addPinOnMap(kakaoMap: KakaoMap, latLng: LatLng, name : String?) {
         val styles = kakaoMap.labelManager?.addLabelStyles(
             LabelStyles.from(
                 LabelStyle.from(R.drawable.location_pin)
@@ -124,24 +135,23 @@ class MapActivity : AppCompatActivity() {
         layer?.addLabel(options)
     }
 
-    private fun initViewModel(){
-        if(intent.extras == null){
-            //첫 진입, SharedPreference로 초기화
-            val sharedPreferences = getSharedPreferences(CURRENT_PLACE, Context.MODE_PRIVATE)
-            val id = sharedPreferences.getInt(COLUMN_ID, NO_ID)
-            if(id != NO_ID) viewModel.initPlace(id)
-        } else {
-            //검색을 통해 넘어옴
-            intent.extras?.getInt(PlaceSearchActivity.INTENT_ID)?.let {
-                viewModel.initPlace(it)
-            }
+    private fun setSearchListener(startActivityLauncher : ActivityResultLauncher<Intent>){
+        searchText.setOnClickListener {
+            startActivityLauncher.launch(Intent(this,PlaceSearchActivity::class.java))
         }
     }
 
-    private fun setSearchListener(){
-        searchText.setOnClickListener {
-            val intent = Intent(this, PlaceSearchActivity::class.java)
-            startActivity(intent)
+    private fun makeResultLauncher() = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){
+        when(it.resultCode){
+            RESULT_OK -> {
+                it.data?.extras?.getInt(PlaceSearchActivity.INTENT_ID)?.let{
+                    viewModel.initPlace(it)
+                }
+
+            }
+            else -> {}
         }
     }
 
