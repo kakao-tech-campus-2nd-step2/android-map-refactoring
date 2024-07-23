@@ -12,13 +12,21 @@ import campus.tech.kakao.map.viewmodel.SearchViewModel
 import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
 import campus.tech.kakao.map.adapter.SavedKeywordsAdapter
 import campus.tech.kakao.map.adapter.SearchResultsAdapter
+import campus.tech.kakao.map.data.AppDatabase
+import campus.tech.kakao.map.data.KakaoApiClient
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import campus.tech.kakao.map.repository.Repository
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchViewModel by viewModels { SearchViewModelFactory(applicationContext) }
     private lateinit var searchResultsAdapter: SearchResultsAdapter
     private lateinit var savedKeywordsAdapter: SavedKeywordsAdapter
+    private val viewModel: SearchViewModel by viewModels {
+        val context = applicationContext
+        val database = AppDatabase.getDatabase(context)
+        val repository = Repository(context, database.keywordDao(), KakaoApiClient.createService())
+        SearchViewModelFactory(repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

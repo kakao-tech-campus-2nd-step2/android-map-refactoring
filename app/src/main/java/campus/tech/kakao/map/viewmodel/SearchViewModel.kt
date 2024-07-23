@@ -1,14 +1,12 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.*
 import campus.tech.kakao.map.data.Keyword
 import campus.tech.kakao.map.repository.Repository
 import kotlinx.coroutines.launch
 
-class SearchViewModel(private val context: Context) : ViewModel() {
-    private val repository: Repository = Repository(context)
+class SearchViewModel(private val repository: Repository) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<Keyword>>()
     val searchResults: LiveData<List<Keyword>> = _searchResults
@@ -74,11 +72,11 @@ class SearchViewModel(private val context: Context) : ViewModel() {
     }
 }
 
-class SearchViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
+class SearchViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return SearchViewModel(context) as T
+            return SearchViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

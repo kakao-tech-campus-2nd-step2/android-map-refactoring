@@ -2,20 +2,20 @@ package campus.tech.kakao.map.repository
 
 import android.content.Context
 import android.content.SharedPreferences
-import campus.tech.kakao.map.data.DatabaseHelper
+import campus.tech.kakao.map.data.KeywordDao
+import campus.tech.kakao.map.data.KakaoLocalApiService
 import campus.tech.kakao.map.data.Keyword
-import campus.tech.kakao.map.data.KakaoApiClient
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class Repository(private val context: Context) {
-    private val dbHelper = DatabaseHelper.getInstance(context)
-    private val db = dbHelper.writableDatabase
-    private val sharedPreferences = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
-
-    private val kakaoApiService = KakaoApiClient.createService()
+class Repository(
+    context: Context,
+    private val keywordDao: KeywordDao,
+    private val kakaoApiService: KakaoLocalApiService
+) {
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
 
     suspend fun search(query: String): List<Keyword> = withContext(Dispatchers.IO) {
         val response = kakaoApiService.searchPlaces(query).execute()
@@ -28,32 +28,15 @@ class Repository(private val context: Context) {
         }
     }
 
-    fun populateInitialData() {
-        val dataCategories = listOf("cafe", "pharmacy", "cinema")
-
-        db.beginTransaction()
-        for (category in dataCategories) {
-            for (i in 1..10) {
-                val name = "$category$i"
-                val address = "대전 유성구 봉명동 $i"
-                if (!isDataExist(name)) {
-                    val insertData = "INSERT INTO ${DatabaseHelper.TABLE_NAME} (${DatabaseHelper.COLUMN_NAME}, ${DatabaseHelper.COLUMN_ADDRESS}) " +
-                            "VALUES ('$name', '$address')"
-                    db.execSQL(insertData)
-                }
-            }
-        }
-        db.setTransactionSuccessful()
-        db.endTransaction()
-        db.close()
+    suspend fun insertKeyword(keyword: Keyword) {
+        keywordDao.insert(keyword)
     }
 
-    private fun isDataExist(name: String): Boolean {
-        val cursor = db.rawQuery("SELECT 1 FROM ${DatabaseHelper.TABLE_NAME} WHERE ${DatabaseHelper.COLUMN_NAME} = ?", arrayOf(name))
-        val exists = cursor.count > 0
-        cursor.close()
-        return exists
+    suspend fun deleteKeyword(keyword: Keyword) {
+        keywordDao.deleteById(keyword.id)
     }
+
+    suspend fun getAllKeywords(): List<Keyword> = keywordDao.getAll()
 
     fun saveKeywordToPrefs(keyword: Keyword) {
         val savedKeywords = getAllSavedKeywordsFromPrefs().toMutableList()
@@ -78,7 +61,6 @@ class Repository(private val context: Context) {
     }
 
     fun saveLastMarkerPosition(latitude: Double, longitude: Double, placeName: String, roadAddressName: String) {
-        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         with(sharedPreferences.edit()) {
             putFloat(PREF_LATITUDE, latitude.toFloat())
             putFloat(PREF_LONGITUDE, longitude.toFloat())
@@ -89,7 +71,6 @@ class Repository(private val context: Context) {
     }
 
     fun loadLastMarkerPosition(): Keyword? {
-        val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         return if (sharedPreferences.contains(PREF_LATITUDE) && sharedPreferences.contains(PREF_LONGITUDE)) {
             val latitude = sharedPreferences.getFloat(PREF_LATITUDE, 0.0f).toDouble()
             val longitude = sharedPreferences.getFloat(PREF_LONGITUDE, 0.0f).toDouble()

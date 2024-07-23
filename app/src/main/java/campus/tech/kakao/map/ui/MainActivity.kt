@@ -10,8 +10,11 @@ import android.widget.FrameLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.AppDatabase
+import campus.tech.kakao.map.data.KakaoApiClient
 import campus.tech.kakao.map.data.Keyword
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.repository.Repository
 import campus.tech.kakao.map.viewmodel.SearchViewModel
 import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -32,7 +35,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var kakaoMap: KakaoMap
     private lateinit var labelLayer: LabelLayer
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private val viewModel: SearchViewModel by viewModels { SearchViewModelFactory(applicationContext) }
+    private val viewModel: SearchViewModel by viewModels {
+        val context = applicationContext
+        val database = AppDatabase.getDatabase(context)
+        val repository = Repository(context, database.keywordDao(), KakaoApiClient.createService())
+        SearchViewModelFactory(repository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
