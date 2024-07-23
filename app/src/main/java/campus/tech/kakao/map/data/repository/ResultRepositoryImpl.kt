@@ -8,8 +8,9 @@ import campus.tech.kakao.map.data.ServerResult
 import campus.tech.kakao.map.data.source.RetrofitService
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.domain.repository.ResultRepository
+import javax.inject.Inject
 
-class ResultRepositoryImpl(
+class ResultRepositoryImpl @Inject constructor(
     private val retrofit: RetrofitService
 ) : ResultRepository {
     private val result = mutableListOf<Location>()

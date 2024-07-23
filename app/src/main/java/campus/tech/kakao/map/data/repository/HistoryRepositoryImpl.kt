@@ -6,8 +6,9 @@ import campus.tech.kakao.map.MapContract
 import campus.tech.kakao.map.data.source.MapDbHelper
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.domain.repository.HistoryRepository
+import javax.inject.Inject
 
-class HistoryRepositoryImpl(
+class HistoryRepositoryImpl @Inject constructor(
     private val helper: MapDbHelper
 ) : HistoryRepository {
     override fun insertHistory(newHistory: Location) {

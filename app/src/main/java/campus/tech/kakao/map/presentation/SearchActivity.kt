@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
@@ -19,11 +20,11 @@ import campus.tech.kakao.map.data.repository.HistoryRepositoryImpl
 import campus.tech.kakao.map.data.repository.LastLocationRepositoryImpl
 import campus.tech.kakao.map.data.repository.ResultRepositoryImpl
 import campus.tech.kakao.map.data.source.MapDbHelper
-import campus.tech.kakao.map.data.source.RetrofitServiceClient
-
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), DatabaseListener {
-//    private val viewModel: MapViewModel by viewModels()
-    private lateinit var viewModel: MapViewModel
+    private val viewModel: MapViewModel by viewModels()
     private lateinit var searchBox: EditText
     private lateinit var searchHistoryView: RecyclerView
     private lateinit var searchResultView: RecyclerView
@@ -38,14 +39,6 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val dbHelper = MapDbHelper(this)
-        val retrofit = RetrofitServiceClient.retrofitService
-        viewModel = MapViewModel(
-            dbHelper,
-            ResultRepositoryImpl(retrofit) ,
-            HistoryRepositoryImpl(dbHelper),
-            LastLocationRepositoryImpl(dbHelper)
-        )
         searchBox = findViewById(R.id.search_box)
         searchHistoryView = findViewById(R.id.search_history)
         searchResultView = findViewById(R.id.search_result)

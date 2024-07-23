@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -17,7 +18,6 @@ import campus.tech.kakao.map.data.repository.HistoryRepositoryImpl
 import campus.tech.kakao.map.data.repository.LastLocationRepositoryImpl
 import campus.tech.kakao.map.data.repository.ResultRepositoryImpl
 import campus.tech.kakao.map.data.source.MapDbHelper
-import campus.tech.kakao.map.data.source.RetrofitServiceClient
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.ResultRepository
 import com.kakao.vectormap.KakaoMap
@@ -31,8 +31,10 @@ import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private val TAG = "KAKAOMAP"
     private lateinit var kakaoMapView: MapView
@@ -44,7 +46,7 @@ class MapActivity : AppCompatActivity() {
     private lateinit var errorLayout: ConstraintLayout
     private lateinit var errorCode: TextView
 
-    private lateinit var viewModel: MapViewModel
+    private val viewModel : MapViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +58,6 @@ class MapActivity : AppCompatActivity() {
         infoSheetAddress = findViewById(R.id.info_sheet_address)
         errorLayout = findViewById(R.id.error_layout)
         errorCode = findViewById(R.id.error_code)
-
-        val dbhelper = MapDbHelper(this)
-        val resultRepo = ResultRepositoryImpl(RetrofitServiceClient.retrofitService)
-        val historyRepo = HistoryRepositoryImpl(dbhelper)
-        val lastRepo = LastLocationRepositoryImpl(dbhelper)
-        viewModel = MapViewModel(dbhelper, resultRepo, historyRepo, lastRepo)
 
         kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
@@ -129,8 +125,15 @@ class MapActivity : AppCompatActivity() {
     private fun setPin(labelManager: LabelManager, target: Location) {
         labelManager.removeAllLabelLayer()
         val style = labelManager
-            .addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.location_label).setTextStyles(30, Color.BLACK)))
+            .addLabelStyles(
+                LabelStyles.from(
+                    LabelStyle.from(R.drawable.location_label).setTextStyles(30, Color.BLACK)
+                )
+            )
         labelManager.layer
-            ?.addLabel(LabelOptions.from(LatLng.from(target.y, target.x)).setStyles(style).setTexts(target.name))
+            ?.addLabel(
+                LabelOptions.from(LatLng.from(target.y, target.x)).setStyles(style)
+                    .setTexts(target.name)
+            )
     }
 }

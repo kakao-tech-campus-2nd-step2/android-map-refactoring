@@ -12,13 +12,16 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import campus.tech.kakao.map.MapApplication
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.data.source.MapDbHelper
+import campus.tech.kakao.map.data.source.RetrofitService
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import campus.tech.kakao.map.domain.repository.ResultRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MapViewModel(
-    dbHelper: MapDbHelper,
+@HiltViewModel
+class MapViewModel @Inject constructor(
     private val resultRepository: ResultRepository,
     private val historyRepository: HistoryRepository,
     private val lastLocationRepository: LastLocationRepository
@@ -66,17 +69,4 @@ class MapViewModel(
         return lastLocationRepository.getLastLocation()
     }
 
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as MapApplication)
-                MapViewModel(
-                    application.dbHelper,
-                    application.resultRepositoryImpl,
-                    application.historyRepositoryImpl,
-                    application.lastLocationRepositoryImpl
-                )
-            }
-        }
-    }
 }

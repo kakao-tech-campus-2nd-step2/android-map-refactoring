@@ -7,8 +7,9 @@ import campus.tech.kakao.map.MapContract
 import campus.tech.kakao.map.data.source.MapDbHelper
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
+import javax.inject.Inject
 
-class LastLocationRepositoryImpl(
+class LastLocationRepositoryImpl @Inject constructor(
     private val helper: MapDbHelper
 ) : LastLocationRepository {
     override fun insertLastLocation(location: Location) {
