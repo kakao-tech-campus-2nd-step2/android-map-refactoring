@@ -16,6 +16,10 @@
 
 ![map_location](https://github.com/user-attachments/assets/05e64aed-bcc6-4a3f-9a08-9bb5d2377702)
 
+## 프로젝트 구조도
+
+![카카오맵_구조도](https://github.com/user-attachments/assets/9b1a7c82-a33f-42af-9a1f-cd2c3fea679f)
+
 ## feature
 
 ### 이전 단계
