@@ -10,6 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.utility.BottomSheetHelper
 import campus.tech.kakao.map.utility.MapUtility
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
@@ -31,6 +32,9 @@ class MapActivity : AppCompatActivity() {
     @Inject
     lateinit var mapUtility: MapUtility
 
+    @Inject
+    lateinit var bottomSheetHelper: BottomSheetHelper
+
     lateinit var mapView: MapView
     lateinit var startMainActivityForResult: ActivityResultLauncher<Intent>
     var map: KakaoMap? = null
@@ -45,15 +49,8 @@ class MapActivity : AppCompatActivity() {
         mapView = findViewById(R.id.map_view)
         loadData()  // 저장 위치 가져오기
 
-        // 수정 필요 (Week4 Step 1 Feedback)
         startMainActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
-                result.data?.let { data ->
-                    val name = data.getStringExtra("name") ?: ""
-                    val address = data.getStringExtra("address") ?: ""
-                    val latitude = data.getStringExtra("latitude")?.toDoubleOrNull()
-                    val longitude = data.getStringExtra("longitude")?.toDoubleOrNull()
-                }
             }
         }
 
@@ -92,7 +89,7 @@ class MapActivity : AppCompatActivity() {
                     savedLatitude = latitude
                     savedLongitude = longitude
 
-                    bottomSheet(name.toString(), address.toString())
+                    bottomSheetHelper.bottomSheet(name.toString(), address.toString())
                 }
             }
         })
@@ -121,17 +118,5 @@ class MapActivity : AppCompatActivity() {
         val pref = getSharedPreferences("pref", 0)
         savedLatitude = pref.getString("latitude", "37.5642")?.toDouble() ?: 37.5642
         savedLongitude = pref.getString("longitude", "127.00")?.toDouble() ?: 127.00
-    }
-
-    // name과 address bottomSheet
-    fun bottomSheet(name: String, address: String) {
-        val bottomSheetDialog = BottomSheetDialog(this@MapActivity)
-        val bottomSheetLayout = layoutInflater.inflate(R.layout.bottom_sheet,null)
-        bottomSheetDialog.setContentView(bottomSheetLayout)
-        val bottomName = bottomSheetLayout.findViewById<TextView>(R.id.tvBName)
-        val bottomAddress = bottomSheetLayout.findViewById<TextView>(R.id.tvBAddress)
-        bottomName.text= name
-        bottomAddress.text = address
-        bottomSheetDialog.show()
     }
 }
