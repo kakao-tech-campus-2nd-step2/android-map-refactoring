@@ -61,8 +61,4 @@ class SearchRecyclerViewAdapter(
         holder.placeName.text = place.name
     }
 
-    override fun submitList(list: MutableList<Place>?) {
-        super.submitList(list)
-    }
-
 }
