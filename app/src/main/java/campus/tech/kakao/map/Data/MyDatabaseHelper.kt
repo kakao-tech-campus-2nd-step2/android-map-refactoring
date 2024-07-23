@@ -76,15 +76,11 @@ class MyDatabaseHelper(context: Context) : SQLiteOpenHelper(context, "History.db
 
     class SearchItemViewHolder(itemView: View, private val onItemClick: (String) -> Unit) :
         RecyclerView.ViewHolder(itemView) {
+        private val nameTextView: TextView = itemView.findViewById(R.id.result)
 
-        private val nameTextView:TextView = itemView.findViewById(R.id.name)
-        private val addressTextView : TextView = itemView.findViewById(R.id.place)
-        private val categoryTextView : TextView = itemView.findViewById((R.id.category))
-
-        fun bind(searchText: String) {
-            nameTextView.text = MapContract.COLUMN_NAME
-            addressTextView.text = MapContract.COLUMN_ADDRESS
-            categoryTextView.text = MapContract.COLUMN_CATEGORY
+        fun bind(placeName: String) {
+            nameTextView.text = placeName
+            itemView.setOnClickListener { onItemClick(placeName) }
         }
     }
 }
