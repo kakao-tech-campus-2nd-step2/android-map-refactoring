@@ -1,20 +1,22 @@
 package campus.tech.kakao.map.data.history
 
-class HistoryRepository(
+import campus.tech.kakao.map.domain.repository.HistoryRepository
+
+class HistoryRepositoryImpl(
     private val historyDao: HistoryDao
-) {
-    suspend fun getHistory(): List<String> {
+) : HistoryRepository {
+    override suspend fun getHistory(): List<String> {
         return historyDao.getAll().map { history ->
             history.name
         }
     }
 
-    suspend fun addHistory(locationName: String) {
+    override suspend fun addHistory(locationName: String) {
         historyDao.deleteByName(locationName)
         historyDao.insertHistory(History(name = locationName))
     }
 
-    suspend fun removeHistory(locationName: String) {
+    override suspend fun removeHistory(locationName: String) {
         historyDao.deleteByName(locationName)
     }
 }

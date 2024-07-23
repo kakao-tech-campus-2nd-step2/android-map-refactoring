@@ -1,9 +1,11 @@
 package campus.tech.kakao.map.data.local_search
 
-class SearchLocationRepository(
+import campus.tech.kakao.map.domain.repository.SearchLocationRepository
+
+class SearchLocationRepositoryImpl(
     private val localSearchService: LocalSearchService
-) {
-    suspend fun searchLocation(category: String): List<Location> {
+) : SearchLocationRepository {
+    override suspend fun searchLocation(category: String): List<Location> {
         val response = localSearchService.requestLocalSearch(query = category)
         return response.body()?.documents?.map {
             Location(

@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
 import campus.tech.kakao.map.data.history.HistoryDatabase
-import campus.tech.kakao.map.data.history.HistoryRepository
+import campus.tech.kakao.map.data.history.HistoryRepositoryImpl
 import campus.tech.kakao.map.data.local_search.LocalSearchService
-import campus.tech.kakao.map.data.local_search.SearchLocationRepository
+import campus.tech.kakao.map.data.local_search.SearchLocationRepositoryImpl
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -22,14 +22,14 @@ class SearchLocationViewModelFactory(
                 HistoryDatabase::class.java,
                 "history_database"
             ).build()
-            val historyRepository = HistoryRepository(db.historyDao())
+            val historyRepository = HistoryRepositoryImpl(db.historyDao())
 
             val localSearchService = Retrofit.Builder()
                 .baseUrl("https://dapi.kakao.com/v2/local/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(LocalSearchService::class.java)
-            val searchLocationRepository = SearchLocationRepository(localSearchService)
+            val searchLocationRepository = SearchLocationRepositoryImpl(localSearchService)
 
             return SearchLocationViewModel(historyRepository, searchLocationRepository) as T
         }

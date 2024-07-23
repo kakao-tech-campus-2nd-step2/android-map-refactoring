@@ -3,7 +3,7 @@ package campus.tech.kakao.map.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.last_location.LastLocationRepository
+import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
 
