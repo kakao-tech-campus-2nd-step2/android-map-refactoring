@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+<<<<<<< HEAD
+    <!-- 권한 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+=======
+>>>>>>> origin/step0
 
     <application
         android:allowBackup="true"
@@ -13,6 +21,25 @@
         android:theme="@style/Theme.Map"
         tools:targetApi="31">
         <activity
+<<<<<<< HEAD
+            android:name=".Map_Activity"
+            android:exported="true" />
+        <activity
+            android:name=".Search_Activity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4U" />
+    </application>
+
+</manifest>
+=======
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -24,3 +51,4 @@
     </application>
 
 </manifest>
+>>>>>>> origin/step0
