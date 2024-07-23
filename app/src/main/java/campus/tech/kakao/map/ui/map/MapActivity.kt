@@ -13,8 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_MAP_ERROR_MESSAGE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
@@ -160,7 +160,7 @@ class MapActivity : AppCompatActivity() {
             override fun getPosition(): LatLng {
                 return LatLng.from(
                     locationViewModel.location.value.latitude,
-                    locationViewModel.location.value.longitude
+                    locationViewModel.location.value.longitude,
                 )
             }
         }
@@ -203,8 +203,8 @@ class MapActivity : AppCompatActivity() {
         return LabelOptions.from(
             LatLng.from(
                 locationViewModel.location.value.latitude,
-                locationViewModel.location.value.longitude
-            )
+                locationViewModel.location.value.longitude,
+            ),
         )
             .setStyles(labelManager.addLabelStyles(styles))
             .setTexts(locationViewModel.location.value.name)

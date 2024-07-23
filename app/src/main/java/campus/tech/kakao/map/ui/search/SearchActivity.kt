@@ -10,13 +10,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.data.model.Place
 import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
+import campus.tech.kakao.map.ui.interfaces.OnPlaceItemClickListener
+import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.interfaces.OnSavedSearchWordTextViewClickListener
 import campus.tech.kakao.map.ui.search.adapters.ResultRecyclerViewAdapter
 import campus.tech.kakao.map.ui.search.adapters.SavedSearchWordRecyclerViewAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,10 +80,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    interface OnPlaceItemClickListener {
-        fun onPlaceItemClicked(place: Place)
-    }
-
     /**
      * 검색 결과를 표시하는 RecyclerView를 설정하는 함수.
      *
@@ -105,7 +104,7 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun insertSearchWord(place: Place) {
         savedSearchWordViewModel.insertSearchWord(
-            place.toSavedSearchWord()
+            place.toSavedSearchWord(),
         )
     }
 
@@ -139,14 +138,6 @@ class SearchActivity : AppCompatActivity() {
         finish()
     }
 
-    interface OnSavedSearchWordClearImageViewClickListener {
-        fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord)
-    }
-
-    interface OnSavedSearchWordTextViewClickListener {
-        fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWord)
-    }
-
     /**
      * SavedSearchWordRecyclerView를 설정하는 함수.
      *
@@ -169,7 +160,7 @@ class SearchActivity : AppCompatActivity() {
         binding.savedSearchWordRecyclerView.adapter =
             SavedSearchWordRecyclerViewAdapter(
                 savedSearchWordClearImageViewClickListener,
-                savedSearchWordTextViewClickListener
+                savedSearchWordTextViewClickListener,
             )
         binding.savedSearchWordRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -228,7 +219,7 @@ class SearchActivity : AppCompatActivity() {
             placeId = this.id,
             address = this.address,
             latitude = this.latitude,
-            longitude = this.longitude
+            longitude = this.longitude,
         )
     }
 }

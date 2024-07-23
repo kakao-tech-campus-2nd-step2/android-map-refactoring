@@ -13,10 +13,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class SavedSearchWordViewModel @Inject constructor(
-    private val savedSearchWordRepository: SavedSearchWordRepository
+class SavedSearchWordViewModel
+@Inject
+constructor(
+    private val savedSearchWordRepository: SavedSearchWordRepository,
 ) : ViewModel() {
-
     private val _savedSearchWords = MutableStateFlow<List<SavedSearchWord>>(emptyList())
     val savedSearchWords: StateFlow<List<SavedSearchWord>> get() = _savedSearchWords
 

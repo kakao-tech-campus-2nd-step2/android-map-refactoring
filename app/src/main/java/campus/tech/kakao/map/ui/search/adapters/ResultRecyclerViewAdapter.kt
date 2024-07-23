@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.databinding.ItemPlaceBinding
 import campus.tech.kakao.map.data.model.Place
-import campus.tech.kakao.map.ui.search.SearchActivity
+import campus.tech.kakao.map.databinding.ItemPlaceBinding
+import campus.tech.kakao.map.ui.interfaces.OnPlaceItemClickListener
 
-class ResultRecyclerViewAdapter(private val clickListener: SearchActivity.OnPlaceItemClickListener) :
+class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListener) :
     ListAdapter<Place, ResultRecyclerViewAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -29,7 +29,7 @@ class ResultRecyclerViewAdapter(private val clickListener: SearchActivity.OnPlac
 
     class PlaceViewHolder(
         private val binding: ItemPlaceBinding,
-        private val clickListener: SearchActivity.OnPlaceItemClickListener
+        private val clickListener: OnPlaceItemClickListener,
     ) :
         RecyclerView.ViewHolder(binding.root) {
         private lateinit var currentPlace: Place

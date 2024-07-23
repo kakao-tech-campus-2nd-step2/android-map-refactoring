@@ -6,8 +6,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class DefaultSavedSearchWordRepository @Inject constructor(
-    private val savedSearchWordDao: SavedSearchWordDao
+class DefaultSavedSearchWordRepository
+@Inject
+constructor(
+    private val savedSearchWordDao: SavedSearchWordDao,
 ) : SavedSearchWordRepository {
     override suspend fun insertOrUpdateSearchWord(searchWord: SavedSearchWord) {
         savedSearchWordDao.insertOrUpdateSearchWord(searchWord)

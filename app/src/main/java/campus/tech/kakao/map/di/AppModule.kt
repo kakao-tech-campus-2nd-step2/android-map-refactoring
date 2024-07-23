@@ -3,8 +3,8 @@ package campus.tech.kakao.map.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import campus.tech.kakao.map.data.repository.LocationSerializer
 import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.data.repository.LocationSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +19,7 @@ object AppModule {
         fileName = "location_data.pb",
         serializer = LocationSerializer,
     )
+
     @Provides
     @Singleton
     fun provideDataStore(

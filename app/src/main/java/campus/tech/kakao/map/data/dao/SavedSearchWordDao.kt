@@ -8,7 +8,6 @@ import campus.tech.kakao.map.data.model.SavedSearchWord
 
 @Dao
 interface SavedSearchWordDao {
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateSearchWord(searchWord: SavedSearchWord)
 

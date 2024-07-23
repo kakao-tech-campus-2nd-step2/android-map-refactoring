@@ -3,8 +3,8 @@ package campus.tech.kakao.map.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.repository.LocationRepository
 import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.data.repository.LocationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
