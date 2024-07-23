@@ -1,8 +1,10 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.map
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -12,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.domain.model.Place
+import campus.tech.kakao.map.presentation.search.SearchActivity
+import campus.tech.kakao.map.presentation.ViewModelFactory
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -35,6 +39,7 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
+
         initViewModel()
         initMapView()
         initSearchView()
@@ -44,7 +49,7 @@ class MapActivity : AppCompatActivity() {
 
     private fun initViewModel(){
         val placeRepository = (application as PlaceApplication).placeRepository
-        mapViewModel = ViewModelProvider(this,ViewModelFactory(placeRepository))
+        mapViewModel = ViewModelProvider(this, ViewModelFactory(placeRepository))
             .get(MapViewModel::class.java)
 
         mapViewModel.lastVisitedPlace.observe(this, { place ->
@@ -65,9 +70,12 @@ class MapActivity : AppCompatActivity() {
             override fun onMapReady(map: KakaoMap) {
                 if (!isNetworkAvailable()) {
                     showErrorPage(Exception("네트워크 연결 오류"))
+                }else{
+                    kakaoMap = map
+                    tvErrorMessage.visibility = View.GONE
+                    mapView.visibility = View.VISIBLE
+                    mapViewModel.loadLastVisitedPlace()
                 }
-                kakaoMap = map
-                mapViewModel.loadLastVisitedPlace()
             }
         })
     }
@@ -84,8 +92,9 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showErrorPage(error: Exception) {
-        setContentView(R.layout.error_page)
         tvErrorMessage = findViewById(R.id.tvErrorMessage)
+        tvErrorMessage.visibility = View.VISIBLE
+        mapView.visibility = View.GONE
         tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
     }
 

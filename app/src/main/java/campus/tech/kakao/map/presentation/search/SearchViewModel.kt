@@ -1,13 +1,8 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.search
 
 import androidx.lifecycle.*
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

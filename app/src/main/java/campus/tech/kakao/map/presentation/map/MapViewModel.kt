@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.map
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

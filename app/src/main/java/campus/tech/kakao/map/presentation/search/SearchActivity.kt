@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,6 +17,8 @@ import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.presentation.adapter.SearchedPlaceAdapter
 import campus.tech.kakao.map.presentation.adapter.LogAdapter
 import campus.tech.kakao.map.domain.model.Place
+import campus.tech.kakao.map.presentation.ViewModelFactory
+import campus.tech.kakao.map.presentation.map.MapActivity
 import campus.tech.kakao.map.util.PlaceMapper
 import kotlinx.coroutines.launch
 
@@ -40,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun initViewModel() {
         val placeRepository = (application as PlaceApplication).placeRepository
-        viewModel = ViewModelProvider(this,ViewModelFactory(placeRepository))
+        viewModel = ViewModelProvider(this, ViewModelFactory(placeRepository))
             .get(SearchViewModel::class.java)
     }
 

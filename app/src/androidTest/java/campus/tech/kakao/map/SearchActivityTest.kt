@@ -12,8 +12,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.presentation.MapActivity
-import campus.tech.kakao.map.presentation.SearchActivity
+import campus.tech.kakao.map.presentation.map.MapActivity
+import campus.tech.kakao.map.presentation.search.SearchActivity
 import campus.tech.kakao.map.presentation.adapter.SearchedPlaceAdapter
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.After

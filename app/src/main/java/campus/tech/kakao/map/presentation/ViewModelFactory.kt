@@ -3,6 +3,8 @@ package campus.tech.kakao.map.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.domain.repository.PlaceRepository
+import campus.tech.kakao.map.presentation.map.MapViewModel
+import campus.tech.kakao.map.presentation.search.SearchViewModel
 
 
 class ViewModelFactory(private val repository: PlaceRepository) : ViewModelProvider.Factory {

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.search
 
 import campus.tech.kakao.map.domain.model.Place
 
