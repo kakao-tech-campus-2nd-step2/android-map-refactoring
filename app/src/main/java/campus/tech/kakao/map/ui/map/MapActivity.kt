@@ -9,7 +9,6 @@ import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.data.local_search.Location
@@ -30,9 +29,12 @@ import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    private lateinit var viewModel: MapViewModel
+    @Inject lateinit var viewModel: MapViewModel
     private lateinit var binding: ActivityMapBinding
     private lateinit var searchLocationLauncher: ActivityResultLauncher<Intent>
     private lateinit var mapErrorLauncher: ActivityResultLauncher<Intent>
@@ -43,9 +45,6 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val viewModelFactory = MapViewModelFactory(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[MapViewModel::class.java]
 
         searchLocationLauncher = createSearchLocationLauncher()
         mapErrorLauncher = createMapErrorLauncher()

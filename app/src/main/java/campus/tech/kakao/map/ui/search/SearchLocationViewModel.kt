@@ -8,8 +8,9 @@ import campus.tech.kakao.map.data.local_search.Location
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.SearchLocationRepository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchLocationViewModel(
+class SearchLocationViewModel @Inject constructor(
     private val historyRepository: HistoryRepository,
     private val searchLocationRepository: SearchLocationRepository
 ) : ViewModel() {

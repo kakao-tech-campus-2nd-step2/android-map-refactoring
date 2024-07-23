@@ -6,8 +6,9 @@ import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
+import javax.inject.Inject
 
-class MapViewModel(
+class MapViewModel @Inject constructor(
     private val lastLocationRepository: LastLocationRepository
 ) : ViewModel() {
 
