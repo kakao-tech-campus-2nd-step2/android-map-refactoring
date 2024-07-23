@@ -1,7 +1,7 @@
 package campus.tech.kakao.map
 
 import android.util.Log
-import campus.tech.kakao.map.data.last_location.LastLocationRepository
+import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import campus.tech.kakao.map.ui.map.MapViewModel
 import com.kakao.vectormap.LatLng
 import io.mockk.Runs

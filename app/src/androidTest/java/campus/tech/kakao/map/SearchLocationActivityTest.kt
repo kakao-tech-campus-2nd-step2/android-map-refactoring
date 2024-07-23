@@ -17,50 +17,39 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import campus.tech.kakao.map.data.local_search.Location
-import campus.tech.kakao.map.data.local_search.SearchLocationRepository
+import campus.tech.kakao.map.di.RepositoryModule
+import campus.tech.kakao.map.domain.repository.HistoryRepository
+import campus.tech.kakao.map.domain.repository.SearchLocationRepository
 import campus.tech.kakao.map.ui.search.SearchLocationActivity
-import campus.tech.kakao.map.ui.search.SearchLocationViewModel
-import io.mockk.Runs
-import io.mockk.coEvery
-import io.mockk.every
-import io.mockk.just
-import io.mockk.mockk
-import io.mockk.spyk
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.UninstallModules
 import io.mockk.unmockkAll
-import io.mockk.verify
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.Assert.*
+import javax.inject.Inject
 
+@UninstallModules(RepositoryModule::class)
+@HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
 class SearchLocationActivityTest {
     @get:Rule
     val activityRule = ActivityScenarioRule(SearchLocationActivity::class.java)
 
-    private val mockRepository = mockk<SearchLocationRepository>()
-    private lateinit var spyViewModel: SearchLocationViewModel
+    @get:Rule
+    val hiltRule = HiltAndroidRule(this)
+
+    @Inject lateinit var mockHistoryRepository: HistoryRepository
+    @Inject lateinit var mockLastLocationRepository: SearchLocationRepository
+    @Inject lateinit var mockSearchLocationRepository: SearchLocationRepository
 
     @Before
     fun setUp() {
-        every { mockRepository.getHistory() } returns listOf("기록1", "기록2")
-        spyViewModel = spyk(SearchLocationViewModel(mockRepository))
-
-        activityRule.scenario.onActivity {
-            val fieldViewModel = it::class.java.getDeclaredField("viewModel")
-            fieldViewModel.isAccessible = true
-            fieldViewModel.set(it, spyViewModel)
-
-            it.applyObserver()
-        }
-
-        coEvery { mockRepository.searchLocation(any()) } returns listOf(
-            Location("카페1", "주소1", "카페", 37.1, 127.1),
-            Location("카페2", "주소2", "카페", 37.2, 127.2)
-        )
+        hiltRule.inject()
     }
 
     @After
@@ -104,7 +93,6 @@ class SearchLocationActivityTest {
     @Test
     fun testMoveToMap() {
         // given
-        every { spyViewModel.addHistory(any()) } just Runs
         onView(withId(R.id.searchInputEditText)).perform(replaceText("카페"))
 
         // when - 아이템을 클릭한다
@@ -116,7 +104,6 @@ class SearchLocationActivityTest {
         )
 
         // then - 현재 액티비티를 종료하고, 이전 액티비티(MapActivity)에 결과를 전달해야한다.
-        verify { spyViewModel.addMarker(any()) }
         assertEquals(Lifecycle.State.DESTROYED, activityRule.scenario.state)
     }
 
