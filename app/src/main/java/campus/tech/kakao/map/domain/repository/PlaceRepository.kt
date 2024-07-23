@@ -9,5 +9,6 @@ interface PlaceRepository {
     fun getLogs(): List<Place>
     fun updateLogs(placeLog: List<Place>)
     fun removeLog(id: String)
-
+    fun saveLastVisitedPlace(place: Place)
+    fun getLastVisitedPlace(): Place?
 }

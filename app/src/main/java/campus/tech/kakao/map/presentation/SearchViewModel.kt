@@ -42,7 +42,6 @@ class SearchViewModel(private val repository: PlaceRepository) : ViewModel() {
         }.stateIn(viewModelScope,SharingStarted.Lazily, emptyList())
     val searchedPlaces: StateFlow<List<Place>> get() = _searchedPlaces
 
-
     init {
         _logList.value = getLogs()
     }
@@ -51,7 +50,7 @@ class SearchViewModel(private val repository: PlaceRepository) : ViewModel() {
         searchText.value = ""
     }
     suspend fun getPlaces(keyword: String): List<Place>{
-        return withContext(Dispatchers.IO) { repository.getPlaces(keyword) }
+        return repository.getPlaces(keyword)
     }
 
     fun getPlaceById(id: String): Place?{
@@ -77,14 +76,5 @@ class SearchViewModel(private val repository: PlaceRepository) : ViewModel() {
     fun removeLog(id: String) {
         repository.removeLog(id)
         _logList.value = getLogs()
-    }
-
-    companion object {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val placeRepository = (this[APPLICATION_KEY] as PlaceApplication).placeRepository
-                SearchViewModel(repository = placeRepository)
-            }
-        }
     }
 }

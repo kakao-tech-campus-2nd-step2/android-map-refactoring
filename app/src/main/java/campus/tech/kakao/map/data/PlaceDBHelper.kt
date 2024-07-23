@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 class PlaceDBHelper(context: Context):
     SQLiteOpenHelper(context, PlaceContract.DATABASE_NAME, null, 1){
 
+    private val sharedPreferences = context.getSharedPreferences("LastVisitedPlace", Context.MODE_PRIVATE)
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(PlaceContract.CREATE_QUERY)
         db?.execSQL(PlaceContract.CREATE_LOG_QUERY)
@@ -99,6 +100,30 @@ class PlaceDBHelper(context: Context):
             }
         }
         return logs
+    }
+
+    fun saveLastVisitedPlace(place: Place) {
+        val editor = sharedPreferences.edit()
+        editor.putString("placeName", place.place)
+        editor.putString("roadAddressName", place.address)
+        editor.putString("categoryName", place.category)
+        editor.putString("yPos", place.yPos)
+        editor.putString("xPos", place.xPos)
+        editor.apply()
+    }
+
+    fun getLastVisitedPlace(): Place? {
+        val placeName = sharedPreferences.getString("placeName", null)
+        val roadAddressName = sharedPreferences.getString("roadAddressName", null)
+        val categoryName = sharedPreferences.getString("categoryName", null)
+        val yPos = sharedPreferences.getString("yPos", null)
+        val xPos = sharedPreferences.getString("xPos", null)
+
+        return if (placeName != null && roadAddressName != null && categoryName != null && yPos != null && xPos != null) {
+            Place("", placeName, roadAddressName, categoryName, xPos, yPos)
+        } else {
+            null
+        }
     }
 
     companion object {

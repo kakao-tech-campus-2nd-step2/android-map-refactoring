@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.presentation.adapter.SearchedPlaceAdapter
@@ -38,7 +39,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this,SearchViewModel.Factory)
+        val placeRepository = (application as PlaceApplication).placeRepository
+        viewModel = ViewModelProvider(this,ViewModelFactory(placeRepository))
             .get(SearchViewModel::class.java)
     }
 

@@ -27,4 +27,12 @@ class PlaceRepositoryImpl(private val dbHelper: PlaceDBHelper):PlaceRepository{
     override fun removeLog(id: String) {
         dbHelper.removeLog(id)
     }
+
+    override fun saveLastVisitedPlace(place: Place) {
+        dbHelper.saveLastVisitedPlace(place)
+    }
+
+    override fun getLastVisitedPlace(): Place? {
+        return dbHelper.getLastVisitedPlace()
+    }
 }
