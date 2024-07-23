@@ -11,20 +11,24 @@ import campus.tech.kakao.map.model.KakaoMapProductResponse
 import campus.tech.kakao.map.model.MapItemEntity
 import campus.tech.kakao.map.network.RetrofitClient
 import campus.tech.kakao.map.repository.MapItemRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class MapViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    application: Application,
+    private var repository: MapItemRepository
+) : AndroidViewModel(application) {
 
     private val _searchResults = MutableLiveData<List<MapItem>>()
     val searchResults: LiveData<List<MapItem>> get() = _searchResults
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
-
-    private val repository: MapItemRepository
 
     init {
         val mapItemDao = AppDatabase.getDatabase(application).mapItemDao()
