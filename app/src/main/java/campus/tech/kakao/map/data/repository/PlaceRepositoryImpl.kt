@@ -3,14 +3,9 @@ package campus.tech.kakao.map.data.repository
 import android.content.Context
 import android.util.Log
 import campus.tech.kakao.map.data.PreferenceHelper
-import campus.tech.kakao.map.data.model.SearchResponse
-import campus.tech.kakao.map.data.network.HttpService
-import campus.tech.kakao.map.data.network.RetrofitObject
+import campus.tech.kakao.map.data.remote.network.HttpService
 import campus.tech.kakao.map.domain.model.PlaceVO
 import campus.tech.kakao.map.domain.repository.PlaceRepository
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class PlaceRepositoryImpl(private val context: Context) : PlaceRepository {
 //    private val retrofitService = RetrofitObject.retrofitService

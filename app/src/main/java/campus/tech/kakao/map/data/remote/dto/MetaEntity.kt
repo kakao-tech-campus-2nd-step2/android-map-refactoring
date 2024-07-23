@@ -1,6 +1,5 @@
-package campus.tech.kakao.map.data.model
+package campus.tech.kakao.map.data.remote.dto
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 data class MetaEntity(

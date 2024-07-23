@@ -1,9 +1,5 @@
-package campus.tech.kakao.map.data.network
+package campus.tech.kakao.map.data.remote.network
 
-import campus.tech.kakao.map.data.model.SearchResponse
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

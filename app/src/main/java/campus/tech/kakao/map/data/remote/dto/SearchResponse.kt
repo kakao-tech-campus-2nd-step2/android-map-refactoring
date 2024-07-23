@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.data.model
+package campus.tech.kakao.map.data.remote.dto
 
 data class SearchResponse(
     val meta: MetaEntity,

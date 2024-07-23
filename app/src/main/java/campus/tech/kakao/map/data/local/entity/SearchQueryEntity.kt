@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.data.model
+package campus.tech.kakao.map.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
