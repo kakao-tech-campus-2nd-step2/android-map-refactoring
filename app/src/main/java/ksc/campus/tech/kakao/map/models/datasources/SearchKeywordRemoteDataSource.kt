@@ -9,6 +9,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ksc.campus.tech.kakao.map.models.dao.SearchKeywordDao
 import ksc.campus.tech.kakao.map.models.entities.SearchKeyword
 import javax.inject.Inject
@@ -30,10 +32,12 @@ class SearchKeywordRemoteDataSource @Inject constructor(
         roomDB.dao().deleteWhere(keyword)
     }
 
-    fun queryAllSearchKeywords(): List<String> {
+    fun queryAllSearchKeywords(): Flow<List<String>> {
         val keywords = roomDB.dao().queryAllKeywords()
-        return keywords.map {
-            it.keyword ?: ""
+        return keywords.map { keyword ->
+            keyword.map {
+                it.keyword ?:""
+            }
         }
     }
 }

@@ -7,6 +7,8 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import ksc.campus.tech.kakao.map.models.repositoriesImpl.MapViewRepositoryImpl
 import javax.inject.Singleton
 
@@ -18,14 +20,14 @@ data class LocationInfo(
 )
 
 interface MapViewRepository {
-    val selectedLocation: LiveData<LocationInfo?>
-    val cameraPosition: LiveData<CameraPosition>
+    val selectedLocation: SharedFlow<LocationInfo?>
+    val cameraPosition: SharedFlow<CameraPosition>
 
-    fun loadFromSharedPreference(context: Context)
-    fun updateSelectedLocation(context: Context, locationInfo: LocationInfo)
-    fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double)
-    fun updateCameraPosition(context: Context, position: CameraPosition)
-    fun clearSelectedLocation()
+    suspend fun loadFromSharedPreference(context: Context)
+    suspend fun updateSelectedLocation(context: Context, locationInfo: LocationInfo)
+    suspend fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double)
+    suspend fun updateCameraPosition(context: Context, position: CameraPosition)
+    suspend fun clearSelectedLocation()
 }
 
 @Module

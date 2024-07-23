@@ -10,6 +10,10 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.Group
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -21,6 +25,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.R
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
@@ -28,8 +33,11 @@ import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivityViewModel) :
+class KakaoMapFragment @Inject constructor() :
     Fragment() {
+
+    private val viewModel: SearchActivityViewModel by activityViewModels()
+
     private lateinit var errorTextView: TextView
     private lateinit var retryButton: ImageButton
     private lateinit var errorMessageGroup: Group
@@ -44,7 +52,6 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
 
             override fun onMapError(e: Exception?) {
                 showErrorText(getErrorMessage(e?.message ?: ""))
-                Log.e("KSC", e?.message ?: "")
             }
 
         },
@@ -53,12 +60,20 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
                     kakaoMap = km
                     restorePosition()
                     restoreMarker()
-                    km.setOnCameraMoveEndListener { _, position, _ ->
-                        viewModel.updateCameraPosition(position)
-                    }
                 }
             })
+    }
 
+    private fun setKakaoMapMoveListener(){
+        kakaoMap?.setOnCameraMoveEndListener { _, position, _ ->
+            viewModel.updateCameraPosition(position)
+        }
+    }
+
+    private fun skipNextCameraMoveListener(){
+        kakaoMap?.setOnCameraMoveEndListener { _, _, _ ->
+            setKakaoMapMoveListener()
+        }
     }
 
     private fun initiateKakaoMap(view: View) {
@@ -66,15 +81,31 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         startKakaoMapView()
     }
 
-    private fun moveCamera(kakaoMap: KakaoMap, position: CameraPosition) {
+    private fun moveCamera(position: CameraPosition) {
+        skipNextCameraMoveListener()
+        if (kakaoMap?.isVisible != true) {
+            Log.w("KSC", "[moveCamera] mapView not activated")
+            return
+        }
+
         val camUpdate =
             CameraUpdateFactory.newCameraPosition(position)
-        kakaoMap.moveCamera(camUpdate)
+        kakaoMap?.moveCamera(camUpdate)
     }
 
     private fun initiateViewModelCallbacks() {
-        viewModel.selectedLocation.observe(viewLifecycleOwner) {
-            updateSelectedLocation(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED){
+                viewModel.cameraPosition.collect{
+                    moveCamera(it)
+                }
+            }
+
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED){
+                viewModel.selectedLocation.collect{
+                    updateSelectedLocation(it)
+                }
+            }
         }
     }
 
@@ -101,18 +132,20 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        initiateViewModelCallbacks()
         initiateViews(view)
         initiateKakaoMap(view)
-        initiateViewModelCallbacks()
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onResume() {
+        Log.d("KSC", "on resume")
         kakaoMapView.resume()
         super.onResume()
     }
 
     override fun onPause() {
+        Log.d("KSC", "on pause")
         kakaoMapView.pause()
         super.onPause()
     }
@@ -123,17 +156,11 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
     }
 
     private fun restoreMarker() {
-        updateSelectedLocation(viewModel.selectedLocation.value)
+        updateSelectedLocation(viewModel.selectedLocation.replayCache.last())
     }
 
     private fun restorePosition() {
-        kakaoMap?.let {
-            if (viewModel.cameraPosition.value != null) {
-                moveCamera(
-                    it, viewModel.cameraPosition.value!!
-                )
-            }
-        }
+        moveCamera(viewModel.cameraPosition.replayCache.last())
     }
 
     private fun updateSelectedLocation(locationInfo: LocationInfo?) {
@@ -151,7 +178,7 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
 
     private fun clearLabels() {
         if (kakaoMap?.isVisible != true) {
-            Log.d("KSC", "mapView not activated")
+            Log.w("KSC", "[clearLabels] mapView not activated")
             return
         }
         val layer = kakaoMap?.labelManager?.layer
@@ -160,7 +187,7 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
 
     private fun addLabel(coordinate: LatLng) {
         if (kakaoMap?.isVisible != true) {
-            Log.d("KSC", "mapView not activated")
+            Log.w("KSC", "[addLabel] mapView not activated")
             return
         }
         val styles = kakaoMap?.labelManager

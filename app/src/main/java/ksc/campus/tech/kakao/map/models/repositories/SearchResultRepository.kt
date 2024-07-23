@@ -5,6 +5,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.Serializable
 import ksc.campus.tech.kakao.map.models.repositoriesImpl.SearchResultRepositoryImpl
 import javax.inject.Singleton
@@ -20,7 +21,7 @@ data class SearchResult(
 )
 
 interface SearchResultRepository {
-    val searchResult: LiveData<List<SearchResult>>
+    val searchResult: Flow<List<SearchResult>>
     fun search(text: String, apiKey: String)
 }
 

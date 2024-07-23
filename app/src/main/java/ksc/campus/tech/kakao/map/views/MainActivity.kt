@@ -10,6 +10,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ksc.campus.tech.kakao.map.R
@@ -17,6 +21,9 @@ import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordAdapter
 import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordClickCallback
 import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
 import ksc.campus.tech.kakao.map.views.fragments.SearchActivityFragmentFactory
@@ -55,10 +62,6 @@ class MainActivity : AppCompatActivity() {
         searchViewModel.searchText.observe(this) {
             searchInput.setQuery(it, false)
         }
-        searchViewModel.keywords.observe(this) {
-            (keywordRecyclerView.adapter as? SearchKeywordAdapter)?.submitList(it.asReversed())
-            setKeywordRecyclerViewActive(it.isNotEmpty())
-        }
         searchViewModel.activeContent.observe(this) {
             if (it == SearchActivityViewModel.ContentType.MAP) {
                 switchToMapMenu()
@@ -66,8 +69,25 @@ class MainActivity : AppCompatActivity() {
                 switchToSearchMenu()
             }
         }
-        searchViewModel.selectedLocation.observe(this){
-            updateText(it?.name?:"", it?.address?:"")
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                searchViewModel.selectedLocation.collect {
+                    updateText(it?.name ?: "", it?.address ?: "")
+
+                }
+            }
+
+        }
+        lifecycle.coroutineScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                while(true) {
+                    searchViewModel.keywords.collectLatest {
+                        (keywordRecyclerView.adapter as? SearchKeywordAdapter)?.submitList(it.asReversed())
+                        setKeywordRecyclerViewActive(it.isNotEmpty())
+                    }
+                }
+            }
         }
     }
 
@@ -123,9 +143,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initiateFragments() {
-        supportFragmentManager.fragmentFactory = SearchActivityFragmentFactory(searchViewModel)
-        mapFragment = supportFragmentManager.fragmentFactory.instantiate(classLoader, KakaoMapFragment::class.java.name)
-        searchFragment = supportFragmentManager.fragmentFactory.instantiate(classLoader, SearchResultFragment::class.java.name)
+        mapFragment = KakaoMapFragment()
+        searchFragment = SearchResultFragment()
     }
 
     private fun initiateViews() {

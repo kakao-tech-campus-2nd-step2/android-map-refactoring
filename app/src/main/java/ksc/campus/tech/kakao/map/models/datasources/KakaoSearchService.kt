@@ -2,16 +2,28 @@ package ksc.campus.tech.kakao.map.models.datasources
 
 import android.content.Context
 import android.util.Log
+import androidx.fragment.app.testing.launchFragment
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.BuildConfig
 import ksc.campus.tech.kakao.map.models.dto.KeywordSearchResponse
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -19,6 +31,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 import javax.inject.Inject
+import kotlin.coroutines.coroutineContext
 
 interface KakaoSearchRetrofitService {
     @GET("/v2/local/search/keyword.json")
@@ -32,14 +45,6 @@ interface KakaoSearchRetrofitService {
 class KakaoSearchService @Inject constructor(
     private val retrofitService: KakaoSearchRetrofitService
 ) {
-    /**
-     * 요청이 유효한지 검증하기 위해 사용.
-     *
-     * 현재 진행중인 쿼리가 유저가 마지막으로 보낸 쿼리인지 검증한다.
-     *
-     * 유저가 새로운 쿼리를 보낼 때마다 [lastSearchId] 값이 1씩 증가한다.
-     */
-    private var lastSearchId: Int = 0
 
     private fun isQueryValid(query: String): Boolean = query.isNotBlank()
 
@@ -77,69 +82,61 @@ class KakaoSearchService @Inject constructor(
         return true
     }
 
-    fun batchSearchByKeyword(
+    fun searchResult(
         query: String,
         apiKey: String,
-        batchCount: Int,
-        onResponse: ((results: List<SearchResult>) -> Unit)?
-    ) {
-        lastSearchId++
-
-        batchSearchByKeyword(lastSearchId, query, apiKey, 1, batchCount, onResponse)
+        batchCount: Int): Flow<List<SearchResult>>{
+        return flow {
+            try {
+                val result = if (query == "") listOf() else batchSearchByKeyword(
+                    query,
+                    apiKey,
+                    1,
+                    batchCount
+                )
+                Log.d("KSC", "Searched")
+                emit(result ?: listOf())
+            } catch (e: HttpException) {
+                Log.e("KSC", e.message ?: "")
+                emit(listOf())
+            } catch (e: Exception) {
+                Log.e("KSC", e.message ?: "")
+                emit(listOf())
+            }
+        }.flowOn(Dispatchers.IO)
     }
 
-
-    private fun batchSearchByKeyword(
-        searchId: Int,
+    private suspend fun batchSearchByKeyword(
         query: String,
         apiKey: String,
         page: Int,
-        batchCount: Int,
-        onResponse: ((results: List<SearchResult>) -> Unit)?
-    ) {
+        batchCount: Int
+    ): List<SearchResult> {
         if (page > batchCount)
-            return
+            return listOf()
 
         if (!isQueryValid(query))
-            return
+            return listOf()
 
-        retrofitService.requestSearchResultByKeyword("KakaoAK $apiKey", query, page).enqueue(
-            object : Callback<KeywordSearchResponse> {
-                override fun onResponse(
-                    call: Call<KeywordSearchResponse>,
-                    response: Response<KeywordSearchResponse>
-                ) {
-                    if (!isResponseSuccess(response)) {
-                        return
-                    }
-                    val result = responseToResultArray(response)
-                    if (lastSearchId != searchId) {
-                        return
-                    }
-                    onResponse?.invoke(result)
-                    if (response.body()?.meta?.isEnd == false) {
-                        batchSearchByKeyword(
-                            searchId,
-                            query,
-                            apiKey,
-                            page + 1,
-                            batchCount,
-                            onResponse
-                        )
-                    }
-                }
+        val result = mutableListOf<SearchResult>()
+        val response =
+            retrofitService.requestSearchResultByKeyword("KakaoAK $apiKey", query, page).execute()
 
-                override fun onFailure(call: Call<KeywordSearchResponse>, p1: Throwable) {
-                    if (call.isCanceled) {
-                        Log.e("KSC", "request canceled")
-                    }
-                    if (call.isExecuted) {
-                        Log.e("KSC", "request was executed but failed")
-                    }
-                    Log.e("KSC", "Message: ${p1.message}")
-                }
-            }
-        )
+        if (!isResponseSuccess(response)) {
+            Log.e("KSC", "Message: ${response.message()}")
+            return listOf()
+        }
+        result += responseToResultArray(response)
+        if (response.body()?.meta?.isEnd == false) {
+            result += batchSearchByKeyword(
+                query,
+                apiKey,
+                page + 1,
+                batchCount
+            )
+        }
+
+        return result
     }
 
     companion object {
