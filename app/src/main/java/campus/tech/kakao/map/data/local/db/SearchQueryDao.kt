@@ -13,7 +13,7 @@ interface SearchQueryDao {
     @Query("SELECT * FROM search_queries")
     fun getAll(): List<SearchQueryEntity>
 
-    @Deleteadd
+    @Delete
     fun delete(searchQueryEntity: SearchQueryEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
