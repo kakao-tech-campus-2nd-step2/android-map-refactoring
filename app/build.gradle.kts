@@ -82,6 +82,7 @@ dependencies {
     implementation("com.kakao.maps.open:android:2.9.5")
     implementation("com.kakao.sdk:v2-all:2.20.3")
     implementation("androidx.activity:activity:1.9.0")
+    implementation("androidx.room:room-common:2.6.1")
 
     // 테스트 의존성 추가
     testImplementation("junit:junit:4.13.2")
@@ -99,4 +100,7 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.4.0")
     androidTestImplementation("androidx.test:runner:1.4.0")
     androidTestImplementation("androidx.arch.core:core-testing:2.1.0")
+
+    //room
+
 }
