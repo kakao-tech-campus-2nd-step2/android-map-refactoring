@@ -1,74 +1,38 @@
 package campus.tech.kakao.map.data.repository
 
-import android.content.ContentValues
-import android.database.Cursor
-import android.util.Log
-import campus.tech.kakao.map.MapContract
-import campus.tech.kakao.map.data.source.MapDbHelper
+import campus.tech.kakao.map.data.source.MapDatabase
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LastLocationRepositoryImpl @Inject constructor(
-    private val helper: MapDbHelper
+    database: MapDatabase
 ) : LastLocationRepository {
-    override fun insertLastLocation(location: Location) {
-        val writeableDb = helper.writableDatabase
-        val content = locationToContent(location)
-        clearLastLocation()
-        writeableDb.insert(MapContract.MapEntry.TABLE_NAME_LAST_LOCATION, null, content)
+    private val lastLocationDao = database.lastLocationDao()
+
+    override suspend fun insertLastLocation(location: Location) {
+        withContext(Dispatchers.IO) {
+            val prevLastLocation = lastLocationDao.getLastLocation()
+            prevLastLocation?.let { lastLocationDao.deleteLastLocation(prevLastLocation) }
+            lastLocationDao.insertLastLocation(location)
+        }
     }
 
-    override fun clearLastLocation() {
-        val writeableDb = helper.writableDatabase
-        helper.clearLastLocation(writeableDb)
+    override suspend fun clearLastLocation() {
+        withContext(Dispatchers.IO) {
+            val prevLastLocation = lastLocationDao.getLastLocation()
+            prevLastLocation?.let { lastLocationDao.deleteLastLocation(prevLastLocation) }
+        }
     }
 
-    override fun getLastLocation(): Location? {
-        val readableDb = helper.readableDatabase
-        val cursor = readableDb.query(
-            MapContract.MapEntry.TABLE_NAME_LAST_LOCATION,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-        return if (cursor.moveToNext())
-            cursorToLocation(cursor)
-        else
-            null
-    }
+    override suspend fun getLastLocation(): Location? {
+        var res: Location?
 
-    private fun locationToContent(location: Location): ContentValues {
-        val content = ContentValues()
-        content.put(MapContract.MapEntry.COLUMN_NAME_ID, location.id)
-        content.put(MapContract.MapEntry.COLUMN_NAME_NAME, location.name)
-        content.put(MapContract.MapEntry.COLUMN_NAME_CATEGORY, location.category)
-        content.put(MapContract.MapEntry.COLUMN_NAME_ADDRESS, location.address)
-        content.put(MapContract.MapEntry.COLUMN_NAME_X, location.x)
-        content.put(MapContract.MapEntry.COLUMN_NAME_Y, location.y)
-
-        return content
-    }
-
-    private fun cursorToLocation(cursor: Cursor): Location {
-        val id =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_ID))
-        val name =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_NAME))
-        val category =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_CATEGORY))
-        val address =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_ADDRESS))
-        val x =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_X))
-                .toDouble()
-        val y =
-            cursor.getString(cursor.getColumnIndexOrThrow(MapContract.MapEntry.COLUMN_NAME_Y))
-                .toDouble()
-
-        return Location(id, name, category, address, x, y)
+        withContext(Dispatchers.IO) {
+            res = lastLocationDao.getLastLocation()
+        }
+        return res
     }
 }

@@ -1,9 +1,11 @@
 package campus.tech.kakao.map.domain.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.io.Serializable
-
+@Entity(tableName = "last_location")
 data class Location(
-    val id: String,
+    @PrimaryKey val id: String,
     val name: String,
     val category: String,
     val address: String,
@@ -13,5 +15,12 @@ data class Location(
     companion object {
         const val LOCATION: String = "LOCATION"
         const val NORMAL: String = "일반"
+    }
+
+    fun toHistory(): History {
+        return History(
+            id = this.id,
+            name = this.name
+        )
     }
 }

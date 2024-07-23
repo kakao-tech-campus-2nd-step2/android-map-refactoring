@@ -24,9 +24,9 @@ class ResultRecyclerAdapter(
             itemView.setOnClickListener {
                 if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
                     val clickedResult = searchResult[bindingAdapterPosition]
-                    databaseListener.insertHistory(clickedResult)
+                    databaseListener.insertHistory(clickedResult.toHistory())
                     databaseListener.insertLastLocation(clickedResult)
-                    databaseListener.showMap(clickedResult)
+                    databaseListener.showMap()
                 }
             }
         }

@@ -11,15 +11,8 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.repository.HistoryRepositoryImpl
-import campus.tech.kakao.map.data.repository.LastLocationRepositoryImpl
-import campus.tech.kakao.map.data.repository.ResultRepositoryImpl
-import campus.tech.kakao.map.data.source.MapDbHelper
-import campus.tech.kakao.map.domain.repository.HistoryRepository
-import campus.tech.kakao.map.domain.repository.ResultRepository
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -47,6 +40,7 @@ class MapActivity : AppCompatActivity() {
     private lateinit var errorCode: TextView
 
     private val viewModel : MapViewModel by viewModels()
+    private lateinit var lastLoc: Location
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +52,11 @@ class MapActivity : AppCompatActivity() {
         infoSheetAddress = findViewById(R.id.info_sheet_address)
         errorLayout = findViewById(R.id.error_layout)
         errorCode = findViewById(R.id.error_code)
-
+        viewModel.lastLocation.observe(this) {
+            lastLoc = it
+            updateView(it)
+            Log.d(TAG, it.toString())
+        }
         kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // TODO: 필요시 구현 예정
@@ -71,11 +69,7 @@ class MapActivity : AppCompatActivity() {
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 this@MapActivity.kakaoMap = kakaoMap
-                val target = viewModel.getLastLocation()
-                if (::kakaoMap.isInitialized && target != null) {
-                    moveToTargetLocation(kakaoMap, target)
-                    showInfo(target)
-                }
+                viewModel.updateLastLocation()
                 Log.d(TAG, "onMapReady")
             }
         })
@@ -88,12 +82,7 @@ class MapActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         kakaoMapView.resume()
-        val target = viewModel.getLastLocation()
-        if (::kakaoMap.isInitialized && target != null) {
-            moveToTargetLocation(kakaoMap, target)
-            showInfo(target)
-        }
-        Log.d(TAG, "onResume")
+        viewModel.updateLastLocation()
     }
 
     override fun onPause() {
@@ -135,5 +124,12 @@ class MapActivity : AppCompatActivity() {
                 LabelOptions.from(LatLng.from(target.y, target.x)).setStyles(style)
                     .setTexts(target.name)
             )
+    }
+
+    fun updateView(lastLocation: Location) {
+        if (::kakaoMap.isInitialized) {
+            moveToTargetLocation(kakaoMap, lastLocation)
+            showInfo(lastLocation)
+        }
     }
 }

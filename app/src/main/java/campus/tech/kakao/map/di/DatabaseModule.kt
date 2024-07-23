@@ -1,6 +1,8 @@
 package campus.tech.kakao.map.di
 
 import android.content.Context
+import androidx.room.Room
+import campus.tech.kakao.map.data.source.MapDatabase
 import campus.tech.kakao.map.data.source.MapDbHelper
 import dagger.Module
 import dagger.Provides
@@ -15,8 +17,12 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideDatabase(
-        @ApplicationContext context: Context
-    ): MapDbHelper {
-        return MapDbHelper(context)
+        @ApplicationContext context: Context,
+    ): MapDatabase {
+        return Room.databaseBuilder(
+            context,
+            MapDatabase::class.java,
+            "map"
+        ).build()
     }
 }

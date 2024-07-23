@@ -10,9 +10,10 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import campus.tech.kakao.map.DatabaseListener
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.domain.model.History
 
 class HistoryRecyclerAdapter(
-    var history: List<Location>,
+    var history: List<History>,
     val layoutInflater: LayoutInflater,
     val databaseListener: DatabaseListener
 ) : RecyclerView.Adapter<HistoryRecyclerAdapter.HistoryViewHolder>() {

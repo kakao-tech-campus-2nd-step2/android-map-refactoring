@@ -20,6 +20,7 @@ import campus.tech.kakao.map.data.repository.HistoryRepositoryImpl
 import campus.tech.kakao.map.data.repository.LastLocationRepositoryImpl
 import campus.tech.kakao.map.data.repository.ResultRepositoryImpl
 import campus.tech.kakao.map.data.source.MapDbHelper
+import campus.tech.kakao.map.domain.model.History
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 @AndroidEntryPoint
@@ -56,15 +57,15 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
         observeData()
     }
 
-    override fun deleteHistory(oldHistory: Location) {
+    override fun deleteHistory(oldHistory: History) {
         viewModel.deleteHistory(oldHistory)
     }
 
-    override fun insertHistory(newHistory: Location) {
+    override fun insertHistory(newHistory: History) {
         viewModel.insertHistory(newHistory)
     }
 
-    override fun showMap(newHistory: Location) {
+    override fun showMap() {
         finish()
     }
 

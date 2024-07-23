@@ -13,12 +13,15 @@ import campus.tech.kakao.map.MapApplication
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.data.source.MapDbHelper
 import campus.tech.kakao.map.data.source.RetrofitService
+import campus.tech.kakao.map.domain.model.History
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import campus.tech.kakao.map.domain.repository.ResultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
@@ -28,8 +31,8 @@ class MapViewModel @Inject constructor(
 ) : ViewModel() {
     private val _searchResult = MutableLiveData<List<Location>>()
     val searchResult: LiveData<List<Location>> = _searchResult
-    private val _searchHistory = MutableLiveData<List<Location>>()
-    val searchHistory: LiveData<List<Location>> = _searchHistory
+    private val _searchHistory = MutableLiveData<List<History>>()
+    val searchHistory: LiveData<List<History>> = _searchHistory
     private val _lastLocation = MutableLiveData<Location>()
     val lastLocation: LiveData<Location> = _lastLocation
 
@@ -44,29 +47,38 @@ class MapViewModel @Inject constructor(
         return resultRepository.getAllResult()
     }
 
-    fun insertHistory(newHistory: Location) {
-        historyRepository.insertHistory(newHistory)
-        _searchHistory.value = historyRepository.getAllHistory()
+    fun insertHistory(newHistory: History) {
+        viewModelScope.launch {
+            historyRepository.insertHistory(newHistory)
+            _searchHistory.value = historyRepository.getAllHistory()
+        }
     }
 
-    fun deleteHistory(oldHistory: Location) {
-        historyRepository.deleteHistory(oldHistory)
-        _searchHistory.value = historyRepository.getAllHistory()
+    fun deleteHistory(oldHistory: History) {
+        viewModelScope.launch {
+            historyRepository.deleteHistory(oldHistory)
+            _searchHistory.value = historyRepository.getAllHistory()
+        }
     }
 
-    fun getAllHistory(): List<Location> {
-        return historyRepository.getAllHistory()
+    fun getAllHistory(): List<History> {
+        viewModelScope.launch {
+            _searchHistory.value = historyRepository.getAllHistory()
+        }
+        return _searchHistory.value ?: listOf()
     }
 
     fun insertLastLocation(location: Location) {
-        lastLocationRepository.insertLastLocation(location)
-        _lastLocation.value = lastLocationRepository.getLastLocation()
-        Log.d("ViewModel", _lastLocation.value.toString())
+        viewModelScope.launch {
+            lastLocationRepository.insertLastLocation(location)
+        }
+        updateLastLocation()
     }
 
-    fun getLastLocation(): Location? {
-        _lastLocation.value = lastLocationRepository.getLastLocation()
-        return lastLocationRepository.getLastLocation()
+    fun updateLastLocation() {
+        viewModelScope.launch {
+            _lastLocation.postValue(lastLocationRepository.getLastLocation())
+        }
     }
 
 }
