@@ -11,8 +11,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedSearchWord
+import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     /**
-     * view들에 필요한 작업을 처리하는 함수.
+     * view들을 설정하는 함수.
      */
     private fun setupViews() {
         setClearImageViewClickListener()
@@ -91,12 +91,7 @@ class SearchActivity : AppCompatActivity() {
             object : OnPlaceItemClickListener {
                 override fun onPlaceItemClicked(place: Place) {
                     insertSearchWord(place)
-                    navigateToMapActivity(
-                        place.name,
-                        place.address,
-                        place.longitude,
-                        place.latitude,
-                    )
+                    navigateToMapActivity(place)
                 }
             }
         binding.searchResultRecyclerView.adapter = ResultRecyclerViewAdapter(placeItemClickListener)
@@ -110,38 +105,36 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun insertSearchWord(place: Place) {
         savedSearchWordViewModel.insertSearchWord(
-            SavedSearchWord(
-                name = place.name,
-                placeId = place.id,
-                address = place.address,
-                latitude = place.latitude,
-                longitude = place.longitude,
-            ),
+            place.toSavedSearchWord()
         )
-        savedSearchWordViewModel.updateSavedSearchWords()
     }
 
     /**
      * MapActivity로 이동하는 함수.
      *
-     * Intent에 Place의 정보를 담아 전달.
-     *
-     * @param placeName 지도에 표시할 장소의 이름.
-     * @param placeAddress 지도에 표시할 장소의 주소.
-     * @param placeLongitude 지도에 표시할 장소의 경도.
-     * @param placeLatitude 지도에 표시할 장소의 위도.
+     * @param place 이동할 장소의 정보를 담고 있는 Place 객체.
      */
-    private fun navigateToMapActivity(
-        placeName: String,
-        placeAddress: String,
-        placeLongitude: Double,
-        placeLatitude: Double,
-    ) {
+    private fun navigateToMapActivity(place: Place) {
         val intent = Intent()
-        intent.putExtra(EXTRA_PLACE_NAME, placeName)
-        intent.putExtra(EXTRA_PLACE_ADDRESS, placeAddress)
-        intent.putExtra(EXTRA_PLACE_LONGITUDE, placeLongitude)
-        intent.putExtra(EXTRA_PLACE_LATITUDE, placeLatitude)
+        intent.putExtra(EXTRA_PLACE_NAME, place.name)
+        intent.putExtra(EXTRA_PLACE_ADDRESS, place.address)
+        intent.putExtra(EXTRA_PLACE_LONGITUDE, place.longitude)
+        intent.putExtra(EXTRA_PLACE_LATITUDE, place.latitude)
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
+    /**
+     * MapActivity로 이동하는 함수.
+     *
+     * @param savedSearchWord 이동할 장소의 정보를 담고 있는 SavedSearchWord 객체.
+     */
+    private fun navigateToMapActivity(savedSearchWord: SavedSearchWord) {
+        val intent = Intent()
+        intent.putExtra(EXTRA_PLACE_NAME, savedSearchWord.name)
+        intent.putExtra(EXTRA_PLACE_ADDRESS, savedSearchWord.address)
+        intent.putExtra(EXTRA_PLACE_LONGITUDE, savedSearchWord.longitude)
+        intent.putExtra(EXTRA_PLACE_LATITUDE, savedSearchWord.latitude)
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -170,12 +163,7 @@ class SearchActivity : AppCompatActivity() {
         val savedSearchWordTextViewClickListener =
             object : OnSavedSearchWordTextViewClickListener {
                 override fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWord) {
-                    navigateToMapActivity(
-                        savedSearchWord.name,
-                        savedSearchWord.address,
-                        savedSearchWord.longitude,
-                        savedSearchWord.latitude,
-                    )
+                    navigateToMapActivity(savedSearchWord)
                 }
             }
         binding.savedSearchWordRecyclerView.adapter =
@@ -227,5 +215,20 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * Place 객체를 SavedSearchWord 객체로 변환하는 확장 함수.
+     *
+     * @return 변환된 SavedSearchWord 객체.
+     */
+    private fun Place.toSavedSearchWord(): SavedSearchWord {
+        return SavedSearchWord(
+            name = this.name,
+            placeId = this.id,
+            address = this.address,
+            latitude = this.latitude,
+            longitude = this.longitude
+        )
     }
 }

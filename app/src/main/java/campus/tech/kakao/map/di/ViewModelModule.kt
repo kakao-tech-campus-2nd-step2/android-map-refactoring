@@ -17,13 +17,13 @@ import dagger.hilt.android.scopes.ViewModelScoped
 abstract class ViewModelModule {
     @Binds
     @ViewModelScoped
-    abstract fun bindPlaceRepository(placeRepositoryImpl: DefaultPlaceRepository): PlaceRepository
+    abstract fun bindPlaceRepository(defaultPlaceRepository: DefaultPlaceRepository): PlaceRepository
 
     @Binds
     @ViewModelScoped
-    abstract fun bindSavedSearchWordRepository(savedSearchWordRepositoryImpl: DefaultSavedSearchWordRepository): SavedSearchWordRepository
+    abstract fun bindSavedSearchWordRepository(defaultSavedSearchWordRepository: DefaultSavedSearchWordRepository): SavedSearchWordRepository
 
     @Binds
     @ViewModelScoped
-    abstract fun bindLocationRepository(locationRepositoryImpl: DefaultLocationRepository): LocationRepository
+    abstract fun bindLocationRepository(defaultLocationRepository: DefaultLocationRepository): LocationRepository
 }

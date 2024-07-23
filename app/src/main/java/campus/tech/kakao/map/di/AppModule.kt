@@ -3,9 +3,8 @@ package campus.tech.kakao.map.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import campus.tech.kakao.map.data.SavedSearchWordDBHelper
 import campus.tech.kakao.map.data.repository.LocationSerializer
-import campus.tech.kakao.map.model.Location
+import campus.tech.kakao.map.data.model.Location
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,15 +19,6 @@ object AppModule {
         fileName = "location_data.pb",
         serializer = LocationSerializer,
     )
-
-    @Provides
-    @Singleton
-    fun provideSavedSearchWordDBHelper(
-        @ApplicationContext context: Context,
-    ): SavedSearchWordDBHelper {
-        return SavedSearchWordDBHelper(context)
-    }
-
     @Provides
     @Singleton
     fun provideDataStore(

@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSavedSearchWordBinding
-import campus.tech.kakao.map.model.SavedSearchWord
+import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.ui.search.SearchActivity
 
 class SavedSearchWordRecyclerViewAdapter(

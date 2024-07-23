@@ -1,11 +1,9 @@
 package campus.tech.kakao.map.data.repository
 
-import campus.tech.kakao.map.model.SavedSearchWord
+import campus.tech.kakao.map.data.model.SavedSearchWord
 
 interface SavedSearchWordRepository {
-    fun insertOrUpdateSearchWord(searchWord: SavedSearchWord)
-
-    fun getAllSearchWords(): List<SavedSearchWord>
-
-    fun deleteSearchWordById(id: Long)
+    suspend fun insertOrUpdateSearchWord(searchWord: SavedSearchWord)
+    suspend fun getAllSearchWords(): List<SavedSearchWord>
+    suspend fun deleteSearchWordById(id: Long)
 }
