@@ -47,7 +47,7 @@ class MainActivityTest {
     fun 장소를_선택하면_지도가_펼쳐진다() {
         Intents.init()
         onView(withId(R.id.etSearch)).perform(replaceText("성심당본점"))
-        Thread.sleep(1000)
+        Thread.sleep(800)
         onView(withId(R.id.recyclerView))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(

@@ -1,8 +1,10 @@
 package campus.tech.kakao.map.network
 
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -27,4 +29,9 @@ object NetworkModule {
         return Network(retrofitService)
     }
 
+    @Provides
+    @Singleton
+    fun singletonSearch(network: Network, @ApplicationContext context: Context): SearchService {
+        return SearchService(network, context)
+    }
 }

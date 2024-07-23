@@ -27,6 +27,7 @@ import campus.tech.kakao.map.data.Profile
 import campus.tech.kakao.map.network.Document
 import campus.tech.kakao.map.network.KakaoResponse
 import campus.tech.kakao.map.network.Network
+import campus.tech.kakao.map.network.SearchService
 import campus.tech.kakao.map.ui.MapActivity
 import campus.tech.kakao.map.utility.CategoryGroupCode
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,6 +42,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var network: Network
+
+    @Inject
+    lateinit var searchService: SearchService
 
     lateinit var adapter: Adapter
     lateinit var tvNoResult: TextView
@@ -79,9 +83,13 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
-                    searchKeyword(search)  // 키워드
+                    searchService.searchKeyword(search) { result ->
+                        searchProfiles(result)
+                    }  // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
-                        searchCategory(categoryCode)
+                        searchService.searchCategory(categoryCode) { result ->
+                            searchProfiles(result)
+                        }
                     }  // 카테고리
                 }
             }
@@ -107,44 +115,6 @@ class MainActivity : AppCompatActivity() {
             etSearch.text.clear()
         }
         loadSavedItems()
-    }
-
-    // 키워드로 검색
-    fun searchKeyword(query: String) {
-        network.searchKeyword(query, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    searchProfiles(response.body())
-                } else {
-                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "요청 실패", t)
-            }
-        })
-    }
-
-    // 카테고리로 검색
-    fun searchCategory(categoryGroupCode: String) {
-        network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    searchProfiles(response.body())
-                } else {
-                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "요청 실패", t)
-            }
-        })
     }
 
     fun searchProfiles(searchResult: KakaoResponse?) {
