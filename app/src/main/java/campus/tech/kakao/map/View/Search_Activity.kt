@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.View
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
 import campus.tech.kakao.map.Adapter.SavedSearchAdapter
+import campus.tech.kakao.map.R
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import kotlinx.coroutines.tasks.await
 

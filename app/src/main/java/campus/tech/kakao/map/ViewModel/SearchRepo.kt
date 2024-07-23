@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.View
+package campus.tech.kakao.map.ViewModel
 
 import android.content.ContentValues
 import android.content.Context
@@ -52,4 +52,3 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, "database_nam
         return dataList
     }
 }
-

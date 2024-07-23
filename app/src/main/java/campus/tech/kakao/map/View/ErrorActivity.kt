@@ -1,11 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.View
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import campus.tech.kakao.map.R
 
 class ErrorActivity : AppCompatActivity() {
 
