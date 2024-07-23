@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.Presenter.View.Adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import campus.tech.kakao.map.Domain.Model.Place
+import campus.tech.kakao.map.Domain.VO.Place
 
 class PlaceDiffUtil : DiffUtil.ItemCallback<Place>(){
     override fun areContentsTheSame(oldItem: Place, newItem: Place): Boolean {

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.Domain.Model
+package campus.tech.kakao.map.Domain.VO
 
 data class Place(
     val id: Int,
