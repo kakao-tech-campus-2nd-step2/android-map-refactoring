@@ -89,7 +89,7 @@ class MapActivity : AppCompatActivity() {
                     savedLatitude = latitude
                     savedLongitude = longitude
 
-                    bottomSheetHelper.bottomSheet(name.toString(), address.toString())
+                    bottomSheetHelper.showBottomSheet(name.toString(), address.toString())
                 }
             }
         })

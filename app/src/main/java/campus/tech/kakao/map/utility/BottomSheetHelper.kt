@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class BottomSheetHelper @Inject constructor (private val context: Context){
 
-    fun bottomSheet(name: String, address: String) {
+    fun showBottomSheet(name: String, address: String) {
         val bottomSheetDialog = BottomSheetDialog(context)
         val bottomSheetLayout = LayoutInflater.from(context).inflate(R.layout.bottom_sheet, null)
         bottomSheetDialog.setContentView(bottomSheetLayout)

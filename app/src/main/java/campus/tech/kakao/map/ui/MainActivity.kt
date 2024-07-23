@@ -22,7 +22,6 @@ import androidx.room.Room
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.Adapter
 import campus.tech.kakao.map.data.AppDatabase
-import campus.tech.kakao.map.data.AppDatabase.Companion.MIGRATION_1_2
 import campus.tech.kakao.map.data.Profile
 import campus.tech.kakao.map.network.Document
 import campus.tech.kakao.map.network.KakaoResponse
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "profiles"
-        ).addMigrations(MIGRATION_1_2).build()
+        ).fallbackToDestructiveMigration().build()
 
         val etSearch = findViewById<EditText>(R.id.etSearch)
         tvNoResult = findViewById(R.id.tvNoResult)
@@ -83,13 +82,16 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
-                    searchService.searchKeyword(search) { result ->
+                    searchService.searchKeyword(search, { result ->
                         searchProfiles(result)
-                    }  // 키워드
+                    }) { error ->
+                        Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                    } // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
-                        searchService.searchCategory(categoryCode) { result ->
+                        searchService.searchCategory(categoryCode, { result ->
                             searchProfiles(result)
-                        }
+                        }, { error -> Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                        })
                     }  // 카테고리
                 }
             }
