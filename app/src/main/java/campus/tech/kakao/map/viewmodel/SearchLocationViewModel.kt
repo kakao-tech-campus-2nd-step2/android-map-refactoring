@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.HistoryRepository
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SearchLocationRepository
 import kotlinx.coroutines.launch
 
 class SearchLocationViewModel(
-    private val repository: SearchLocationRepository
+    private val historyRepository: HistoryRepository,
+    private val searchLocationRepository: SearchLocationRepository
 ) : ViewModel() {
 
     private val _location = MutableLiveData<List<Location>>()
@@ -25,7 +27,9 @@ class SearchLocationViewModel(
     val markerLocation: LiveData<Location> = _markerLocation
 
     init {
-        _history.postValue(repository.getHistory())
+        viewModelScope.launch {
+            _history.postValue(historyRepository.getHistory())
+        }
     }
 
     fun searchLocationByHistory(locationName: String) {
@@ -34,18 +38,22 @@ class SearchLocationViewModel(
 
     fun searchLocation(category: String) {
         viewModelScope.launch {
-            _location.postValue(repository.searchLocation(category))
+            _location.postValue(searchLocationRepository.searchLocation(category))
         }
     }
 
     fun addHistory(locationName: String) {
-        repository.addHistory(locationName)
-        _history.postValue(repository.getHistory())
+        viewModelScope.launch {
+            historyRepository.addHistory(locationName)
+            _history.postValue(historyRepository.getHistory())
+        }
     }
 
     fun removeHistory(locationName: String) {
-        repository.removeHistory(locationName)
-        _history.postValue(repository.getHistory())
+        viewModelScope.launch {
+            historyRepository.removeHistory(locationName)
+            _history.postValue(historyRepository.getHistory())
+        }
     }
 
     fun addMarker(location: Location) {
