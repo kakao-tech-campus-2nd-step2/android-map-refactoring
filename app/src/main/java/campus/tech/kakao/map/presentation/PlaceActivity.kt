@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -81,7 +82,9 @@ class PlaceActivity : AppCompatActivity() {
     }
 
     private fun initializeAdapters() {
+        Log.d("testt","initializeAdapters")
         placeAdapter = PlaceAdapter { place ->
+            Log.d("testt", "place $place")
             placeViewModel.saveSearchQuery(place)
             sendPositiontoMap(place)
         }
@@ -92,6 +95,7 @@ class PlaceActivity : AppCompatActivity() {
                 placeViewModel.removeSearchQuery(query)
             },
             onItemClick = { query ->
+                Log.d("testt", "search $query")
                 binding.searchEditText.setText(query)
                 placeViewModel.searchPlaces(query)
             }

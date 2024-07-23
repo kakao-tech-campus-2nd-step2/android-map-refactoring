@@ -34,8 +34,8 @@ class PlaceViewModel @Inject constructor(
     fun saveSearchQuery(place: PlaceVO) {
         viewModelScope.launch(Dispatchers.IO) {
             saveSearchQueryUseCase(place)
+            loadSearchHistory()
         }
-        loadSearchHistory()
     }
 
     fun loadSearchHistory() {
@@ -48,8 +48,8 @@ class PlaceViewModel @Inject constructor(
     fun removeSearchQuery(query: String) {
         viewModelScope.launch(Dispatchers.IO) {
             removeSearchQueryUseCase(query)
+            loadSearchHistory()
         }
-        loadSearchHistory()
     }
 
     fun getPlaceLocation(place: PlaceVO): LatLng {
