@@ -1,7 +1,7 @@
 package campus.tech.kakao.View
 
-
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +11,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.R
-import campus.tech.kakao.Model.ResultSearchKeyword
-import campus.tech.kakao.Model.RetrofitClient
-import campus.tech.kakao.Model.RoomDb
 import campus.tech.kakao.ViewModel.SearchViewModel
-import campus.tech.kakao.ViewModel.SearchViewModelFactory
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
     lateinit var searchView: SearchView
     lateinit var recyclerView: RecyclerView
@@ -29,9 +25,7 @@ class SearchFragment : Fragment() {
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var adapter: PlacesAdapter
 
-    private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(RoomDb(requireContext()))
-    }
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,15 +57,18 @@ class SearchFragment : Fragment() {
 
     private fun setupRecyclerViews() {
         recyclerView.layoutManager = LinearLayoutManager(context)
-        historyRecyclerView.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        historyRecyclerView.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         historyAdapter = HistoryAdapter(mutableListOf(), { id ->
             viewModel.deleteSelectedData(id)
         }, { historyItem -> searchView.setQuery(historyItem, true) })
         historyRecyclerView.adapter = historyAdapter
 
-        adapter = PlacesAdapter(listOf()) { name ->
-            viewModel.insertSelectedData(name)
+        adapter = PlacesAdapter(listOf()) { place ->
+            viewModel.insertSelectedData(place.placeName)
+            viewModel.selectPlace(place)
+            navigateToMapFragment()
         }
         recyclerView.adapter = adapter
     }
@@ -80,7 +77,7 @@ class SearchFragment : Fragment() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
-                    searchPlaces(query)
+                    viewModel.searchPlaces(BuildConfig.KAKAO_REST_API_KEY, query)
                 }
                 return true
             }
@@ -90,33 +87,9 @@ class SearchFragment : Fragment() {
                     showNoResultMessage()
                     adapter.updateData(emptyList())
                 } else {
-                    searchPlaces(newText)
+                    viewModel.searchPlaces(BuildConfig.KAKAO_REST_API_KEY, newText)
                 }
                 return true
-            }
-        })
-    }
-
-    private fun searchPlaces(query: String) {
-        val apiKey = "KakaoAK ${campus.tech.kakao.map.BuildConfig.KAKAO_REST_API_KEY}"
-
-        RetrofitClient.instance.searchPlaces(apiKey, query).enqueue(object : Callback<ResultSearchKeyword> {
-            override fun onResponse(call: Call<ResultSearchKeyword>, response: Response<ResultSearchKeyword>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val places = response.body()?.documents ?: emptyList()
-                    if (places.isEmpty()) {
-                        showNoResultMessage()
-                    } else {
-                        hideNoResultMessage()
-                        adapter.updateData(places)
-                    }
-                } else {
-                    showNoResultMessage()
-                }
-            }
-
-            override fun onFailure(call: Call<ResultSearchKeyword>, t: Throwable) {
-                showNoResultMessage()
             }
         })
     }
@@ -124,19 +97,49 @@ class SearchFragment : Fragment() {
     private fun showNoResultMessage() {
         noResultTextView.visibility = View.VISIBLE
         recyclerView.visibility = View.GONE
-        historyRecyclerView.visibility = if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        historyRecyclerView.visibility =
+            if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
     }
 
     private fun hideNoResultMessage() {
         noResultTextView.visibility = View.GONE
         recyclerView.visibility = View.VISIBLE
-        historyRecyclerView.visibility = if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
+        historyRecyclerView.visibility =
+            if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
     }
 
     private fun observeViewModel() {
         viewModel.selectedData.observe(viewLifecycleOwner) { historyData ->
             historyAdapter.updateData(historyData)
-            historyRecyclerView.visibility = if (historyData.isNotEmpty()) View.VISIBLE else View.GONE
+            historyRecyclerView.visibility =
+                if (historyData.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+
+        viewModel.searchResults.observe(viewLifecycleOwner) { searchResults ->
+            if (searchResults.isEmpty()) {
+                showNoResultMessage()
+            } else {
+                hideNoResultMessage()
+                adapter.updateData(searchResults)
+            }
+        }
+    }
+
+    private fun navigateToMapFragment() {
+        viewModel.place.value?.let { place ->
+            (activity as MainActivity).clearBackStack()
+            val fragment = MapFragment().apply {
+                arguments = Bundle().apply {
+                    putDouble("x", place.x!!)
+                    putDouble("y", place.y!!)
+                    putString("placeName", place.placeName)
+                    putString("roadAddressName", place.roadAddressName)
+                }
+            }
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 }
