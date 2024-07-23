@@ -2,8 +2,11 @@ package campus.tech.kakao.map.repository
 
 import campus.tech.kakao.map.database.MapItemDao
 import campus.tech.kakao.map.model.MapItemEntity
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MapItemRepository(private val mapItemDao: MapItemDao) {
+@Singleton
+class MapItemRepository @Inject constructor(private val mapItemDao: MapItemDao) {
 
     suspend fun insert(mapItem: MapItemEntity) {
         mapItemDao.insert(mapItem)
