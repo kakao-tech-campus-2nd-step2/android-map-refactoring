@@ -1,13 +1,13 @@
-package campus.tech.kakao.map.viewmodel
+package campus.tech.kakao.map.ui.search
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.room.Room
-import campus.tech.kakao.map.model.HistoryDatabase
-import campus.tech.kakao.map.model.HistoryRepository
-import campus.tech.kakao.map.model.LocalSearchService
-import campus.tech.kakao.map.model.SearchLocationRepository
+import campus.tech.kakao.map.data.history.HistoryDatabase
+import campus.tech.kakao.map.data.history.HistoryRepository
+import campus.tech.kakao.map.data.local_search.LocalSearchService
+import campus.tech.kakao.map.data.local_search.SearchLocationRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 

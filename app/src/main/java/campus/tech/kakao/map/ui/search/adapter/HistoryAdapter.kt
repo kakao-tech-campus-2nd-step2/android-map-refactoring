@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.search.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemHistoryBinding
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModel
+import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 
 class HistoryAdapter(
     private var dataList: List<String>,

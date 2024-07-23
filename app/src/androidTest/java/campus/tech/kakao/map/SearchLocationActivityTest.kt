@@ -17,10 +17,10 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.model.SearchLocationRepository
-import campus.tech.kakao.map.view.SearchLocationActivity
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModel
+import campus.tech.kakao.map.data.local_search.Location
+import campus.tech.kakao.map.data.local_search.SearchLocationRepository
+import campus.tech.kakao.map.ui.search.SearchLocationActivity
+import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.map
 
 import android.content.Intent
 import android.graphics.Color
@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
-import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.viewmodel.MapViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
+import campus.tech.kakao.map.data.local_search.Location
+import campus.tech.kakao.map.ui.map_error.MapErrorActivity
+import campus.tech.kakao.map.ui.search.SearchLocationActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_HIDDEN

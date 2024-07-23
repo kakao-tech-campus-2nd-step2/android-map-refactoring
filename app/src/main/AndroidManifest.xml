@@ -16,10 +16,10 @@
         android:theme="@style/Theme.Map"
         tools:targetApi="31">
         <activity
-            android:name=".view.MapErrorActivity"
+            android:name=".ui.map_error.MapErrorActivity"
             android:exported="false" />
         <activity
-            android:name=".view.MapActivity"
+            android:name=".ui.map.MapActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.SearchLocationActivity"
+            android:name=".ui.search.SearchLocationActivity"
             android:exported="false" />
     </application>
 

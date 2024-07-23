@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.map_error
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.data.last_location
 
 import android.content.Context
 import androidx.datastore.preferences.core.doublePreferencesKey
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
 
-class DataStoreRepository(private val context: Context) {
+class LastLocationRepository(private val context: Context) {
     companion object {
         private val Context.dataStore by preferencesDataStore(name = "last_location")
         private val latitudeKey = doublePreferencesKey("latitude")

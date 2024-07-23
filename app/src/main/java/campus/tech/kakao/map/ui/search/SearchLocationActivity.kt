@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.search
 
 import android.os.Bundle
 import android.text.Editable
@@ -7,8 +7,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.databinding.ActivitySearchLocationBinding
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModel
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModelFactory
+import campus.tech.kakao.map.ui.search.adapter.HistoryAdapter
+import campus.tech.kakao.map.ui.search.adapter.SearchLocationAdapter
 
 class SearchLocationActivity : AppCompatActivity() {
     private lateinit var viewModel: SearchLocationViewModel

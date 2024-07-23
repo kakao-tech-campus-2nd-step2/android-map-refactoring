@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.data.history
 
 import androidx.room.Dao
 import androidx.room.Insert

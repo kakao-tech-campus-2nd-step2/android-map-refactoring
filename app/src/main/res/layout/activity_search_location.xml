@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10dp"
-        tools:context=".view.SearchLocationActivity">
+        tools:context=".ui.search.SearchLocationActivity">
 
         <EditText
             android:id="@+id/searchInputEditText"

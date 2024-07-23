@@ -1,12 +1,12 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.search.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemLocationBinding
-import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModel
+import campus.tech.kakao.map.data.local_search.Location
+import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 
 class SearchLocationAdapter(
     private val dataList: List<Location>,

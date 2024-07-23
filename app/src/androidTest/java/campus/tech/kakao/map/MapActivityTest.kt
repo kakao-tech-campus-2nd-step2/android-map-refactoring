@@ -6,8 +6,8 @@ import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.view.MapActivity
-import campus.tech.kakao.map.view.SearchLocationActivity
+import campus.tech.kakao.map.ui.map.MapActivity
+import campus.tech.kakao.map.ui.search.SearchLocationActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

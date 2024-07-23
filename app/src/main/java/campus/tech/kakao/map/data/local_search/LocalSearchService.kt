@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.data.local_search
 
 import campus.tech.kakao.map.BuildConfig
 import retrofit2.Response
