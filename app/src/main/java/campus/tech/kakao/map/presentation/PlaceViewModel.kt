@@ -4,11 +4,17 @@ import campus.tech.kakao.map.domain.usecase.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.domain.model.PlaceVO
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
-class PlaceViewModel(
+@HiltViewModel
+class PlaceViewModel @Inject constructor(
     private val getSearchPlacesUseCase: GetSearchPlacesUseCase,
     private val saveSearchQueryUseCase: SaveSearchQueryUseCase,
     private val getSearchHistoryUseCase: GetSearchHistoryUseCase,
@@ -26,17 +32,23 @@ class PlaceViewModel(
     }
 
     fun saveSearchQuery(place: PlaceVO) {
-        saveSearchQueryUseCase(place)
+        viewModelScope.launch(Dispatchers.IO) {
+            saveSearchQueryUseCase(place)
+        }
         loadSearchHistory()
     }
 
     fun loadSearchHistory() {
-        val history = getSearchHistoryUseCase()
-        _searchHistory.postValue(history.toList())
+        viewModelScope.launch(Dispatchers.IO) {
+            val history = getSearchHistoryUseCase()
+            _searchHistory.postValue(history.toList())
+        }
     }
 
     fun removeSearchQuery(query: String) {
-        removeSearchQueryUseCase(query)
+        viewModelScope.launch(Dispatchers.IO) {
+            removeSearchQueryUseCase(query)
+        }
         loadSearchHistory()
     }
 

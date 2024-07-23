@@ -5,19 +5,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.repository.PlaceRepositoryImpl
-import campus.tech.kakao.map.data.usecase.*;
 import campus.tech.kakao.map.databinding.ActivityPlaceBinding
 import campus.tech.kakao.map.domain.model.PlaceVO
-import com.kakao.vectormap.LatLng
-import com.kakao.vectormap.camera.CameraPosition
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PlaceActivity : AppCompatActivity() {
-    private lateinit var placeViewModel: PlaceViewModel
+    private val placeViewModel: PlaceViewModel by viewModels()
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var historyAdapter: SearchHistoryAdapter
 
@@ -29,12 +27,13 @@ class PlaceActivity : AppCompatActivity() {
         binding = ActivityPlaceBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initializeViewModel()
         initializeAdapters()
         initializeRecyclerView()
 
         setUpSearchEditText()
         setUpRemoveButton()
+
+        observeViewModel()
     }
 
     private fun showEmptyMessage() {
@@ -52,20 +51,15 @@ class PlaceActivity : AppCompatActivity() {
         placeAdapter.updateData(places)
     }
 
+    private fun updateUI(places: List<PlaceVO>) {
+        if (places.isEmpty()) {
+            showEmptyMessage()
+        } else {
+            showRecyclerView(places)
+        }
+    }
 
-    private fun initializeViewModel() {
-        val placeRepository = PlaceRepositoryImpl(context = this)
-
-        placeViewModel = ViewModelProvider(
-            this,
-            PlaceViewModelFactory(
-                getSearchPlacesUseCase = GetSearchPlacesUseCaseImpl(placeRepository),
-                saveSearchQueryUseCase = SaveSearchQueryUseCaseImpl(placeRepository),
-                getSearchHistoryUseCase = GetSearchHistoryUseCaseImpl(placeRepository),
-                removeSearchQueryUseCase = RemoveSearchQueryUseCaseImpl(placeRepository),
-            )
-        )[PlaceViewModel::class.java]
-
+    private fun observeViewModel() {
         placeViewModel.places.observe(this) { places ->
             updateUI(places)
         }
@@ -73,15 +67,8 @@ class PlaceActivity : AppCompatActivity() {
         placeViewModel.searchHistory.observe(this) { history ->
             historyAdapter.updateData(history)
         }
-        placeViewModel.loadSearchHistory()
-    }
 
-    private fun updateUI(places: List<PlaceVO>) {
-        if (places.isEmpty()) {
-            showEmptyMessage()
-        } else {
-            showRecyclerView(places)
-        }
+        placeViewModel.loadSearchHistory()
     }
 
     private fun initializeRecyclerView() {
