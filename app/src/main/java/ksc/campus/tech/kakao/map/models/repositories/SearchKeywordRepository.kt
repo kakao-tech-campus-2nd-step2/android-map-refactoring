@@ -17,12 +17,13 @@ interface SearchKeywordRepository {
     suspend fun deleteKeyword(keyword: String)
     suspend fun getKeywords()
 }
+
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SearchKeywordRepositoryModule{
+abstract class SearchKeywordRepositoryModule {
     @Binds
     @Singleton
     abstract fun provideSearchKeywordRepository(
         searchKeywordRepositoryImpl: SearchKeywordRepositoryImpl
-    ) : SearchKeywordRepository
+    ): SearchKeywordRepository
 }

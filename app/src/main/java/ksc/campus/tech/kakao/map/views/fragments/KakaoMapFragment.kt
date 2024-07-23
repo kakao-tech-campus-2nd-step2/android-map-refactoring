@@ -28,7 +28,8 @@ import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivityViewModel) : Fragment() {
+class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivityViewModel) :
+    Fragment() {
     private lateinit var errorTextView: TextView
     private lateinit var retryButton: ImageButton
     private lateinit var errorMessageGroup: Group
@@ -36,13 +37,13 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
     private lateinit var kakaoMapView: MapView
     private var kakaoMap: KakaoMap? = null
 
-    private fun startKakaoMapView(){
+    private fun startKakaoMapView() {
         kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
             }
 
             override fun onMapError(e: Exception?) {
-                showErrorText(getErrorMessage(e?.message?:""))
+                showErrorText(getErrorMessage(e?.message ?: ""))
                 Log.e("KSC", e?.message ?: "")
             }
 
@@ -59,32 +60,33 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
             })
 
     }
+
     private fun initiateKakaoMap(view: View) {
         kakaoMapView = view.findViewById(R.id.kakao_map_view)
         startKakaoMapView()
     }
 
-    private fun moveCamera(kakaoMap: KakaoMap, position: CameraPosition){
+    private fun moveCamera(kakaoMap: KakaoMap, position: CameraPosition) {
         val camUpdate =
             CameraUpdateFactory.newCameraPosition(position)
         kakaoMap.moveCamera(camUpdate)
     }
 
-    private fun initiateViewModelCallbacks(){
-        viewModel.selectedLocation.observe(viewLifecycleOwner){
+    private fun initiateViewModelCallbacks() {
+        viewModel.selectedLocation.observe(viewLifecycleOwner) {
             updateSelectedLocation(it)
         }
     }
 
-    private fun initiateRetryButton(parent: View){
+    private fun initiateRetryButton(parent: View) {
         retryButton = parent.findViewById(R.id.retry_button)
-        retryButton.setOnClickListener{
+        retryButton.setOnClickListener {
             startKakaoMapView()
             setErrorMessageVisibility(false)
         }
     }
 
-    private fun initiateViews(parent: View){
+    private fun initiateViews(parent: View) {
         errorTextView = parent.findViewById(R.id.text_error)
         errorMessageGroup = parent.findViewById(R.id.error_message_group)
 
@@ -120,13 +122,13 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         super.onDestroyView()
     }
 
-    private fun restoreMarker(){
+    private fun restoreMarker() {
         updateSelectedLocation(viewModel.selectedLocation.value)
     }
 
-    private fun restorePosition(){
+    private fun restorePosition() {
         kakaoMap?.let {
-            if(viewModel.cameraPosition.value != null) {
+            if (viewModel.cameraPosition.value != null) {
                 moveCamera(
                     it, viewModel.cameraPosition.value!!
                 )
@@ -134,7 +136,7 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         }
     }
 
-    private fun updateSelectedLocation(locationInfo: LocationInfo?){
+    private fun updateSelectedLocation(locationInfo: LocationInfo?) {
         if (locationInfo == null) {
             clearLabels()
         } else {
@@ -142,13 +144,13 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         }
     }
 
-    private fun changeSelectedPosition(coordinate: LatLng){
+    private fun changeSelectedPosition(coordinate: LatLng) {
         clearLabels()
         addLabel(coordinate)
     }
 
-    private fun clearLabels(){
-        if(kakaoMap?.isVisible != true) {
+    private fun clearLabels() {
+        if (kakaoMap?.isVisible != true) {
             Log.d("KSC", "mapView not activated")
             return
         }
@@ -156,8 +158,8 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         layer?.removeAll()
     }
 
-    private fun addLabel(coordinate:LatLng){
-        if(kakaoMap?.isVisible != true) {
+    private fun addLabel(coordinate: LatLng) {
+        if (kakaoMap?.isVisible != true) {
             Log.d("KSC", "mapView not activated")
             return
         }
@@ -169,16 +171,16 @@ class KakaoMapFragment @Inject constructor(private val viewModel: SearchActivity
         layer?.addLabel(options)
     }
 
-    private fun getErrorMessage(error: String): String{
+    private fun getErrorMessage(error: String): String {
         return "지도 인증을 실패 했습니다. \n다시 시도해 주세요.\n\n$error"
     }
 
-    private fun showErrorText(errorMessage:String){
+    private fun showErrorText(errorMessage: String) {
         setErrorMessageVisibility(true)
         errorTextView.text = errorMessage
     }
 
-    private fun setErrorMessageVisibility(visible:Boolean){
+    private fun setErrorMessageVisibility(visible: Boolean) {
         errorMessageGroup.isVisible = visible
     }
 }

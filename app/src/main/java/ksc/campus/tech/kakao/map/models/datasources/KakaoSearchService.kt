@@ -38,7 +38,7 @@ class KakaoSearchService @Inject constructor(
      * 현재 진행중인 쿼리가 유저가 마지막으로 보낸 쿼리인지 검증한다.
      *
      * 유저가 새로운 쿼리를 보낼 때마다 [lastSearchId] 값이 1씩 증가한다.
-    */
+     */
     private var lastSearchId: Int = 0
 
     private fun isQueryValid(query: String): Boolean = query.isNotBlank()
@@ -59,8 +59,8 @@ class KakaoSearchService @Inject constructor(
                         doc.categoryGroupCode,
                         parseCategory(doc.categoryName)
                     ),
-                    doc.y.toDoubleOrNull()?:0.0,
-                    doc.x.toDoubleOrNull()?:0.0
+                    doc.y.toDoubleOrNull() ?: 0.0,
+                    doc.x.toDoubleOrNull() ?: 0.0
                 )
             )
         }
@@ -142,7 +142,7 @@ class KakaoSearchService @Inject constructor(
         )
     }
 
-    companion object{
+    companion object {
         private val CATEGORY_CODE_DESCRIPTION_MAP: HashMap<String, String> = hashMapOf(
             Pair("MT1", "대형마트"),
             Pair("CS2", "편의점"),
@@ -168,7 +168,7 @@ class KakaoSearchService @Inject constructor(
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SearchKakaoRetrofitService{
+object SearchKakaoRetrofitService {
     @Provides
     fun provideSearchKakaoRetrofitService(
         @ApplicationContext context: Context

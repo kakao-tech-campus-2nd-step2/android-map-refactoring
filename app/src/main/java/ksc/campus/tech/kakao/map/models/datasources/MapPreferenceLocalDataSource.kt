@@ -16,7 +16,7 @@ import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import java.lang.reflect.Type
 import javax.inject.Inject
 
-class CameraPositionSerializer: JsonSerializer<CameraPosition> {
+class CameraPositionSerializer : JsonSerializer<CameraPosition> {
     override fun serialize(
         src: CameraPosition?,
         typeOfSrc: Type?,
@@ -24,22 +24,22 @@ class CameraPositionSerializer: JsonSerializer<CameraPosition> {
     ): JsonElement {
         val json = JsonObject()
 
-        if(src == null){
+        if (src == null) {
             return json
         }
 
         json.addProperty("latitude", src.position.latitude)
         json.addProperty("longitude", src.position.longitude)
-        json.addProperty("zoom_level",src.zoomLevel)
-        json.addProperty("tilt_angle",src.tiltAngle)
-        json.addProperty("rotation_angle",src.rotationAngle)
-        json.addProperty("height",src.height)
+        json.addProperty("zoom_level", src.zoomLevel)
+        json.addProperty("tilt_angle", src.tiltAngle)
+        json.addProperty("rotation_angle", src.rotationAngle)
+        json.addProperty("height", src.height)
 
         return json
     }
 }
 
-class CameraPositionDeserializer: JsonDeserializer<CameraPosition?> {
+class CameraPositionDeserializer : JsonDeserializer<CameraPosition?> {
     override fun deserialize(
         json: JsonElement?,
         typeOfT: Type?,
@@ -60,23 +60,20 @@ class CameraPositionDeserializer: JsonDeserializer<CameraPosition?> {
                 jsonObject.get("rotation_angle").asDouble,
                 jsonObject.get("height").asDouble
             )
-        }
-        catch (e: UnsupportedOperationException){
-            Log.e("KSC", e.message?:"")
+        } catch (e: UnsupportedOperationException) {
+            Log.e("KSC", e.message ?: "")
             return null
-        }
-        catch (e: NumberFormatException){
-            Log.e("KSC", e.message?:"")
+        } catch (e: NumberFormatException) {
+            Log.e("KSC", e.message ?: "")
             return null
-        }
-        catch(e: IllegalStateException){
-            Log.e("KSC", e.message?:"")
+        } catch (e: IllegalStateException) {
+            Log.e("KSC", e.message ?: "")
             return null
         }
     }
 }
 
-class MapPreferenceLocalDataSource @Inject constructor(){
+class MapPreferenceLocalDataSource @Inject constructor() {
     private val cameraPositionSerializer: Gson = GsonBuilder()
         .registerTypeAdapter(CameraPositionSerializer::class.java, CameraPositionSerializer())
         .create()
@@ -85,11 +82,11 @@ class MapPreferenceLocalDataSource @Inject constructor(){
         .create()
     private val gson: Gson = Gson()
 
-    fun getCameraPosition(context: Context): CameraPosition?{
+    fun getCameraPosition(context: Context): CameraPosition? {
         val sharedPreference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
         val data = sharedPreference.getString(CAMERA_POSITION_KEY, "")
 
-        if(data.isNullOrEmpty()) {
+        if (data.isNullOrEmpty()) {
             return null
         }
 

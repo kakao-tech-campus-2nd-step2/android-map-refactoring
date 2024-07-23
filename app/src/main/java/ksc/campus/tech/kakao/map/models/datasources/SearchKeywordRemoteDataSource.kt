@@ -14,13 +14,13 @@ import ksc.campus.tech.kakao.map.models.entities.SearchKeyword
 import javax.inject.Inject
 
 @Database(entities = [SearchKeyword::class], version = 4)
-abstract class SearchKeywordDB : RoomDatabase(){
+abstract class SearchKeywordDB : RoomDatabase() {
     abstract fun dao(): SearchKeywordDao
 }
 
 class SearchKeywordRemoteDataSource @Inject constructor(
     private val roomDB: SearchKeywordDB
-){
+) {
     fun insertOrReplaceKeyword(keyword: String) {
         val data = SearchKeyword(0, keyword)
         roomDB.dao().insert(data)
@@ -33,18 +33,19 @@ class SearchKeywordRemoteDataSource @Inject constructor(
     fun queryAllSearchKeywords(): List<String> {
         val keywords = roomDB.dao().queryAllKeywords()
         return keywords.map {
-            it.keyword?:""
+            it.keyword ?: ""
         }
     }
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-object SearchKeywordDBModule{
+object SearchKeywordDBModule {
     @Provides
     fun provideSearchKeywordDB(
         @ApplicationContext context: Context
     ): SearchKeywordDB {
-        return Room.databaseBuilder(context, SearchKeywordDB::class.java, "MapSearch2").fallbackToDestructiveMigration().build()
+        return Room.databaseBuilder(context, SearchKeywordDB::class.java, "MapSearch2")
+            .fallbackToDestructiveMigration().build()
     }
 }

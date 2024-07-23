@@ -19,7 +19,8 @@ import ksc.campus.tech.kakao.map.views.adapters.SearchResultAdapter
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SearchResultFragment @Inject constructor(val viewModel: SearchActivityViewModel) : Fragment() {
+class SearchResultFragment @Inject constructor(val viewModel: SearchActivityViewModel) :
+    Fragment() {
     private lateinit var searchResultRecyclerView: RecyclerView
     private lateinit var noResultHelpText: View
 

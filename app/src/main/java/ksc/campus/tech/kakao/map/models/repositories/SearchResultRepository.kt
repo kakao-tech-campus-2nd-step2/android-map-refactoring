@@ -10,7 +10,14 @@ import ksc.campus.tech.kakao.map.models.repositoriesImpl.SearchResultRepositoryI
 import javax.inject.Singleton
 
 @Serializable
-data class SearchResult(val id: String, val name: String, val address: String, val type: String, val latitude: Double, val longitude: Double)
+data class SearchResult(
+    val id: String,
+    val name: String,
+    val address: String,
+    val type: String,
+    val latitude: Double,
+    val longitude: Double
+)
 
 interface SearchResultRepository {
     val searchResult: LiveData<List<SearchResult>>
@@ -19,10 +26,10 @@ interface SearchResultRepository {
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class SearchResultRepositoryModule{
+abstract class SearchResultRepositoryModule {
     @Binds
     @Singleton
     abstract fun bindSearchResultRepository(
         searchResultRepositoryImpl: SearchResultRepositoryImpl
-    ) : SearchResultRepository
+    ): SearchResultRepository
 }

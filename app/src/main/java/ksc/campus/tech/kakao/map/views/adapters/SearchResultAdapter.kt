@@ -36,7 +36,7 @@ class SearchResultAdapter(
             resultType = itemView.findViewById(R.id.text_result_type)
         }
 
-        fun bindData(item: SearchResult){
+        fun bindData(item: SearchResult) {
             holdingData = item
             resultName.text = item.name
             resultAddress.text = item.address

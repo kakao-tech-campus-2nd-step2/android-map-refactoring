@@ -4,16 +4,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentFactory
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 
-class SearchActivityFragmentFactory(private val viewModel: SearchActivityViewModel) : FragmentFactory() {
+class SearchActivityFragmentFactory(private val viewModel: SearchActivityViewModel) :
+    FragmentFactory() {
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {
-        return when(className){
-            KakaoMapFragment::class.java.name->{
+        return when (className) {
+            KakaoMapFragment::class.java.name -> {
                 KakaoMapFragment(viewModel)
             }
-            SearchResultFragment::class.java.name->{
+
+            SearchResultFragment::class.java.name -> {
                 SearchResultFragment(viewModel)
             }
-            else->{
+
+            else -> {
                 super.instantiate(classLoader, className)
             }
         }
