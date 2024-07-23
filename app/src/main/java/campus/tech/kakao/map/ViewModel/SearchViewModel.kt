@@ -1,7 +1,6 @@
 package campus.tech.kakao.map.ViewModel
 
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.map.View.SearchRepo
 
 class SearchViewModel private constructor(private val searchRepository: SearchRepo) : ViewModel() {
     companion object {
