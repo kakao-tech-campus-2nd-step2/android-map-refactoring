@@ -1,7 +1,9 @@
-package campus.tech.kakao.map.Domain.Model
+package campus.tech.kakao.map.Data.Datasource.Local
 
 import android.database.Cursor
 import android.provider.BaseColumns
+import campus.tech.kakao.map.Domain.VO.Place
+import campus.tech.kakao.map.Domain.VO.PlaceCategory
 
 object PlaceContract {
     const val DATABASE_NAME = "Place.db"

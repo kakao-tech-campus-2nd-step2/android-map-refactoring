@@ -1,63 +1,57 @@
 package campus.tech.kakao.map.Data
 
-import campus.tech.kakao.map.Data.Datasource.Local.Dao.FavoriteDao
-import campus.tech.kakao.map.Data.Datasource.Local.Dao.PlaceDao
+import campus.tech.kakao.map.Data.Datasource.Local.Entity.FavoriteEntity
+import campus.tech.kakao.map.Data.Datasource.Local.Entity.PlaceEntity
+import campus.tech.kakao.map.Data.Datasource.Local.Entity.toVO
+import campus.tech.kakao.map.Data.Datasource.Local.DB.RoomDB
 import campus.tech.kakao.map.Data.Datasource.Remote.RemoteService
-import campus.tech.kakao.map.Data.Datasource.Remote.Response.Document
 import campus.tech.kakao.map.Data.Datasource.Remote.Response.toVO
 import campus.tech.kakao.map.Data.Datasource.Remote.RetrofitService
 import campus.tech.kakao.map.Domain.PlaceRepository
-import campus.tech.kakao.map.Domain.Model.Place
+import campus.tech.kakao.map.Domain.VO.Place
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class PlaceRepositoryImpl @Inject constructor(
-    private val placeDao: PlaceDao,
-    private val favoriteDao: FavoriteDao,
+    private val roomDB: RoomDB,
     private val retrofitService: RetrofitService,
     private val httpUrlConnect: RemoteService
 ) : PlaceRepository {
 
-    override fun getCurrentFavorite() : List<Place>{
-        return favoriteDao.getCurrentFavorite()
+    override suspend fun getCurrentFavorite() : List<Place> = withContext(Dispatchers.IO){
+        roomDB.favoriteDao().getCurrentFavorite().map { it.toVO() }
     }
 
-    override fun getSimilarPlacesByName(name: String) : List<Place> {
-        return placeDao.getSimilarPlacesByName(name)
+    override suspend fun getSimilarPlacesByName(name: String) : List<Place> = withContext(Dispatchers.IO){
+        roomDB.placeDao().getSimilarPlacesByName(name).map { it.toVO() }
     }
 
-    override fun getPlaceById(id : Int): Place? {
-        return placeDao.getPlaceById(id)
+    override suspend fun getPlaceById(id : Int): Place? = withContext(Dispatchers.IO){
+        roomDB.placeDao().getPlaceById(id)?.toVO()
     }
 
-    override fun getFavoriteById(id: Int) : Place?{
-        return favoriteDao.getFavoriteById(id)
+    override suspend fun getFavoriteById(id: Int) : Place? = withContext(Dispatchers.IO){
+        roomDB.favoriteDao().getFavoriteById(id)?.toVO()
     }
 
-    override fun addFavorite(place : Place) : List<Place> {
-        favoriteDao.addFavorite(place)
-        return getCurrentFavorite()
+    override suspend fun addFavorite(place : Place) : List<Place> = withContext(Dispatchers.IO){
+        roomDB.favoriteDao().addFavorite(place.toFavoriteEntity())
+        getCurrentFavorite()
     }
 
-    override fun deleteFavorite(id : Int) : List<Place>{
-        favoriteDao.deleteFavorite(id)
-        return getCurrentFavorite()
+    override suspend fun deleteFavorite(id : Int) : List<Place> = withContext(Dispatchers.IO){
+        roomDB.favoriteDao().deleteFavorite(id)
+        getCurrentFavorite()
     }
 
-    override suspend fun searchPlaceRemote(name: String) : List<Place>{
-        return getPlaceByNameRemote(name)
+    override suspend fun searchPlaceRemote(name: String) : List<Place> = withContext(Dispatchers.IO){
+        getPlaceByNameRemote(name)
     }
 
-    override fun getPlaceByNameHTTP(name : String) : List<Place>{
-        val places = mutableListOf<Place>()
-        httpUrlConnect.getPlaceResponse(name).forEach{
-            places.add(
-                it.toVO()
-            )
-        }
-        return places
-    }
+    override fun getPlaceByNameHTTP(name : String) : List<Place> =
+        httpUrlConnect.getPlaceResponse(name).map{ it.toVO()}
+
 
     private suspend fun getPlaceByNameRemote(name: String): List<Place> =
         withContext(Dispatchers.IO) {
@@ -94,6 +88,23 @@ class PlaceRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun Place.toPlaceEntity() = PlaceEntity(
+        this.id,
+        this.name,
+        this.address,
+        this.category,
+        this.x,
+        this.y
+    )
+
+    private fun Place.toFavoriteEntity() = FavoriteEntity(
+        this.id,
+        this.name,
+        this.address,
+        this.category,
+        this.x,
+        this.y
+    )
     companion object {
         const val MAX_PAGE = 2
     }
