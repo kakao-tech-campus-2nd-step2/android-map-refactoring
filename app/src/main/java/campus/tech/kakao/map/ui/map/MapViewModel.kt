@@ -1,20 +1,21 @@
-package campus.tech.kakao.map.viewmodel
+package campus.tech.kakao.map.ui.map
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.model.DataStoreRepository
+import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import kotlinx.coroutines.launch
 import java.io.IOException
+import javax.inject.Inject
 
-class MapViewModel(
-    private val dataStoreRepository: DataStoreRepository
+class MapViewModel @Inject constructor(
+    private val lastLocationRepository: LastLocationRepository
 ) : ViewModel() {
 
     fun saveLastLocation(latitude: Double, longitude: Double) {
         viewModelScope.launch {
             try {
-                dataStoreRepository.saveLocation(latitude, longitude)
+                lastLocationRepository.saveLocation(latitude, longitude)
             } catch (ioException: IOException) {
                 Log.e("MapViewModel", "Failed to save location", ioException)
             } catch (exception: Exception) {
@@ -25,7 +26,7 @@ class MapViewModel(
 
     fun loadLastLocation(callback: (Double, Double, Boolean) -> Unit) {
         viewModelScope.launch {
-            dataStoreRepository.loadLocation().collect {
+            lastLocationRepository.loadLocation().collect {
                 it?.let {
                     callback(it.latitude, it.longitude, false)
                 }

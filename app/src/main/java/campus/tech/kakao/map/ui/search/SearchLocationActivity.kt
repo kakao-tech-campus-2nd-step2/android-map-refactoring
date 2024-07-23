@@ -1,26 +1,25 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.search
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.databinding.ActivitySearchLocationBinding
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModel
-import campus.tech.kakao.map.viewmodel.SearchLocationViewModelFactory
+import campus.tech.kakao.map.ui.search.adapter.HistoryAdapter
+import campus.tech.kakao.map.ui.search.adapter.SearchLocationAdapter
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchLocationActivity : AppCompatActivity() {
-    private lateinit var viewModel: SearchLocationViewModel
+    @Inject lateinit var viewModel: SearchLocationViewModel
     private lateinit var binding: ActivitySearchLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchLocationBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val viewModelFactory = SearchLocationViewModelFactory(this)
-        viewModel = ViewModelProvider(this, viewModelFactory)[SearchLocationViewModel::class.java]
 
         binding.removeSearchInputButton.setOnClickListener {
             binding.searchInputEditText.text.clear()
@@ -34,10 +33,6 @@ class SearchLocationActivity : AppCompatActivity() {
             }
         })
 
-        applyObserver()
-    }
-
-    fun applyObserver() {
         viewModel.searchInput.observe(this) {
             it?.let { searchInput ->
                 binding.searchInputEditText.setText(searchInput)

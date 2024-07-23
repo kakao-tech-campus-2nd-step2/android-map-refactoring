@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.data.local_search
 
 data class LocalSearchResponse(
     val documents: List<LocalSearchDocument>,

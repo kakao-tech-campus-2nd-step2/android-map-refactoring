@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.view
+package campus.tech.kakao.map.ui.search.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 
