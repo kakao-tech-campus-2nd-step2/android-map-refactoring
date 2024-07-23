@@ -21,7 +21,9 @@ import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager

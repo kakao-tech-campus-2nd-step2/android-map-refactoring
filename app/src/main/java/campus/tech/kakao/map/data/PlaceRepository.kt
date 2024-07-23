@@ -5,11 +5,9 @@ import campus.tech.kakao.map.BuildConfig
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class PlaceRepository {
-
-    private val retrofitLocalKeywordService: RetrofitLocalKeywordService =
-        RetrofitInstance.retrofitLocalKeywordService
+class PlaceRepository @Inject constructor(private val retrofitLocalKeywordService: RetrofitLocalKeywordService) {
 
     fun searchPlace(
         keyword: String,
