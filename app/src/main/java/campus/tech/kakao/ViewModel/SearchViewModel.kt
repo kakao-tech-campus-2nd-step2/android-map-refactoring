@@ -1,13 +1,34 @@
 package campus.tech.kakao.ViewModel
+
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.Model.KakaoApiService
+import campus.tech.kakao.Model.Place
+import campus.tech.kakao.Model.ResultSearchKeyword
 import campus.tech.kakao.Model.RoomDb
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import javax.inject.Inject
 
-class SearchViewModel(private val db: RoomDb) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val db: RoomDb,
+    private val kakaoApiService: KakaoApiService
+) : ViewModel() {
+
     private val liveSelectedData = MutableLiveData<List<Pair<Long, String>>>()
-    val selectedData: MutableLiveData<List<Pair<Long, String>>> get() = liveSelectedData
+    val selectedData: LiveData<List<Pair<Long, String>>> get() = liveSelectedData
+
+    private val liveSearchResults = MutableLiveData<List<Place>>()
+    val searchResults: LiveData<List<Place>> get() = liveSearchResults
+
+    private val selectedPlace = MutableLiveData<Place>()
+    val place: LiveData<Place> get() = selectedPlace
 
     fun loadSelectedData() {
         viewModelScope.launch {
@@ -27,5 +48,24 @@ class SearchViewModel(private val db: RoomDb) : ViewModel() {
             db.deleteFromSelectedData(id)
             loadSelectedData()
         }
+    }
+
+    fun searchPlaces(apiKey: String, query: String) {
+        val authHeader = "KakaoAK $apiKey"
+
+        val call = kakaoApiService.searchPlaces(authHeader, query)
+        call.enqueue(object : Callback<ResultSearchKeyword> {
+            override fun onResponse(call: Call<ResultSearchKeyword>, response: Response<ResultSearchKeyword>) {
+                if (response.isSuccessful && response.body() != null) {
+                    liveSearchResults.value = response.body()?.documents ?: emptyList()
+                } else { liveSearchResults.value = emptyList() }
+            }
+
+            override fun onFailure(call: Call<ResultSearchKeyword>, t: Throwable) { liveSearchResults.value = emptyList() }
+        })
+    }
+
+    fun selectPlace(place: Place) {
+        selectedPlace.value = place
     }
 }
