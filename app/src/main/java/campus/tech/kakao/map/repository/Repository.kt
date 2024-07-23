@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.repository
 
-import android.content.Context
 import android.content.SharedPreferences
 import campus.tech.kakao.map.data.KeywordDao
 import campus.tech.kakao.map.data.KakaoLocalApiService
@@ -9,13 +8,13 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class Repository(
-    context: Context,
+class Repository @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
     private val keywordDao: KeywordDao,
     private val kakaoApiService: KakaoLocalApiService
 ) {
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
 
     suspend fun search(query: String): List<Keyword> = withContext(Dispatchers.IO) {
         val response = kakaoApiService.searchPlaces(query).execute()
