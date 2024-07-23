@@ -19,17 +19,27 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        observeNetworkAvailability()
+        setInitialFragment(savedInstanceState)
+        observeCurrentFragment()
+    }
+
+    private fun observeNetworkAvailability() {
         mainViewModel.checkNetworkAvailability(this)
         mainViewModel.isNetworkAvailable.observe(this, Observer { isAvailable ->
             if (!isAvailable) {
                 Toast.makeText(this, "인터넷 연결 안됨", Toast.LENGTH_SHORT).show()
             }
         })
+    }
 
+    private fun setInitialFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
             mainViewModel.setMapFragment()
         }
+    }
 
+    private fun observeCurrentFragment() {
         mainViewModel.currentFragment.observe(this, Observer { fragment ->
             replaceFragment(fragment)
         })
