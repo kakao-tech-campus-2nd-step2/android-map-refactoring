@@ -1,6 +1,5 @@
 package campus.tech.kakao.View
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +9,8 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import campus.tech.kakao.ViewModel.MapViewModel
 import campus.tech.kakao.map.R
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -20,7 +21,9 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapFragment : Fragment() {
     private lateinit var mapView: MapView
     private lateinit var searchView: SearchView
@@ -28,16 +31,21 @@ class MapFragment : Fragment() {
     var y: Double = 37.402005
     private var kakaoMap: KakaoMap? = null
 
+    private val mapViewModel: MapViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val lastLocation = getLastLocation(requireContext())
+        val lastLocation = mapViewModel.getLastLocation(requireContext())
         y = lastLocation.first
         x = lastLocation.second
 
         arguments?.let {
             x = it.getDouble("x", x)
             y = it.getDouble("y", y)
+            val placeName = it.getString("placeName", "")
+            val roadAddressName = it.getString("roadAddressName", "")
+
+            Log.d("MapFragment", "Received Data - x: $x, y: $y, placeName: $placeName, roadAddressName: $roadAddressName")
         }
     }
 
@@ -80,15 +88,20 @@ class MapFragment : Fragment() {
 
                 readyMap.setOnCameraMoveEndListener { _, _, _ ->
                     val position = readyMap.cameraPosition!!.position
-                    saveLastLocation(position.latitude, position.longitude)
+                    mapViewModel.saveLastLocation(requireContext(), position.latitude, position.longitude)
                 }
 
                 readyMap.setOnMapClickListener { _, _, _, _ ->
                     (activity as? MainActivity)?.showSearchFragment()
                 }
-
+                
                 arguments?.let {
-                    setCoordinates(it.getDouble("x", x), it.getDouble("y", y), it.getString("placeName", ""), it.getString("roadAddressName", ""))
+                    val x = it.getDouble("x", this@MapFragment.x)
+                    val y = it.getDouble("y", this@MapFragment.y)
+                    val placeName = it.getString("placeName", "")
+                    val roadAddressName = it.getString("roadAddressName", "")
+                    Log.d("MapFragment", "Setting Coordinates - x: $x, y: $y, placeName: $placeName, roadAddressName: $roadAddressName")
+                    setCoordinates(x, y, placeName, roadAddressName)
                 }
             }
         })
@@ -108,22 +121,6 @@ class MapFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         mapView.pause()
-    }
-
-    fun saveLastLocation(lat: Double, lng: Double) {
-        val sharedPreferences = requireContext().getSharedPreferences("MapPrefs", Context.MODE_PRIVATE)
-        with(sharedPreferences.edit()) {
-            putFloat("lastX", lng.toFloat())
-            putFloat("lastY", lat.toFloat())
-            apply()
-        }
-    }
-
-    fun getLastLocation(context: Context): Pair<Double, Double> {
-        val sharedPreferences = context.getSharedPreferences("MapPrefs", Context.MODE_PRIVATE)
-        val lat = sharedPreferences.getFloat("lastY", 37.402005f).toDouble()
-        val lng = sharedPreferences.getFloat("lastX", 127.108621f).toDouble()
-        return Pair(lat, lng)
     }
 
     fun setCoordinates(newX: Double, newY: Double, placeName: String, roadAddressName: String) {
