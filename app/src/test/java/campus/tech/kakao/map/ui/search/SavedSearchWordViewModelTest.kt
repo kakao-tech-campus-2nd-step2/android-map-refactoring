@@ -1,15 +1,21 @@
 package campus.tech.kakao.map.ui.search
 
-import campus.tech.kakao.map.data.SavedSearchWordDBHelper
-import campus.tech.kakao.map.data.repository.DefaultSavedSearchWordRepository
-import campus.tech.kakao.map.data.repository.SavedSearchWordRepository
-import campus.tech.kakao.map.model.SavedSearchWord
+import android.util.Log
+import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
+import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
+import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -20,20 +26,26 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedSearchWordViewModelTest {
-    private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var viewModel: SavedSearchWordViewModel
-    private lateinit var repository: SavedSearchWordRepository
-    private lateinit var dbHelper: SavedSearchWordDBHelper
+    private lateinit var insertOrUpdateSearchWordUseCase: InsertOrUpdateSearchWordUseCase
+    private lateinit var deleteSearchWordByIdUseCase: DeleteSearchWordByIdUseCase
+    private lateinit var getAllSearchWordsUseCase: GetAllSearchWordsUseCase
     private lateinit var searchWord1: SavedSearchWord
     private lateinit var searchWord2: SavedSearchWord
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dbHelper = mockk(relaxed = true)
-        repository = DefaultSavedSearchWordRepository(dbHelper)
-        viewModel = SavedSearchWordViewModel(repository)
+        insertOrUpdateSearchWordUseCase = mockk()
+        deleteSearchWordByIdUseCase = mockk()
+        getAllSearchWordsUseCase = mockk()
+        viewModel = SavedSearchWordViewModel(
+            insertOrUpdateSearchWordUseCase,
+            deleteSearchWordByIdUseCase,
+            getAllSearchWordsUseCase
+        )
 
         searchWord1 =
             SavedSearchWord(
@@ -53,6 +65,8 @@ class SavedSearchWordViewModelTest {
                 latitude = 124.567,
                 longitude = 23.45,
             )
+
+        mockLogClass()
     }
 
     @After
@@ -64,47 +78,56 @@ class SavedSearchWordViewModelTest {
     fun testInsertOrUpdateSearchWord() =
         runTest(testDispatcher) {
             // Given
-            coEvery { repository.insertOrUpdateSearchWord(any()) } returns Unit
-            coEvery { dbHelper.insertOrUpdateSearchWord(any()) } returns Unit
-            coEvery { repository.getAllSearchWords() } returns listOf(searchWord1, searchWord2)
-            coEvery { dbHelper.getAllSearchWords() } returns listOf(searchWord1, searchWord2)
+            coEvery { insertOrUpdateSearchWordUseCase(any()) } returns Unit
+            coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(searchWord1, searchWord2)
 
             // When
             viewModel.insertSearchWord(searchWord1)
-            viewModel.updateSavedSearchWords()
-
+            viewModel.savedSearchWords.first { it.isNotEmpty() }
             viewModel.insertSearchWord(searchWord2)
-            viewModel.updateSavedSearchWords()
+            viewModel.savedSearchWords.first { it.size == 2 }
 
             // Then
+            coVerify(exactly = 3) { getAllSearchWordsUseCase() }
+            coVerify { insertOrUpdateSearchWordUseCase(searchWord1) }
+            coVerify { insertOrUpdateSearchWordUseCase(searchWord2) }
             assertEquals(listOf(searchWord1, searchWord2), viewModel.savedSearchWords.value)
-            coVerify { repository.insertOrUpdateSearchWord(searchWord1) }
-            coVerify { repository.insertOrUpdateSearchWord(searchWord2) }
-
-            // init 포함 3번 호출 돼야 함
-            coVerify(exactly = 3) { repository.getAllSearchWords() }
         }
 
     @Test
     fun testDeleteSearchWordById() =
         runTest(testDispatcher) {
             // Given
-            coEvery { repository.deleteSearchWordById(searchWord2.id) } returns Unit
-            coEvery { dbHelper.deleteSearchWordById(searchWord2.id) } returns Unit
-            coEvery { repository.getAllSearchWords() } returns mutableListOf(searchWord1, searchWord2)
+            coEvery { insertOrUpdateSearchWordUseCase(any()) } just runs
+            coEvery { deleteSearchWordByIdUseCase(searchWord1.id) } just runs
+            coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(
+                searchWord1,
+                searchWord2
+            ) andThen listOf(searchWord2)
 
-            println(viewModel.savedSearchWords.value)
             // When
             viewModel.insertSearchWord(searchWord1)
-            viewModel.updateSavedSearchWords()
+            viewModel.savedSearchWords.first { it.isNotEmpty() }
 
             viewModel.insertSearchWord(searchWord2)
-            viewModel.updateSavedSearchWords()
+            viewModel.savedSearchWords.first { it.size == 2 }
 
-            viewModel.deleteSearchWordById(searchWord2)
+            viewModel.deleteSearchWordById(searchWord1)
+            viewModel.savedSearchWords.first { it.size == 1 }
 
             // Then
-            coVerify { repository.deleteSearchWordById(searchWord2.id) }
-            assertEquals(1, viewModel.savedSearchWords.value.size)
+            coVerify(exactly = 4) { getAllSearchWordsUseCase() }
+            coVerify { deleteSearchWordByIdUseCase(searchWord1.id) }
+            assertEquals(listOf(searchWord2), viewModel.savedSearchWords.value)
+
         }
+
+    private fun mockLogClass() {
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
+    }
 }

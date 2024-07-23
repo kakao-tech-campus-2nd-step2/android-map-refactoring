@@ -97,6 +97,10 @@ kapt {
     correctErrorTypes = true
 }
 
+ktlint {
+    version = "0.49.1"
+}
+
 protobuf {
     protoc {
         artifact = "com.google.protobuf:protoc:3.25.1"

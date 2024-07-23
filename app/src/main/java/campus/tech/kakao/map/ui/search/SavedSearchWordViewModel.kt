@@ -52,7 +52,7 @@ constructor(
     }
 
     fun updateSavedSearchWords() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             try {
                 val searchWords = getAllSearchWordsUseCase()
                 _savedSearchWords.emit(searchWords)
