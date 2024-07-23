@@ -1,24 +1,25 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
+        maven { url = uri("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/") }
     }
 }
+
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/")
+        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
+        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/") }
+
+        jcenter()
     }
 }
+
 
 rootProject.name = "android-map-refactoring"
 include(":app")
