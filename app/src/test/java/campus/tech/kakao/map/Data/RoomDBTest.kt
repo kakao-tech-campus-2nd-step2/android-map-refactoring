@@ -7,6 +7,10 @@ import campus.tech.kakao.map.Domain.VO.PlaceCategory
 import campus.tech.kakao.map.MyApplication
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -15,7 +19,8 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import javax.inject.Inject
 
-@Config(application = MyApplication::class, manifest = Config.NONE)
+@RunWith(AndroidJUnit4::class)
+@Config(application = HiltTestApplication::class, manifest = Config.NONE)
 @HiltAndroidTest
 class RoomDBTest {
     @get:Rule
@@ -23,21 +28,21 @@ class RoomDBTest {
     private val fakePlace = FavoriteEntity(1, "name", "address", PlaceCategory.CAFE,1.0, 1.0)
 
     @Inject
-    lateinit var roomDB : RoomDB
+    lateinit var roomDB: RoomDB
 
     @Before
-    fun init() {
+    fun init() = runBlocking {
         hiltRule.inject()
-        roomDB.favoriteDao().addFavorite(
-            FavoriteEntity(1, "name", "address", PlaceCategory.CAFE,1.0, 1.0)
-        )
+        withContext(Dispatchers.IO) {
+            roomDB.favoriteDao().addFavorite(fakePlace)
+        }
     }
 
     @Test
-    fun `검색한 키워드로 장소를 불러온다`(){
-        val resultCafe = roomDB.placeDao().getSimilarPlacesByName("카페")
-        val resultRestaurant = roomDB.placeDao().getSimilarPlacesByName("음식점")
-        val resultPharmacy = roomDB.placeDao().getSimilarPlacesByName("약국")
+    fun `검색한 키워드로 장소를 불러온다`() = runBlocking {
+        val resultCafe = withContext(Dispatchers.IO) { roomDB.placeDao().getSimilarPlacesByName("카페") }
+        val resultRestaurant = withContext(Dispatchers.IO) { roomDB.placeDao().getSimilarPlacesByName("음식점") }
+        val resultPharmacy = withContext(Dispatchers.IO) { roomDB.placeDao().getSimilarPlacesByName("약국") }
 
         Assert.assertTrue(resultCafe.all { it.category == PlaceCategory.CAFE })
         Assert.assertTrue(resultRestaurant.all { it.category == PlaceCategory.RESTAURANT })
@@ -45,25 +50,27 @@ class RoomDBTest {
     }
 
     @Test
-    fun `id값으로 즐겨찾기 가져오기`() {
-        roomDB.favoriteDao().getFavoriteById(fakePlace.id).let{
-            Assert.assertEquals(fakePlace, it)
-        }
+    fun `id값으로 즐겨찾기 가져오기`() = runBlocking {
+        val favorite = withContext(Dispatchers.IO) { roomDB.favoriteDao().getFavoriteById(fakePlace.id) }
+        Assert.assertEquals(fakePlace, favorite)
     }
 
     @Test
-    fun `존재하지 않는 항목이나 삭제된 항목을 찾을 시 null 반환`(){
-        roomDB.favoriteDao().deleteFavorite(fakePlace.id)
+    fun `존재하지 않는 항목이나 삭제된 항목을 찾을 시 null 반환`() = runBlocking {
+        withContext(Dispatchers.IO) { roomDB.favoriteDao().deleteFavorite(fakePlace.id) }
 
-        Assert.assertEquals(null, roomDB.favoriteDao().getFavoriteById(fakePlace.id))
-        Assert.assertEquals(null, roomDB.favoriteDao().getFavoriteById(-1))
+        val favorite1 = withContext(Dispatchers.IO) { roomDB.favoriteDao().getFavoriteById(fakePlace.id) }
+        val favorite2 = withContext(Dispatchers.IO) { roomDB.favoriteDao().getFavoriteById(-1) }
+
+        Assert.assertEquals(null, favorite1)
+        Assert.assertEquals(null, favorite2)
     }
 
     @Test
-    fun `즐겨찾기 추가`(){
-        val before = roomDB.favoriteDao().getCurrentFavorite()
-        roomDB.favoriteDao().deleteFavorite(fakePlace.id)
-        val after = roomDB.favoriteDao().getCurrentFavorite()
+    fun `즐겨찾기 추가`() = runBlocking {
+        val before = withContext(Dispatchers.IO) { roomDB.favoriteDao().getCurrentFavorite() }
+        withContext(Dispatchers.IO) { roomDB.favoriteDao().deleteFavorite(fakePlace.id) }
+        val after = withContext(Dispatchers.IO) { roomDB.favoriteDao().getCurrentFavorite() }
 
         after.add(fakePlace)
         Assert.assertEquals(before, after)
