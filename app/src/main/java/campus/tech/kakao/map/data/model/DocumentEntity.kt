@@ -1,8 +1,13 @@
 package campus.tech.kakao.map.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+
+@Entity(tableName = "documents")
 data class DocumentEntity(
+    @PrimaryKey
     val id: String,
     @SerializedName("place_name")
     val placeName: String,
