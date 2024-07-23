@@ -81,12 +81,9 @@ class SearchActivity : AppCompatActivity(), AdapterCallback {
         }
     }
 
-    override fun onWordAdded(document: Document) {
-        model.addWord(document)
-    }
 
-    override fun onDocumentInfoSet(document: Document) {
-        model.setMapInfo(document)
+    override fun onPlaceClicked(document: Document) {
+        model.placeClicked(document)
         finish()
     }
 

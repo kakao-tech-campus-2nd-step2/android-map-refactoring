@@ -26,11 +26,6 @@ class DocumentAdapter(
 
 	}
 ) {
-	private fun placeClicked(position:Int){
-		val document: Document = getItem(position)
-		val viewModel = MainViewModel(MyApplication())
-		viewModel.placeClicked(document, callback)
-	}
 	inner class ViewHolder(
 		itemView: View
 	): RecyclerView.ViewHolder(itemView) {
@@ -39,7 +34,7 @@ class DocumentAdapter(
 		val type:TextView = itemView.findViewById(R.id.type)
 		init {
 			itemView.setOnClickListener {
-				placeClicked(bindingAdapterPosition)
+				callback.onPlaceClicked(getItem(bindingAdapterPosition))
 			}
 		}
 	}

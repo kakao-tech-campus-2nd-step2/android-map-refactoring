@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import campus.tech.kakao.map.adapter.AdapterCallback
 import campus.tech.kakao.map.dto.MapPosition.getMapPosition
 import campus.tech.kakao.map.url.RetrofitData.Companion.getInstance
 import campus.tech.kakao.map.dto.Document
@@ -26,10 +25,10 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
 
 	fun addWord(document: Document){
-		wordDbHelper.addWord(wordfromDocument(document))
+		wordDbHelper.addWord(wordFromDocument(document))
 	}
 
-	private fun wordfromDocument(document: Document): SearchWord {
+	private fun wordFromDocument(document: Document): SearchWord {
 		return SearchWord(document.placeName, document.categoryGroupName, document.addressName)
 	}
 	fun deleteWord(word: SearchWord){
@@ -49,7 +48,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 		wordDbHelper.close()
 	}
 
-	fun setMapInfo(document: Document){
+	private fun setMapInfo(document: Document){
 		getMapPosition(getApplication()).setMapInfo(document)
 	}
 
@@ -61,9 +60,9 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 		return listOf(latitude, longitude, placeName, addressName)
 	}
 
-	fun placeClicked(document: Document, callback:AdapterCallback){
-		callback.onWordAdded(document)
-		callback.onDocumentInfoSet(document)
+	fun placeClicked(document: Document){
+		addWord(document)
+		setMapInfo(document)
 		_documentClicked.value = true
 	}
 
