@@ -1,4 +1,4 @@
-package campus.tech.kakao.Model
+package campus.tech.kakao.Model.Entity
 
 
 import androidx.room.ColumnInfo

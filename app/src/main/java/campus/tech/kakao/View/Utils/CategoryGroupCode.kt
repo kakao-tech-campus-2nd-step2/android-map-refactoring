@@ -1,4 +1,4 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Utils
 
 class CategoryGroupCode {
     val CodeToCategory : Map<String, String> = mapOf(

@@ -1,4 +1,4 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Adapter
 
 import android.view.LayoutInflater
 import android.view.View

@@ -1,5 +1,7 @@
-package campus.tech.kakao.Model
+package campus.tech.kakao.Model.Database
 
+import campus.tech.kakao.Model.Dao.SelectedDataDao
+import campus.tech.kakao.Model.Entity.SelectedData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

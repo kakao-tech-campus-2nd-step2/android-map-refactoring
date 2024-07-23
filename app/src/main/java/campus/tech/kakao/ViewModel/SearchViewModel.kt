@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.Model.KakaoApiService
+import campus.tech.kakao.Model.Network.KakaoApiService
 import campus.tech.kakao.Model.Place
 import campus.tech.kakao.Model.ResultSearchKeyword
-import campus.tech.kakao.Model.RoomDb
+import campus.tech.kakao.Model.Database.RoomDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call

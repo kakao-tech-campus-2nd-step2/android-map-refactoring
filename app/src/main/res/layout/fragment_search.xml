@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="campus.tech.kakao.View.SearchFragment">
+    tools:context="campus.tech.kakao.View.Fragment.SearchFragment">
 
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView2"

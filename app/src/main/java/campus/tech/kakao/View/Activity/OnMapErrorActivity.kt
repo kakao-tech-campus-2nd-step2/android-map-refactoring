@@ -1,4 +1,4 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Activity
 
 import android.os.Bundle
 import android.view.View.GONE

@@ -1,4 +1,4 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,9 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.Model.Place
+import campus.tech.kakao.View.Utils.CategoryGroupCode
 import campus.tech.kakao.map.R
 
 class PlacesAdapter(private var places: List<Place>, private val onItemClick: (Place) -> Unit) : RecyclerView.Adapter<PlacesAdapter.PlaceViewHolder>() {
+
+    private val categoryGroupCode = CategoryGroupCode()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_place, parent, false)
@@ -19,7 +22,7 @@ class PlacesAdapter(private var places: List<Place>, private val onItemClick: (P
         val place = places[position]
         holder.nameTextView.text = place.placeName
         holder.addressTextView.text = place.roadAddressName
-        holder.categoryTextView.text = place.categoryName ?: ""
+        holder.categoryTextView.text = categoryGroupCode.CodeToCategory[place.categoryName] ?: ""
         holder.itemView.setOnClickListener {
             onItemClick(place)
         }

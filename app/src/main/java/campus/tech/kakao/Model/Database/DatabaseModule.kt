@@ -1,7 +1,8 @@
-package campus.tech.kakao.Model
+package campus.tech.kakao.Model.Database
 
 import android.content.Context
 import androidx.room.Room
+import campus.tech.kakao.Model.Dao.SelectedDataDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

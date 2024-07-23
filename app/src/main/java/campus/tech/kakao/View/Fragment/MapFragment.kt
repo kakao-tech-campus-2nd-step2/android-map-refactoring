@@ -1,4 +1,4 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import campus.tech.kakao.View.Activity.MainActivity
+import campus.tech.kakao.View.Activity.OnMapErrorActivity
+import campus.tech.kakao.View.PlaceInfoBottomSheet
 import campus.tech.kakao.ViewModel.MapViewModel
+import campus.tech.kakao.ViewModel.MainViewModel
 import campus.tech.kakao.map.R
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -32,6 +36,8 @@ class MapFragment : Fragment() {
     private var kakaoMap: KakaoMap? = null
 
     private val mapViewModel: MapViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels({ requireActivity() })
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -92,9 +98,9 @@ class MapFragment : Fragment() {
                 }
 
                 readyMap.setOnMapClickListener { _, _, _, _ ->
-                    (activity as? MainActivity)?.showSearchFragment()
+                    mainViewModel.setSearchFragment()
                 }
-                
+
                 arguments?.let {
                     val x = it.getDouble("x", this@MapFragment.x)
                     val y = it.getDouble("y", this@MapFragment.y)
@@ -108,7 +114,7 @@ class MapFragment : Fragment() {
 
         searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
-                (activity as? MainActivity)?.showSearchFragment()
+                mainViewModel.setSearchFragment()
             }
         }
     }

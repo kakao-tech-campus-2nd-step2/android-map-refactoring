@@ -1,7 +1,6 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.View.Fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.View.Adapter.HistoryAdapter
+import campus.tech.kakao.View.Adapter.PlacesAdapter
+import campus.tech.kakao.View.Activity.MainActivity
 import campus.tech.kakao.ViewModel.SearchViewModel
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R

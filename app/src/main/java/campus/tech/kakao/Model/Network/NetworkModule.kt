@@ -1,4 +1,4 @@
-package campus.tech.kakao.Model
+package campus.tech.kakao.Model.Network
 
 import dagger.Module
 import dagger.Provides
