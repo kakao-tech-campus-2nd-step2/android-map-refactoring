@@ -2,10 +2,10 @@ package campus.tech.kakao.map.data.repository
 
 import campus.tech.kakao.map.data.dao.SavedSearchWordDao
 import campus.tech.kakao.map.data.model.SavedSearchWord
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ViewModelScoped
 class DefaultSavedSearchWordRepository
 @Inject
 constructor(

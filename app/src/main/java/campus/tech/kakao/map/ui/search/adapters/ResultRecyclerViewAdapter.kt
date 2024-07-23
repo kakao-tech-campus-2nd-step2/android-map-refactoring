@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.data.model.Place
 import campus.tech.kakao.map.databinding.ItemPlaceBinding
-import campus.tech.kakao.map.ui.interfaces.OnPlaceItemClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
 
 class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListener) :
     ListAdapter<Place, ResultRecyclerViewAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
