@@ -13,8 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.NetworkRepository
 import campus.tech.kakao.map.data.Place
-import campus.tech.kakao.map.data.PlaceDBClient
-import campus.tech.kakao.map.data.PlaceDao
+import campus.tech.kakao.map.data.PlaceRepository
 import campus.tech.kakao.map.databinding.SearchLayoutBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -27,16 +26,15 @@ class PlaceActivity : AppCompatActivity() {
     private lateinit var placeAdapter: PlaceRecyclerViewAdapter
     private lateinit var searchAdapter: SearchRecyclerViewAdapter
     private lateinit var placeBinding: SearchLayoutBinding
-    private lateinit var placeDao: PlaceDao
 
     @Inject
     lateinit var networkRepository: NetworkRepository
+    @Inject
+    lateinit var placeRepository: PlaceRepository
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         placeBinding = DataBindingUtil.setContentView(this, R.layout.search_layout)
-        placeDao = PlaceDBClient.getInstance(applicationContext).placeDao()
-
 
         val searchList: MutableList<Place> = mutableListOf()
         val keywordList: MutableList<Place> = mutableListOf()
@@ -55,7 +53,7 @@ class PlaceActivity : AppCompatActivity() {
 
         // DAO로 데이터 접근
         lifecycleScope.launch {
-            val places = placeDao.getAllPlaces()
+            val places: MutableList<Place> = placeRepository.getAllPlaces()
             withContext(Dispatchers.Main) {
                 searchList.clear()
                 searchList.addAll(places)
@@ -142,7 +140,7 @@ class PlaceActivity : AppCompatActivity() {
     fun addPlaceRecord(searchList: MutableList<Place>, place: Place) {
         searchList.add(place)
         lifecycleScope.launch {
-            placeDao.insertPlace(place)
+            placeRepository.insertPlace(place)
         }
         searchAdapter.notifyDataSetChanged()
     }
@@ -151,7 +149,7 @@ class PlaceActivity : AppCompatActivity() {
         val index = searchList.indexOf(place)
         searchList.removeAt(index)
         lifecycleScope.launch {
-            placeDao.deletePlace(place)
+            placeRepository.deletePlace(place)
         }
         searchAdapter.notifyDataSetChanged()
     }

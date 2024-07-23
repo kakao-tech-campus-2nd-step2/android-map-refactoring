@@ -13,9 +13,6 @@ interface PlaceDao {
     @Delete
     suspend fun deletePlace(place: Place)
 
-    @Query("DELETE FROM places WHERE name = :name")
-    suspend fun deletePlaceByName(name: String)
-
     @Query("SELECT * FROM places")
     suspend fun getAllPlaces() : MutableList<Place>
 }
