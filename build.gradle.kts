@@ -6,12 +6,3 @@ plugins {
     id("com.google.dagger.hilt.android") version "2.48.1" apply false
 
 }
-//
-//allprojects {
-//    apply(plugin = "org.jlleitschuh.gradle.ktlint")
-//    repositories {
-//        google()
-//        mavenCentral()
-//        maven(url = "https://devrepo.kakao.com/nexus/repository/kakaomap-releases/")
-//    }
-//}

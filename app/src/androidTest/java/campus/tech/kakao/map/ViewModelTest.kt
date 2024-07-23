@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import campus.tech.kakao.map.Model.LocationData
 import campus.tech.kakao.map.Model.Place
-import campus.tech.kakao.map.Model.RetrofitClient
+import campus.tech.kakao.map.Module.RetrofitClient
 import campus.tech.kakao.map.Model.SearchResult
 import campus.tech.kakao.map.viewmodel.DataDbHelper
 import campus.tech.kakao.map.viewmodel.MainViewModel

@@ -23,7 +23,9 @@ import campus.tech.kakao.map.viewmodel.MainViewModel
 import campus.tech.kakao.map.Adapter.SearchViewAdapter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var db: DataDbHelper

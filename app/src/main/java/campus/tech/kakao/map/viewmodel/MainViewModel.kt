@@ -1,20 +1,25 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import retrofit2.Call
 import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.Model.KakaoLocalApi
+import campus.tech.kakao.map.Model.LocationDao
 import campus.tech.kakao.map.Model.LocationData
 import campus.tech.kakao.map.Model.Place
-import campus.tech.kakao.map.Model.RetrofitClient
 import campus.tech.kakao.map.Model.SearchCallback
 import campus.tech.kakao.map.Model.SearchResult
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val locationDao: LocationDao,
+    private val kakaoLocalApi: KakaoLocalApi
+) : ViewModel() {
 
     private var listener: (UiState) -> Unit = {}
     private lateinit var call: Call<SearchResult>
-    private val db: DataDbHelper = DataDbHelper(application)
 
     private var uiState: UiState = UiState(
         locationList = emptyList(),
@@ -26,22 +31,18 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun searchLocations(key: String) {
-        val apiService = RetrofitClient.instance
-        call = apiService.searchPlaces(BuildConfig.API_KEY, key)
+        call = kakaoLocalApi.searchPlaces(BuildConfig.API_KEY, key)
         call.enqueue(SearchCallback(this))
     }
 
     fun updateSearchResults(results: List<Place>) {
-        val locationList = mutableListOf<LocationData>()
-        for (result in results) {
-            locationList.add(
-                LocationData(
-                    result.place_name,
-                    result.address_name,
-                    result.category_group_name,
-                    result.y.toDouble(),
-                    result.x.toDouble()
-                )
+        val locationList = results.map { result ->
+            LocationData(
+                result.place_name,
+                result.address_name,
+                result.category_group_name,
+                result.y.toDouble(),
+                result.x.toDouble()
             )
         }
         uiState = UiState(
@@ -54,19 +55,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // DB 관련 메서드들
     fun insertLocation(location: LocationData) {
-        db.insertLocation(location)
+        locationDao.insertLocation(location)
     }
 
     fun getAllLocations(): List<LocationData> {
-        return db.getAllLocations()
+        return locationDao.getAllLocations()
     }
 
     fun deleteLocation(location: LocationData) {
-        db.deleteLocation(location)
+        locationDao.deleteLocation(location)
     }
 
     fun deleteAllLocations() {
-        db.deleteAllLocations()
+        locationDao.deleteAllLocations()
     }
 
     override fun onCleared() {
@@ -74,7 +75,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         if (::call.isInitialized) {
             call.cancel()
         }
-        db.close()
     }
 
     data class UiState(
