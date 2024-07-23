@@ -3,8 +3,6 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("kotlin-parcelize")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -20,8 +18,8 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String","BASE_URL",getApiKey("BASE_URL"))
+        testInstrumentationRunner = "campus.tech.kakao.map.HiltTestRunner"
+        buildConfigField("String", "BASE_URL", getApiKey("BASE_URL"))
         buildConfigField("String", "KAKAO_API_KEY", getApiKey("KAKAO_API_KEY"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
     }
@@ -44,8 +42,14 @@ android {
     }
 
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig = true
+    }
+    testOptions {
+        unitTests {
+
+        }
+
     }
 }
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
@@ -86,6 +90,7 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.3")
+
 }
 
 kapt {

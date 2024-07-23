@@ -12,9 +12,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import campus.tech.kakao.map.Base.ErrorEnum
 import campus.tech.kakao.map.R
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 
 
+@AndroidEntryPoint
 class ErrorActivity : AppCompatActivity() {
     private lateinit var errorText : TextView
     private lateinit var errorMsg : TextView
