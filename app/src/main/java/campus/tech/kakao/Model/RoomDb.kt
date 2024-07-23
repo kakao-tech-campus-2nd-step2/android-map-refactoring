@@ -1,12 +1,12 @@
 package campus.tech.kakao.Model
 
-import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class RoomDb(context: Context) {
-    private val database: AppDatabase = AppDatabase.getDatabase(context)
-    private val selectedDataDao: SelectedDataDao = database.selectedDataDao()
+@Singleton
+class RoomDb @Inject constructor(private val selectedDataDao: SelectedDataDao) {
 
     suspend fun insertIntoSelectedData(name: String): Long {
         val selectedData = SelectedData(name = name)
