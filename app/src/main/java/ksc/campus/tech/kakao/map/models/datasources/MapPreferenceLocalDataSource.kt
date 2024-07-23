@@ -14,6 +14,7 @@ import com.google.gson.JsonSyntaxException
 import com.kakao.vectormap.camera.CameraPosition
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import java.lang.reflect.Type
+import javax.inject.Inject
 
 class CameraPositionSerializer: JsonSerializer<CameraPosition> {
     override fun serialize(
@@ -75,7 +76,7 @@ class CameraPositionDeserializer: JsonDeserializer<CameraPosition?> {
     }
 }
 
-class MapPreferenceLocalDataSource {
+class MapPreferenceLocalDataSource @Inject constructor(){
     private val cameraPositionSerializer: Gson = GsonBuilder()
         .registerTypeAdapter(CameraPositionSerializer::class.java, CameraPositionSerializer())
         .create()

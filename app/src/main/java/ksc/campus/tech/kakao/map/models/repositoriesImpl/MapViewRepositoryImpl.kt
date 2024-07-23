@@ -11,11 +11,12 @@ import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
 import javax.inject.Inject
 
 
-class MapViewRepositoryImpl @Inject constructor() : MapViewRepository {
+class MapViewRepositoryImpl @Inject constructor(
+    private val mapPreferenceDataSource: MapPreferenceLocalDataSource
+) : MapViewRepository {
     private val _selectedLocation: MutableLiveData<LocationInfo?> = MutableLiveData<LocationInfo?>(null)
     private val _cameraPosition: MutableLiveData<CameraPosition> = MutableLiveData(initialCameraPosition)
 
-    private val mapPreferenceDataSource: MapPreferenceLocalDataSource = MapPreferenceLocalDataSource()
     override val selectedLocation: LiveData<LocationInfo?>
         get() = _selectedLocation
 

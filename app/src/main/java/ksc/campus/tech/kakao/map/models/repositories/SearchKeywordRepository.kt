@@ -19,12 +19,10 @@ interface SearchKeywordRepository {
 }
 @Module
 @InstallIn(SingletonComponent::class)
-object SearchKeywordRepositoryModule{
-    @Provides
+abstract class SearchKeywordRepositoryModule{
+    @Binds
     @Singleton
-    fun provideSearchKeywordRepository(
-        @ApplicationContext context: Context
-    ) : SearchKeywordRepository{
-        return SearchKeywordRepositoryImpl(context)
-    }
+    abstract fun provideSearchKeywordRepository(
+        searchKeywordRepositoryImpl: SearchKeywordRepositoryImpl
+    ) : SearchKeywordRepository
 }
