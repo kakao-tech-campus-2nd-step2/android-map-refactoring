@@ -8,7 +8,7 @@ import androidx.room.Query
 
 @Dao
 interface PlaceDao {
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlace(place: PlaceEntity)
 
     @Delete
