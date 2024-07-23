@@ -83,6 +83,7 @@ dependencies {
     implementation("com.kakao.sdk:v2-all:2.20.3")
     implementation("androidx.activity:activity:1.9.0")
     implementation("androidx.room:room-common:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     // 테스트 의존성 추가
     testImplementation("junit:junit:4.13.2")
