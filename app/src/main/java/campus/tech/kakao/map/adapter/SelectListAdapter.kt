@@ -29,6 +29,7 @@ class SelectListAdapter(
         }
     }
 
+
     fun setCancelBtnClickListener(cancelBtnClickListener: ItemClickListener) {
         this.cancelBtnListener = cancelBtnClickListener
     }
@@ -39,6 +40,7 @@ class SelectListAdapter(
 
     lateinit var cancelBtnListener: ItemClickListener
     lateinit var itemListener: ItemClickListener
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = layoutInflater.inflate(R.layout.select_item, parent, false)
@@ -54,6 +56,7 @@ class SelectListAdapter(
     }
 
     fun updateMapItemList(mapItemList: List<MapItem>) {
+
         this.selectItemList = mapItemList
         notifyDataSetChanged()
     }

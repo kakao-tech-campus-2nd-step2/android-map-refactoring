@@ -62,6 +62,7 @@ class SearchActivity : AppCompatActivity() {
                         mapItem.kakaoId
                     )
                 )
+
                 val intent = Intent(this@SearchActivity, MapActivity::class.java)
                 intent.putExtra("x", mapItem.x.toDouble())
                 intent.putExtra("y", mapItem.y.toDouble())

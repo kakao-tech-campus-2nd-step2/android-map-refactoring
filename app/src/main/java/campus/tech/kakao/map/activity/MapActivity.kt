@@ -27,6 +27,7 @@ class MapActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
@@ -73,6 +74,7 @@ class MapActivity : AppCompatActivity() {
                     return LatLng.from(lastY ?: 37.395447, lastX ?: 127.110457)
                 } else {
                     return LatLng.from(y ?: 37.395447, x ?: 127.110457)
+
                 }
             }
 
@@ -105,6 +107,7 @@ class MapActivity : AppCompatActivity() {
         super.onPause()
         mapView.pause()
     }
+
 
     fun showLabel(kakaoMap: KakaoMap, x: Double, y: Double, name: String) {
         // LabelStyles 생성하기
