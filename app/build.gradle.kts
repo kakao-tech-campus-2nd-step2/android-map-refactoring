@@ -59,7 +59,11 @@ android {
 }
 
 dependencies {
-    val lifecycle_version = "2.8.3"
+    val fragment_version = "1.8.1"
+    debugImplementation("androidx.fragment:fragment-testing-manifest:$fragment_version")
+    implementation("androidx.legacy:legacy-support-v4:1.0.0")
+	implementation("androidx.fragment:fragment-ktx:1.5.6")
+	val lifecycle_version = "2.8.3"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.core:core-ktx:1.13.1")
@@ -96,6 +100,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
 }
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
