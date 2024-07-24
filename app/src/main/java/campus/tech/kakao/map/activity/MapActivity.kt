@@ -19,15 +19,20 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private lateinit var mapView : MapView
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        val sharedPreferences : SharedPreferences = applicationContext.getSharedPreferences("lastPos", Context.MODE_PRIVATE)
+        //val sharedPreferences : SharedPreferences = applicationContext.getSharedPreferences("lastPos", Context.MODE_PRIVATE)
 
         val inputSpace = findViewById<TextView>(R.id.toSearchActivity)
         val bottomSheet = findViewById<LinearLayoutCompat>(R.id.bottomSheet)

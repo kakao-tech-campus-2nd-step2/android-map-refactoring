@@ -9,6 +9,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,17 +22,21 @@ import campus.tech.kakao.map.Room.MapItem
 import campus.tech.kakao.map.adapter.SelectItemClickListener
 import campus.tech.kakao.map.adapter.SelectListAdapter
 import campus.tech.kakao.map.SelectMapItem
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
+    private val mapItemViewModel: MapItemViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val mapItemViewModel = MapItemViewModel(this)
-        //mapItemViewModel.makeAllSelectItemList()
+        //val mapItemViewModel = MapItemViewModel(this)
 
         val mapList = findViewById<RecyclerView>(R.id.mapList)
         val selectList = findViewById<RecyclerView>(R.id.selectList)

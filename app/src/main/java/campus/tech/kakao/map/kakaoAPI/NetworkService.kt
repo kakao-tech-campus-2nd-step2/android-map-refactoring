@@ -1,10 +1,12 @@
 package campus.tech.kakao.map.kakaoAPI
 
 import campus.tech.kakao.map.Room.KakaoMapItem
+import campus.tech.kakao.map.Room.MapDatabase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NetworkService {
+class NetworkService @Inject constructor(private val retrofitService : RetrofitService) {
     var page: Int = 1
     var isEnd: Boolean? = false
 

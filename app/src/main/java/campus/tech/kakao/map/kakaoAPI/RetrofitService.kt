@@ -20,8 +20,8 @@ interface RetrofitService {
     ): Call<KakaoMapResponse>
 }
 
-val retrofitService = Retrofit.Builder()
-    .baseUrl("https://dapi.kakao.com/")
-    .addConverterFactory(GsonConverterFactory.create())
-    .build()
-    .create(RetrofitService::class.java)
+//val retrofitService = Retrofit.Builder()
+//    .baseUrl("https://dapi.kakao.com/")
+//    .addConverterFactory(GsonConverterFactory.create())
+//    .build()
+//    .create(RetrofitService::class.java)
