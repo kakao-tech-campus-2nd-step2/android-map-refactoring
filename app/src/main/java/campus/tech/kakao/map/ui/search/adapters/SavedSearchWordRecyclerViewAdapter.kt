@@ -5,13 +5,14 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.databinding.ItemSavedSearchWordBinding
-import campus.tech.kakao.map.model.SavedSearchWord
-import campus.tech.kakao.map.ui.search.SearchActivity
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
 
 class SavedSearchWordRecyclerViewAdapter(
-    private val savedSearchWordClearImageViewClickListener: SearchActivity.OnSavedSearchWordClearImageViewClickListener,
-    private val savedSearchWordTextViewClickListener: SearchActivity.OnSavedSearchWordTextViewClickListener,
+    private val savedSearchWordClearImageViewClickListener: OnSavedSearchWordClearImageViewClickListener,
+    private val savedSearchWordTextViewClickListener: OnSavedSearchWordTextViewClickListener,
 ) :
     ListAdapter<SavedSearchWord, SavedSearchWordRecyclerViewAdapter.SavedSearchWordViewHolder>(
         SavedSearchWordDiffCallback(),
@@ -39,22 +40,21 @@ class SavedSearchWordRecyclerViewAdapter(
 
     class SavedSearchWordViewHolder(
         private val binding: ItemSavedSearchWordBinding,
-        private val savedSearchWordImageViewClickListener: SearchActivity.OnSavedSearchWordClearImageViewClickListener,
-        private val savedSearchWordTextViewClickListener: SearchActivity.OnSavedSearchWordTextViewClickListener,
+        private val savedSearchWordImageViewClickListener: OnSavedSearchWordClearImageViewClickListener,
+        private val savedSearchWordTextViewClickListener: OnSavedSearchWordTextViewClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
-
         private lateinit var currentSavedSearchWord: SavedSearchWord
 
         init {
             binding.savedSearchWordClearImageView.setOnClickListener {
                 savedSearchWordImageViewClickListener.onSavedSearchWordClearImageViewClicked(
-                    currentSavedSearchWord
+                    currentSavedSearchWord,
                 )
             }
 
             binding.savedSearchWordTextView.setOnClickListener {
                 savedSearchWordTextViewClickListener.onSavedSearchWordTextViewClicked(
-                    currentSavedSearchWord
+                    currentSavedSearchWord,
                 )
             }
         }
@@ -64,7 +64,6 @@ class SavedSearchWordRecyclerViewAdapter(
             binding.savedSearchWordTextView.text = savedSearchWord.name
         }
     }
-
 }
 
 private class SavedSearchWordDiffCallback : DiffUtil.ItemCallback<SavedSearchWord>() {
@@ -82,4 +81,3 @@ private class SavedSearchWordDiffCallback : DiffUtil.ItemCallback<SavedSearchWor
         return oldItem == newItem
     }
 }
-

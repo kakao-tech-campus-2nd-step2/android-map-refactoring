@@ -3,10 +3,11 @@ package campus.tech.kakao.map.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.repository.LocationRepository
-import campus.tech.kakao.map.model.Location
+import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.domain.usecase.LoadLocationUseCase
+import campus.tech.kakao.map.domain.usecase.SaveLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +17,9 @@ import javax.inject.Inject
 class LocationViewModel
 @Inject
 constructor(
-    private val locationRepository: LocationRepository,
+    private val loadLocationUseCase: LoadLocationUseCase,
+    private val saveLocationUseCase: SaveLocationUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _location = MutableStateFlow(getDefaultLocation())
     val location: StateFlow<Location> get() = _location
@@ -26,9 +29,9 @@ constructor(
     }
 
     fun saveLocation(newLocation: Location) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             try {
-                locationRepository.saveLocation(newLocation)
+                saveLocationUseCase(newLocation)
                 _location.value = newLocation
             } catch (e: Exception) {
                 Log.e("LocationViewModel", "Error saving location", e)
@@ -37,9 +40,9 @@ constructor(
     }
 
     private fun loadLocation() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             try {
-                val loadedLocation = locationRepository.loadLocation()
+                val loadedLocation = loadLocationUseCase()
                 _location.value = loadedLocation
             } catch (e: Exception) {
                 Log.e("LocationViewModel", "Error loading location", e)

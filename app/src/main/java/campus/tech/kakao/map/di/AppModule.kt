@@ -3,18 +3,17 @@ package campus.tech.kakao.map.di
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
-import campus.tech.kakao.map.data.SavedSearchWordDBHelper
+import campus.tech.kakao.map.data.model.Location
 import campus.tech.kakao.map.data.repository.LocationSerializer
-import campus.tech.kakao.map.model.Location
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object AppModule {
     private val Context.dataStore: DataStore<Location> by dataStore(
         fileName = "location_data.pb",
@@ -22,15 +21,7 @@ object AppModule {
     )
 
     @Provides
-    @Singleton
-    fun provideSavedSearchWordDBHelper(
-        @ApplicationContext context: Context,
-    ): SavedSearchWordDBHelper {
-        return SavedSearchWordDBHelper(context)
-    }
-
-    @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideDataStore(
         @ApplicationContext context: Context,
     ): DataStore<Location> {
