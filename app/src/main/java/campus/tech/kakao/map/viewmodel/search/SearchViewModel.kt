@@ -25,22 +25,28 @@ class SearchViewModel(
     }
 
     fun getSearchResults(searchKeyword: SearchKeyword) {
-        viewModelScope.launch{
+        viewModelScope.launch {
             _searchResults.value = searchRepository.Search(searchKeyword)
         }
     }
 
     fun saveSearchKeyword(searchKeyword: SearchKeyword) {
-        savedSearchKeywordRepository.saveSearchKeyword(searchKeyword)
-        getSavedSearchKeywords()
+        viewModelScope.launch {
+            savedSearchKeywordRepository.saveSearchKeyword(searchKeyword)
+            getSavedSearchKeywords()
+        }
     }
 
     fun getSavedSearchKeywords() {
-        _savedSearchKeywords.value = savedSearchKeywordRepository.getSavedSearchKeywords()
+        viewModelScope.launch {
+            _savedSearchKeywords.value = savedSearchKeywordRepository.getSavedSearchKeywords()
+        }
     }
 
     fun delSavedSearchKeyword(searchKeyword: SearchKeyword) {
-        savedSearchKeywordRepository.delSavedSearchKeyword(searchKeyword)
-        getSavedSearchKeywords()
+        viewModelScope.launch {
+            savedSearchKeywordRepository.delSavedSearchKeyword(searchKeyword)
+            getSavedSearchKeywords()
+        }
     }
 }
