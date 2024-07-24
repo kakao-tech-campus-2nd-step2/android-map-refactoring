@@ -146,7 +146,7 @@ class MainActivityTest {
         // when
         activityRule.scenario.onActivity {
             runBlocking {
-                mapViewRepository.updateSelectedLocation(it, location)
+                mapViewRepository.updateSelectedLocation(location)
             }
         }
 
