@@ -1,25 +1,24 @@
 package campus.tech.kakao.map.model.repository
 
+import android.util.Log
+import campus.tech.kakao.map.model.AppDatabase
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.datasource.SavedLocationDataSource
 
 class SavedLocationRepository(
-    private val locationLocalRepository: SavedLocationDataSource
+    private val appDatabase: AppDatabase
 ) {
-    fun getSavedLocationAll(): MutableList<SavedLocation> {
-        val results = locationLocalRepository.getSavedLocationAll()
-        return if(results.isNotEmpty()) results else mutableListOf()
+    suspend fun getSavedLocationAll(): MutableList<SavedLocation> {
+        val results = appDatabase.savedLocationDao().getAll()
+        return if(results.isNotEmpty()) results.toMutableList() else mutableListOf()
     }
 
-    fun addSavedLocation(title: String) {
-        locationLocalRepository.addSavedLocation(title)
+    suspend fun addSavedLocation(savedLocation: SavedLocation) {
+        appDatabase.savedLocationDao().insert(savedLocation)
     }
 
-    fun deleteSavedLocation(title: String): Boolean {
-        if (locationLocalRepository.deleteSavedLocation(title) == 1) {
-            return true
-        }
-        return false
+    suspend fun deleteSavedLocation(savedLocation: SavedLocation) {
+
+        appDatabase.savedLocationDao().delete(savedLocation)
     }
 
 }

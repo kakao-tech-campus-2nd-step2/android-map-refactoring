@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.view.search
 
+import android.util.Log
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,7 @@ class SavedLocationAdapter(
 ) : ListAdapter<SavedLocation, SavedLocationHolder>(
     object: DiffUtil.ItemCallback<SavedLocation>() {
         override fun areItemsTheSame(oldItem: SavedLocation, newItem: SavedLocation): Boolean {
-            return oldItem.title == newItem.title
+            return oldItem.id == newItem.id
         }
         override fun areContentsTheSame(oldItem: SavedLocation, newItem: SavedLocation): Boolean {
             return oldItem == newItem
@@ -39,7 +40,8 @@ class SavedLocationAdapter(
                 itemSelectedListener.onSavedLocationViewClicked(getItem(bindingAdapterPosition).title)
             }
             savedLocationXButton.setOnClickListener {
-                itemSelectedListener.onSavedLocationXButtonClicked(getItem(bindingAdapterPosition) as SavedLocation)
+                val savedLocation = getItem(bindingAdapterPosition) as SavedLocation
+                itemSelectedListener.onSavedLocationXButtonClicked(savedLocation)
             }
         }
     }

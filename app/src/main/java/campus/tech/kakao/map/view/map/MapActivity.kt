@@ -140,7 +140,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun getCoordinates(): Location? {
-        var location = getCoordinatesByIntent()
+        var location = getLocationByIntent()
         if(location == null) {
             location = lastLocationRepository.getLastLocation()
         }
@@ -148,17 +148,12 @@ class MapActivity : AppCompatActivity() {
 
     }
 
-    private fun getCoordinatesByIntent(): Location? {
-        if (intent.hasExtra("title") && intent.hasExtra("longitude")
-            && intent.hasExtra("latitude") && intent.hasExtra("address")) {
-            val title = intent.getStringExtra("title")
-            val longitude = intent.getDoubleExtra("longitude", 0.0)
-            val latitude = intent.getDoubleExtra("latitude", 0.0)
-            val address = intent.getStringExtra("address").toString()
-            val category = intent.getStringExtra("category").toString()
-            if (title != null) {
-                return Location(title, address, category, longitude, latitude)
-            } else return null
-        } else return null
+    private fun getLocationByIntent(): Location? {
+        if (intent.hasExtra("location")) {
+            val location = intent.getSerializableExtra("location") as Location
+            Log.d("jieun","getLocationByIntent location "+location.toString())
+            return location
+        }
+        return null
     }
 }

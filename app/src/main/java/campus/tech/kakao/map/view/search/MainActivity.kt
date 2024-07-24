@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -13,12 +14,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.model.datasource.SavedLocationDataSource
 import campus.tech.kakao.map.model.datasource.LocationDataSource
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.model.AppDatabase
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.LocationDbHelper
 import campus.tech.kakao.map.model.repository.LocationRepository
 import campus.tech.kakao.map.model.repository.SavedLocationRepository
 import campus.tech.kakao.map.view.map.MapActivity
@@ -39,17 +39,16 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         ViewModelProvider(this, SavedLocationViewModelFactory(savedLocationRepository))
         .get(SavedLocationViewModel::class.java)
     }
-
     private val savedLocationAdapter: SavedLocationAdapter by lazy { SavedLocationAdapter(this) }
     private val savedLocationRecyclerView: RecyclerView by lazy {
         findViewById(R.id.savedLocationRecyclerView)
     }
 
-    private val locationDbHelper: LocationDbHelper by lazy { LocationDbHelper(this) }
-    private val locationLocalDataSource: SavedLocationDataSource by lazy { SavedLocationDataSource(locationDbHelper) }
     private val locationRemoteDataSource: LocationDataSource by lazy { LocationDataSource() }
     private val locationRepository: LocationRepository by lazy { LocationRepository(locationRemoteDataSource) }
-    private val savedLocationRepository: SavedLocationRepository by lazy { SavedLocationRepository(locationLocalDataSource) }
+
+    private val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(this) }
+    private val savedLocationRepository: SavedLocationRepository by lazy { SavedLocationRepository(appDatabase) }
 
     private val clearButton: ImageView by lazy { findViewById(R.id.clearButton) }
     private val searchEditText: EditText by lazy { findViewById(R.id.SearchEditTextInMain) }
@@ -122,19 +121,15 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     override fun onLocationViewClicked(location: Location) {
-        savedLocationViewModel.addSavedLocation(location.title)
+        savedLocationViewModel.addSavedLocation(location.id, location.title)
 
         val intent = Intent(this@MainActivity, MapActivity::class.java)
-        intent.putExtra("title", location.title)
-        intent.putExtra("address", location.address)
-        intent.putExtra("category", location.category)
-        intent.putExtra("longitude", location.longitude)
-        intent.putExtra("latitude", location.latitude)
+        intent.putExtra("location", location)
         startActivity(intent)
     }
 
-    override fun onSavedLocationXButtonClicked(item: SavedLocation) {
-        savedLocationViewModel.deleteSavedLocation(item)
+    override fun onSavedLocationXButtonClicked(savedLocation: SavedLocation) {
+        savedLocationViewModel.deleteSavedLocation(savedLocation)
     }
 
     override fun onSavedLocationViewClicked(title: String) {

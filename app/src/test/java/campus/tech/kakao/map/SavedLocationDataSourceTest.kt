@@ -5,7 +5,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import campus.tech.kakao.map.model.LocationDbHelper
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.datasource.SavedLocationDataSource
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
