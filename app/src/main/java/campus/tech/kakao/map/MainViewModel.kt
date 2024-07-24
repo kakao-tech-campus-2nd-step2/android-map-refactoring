@@ -21,15 +21,12 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 	private val _documentClicked = MutableLiveData<Boolean>()
 	val documentClicked: LiveData<Boolean> get() = _documentClicked
 
-
-
-
 	fun addWord(document: Document){
 		wordDbHelper.addWord(wordFromDocument(document))
 	}
 
 	private fun wordFromDocument(document: Document): SearchWord {
-		return SearchWord(document.placeName, document.categoryGroupName, document.addressName)
+		return SearchWord(document.placeName, document.addressName, document.categoryGroupName)
 	}
 	fun deleteWord(word: SearchWord){
 		wordDbHelper.deleteWord(word)
@@ -61,6 +58,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 	}
 
 	fun placeClicked(document: Document){
+		_documentClicked.value = false
 		addWord(document)
 		setMapInfo(document)
 		_documentClicked.value = true

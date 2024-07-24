@@ -1,15 +1,16 @@
 package campus.tech.kakao.map
 
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -51,6 +52,7 @@ class MapActivity : AppCompatActivity() {
 		mapView = findViewById(R.id.map_view)
 		model = ViewModelProvider(this)[MainViewModel::class.java]
 		getMapInfo()
+		model.documentClickedDone()
 		mapView.start(object : MapLifeCycleCallback() {
 			override fun onMapDestroy() {
 
@@ -77,30 +79,36 @@ class MapActivity : AppCompatActivity() {
 		})
 		searchBar = findViewById(R.id.search_bar)
 		searchBar.setOnClickListener {
-			val intent = Intent(this@MapActivity, SearchActivity::class.java)
-			startActivity(intent)
+			val fragmentManager = supportFragmentManager
+			val searchFragment = SearchFragment()
+			val transaction = fragmentManager.beginTransaction()
+			transaction.replace(R.id.activity_map, searchFragment)
+			transaction.addToBackStack(null)
+			findViewById<CoordinatorLayout>(R.id.activity_map).setOnTouchListener(View.OnTouchListener { v, event -> true })
+			transaction.commit()
 		}
 		initBottomSheet()
+		documentClickedObserve()
 	}
 
 	override fun onResume() {
 		super.onResume()
-		getMapInfo()
 		mapView.resume()
+	}
+	private fun documentClickedObserve(){
 		model.documentClicked.observe(this){documentClicked->
 			if(documentClicked){
+				getMapInfo()
 				makeMarker()
 				setBottomSheet()
-				model.documentClickedDone()
+				val cameraUpdate: CameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+				map?.moveCamera(cameraUpdate)
 			}
 			else{
 				map?.labelManager?.layer?.removeAll()
 				bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 			}
 		}
-
-		val cameraUpdate: CameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-		map?.moveCamera(cameraUpdate)
 	}
 
 	override fun onPause() {
@@ -114,7 +122,6 @@ class MapActivity : AppCompatActivity() {
 		longitude = mapInfoList[1].toDouble()
 		placeName = mapInfoList[2]
 		addressName = mapInfoList[3]
-		model.documentClickedDone()
 	}
 
 	private fun makeMarker(){
@@ -152,5 +159,14 @@ class MapActivity : AppCompatActivity() {
 		bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 		bottomSheetName.text = placeName
 		bottomSheetAddress.text = addressName
+	}
+	override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+		if (keyCode == KeyEvent.KEYCODE_BACK && supportFragmentManager.backStackEntryCount > 0) {
+			model.documentClickedDone()
+			supportFragmentManager.popBackStack()
+			return true
+		}
+
+		return super.onKeyDown(keyCode, event)
 	}
 }
