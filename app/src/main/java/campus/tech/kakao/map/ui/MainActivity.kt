@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
@@ -31,6 +32,9 @@ import campus.tech.kakao.map.network.SearchService
 import campus.tech.kakao.map.utility.CategoryGroupCode
 import campus.tech.kakao.map.utility.SaveHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
@@ -62,20 +66,10 @@ class MainActivity : AppCompatActivity() {
             applicationContext,
             AppDatabase::class.java, "profiles"
         ).fallbackToDestructiveMigration().build()
-//
-//        val etSearch = findViewById<EditText>(R.id.etSearch)
-//        tvNoResult = findViewById(R.id.tvNoResult)
-//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-//        recyclerView.layoutManager = LinearLayoutManager(this)
-//        val btnClose = findViewById<Button>(R.id.btnClose)
-//        llSave = findViewById(R.id.llSave)
-//        hScrollView = findViewById(R.id.hScrollView)
+
+        tvNoResult = findViewById(R.id.tvNoResult)
 
         adapter = Adapter(mutableListOf())
-
-//        recyclerView.adapter = adapter
-//
-//        tvNoResult.visibility = TextView.VISIBLE
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
@@ -87,16 +81,23 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
-                    searchService.searchKeyword(search, { result ->
-                        searchProfiles(result)
-                    }) { error ->
-                        Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        try {
+                            val result = withContext(Dispatchers.IO) { searchService.searchKeyword(search) }
+                            searchProfiles(result)
+                        } catch (error:Exception) {
+                            Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                        }
                     } // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
-                        searchService.searchCategory(categoryCode, { result ->
-                            searchProfiles(result)
-                        }, { error -> Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
-                        })
+                        lifecycleScope.launch {
+                            try {
+                                val result = searchService.searchCategory(categoryCode)
+                                searchProfiles(result)
+                            } catch (error: Exception) {
+                                Toast.makeText(this@MainActivity, "요청 실패: ${error.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }  // 카테고리
                 }
             }
@@ -132,8 +133,10 @@ class MainActivity : AppCompatActivity() {
                 val profiles = documents.map { it.toProfile() }
                 adapter.updateProfiles(profiles)
 
-                thread {
-                    db.profileDao().insertAll(*profiles.toTypedArray())
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        db.profileDao().insertAll(*profiles.toTypedArray())
+                    }
                 }
 
                 binding.tvNoResult.visibility = View.GONE

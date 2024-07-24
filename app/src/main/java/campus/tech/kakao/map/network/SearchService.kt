@@ -11,39 +11,21 @@ import javax.inject.Singleton
 
 class SearchService @Inject constructor(private val network: Network, private val context: Context) {
 
-    fun searchKeyword(query: String, callback: (KakaoResponse?) -> Unit, errorCallback: (Throwable) -> Unit) {
-        network.searchKeyword(query, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    callback(response.body())
-                } else {
-                    errorCallback(Exception("응답 실패"))
-                    Log.e("SearchService", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                errorCallback(t)
-                Log.e("SearchService", "요청 실패", t)
-            }
-        })
+    suspend fun searchKeyword(query: String): KakaoResponse? {
+        return try {
+            network.searchKeyword(query)
+        } catch (error: Throwable) {
+            Log.e("SearchService", "요청 실패", error)
+            throw error
+        }
     }
 
-    fun searchCategory(categoryGroupCode: String, callback: (KakaoResponse?) -> Unit, errorCallback: (Throwable) -> Unit) {
-        network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    callback(response.body())
-                } else {
-                    errorCallback(Exception("응답 실패"))
-                    Log.e("SearchService", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                errorCallback(t)
-                Log.e("SearchService", "요청 실패", t)
-            }
-        })
+    suspend fun searchCategory(categoryGroupCode: String): KakaoResponse? {
+        return try {
+            network.searchCategory(categoryGroupCode)
+        } catch (error: Throwable) {
+            Log.e("SearchService", "요청 실패", error)
+            throw error
+        }
     }
 }
