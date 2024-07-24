@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.lifecycleScope
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.domain.model.Place
@@ -31,6 +32,7 @@ import kotlinx.coroutines.launch
 class MapActivity : AppCompatActivity() {
     private val mapView by lazy<MapView> { findViewById(R.id.mapView) }
     private val searchView by lazy<ConstraintLayout> { findViewById(R.id.searchView) }
+    private val swipeRefreshLayout by lazy<SwipeRefreshLayout> {findViewById(R.id.swipeRefreshLayout)}
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private lateinit var mapBottomSheet: MapBottomSheet
     private lateinit var tvErrorMessage: TextView
@@ -41,34 +43,15 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        observeViewModel()
+        collectViewModel()
+        initSwipeRefreshLayout()
         initMapView()
         initSearchView()
         setResultLauncher()
 
     }
 
-    private fun initMapView() {
-        mapView.start(object : MapLifeCycleCallback() {
-            override fun onMapDestroy() {}
-            override fun onMapError(error: Exception) {
-                showErrorPage(error)
-            }
-        }, object : KakaoMapReadyCallback() {
-            override fun onMapReady(map: KakaoMap) {
-                if (!isNetworkAvailable()) {
-                    showErrorPage(Exception("네트워크 연결 오류"))
-                }else{
-                    kakaoMap = map
-                    mapViewModel.loadLastVisitedPlace()
-                    tvErrorMessage.visibility = View.GONE
-                    mapView.visibility = View.VISIBLE
-                }
-            }
-        })
-    }
-
-    private fun observeViewModel() {
+    private fun collectViewModel() {
         lifecycleScope.launch {
             mapViewModel.lastVisitedPlace.collect { place ->
                 place?.let {
@@ -78,15 +61,38 @@ class MapActivity : AppCompatActivity() {
             }
         }
     }
+    private fun initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener {
+            showMapPage()
+            swipeRefreshLayout.isRefreshing = false
+        }
+    }
+    private fun initMapView() {
+        mapView.start(object : MapLifeCycleCallback() {
+            override fun onMapDestroy() {}
+            override fun onMapError(error: Exception) {
+                showErrorPage(error)
+            }
+        }, object : KakaoMapReadyCallback() {
+            override fun onMapReady(map: KakaoMap) {
+                kakaoMap = map
+                showMapPage()
+            }
+        })
+    }
+
 
     private fun isNetworkAvailable(): Boolean {
         return PlaceApplication.isNetworkActive()
     }
 
-    private fun initSearchView() {
-        searchView.setOnClickListener {
-            val intent = Intent(this, SearchActivity::class.java)
-            resultLauncher.launch(intent)
+    private fun showMapPage(){
+        if (!isNetworkAvailable()) {
+            showErrorPage(Exception("네트워크 연결 오류"))
+        } else {
+            mapViewModel.loadLastVisitedPlace()
+            tvErrorMessage.visibility = View.GONE
+            mapView.visibility = View.VISIBLE
         }
     }
 
@@ -95,6 +101,13 @@ class MapActivity : AppCompatActivity() {
         tvErrorMessage.visibility = View.VISIBLE
         mapView.visibility = View.GONE
         tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
+    }
+
+    private fun initSearchView() {
+        searchView.setOnClickListener {
+            val intent = Intent(this, SearchActivity::class.java)
+            resultLauncher.launch(intent)
+        }
     }
 
     private fun setResultLauncher() {

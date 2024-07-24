@@ -45,7 +45,7 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
         searchText.value = ""
     }
 
-    suspend fun getPlaces(keyword: String): List<Place> {
+    private suspend fun getPlaces(keyword: String): List<Place> {
         return repository.getPlaces(keyword)
     }
 
