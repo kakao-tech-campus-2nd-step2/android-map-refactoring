@@ -24,11 +24,35 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext appContext: Context): AppDatabase {
+    @DatabaseName
+    fun provideDatabaseName(): String {
+        return "SearchData.db"
+    }
+
+    @Provides
+    @Singleton
+    @PreferencesName
+    fun providePreferencesName(): String {
+        return "search_prefs"
+    }
+
+    @Provides
+    @Singleton
+    @ApiBaseUrl
+    fun provideApiBaseUrl(): String {
+        return "https://dapi.kakao.com/"
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(
+        @ApplicationContext appContext: Context,
+        @DatabaseName dbName: String
+    ): AppDatabase {
         return Room.databaseBuilder(
             appContext,
             AppDatabase::class.java,
-            "SearchData.db"
+            dbName
         ).fallbackToDestructiveMigration().build()
     }
 
@@ -39,9 +63,9 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideKakaoLocalApiService(): KakaoLocalApiService {
+    fun provideKakaoLocalApiService(@ApiBaseUrl baseUrl: String): KakaoLocalApiService {
         return Retrofit.Builder()
-            .baseUrl("https://dapi.kakao.com/")
+            .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(KakaoLocalApiService::class.java)
@@ -49,8 +73,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideSharedPreferences(@ApplicationContext appContext: Context): SharedPreferences {
-        return appContext.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
+    fun provideSharedPreferences(@ApplicationContext appContext: Context, @PreferencesName prefsName: String): SharedPreferences {
+        return appContext.getSharedPreferences(prefsName, Context.MODE_PRIVATE)
     }
 }
 
