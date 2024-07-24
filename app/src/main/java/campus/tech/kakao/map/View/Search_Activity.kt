@@ -9,28 +9,27 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import androidx.appcompat.widget.SearchView
 import campus.tech.kakao.map.Adapter.SavedSearchAdapter
 import campus.tech.kakao.map.R
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
-import kotlinx.coroutines.tasks.await
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
+import campus.tech.kakao.map.Data.SearchViewModel
 
 class Search_Activity : AppCompatActivity() {
     private lateinit var searchView: SearchView
     private lateinit var searchRecyclerView: RecyclerView
-    private lateinit var savedSearchRecyclerView: RecyclerView
     private lateinit var searchResultAdapter: PlaceAdapter
+    private lateinit var savedSearchRecyclerView: RecyclerView
     private lateinit var savedSearchAdapter: SavedSearchAdapter
     private lateinit var placesClient: PlacesClient
+    private val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +42,9 @@ class Search_Activity : AppCompatActivity() {
         initAdapters()
         setupRecyclerViews()
         setupSearchView()
+
+        observeSearchResults()
+        observeSavedSearches()
     }
 
     private fun initViews() {
@@ -71,6 +73,7 @@ class Search_Activity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrBlank()) {
+                    searchViewModel.insertSearchResult(text = query)
                     searchAndDisplayResults(query)
                 }
                 return true
@@ -92,33 +95,30 @@ class Search_Activity : AppCompatActivity() {
             searchRecyclerView.visibility = RecyclerView.GONE
             return
         }
+    }
 
-        lifecycleScope.launch(Dispatchers.Main) {
-            try {
-                val request = FindAutocompletePredictionsRequest.builder()
-                    .setQuery(searchText)
-                    .build()
-
-                val response = placesClient.findAutocompletePredictions(request).await()
-
-                val places = response.autocompletePredictions.map { prediction ->
+    private fun observeSearchResults() {
+        searchViewModel.searchResults.observe(this, Observer { results ->
+            if (results.isEmpty()) {
+                searchRecyclerView.visibility = RecyclerView.GONE
+            } else {
+                val places = results.map { result ->
                     mapOf(
-                        "name" to prediction.getPrimaryText(null).toString(),
-                        "address" to prediction.getSecondaryText(null).toString(),
-                        "id" to prediction.placeId
+                        "name" to result.text,
+                        "address" to "",
+                        "id" to result.id.toString()
                     )
                 }
-
-                if (places.isEmpty()) {
-                    searchRecyclerView.visibility = RecyclerView.GONE
-                } else {
-                    searchResultAdapter.updateData(places)
-                    searchRecyclerView.visibility = RecyclerView.VISIBLE
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+                searchResultAdapter.updateData(places)
+                searchRecyclerView.visibility = RecyclerView.VISIBLE
             }
-        }
+        })
+    }
+
+    private fun observeSavedSearches() {
+        searchViewModel.searchResults.observe(this, Observer { savedSearches ->
+            savedSearchAdapter.notifyDataSetChanged()
+        })
     }
 
     inner class PlaceAdapter(private var data: List<Map<String, String>>) :
@@ -193,7 +193,6 @@ class Search_Activity : AppCompatActivity() {
             }
         }
     }
-
 }
 
 

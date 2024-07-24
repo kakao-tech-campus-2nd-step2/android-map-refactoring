@@ -57,6 +57,9 @@ android {
 }
 
 dependencies {
+    kapt ("androidx.room:room-compiler:2.5.0")
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
     implementation("androidx.test.ext:junit-ktx:1.2.1@arr")
     androidTestImplementation("org.mockito:mockito-android:3.11.2")
     testImplementation("org.mockito:mockito-core:3.11.2")
