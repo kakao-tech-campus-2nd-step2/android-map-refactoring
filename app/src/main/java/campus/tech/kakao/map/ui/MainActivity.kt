@@ -18,32 +18,48 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.adapter.Adapter
-import campus.tech.kakao.map.utility.CategoryGroupCode
-import campus.tech.kakao.map.utility.Document
-import campus.tech.kakao.map.network.Network
-import campus.tech.kakao.map.utility.Profile
+import androidx.room.Room
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.KakaoResponse
-import org.json.JSONArray
-import retrofit2.*
+import campus.tech.kakao.map.adapter.Adapter
+import campus.tech.kakao.map.data.AppDatabase
+import campus.tech.kakao.map.data.AppDatabase.Companion.MIGRATION_1_2
+import campus.tech.kakao.map.data.Profile
+import campus.tech.kakao.map.network.Document
+import campus.tech.kakao.map.network.KakaoResponse
+import campus.tech.kakao.map.network.Network
+import campus.tech.kakao.map.network.SearchService
+import campus.tech.kakao.map.utility.CategoryGroupCode
+import campus.tech.kakao.map.utility.SaveHelper
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import kotlin.concurrent.thread
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    lateinit var adapter: Adapter
+    @Inject
+    lateinit var network: Network
 
+    @Inject
+    lateinit var searchService: SearchService
+
+    @Inject
+    lateinit var searchSave: SaveHelper
+
+    lateinit var adapter: Adapter
     lateinit var tvNoResult: TextView
     lateinit var llSave: LinearLayoutCompat
     lateinit var hScrollView: HorizontalScrollView
+    lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        키 해시 받기
-//        var keyHash = Utility.getKeyHash(this)
-//        Log.d("keyHash", keyHash)
-
+        db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "profiles"
+        ).addMigrations(MIGRATION_1_2).build()
 
         val etSearch = findViewById<EditText>(R.id.etSearch)
         tvNoResult = findViewById(R.id.tvNoResult)
@@ -67,9 +83,13 @@ class MainActivity : AppCompatActivity() {
                 if (search.isEmpty()) {
                     showNoResults()
                 } else {
-                    searchKeyword(search)  // 키워드
+                    searchService.searchKeyword(search) { result ->
+                        searchProfiles(result)
+                    }  // 키워드
                     CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
-                        searchCategory(categoryCode)
+                        searchService.searchCategory(categoryCode) { result ->
+                            searchProfiles(result)
+                        }
                     }  // 카테고리
                 }
             }
@@ -77,10 +97,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
             override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
-                if (isProfileInSearchSave(name)) {
-                    removeSavedItem(name)
+                if (searchSave.isProfileInSearchSave(name, llSave)) {
+                    searchSave.removeSavedItem(name, llSave)
                 }
-                addSavedItem(name)
+                searchSave.addSavedItem(name, llSave, hScrollView, LayoutInflater.from(this@MainActivity), etSearch)
                 val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
                     putExtra("name", name)
                     putExtra("address", address)
@@ -94,45 +114,7 @@ class MainActivity : AppCompatActivity() {
         btnClose.setOnClickListener {
             etSearch.text.clear()
         }
-        loadSavedItems()
-    }
-
-    // 키워드로 검색
-    fun searchKeyword(query: String) {
-        Network.searchKeyword(query, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    searchProfiles(response.body())
-                } else {
-                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "요청 실패", t)
-            }
-        })
-    }
-
-    // 카테고리로 검색
-    fun searchCategory(categoryGroupCode: String) {
-        Network.searchCategory(categoryGroupCode, object : Callback<KakaoResponse> {
-            override fun onResponse(call: Call<KakaoResponse>, response: Response<KakaoResponse>) {
-                if (response.isSuccessful) {
-                    searchProfiles(response.body())
-                } else {
-                    Toast.makeText(applicationContext, "응답 실패", Toast.LENGTH_SHORT).show()
-                    Log.e("MainActivity", "응답 실패")
-                }
-            }
-
-            override fun onFailure(call: Call<KakaoResponse>, t: Throwable) {
-                Toast.makeText(applicationContext, "요청 실패: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.e("MainActivity", "요청 실패", t)
-            }
-        })
+        searchSave.loadSavedItems(llSave, hScrollView, LayoutInflater.from(this), etSearch)
     }
 
     fun searchProfiles(searchResult: KakaoResponse?) {
@@ -140,15 +122,20 @@ class MainActivity : AppCompatActivity() {
             if (documents.isEmpty()) {
                 showNoResults()
             } else {
-                val profiles = documents.map { it.toProfile()}
+                val profiles = documents.map { it.toProfile() }
                 adapter.updateProfiles(profiles)
+
+                thread {
+                    db.profileDao().insertAll(*profiles.toTypedArray())
+                }
+
                 tvNoResult.visibility = View.GONE
             }
         } ?: showNoResults()
     }
 
     fun Document.toProfile(): Profile {
-        return Profile(this.name, this.address, this.type, this.latitude, this.longitude)
+        return Profile(name = this.name, address = this.address, type = this.type, latitude = this.latitude, longitude = this.longitude)
     }
 
     fun showNoResults() {
@@ -158,84 +145,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        saveSavedItems()
-    }
-
-    fun saveSavedItems() {
-        val sharedPreferences = getSharedPreferences("SavedItems", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val savedNames = JSONArray()
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName != null) {
-                savedNames.put(tvSaveName.text.toString())
-            }
-        }
-        editor.putString("savedNames", savedNames.toString())
-        editor.apply()
-    }
-
-    fun loadSavedItems() {
-        val sharedPreferences = getSharedPreferences("SavedItems", MODE_PRIVATE)
-        val savedNamesString = sharedPreferences.getString("savedNames", "[]")
-        val savedNames = JSONArray(savedNamesString)
-        for (i in 0 until savedNames.length()) {
-            val name = savedNames.getString(i)
-            addSavedItem(name)
-        }
-    }
-
-
-    fun addSavedItem(name: String) {
-        val savedView = LayoutInflater.from(this)
-            .inflate(R.layout.search_save, llSave, false) as ConstraintLayout
-
-        val tvSaveName = savedView.findViewById<TextView>(R.id.tvSaveName)
-        val ivDelete = savedView.findViewById<ImageView>(R.id.ivDelete)
-
-        tvSaveName.text = name
-
-        // 저장된 검색어를 누르면 검색어가 입력됨
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        tvSaveName.setOnClickListener {
-            etSearch.setText(name)
-        }
-
-        ivDelete.setOnClickListener {
-            llSave.removeView(savedView)
-        }
-
-        llSave.addView(savedView)
-        hScrollView.visibility = View.VISIBLE
-        scrollToEndOfSearchSave()
-    }
-
-    fun removeSavedItem(name: String) {
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName?.text.toString() == name) {
-                llSave.removeViewAt(i)
-                break
-            }
-        }
-    }
-
-    fun isProfileInSearchSave(name: String): Boolean {
-        for (i in 0 until llSave.childCount) {
-            val savedView = llSave.getChildAt(i) as? ConstraintLayout
-            val tvSaveName = savedView?.findViewById<TextView>(R.id.tvSaveName)
-            if (tvSaveName?.text.toString() == name) {
-                return true
-            }
-        }
-        return false
-    }
-
-    fun scrollToEndOfSearchSave() {
-        hScrollView.post {
-            hScrollView.fullScroll(View.FOCUS_RIGHT)
-        }
+        searchSave.saveSavedItems(llSave)
     }
 }
