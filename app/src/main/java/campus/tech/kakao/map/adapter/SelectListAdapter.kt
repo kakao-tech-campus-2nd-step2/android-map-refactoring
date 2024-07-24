@@ -7,11 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.SelectItemClickListener
+import campus.tech.kakao.map.Room.MapItem
 import campus.tech.kakao.map.SelectMapItem
 
 class SelectListAdapter(
-    var selectItemList: List<SelectMapItem>, val layoutInflater: LayoutInflater
+    var selectItemList: List<MapItem>, val layoutInflater: LayoutInflater
 ) : RecyclerView.Adapter<SelectListAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView
@@ -54,7 +54,7 @@ class SelectListAdapter(
         return selectItemList.size
     }
 
-    fun updateMapItemList(mapItemList: List<SelectMapItem>) {
+    fun updateMapItemList(mapItemList: List<MapItem>) {
         this.selectItemList = mapItemList
         notifyDataSetChanged()
     }

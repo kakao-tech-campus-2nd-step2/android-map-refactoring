@@ -5,9 +5,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.ItemClickListener
-import campus.tech.kakao.map.KakaoMapItem
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.Room.KakaoMapItem
 
 class MapListAdapter(
     var mapItemList: List<KakaoMapItem>, val layoutInflater: LayoutInflater

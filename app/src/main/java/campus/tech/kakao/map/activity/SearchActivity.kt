@@ -12,12 +12,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.ItemClickListener
-import campus.tech.kakao.map.KakaoMapItem
-import campus.tech.kakao.map.MapItemViewModel
+import campus.tech.kakao.map.adapter.ItemClickListener
+import campus.tech.kakao.map.Room.MapItemViewModel
 import campus.tech.kakao.map.adapter.MapListAdapter
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.SelectItemClickListener
+import campus.tech.kakao.map.Room.KakaoMapItem
+import campus.tech.kakao.map.Room.MapItem
+import campus.tech.kakao.map.adapter.SelectItemClickListener
 import campus.tech.kakao.map.adapter.SelectListAdapter
 import campus.tech.kakao.map.SelectMapItem
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         val mapItemViewModel = MapItemViewModel(this)
-        mapItemViewModel.makeAllSelectItemList()
+        //mapItemViewModel.makeAllSelectItemList()
 
         val mapList = findViewById<RecyclerView>(R.id.mapList)
         val selectList = findViewById<RecyclerView>(R.id.selectList)
@@ -51,7 +52,17 @@ class SearchActivity : AppCompatActivity() {
         //리스너 정의
         mapListAdapter.setItemClickListener(object : ItemClickListener {
             override fun onClick(v: View, mapItem: KakaoMapItem) {
-                mapItemViewModel.insertSelectItem(mapItem.name, mapItem.id)
+                mapItemViewModel.insertSelectItem(
+                    MapItem(
+                        0,
+                        mapItem.name,
+                        mapItem.address,
+                        mapItem.category,
+                        mapItem.x,
+                        mapItem.y,
+                        mapItem.id
+                    )
+                )
                 val intent = Intent(this@SearchActivity, MapActivity::class.java)
                 intent.putExtra("x", mapItem.x.toDouble())
                 intent.putExtra("y", mapItem.y.toDouble())
@@ -64,13 +75,13 @@ class SearchActivity : AppCompatActivity() {
         })
 
         selectListAdapter.setCancelBtnClickListener(object : SelectItemClickListener {
-            override fun onClick(v: View, selectItem: SelectMapItem) {
-                mapItemViewModel.deleteSelectItem(selectItem.id)
+            override fun onClick(v: View, selectItem: MapItem) {
+                mapItemViewModel.deleteSelectItem(selectItem)
             }
         })
 
         selectListAdapter.setItemClickListener(object : SelectItemClickListener {
-            override fun onClick(v: View, selectItem: SelectMapItem) {
+            override fun onClick(v: View, selectItem: MapItem) {
                 inputSpace.setText(selectItem.name)
             }
         })
@@ -78,7 +89,7 @@ class SearchActivity : AppCompatActivity() {
         // 옵저버 설정
         mapItemViewModel.kakaoMapItemList.observe(this) {
             mapListAdapter.updateMapItemList(it)
-            if (mapItemViewModel.kakaoMapItemList.value.isNullOrEmpty()){
+            if (mapItemViewModel.kakaoMapItemList.value.isNullOrEmpty()) {
                 mainText.visibility = View.VISIBLE
             } else {
                 mainText.visibility = View.INVISIBLE

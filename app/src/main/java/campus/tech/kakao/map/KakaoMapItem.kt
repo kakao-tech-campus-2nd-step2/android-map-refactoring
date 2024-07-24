@@ -8,14 +8,14 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class KakaoMapItem(
-    val id: String,
-    val name: String,
-    val address: String,
-    val category: String,
-    val x : String,
-    val y : String
-)
+//data class KakaoMapItem(
+//    val id: String,
+//    val name: String,
+//    val address: String,
+//    val category: String,
+//    val x : String,
+//    val y : String
+//)
 
 data class SelectMapItem(
     val id: String,
@@ -32,7 +32,7 @@ object SelectItemDB : BaseColumns {
 class KakaoMapItemDbHelper(context: Context) : SQLiteOpenHelper(context, "kakaoMap.db", null, 1) {
     private val wDb = writableDatabase
     private val rDb = readableDatabase
-    val selectItemDao = SelectItemDao(wDb, rDb)
+    //val selectItemDao = SelectItemDao(wDb, rDb)
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
             "CREATE TABLE ${SelectItemDB.TABLE_NAME} (" +

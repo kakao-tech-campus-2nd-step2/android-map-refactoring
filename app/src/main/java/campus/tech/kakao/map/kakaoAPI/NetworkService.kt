@@ -1,6 +1,6 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.kakaoAPI
 
-import android.util.Log
+import campus.tech.kakao.map.Room.KakaoMapItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -8,7 +8,7 @@ class NetworkService {
     var page: Int = 1
     var isEnd: Boolean? = false
 
-    suspend fun searchKakaoMapItem(category: String): MutableList<KakaoMapItem> {
+    suspend fun searchKakaoMapItem(category: String): List<KakaoMapItem> {
         val mapItemList = mutableListOf<KakaoMapItem>()
         page = 1
         isEnd = false
