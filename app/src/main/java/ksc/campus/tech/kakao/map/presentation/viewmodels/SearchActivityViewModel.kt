@@ -12,12 +12,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.BuildConfig
-import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import ksc.campus.tech.kakao.map.domain.models.LocationInfo
+import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import ksc.campus.tech.kakao.map.domain.repositories.MapViewRepository
 import ksc.campus.tech.kakao.map.domain.repositories.SearchKeywordRepository
 import ksc.campus.tech.kakao.map.domain.repositories.SearchResultRepository
@@ -32,6 +31,7 @@ class SearchActivityViewModel @Inject constructor(
 
     private val _searchText: MutableLiveData<String> = MutableLiveData("")
     private val _activeContent: MutableLiveData<ContentType> = MutableLiveData(ContentType.MAP)
+
     private val _searchResult = MutableStateFlow<List<SearchResult>>(listOf())
 
     val keywords = keywordRepository.keywords.stateIn(
@@ -60,7 +60,8 @@ class SearchActivityViewModel @Inject constructor(
         searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY)
         switchContent(ContentType.SEARCH_LIST)
         viewModelScope.launch {
-            searchResultRepository.searchResult.collectLatest {
+            _searchResult.emit(listOf())
+            searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY).collect {
                 _searchResult.emit(it)
             }
         }

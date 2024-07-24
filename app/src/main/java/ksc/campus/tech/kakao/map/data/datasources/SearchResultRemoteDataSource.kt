@@ -21,7 +21,7 @@ class SearchResultRemoteDataSource @Inject constructor(
     private fun responseToArray(response: Response<KakaoSearchDTO>): List<Document> =
         response.body()?.documents ?: listOf()
 
-    fun searchResult(
+    fun getSearchResult(
         query: String,
         apiKey: String,
         batchCount: Int

@@ -1,18 +1,12 @@
 package ksc.campus.tech.kakao.map.repositoriesImpl
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.flow
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import ksc.campus.tech.kakao.map.domain.repositories.SearchResultRepository
 import javax.inject.Inject
 
 class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
-    private val _searchResult: MutableStateFlow<List<SearchResult>> = MutableStateFlow(listOf())
-
-    override val searchResult: Flow<List<SearchResult>>
-        get() = _searchResult
-
     private fun getDummyData(prefix:String):List<SearchResult>{
         val result = mutableListOf<SearchResult>()
         for(i in 0..15) {
@@ -31,9 +25,7 @@ class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
         return result
     }
 
-    override fun search(text: String, apiKey: String) {
-        runBlocking {
-            _searchResult.emit(getDummyData(text))
-        }
+    override fun search(text: String, apiKey: String): Flow<List<SearchResult>> = flow{
+        emit(getDummyData(text))
     }
 }

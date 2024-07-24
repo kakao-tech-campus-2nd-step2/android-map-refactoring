@@ -11,8 +11,7 @@ import javax.inject.Singleton
 
 
 interface SearchResultRepository {
-    val searchResult: Flow<List<SearchResult>>
-    fun search(text: String, apiKey: String)
+    fun search(text: String, apiKey: String): Flow<List<SearchResult>>
 }
 
 @Module

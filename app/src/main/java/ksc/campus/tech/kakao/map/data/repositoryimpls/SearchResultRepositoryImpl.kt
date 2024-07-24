@@ -11,22 +11,13 @@ import javax.inject.Inject
 class SearchResultRepositoryImpl @Inject constructor(
     private val searchResultRemoteDataSource: SearchResultRemoteDataSource
 ): SearchResultRepository {
-    private var text:String = ""
-    private var key:String = ""
-    override val searchResult: Flow<List<SearchResult>>
-        get() = searchResultRemoteDataSource.searchResult(text, key, BATCH_COUNT).map { document ->
+
+    override fun search(text: String, apiKey: String): Flow<List<SearchResult>> {
+        return searchResultRemoteDataSource.getSearchResult(text, apiKey, BATCH_COUNT).map { document ->
             document.map {
                 KakaoSearchDtoMapper.mapSearchResponseToSearchResult(it)
             }
         }
-
-    private fun clearResults() {
-        text = ""
-    }
-
-    override fun search(text: String, apiKey: String) {
-        this.text = text
-        this.key = apiKey
     }
 
     companion object{
