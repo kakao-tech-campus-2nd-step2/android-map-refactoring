@@ -17,16 +17,12 @@ import campus.tech.kakao.map.adapter.ItemClickListener
 import campus.tech.kakao.map.Room.MapItemViewModel
 import campus.tech.kakao.map.adapter.MapListAdapter
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.Room.KakaoMapItem
 import campus.tech.kakao.map.Room.MapItem
-import campus.tech.kakao.map.adapter.SelectItemClickListener
 import campus.tech.kakao.map.adapter.SelectListAdapter
-import campus.tech.kakao.map.SelectMapItem
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
@@ -35,8 +31,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
-
-        //val mapItemViewModel = MapItemViewModel(this)
 
         val mapList = findViewById<RecyclerView>(R.id.mapList)
         val selectList = findViewById<RecyclerView>(R.id.selectList)
@@ -56,7 +50,7 @@ class SearchActivity : AppCompatActivity() {
 
         //리스너 정의
         mapListAdapter.setItemClickListener(object : ItemClickListener {
-            override fun onClick(v: View, mapItem: KakaoMapItem) {
+            override fun onClick(v: View, mapItem: MapItem) {
                 mapItemViewModel.insertSelectItem(
                     MapItem(
                         0,
@@ -65,7 +59,7 @@ class SearchActivity : AppCompatActivity() {
                         mapItem.category,
                         mapItem.x,
                         mapItem.y,
-                        mapItem.id
+                        mapItem.kakaoId
                     )
                 )
                 val intent = Intent(this@SearchActivity, MapActivity::class.java)
@@ -75,17 +69,16 @@ class SearchActivity : AppCompatActivity() {
                 intent.putExtra("address", mapItem.address)
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
-                //finish()
             }
         })
 
-        selectListAdapter.setCancelBtnClickListener(object : SelectItemClickListener {
+        selectListAdapter.setCancelBtnClickListener(object : ItemClickListener {
             override fun onClick(v: View, selectItem: MapItem) {
                 mapItemViewModel.deleteSelectItem(selectItem)
             }
         })
 
-        selectListAdapter.setItemClickListener(object : SelectItemClickListener {
+        selectListAdapter.setItemClickListener(object : ItemClickListener {
             override fun onClick(v: View, selectItem: MapItem) {
                 inputSpace.setText(selectItem.name)
             }

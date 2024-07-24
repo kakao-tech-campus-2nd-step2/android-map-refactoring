@@ -1,11 +1,9 @@
 package campus.tech.kakao.map.Room
 
-import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Room
 import campus.tech.kakao.map.kakaoAPI.NetworkService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,17 +12,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapItemViewModel @Inject constructor(
-    private val mapDB : MapDatabase,
-    private val networkService : NetworkService
+    private val mapDB: MapDatabase,
+    private val networkService: NetworkService
 ) : ViewModel() {
-//    val networkService = NetworkService()
-//    val mapDB = Room.databaseBuilder(
-//        context,
-//        MapDatabase::class.java, "kakaoMapDB"
-//    ).build()
 
-    private val _kakaoMapItemList: MutableLiveData<List<KakaoMapItem>> = MutableLiveData()
-    val kakaoMapItemList: LiveData<List<KakaoMapItem>> get() = _kakaoMapItemList
+    private val _kakaoMapItemList: MutableLiveData<List<MapItem>> = MutableLiveData()
+    val kakaoMapItemList: LiveData<List<MapItem>> get() = _kakaoMapItemList
 
     private val _selectItemList: MutableLiveData<List<MapItem>> = MutableLiveData()
     val selectItemList: LiveData<List<MapItem>> get() = _selectItemList

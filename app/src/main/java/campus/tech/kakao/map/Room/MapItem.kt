@@ -14,12 +14,3 @@ data class MapItem(
     @ColumnInfo(name = "y") val y: String,
     @ColumnInfo(name = "kakaoId") val kakaoId: String
 )
-
-data class KakaoMapItem(
-    val id: String,
-    val name: String,
-    val address: String,
-    val category: String,
-    val x: String,
-    val y: String
-)

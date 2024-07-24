@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import campus.tech.kakao.map.Room.MapItem
 
 @Dao
 interface SelectMapItemDao {

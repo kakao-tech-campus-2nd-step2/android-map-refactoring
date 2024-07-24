@@ -8,20 +8,6 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-//data class KakaoMapItem(
-//    val id: String,
-//    val name: String,
-//    val address: String,
-//    val category: String,
-//    val x : String,
-//    val y : String
-//)
-
-data class SelectMapItem(
-    val id: String,
-    val name: String
-)
-
 object SelectItemDB : BaseColumns {
     const val TABLE_NAME = "selectItem"
     const val TABLE_COLUMN_ID = "id"

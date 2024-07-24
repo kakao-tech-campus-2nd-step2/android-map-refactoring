@@ -8,7 +8,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.Room.MapItem
-import campus.tech.kakao.map.SelectMapItem
 
 class SelectListAdapter(
     var selectItemList: List<MapItem>, val layoutInflater: LayoutInflater
@@ -30,16 +29,16 @@ class SelectListAdapter(
         }
     }
 
-    fun setCancelBtnClickListener(cancelBtnClickListener: SelectItemClickListener) {
+    fun setCancelBtnClickListener(cancelBtnClickListener: ItemClickListener) {
         this.cancelBtnListener = cancelBtnClickListener
     }
 
-    fun setItemClickListener(itemClickListener: SelectItemClickListener) {
+    fun setItemClickListener(itemClickListener: ItemClickListener) {
         this.itemListener = itemClickListener
     }
 
-    lateinit var cancelBtnListener: SelectItemClickListener
-    lateinit var itemListener: SelectItemClickListener
+    lateinit var cancelBtnListener: ItemClickListener
+    lateinit var itemListener: ItemClickListener
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = layoutInflater.inflate(R.layout.select_item, parent, false)

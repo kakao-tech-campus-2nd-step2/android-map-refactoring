@@ -51,5 +51,4 @@ object DBModule {
     fun provideSharedPreferences(
         @ApplicationContext context: Context
     ): SharedPreferences = context.getSharedPreferences("lastPos", Context.MODE_PRIVATE)
-
 }
