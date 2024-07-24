@@ -51,9 +51,10 @@ class MapActivity : AppCompatActivity() {
         errorLayout = findViewById(R.id.error_layout)
         errorCode = findViewById(R.id.error_code)
         viewModel.lastLocation.observe(this) {
-            lastLoc = it
-            updateView(it)
-            Log.d(TAG, it.toString())
+            it?.let {
+                lastLoc = it
+                updateView(it)
+            }
         }
         kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {

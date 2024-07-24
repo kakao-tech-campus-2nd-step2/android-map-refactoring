@@ -31,7 +31,7 @@ class LastLocationRepositoryImpl @Inject constructor(
         var res: Location?
 
         withContext(Dispatchers.IO) {
-            res = lastLocationDao.getLastLocation()
+                res = lastLocationDao.getLastLocation()
         }
         return res
     }
