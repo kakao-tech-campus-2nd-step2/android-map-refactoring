@@ -78,14 +78,13 @@ class MapActivity : AppCompatActivity() {
                 showErrorMessage(error)
             }
         }, object : KakaoMapReadyCallback() {
-            val location = getCoordinates()
+            val location = getLocation()
             override fun onMapReady(kakaoMap: KakaoMap) { // 인증 후 API 가 정상적으로 실행될 때 호출됨
-                Log.d("jieun", "onMapReady coordinates: " + location.toString())
+                Log.d("jieun", "onMapReady location: " + location.toString())
                 if (location != null) {
                     showLabel(location, kakaoMap)
                     showBottomSheet(location)
                     lastLocationRepository.putLastLocation(location)
-//                    Log.d("jieun", "onMapReady setSharedData: " + getSharedData("pref"))
                 } else{
                     hideBottomSheet()
                 }
@@ -139,7 +138,7 @@ class MapActivity : AppCompatActivity() {
         bottom_sheet_address.text = location.address
     }
 
-    private fun getCoordinates(): Location? {
+    private fun getLocation(): Location? {
         var location = getLocationByIntent()
         if(location == null) {
             location = lastLocationRepository.getLastLocation()

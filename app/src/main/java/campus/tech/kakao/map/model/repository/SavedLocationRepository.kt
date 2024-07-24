@@ -16,7 +16,6 @@ class SavedLocationRepository(
     }
 
     suspend fun deleteSavedLocation(savedLocation: SavedLocation) {
-
         appDatabase.savedLocationDao().delete(savedLocation)
     }
 
