@@ -1,0 +1,41 @@
+package campus.tech.kakao.map.viewmodel
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.repository.PlaceRepository
+import campus.tech.kakao.map.repository.SavedPlaceRepository
+import campus.tech.kakao.map.repository.SharedPreferenceRepository
+import com.kakao.vectormap.LatLng
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
+
+class MapActivityViewModel(
+    private val sharedPreferenceRepository: SharedPreferenceRepository
+) : ViewModel() {
+    private val _recentPos = MutableLiveData<LatLng>()
+    val recentPos : LiveData<LatLng> get() = _recentPos
+
+    init {
+        getRecentPos()
+    }
+
+    fun getRecentPos(){
+        viewModelScope.launch{
+            sharedPreferenceRepository.pos.collectLatest {
+                _recentPos.value = it
+            }
+        }
+    }
+
+    fun setRecentPos(latitude : Double, longitude : Double){
+        viewModelScope.launch {
+            sharedPreferenceRepository.putPos(latitude, longitude)
+        }
+    }
+}
