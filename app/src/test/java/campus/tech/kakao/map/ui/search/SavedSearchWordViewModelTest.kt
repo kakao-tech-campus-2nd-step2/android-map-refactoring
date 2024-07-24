@@ -45,6 +45,7 @@ class SavedSearchWordViewModelTest {
             insertOrUpdateSearchWordUseCase,
             deleteSearchWordByIdUseCase,
             getAllSearchWordsUseCase,
+            testDispatcher
         )
 
         searchWord1 =

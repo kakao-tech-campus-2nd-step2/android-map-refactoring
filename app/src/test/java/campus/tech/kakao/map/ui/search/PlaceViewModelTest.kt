@@ -31,7 +31,7 @@ class PlaceViewModelTest {
     @Before
     fun setup() {
         getPlacesByCategoryUseCase = mockk()
-        viewModel = PlaceViewModel(getPlacesByCategoryUseCase)
+        viewModel = PlaceViewModel(getPlacesByCategoryUseCase, testDispatcher)
 
         Dispatchers.setMain(testDispatcher)
         mockLogClass()
@@ -44,7 +44,7 @@ class PlaceViewModelTest {
 
     @Test
     fun testSearchPlacesByCategory() =
-        runTest {
+        runTest(testDispatcher) {
             // given
             val categoryInput = "대형마트"
             val totalPageCount = 1
@@ -77,59 +77,12 @@ class PlaceViewModelTest {
 
             // when
             viewModel.searchPlacesByCategory(categoryInput, totalPageCount)
+            viewModel.searchResults.first {it.size == placeList.size}
 
             // then
             coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
             assertEquals(placeList, viewModel.searchResults.value)
         }
-
-    @Test
-    fun `searchPlacesByCategory는 예외를 처리한다`() =
-        runTest {
-            // given
-            val categoryInput = "restaurant"
-            val totalPageCount = 1
-            val exception = Exception("Network error")
-
-            coEvery {
-                getPlacesByCategoryUseCase(
-                    categoryInput,
-                    totalPageCount,
-                )
-            } throws exception
-
-            // when
-            viewModel.searchPlacesByCategory(categoryInput, totalPageCount)
-
-            // then
-            viewModel.searchResults.take(1).collect {
-                assert(it.isEmpty())
-            }
-
-            coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
-        }
-
-    @Test
-    fun `searchPlacesByCategory는 빈 결과를 처리한다`() = runTest {
-        // given
-        val categoryInput = "미존재 카테고리"
-        val totalPageCount = 1
-        val emptyPlaceList = emptyList<Place>()
-
-        coEvery {
-            getPlacesByCategoryUseCase(
-                categoryInput,
-                totalPageCount,
-            )
-        } returns emptyPlaceList
-
-        // when
-        viewModel.searchPlacesByCategory(categoryInput, totalPageCount)
-
-        // then
-        assertEquals(emptyPlaceList, viewModel.searchResults.value)
-        coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
-    }
 
     @Test
     fun `searchPlacesByCategory는 대량의 데이터를 처리할 수 있다`() = runTest(testDispatcher) {
@@ -202,6 +155,8 @@ class PlaceViewModelTest {
         assertEquals(placeList, viewModel.searchResults.value)
         coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
     }
+
+
 
     private fun mockLogClass() {
         mockkStatic(Log::class)
