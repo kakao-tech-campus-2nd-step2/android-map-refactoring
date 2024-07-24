@@ -5,12 +5,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.PlaceDataModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.domain.Place
 
 class PlaceRecyclerViewAdapter(
-    private val places: MutableList<PlaceDataModel>,
-    private val onItemClick: (PlaceDataModel) -> Unit
+    private val places: MutableList<Place>,
+    private val onItemClick: (Place) -> Unit
 ) : RecyclerView.Adapter<PlaceRecyclerViewAdapter.PlaceViewHolder>() {
 
     inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -44,7 +44,7 @@ class PlaceRecyclerViewAdapter(
         holder.placeCategory.text = place.category
     }
 
-    fun updateData(newPlace: List<PlaceDataModel>) {
+    fun updateData(newPlace: List<Place>) {
         places.clear()
         places.addAll(newPlace)
     }

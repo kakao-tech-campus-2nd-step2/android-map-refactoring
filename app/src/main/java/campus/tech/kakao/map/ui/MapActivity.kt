@@ -1,33 +1,44 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import campus.tech.kakao.map.ui.ModalBottomSheet
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.MapLayoutBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraAnimation
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
+import javax.inject.Named
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    @Named("latitude")
+    lateinit var preferencesLatitude: String
+    @Inject
+    @Named("longitude")
+    lateinit var preferencesLongitude: String
 
-    lateinit var mapView: MapView
-    lateinit var etSearch: EditText
+    private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
+
     private val startZoomLevel = 15
     var latitude: String? = "35.234"
     var longitude: String? = "129.0807"
@@ -37,7 +48,6 @@ class MapActivity : AppCompatActivity() {
         override fun onMapReady(kakaoMap: KakaoMap) {
             labelManager = kakaoMap.labelManager!!
 
-            val (preferencesLatitude, preferencesLongitude) = getLocationByPreference()
             val (intentLatitude, intentLongitude) = getLocationByIntent()
             latitude = intentLatitude ?: preferencesLatitude
             longitude = intentLongitude ?: preferencesLongitude
@@ -81,16 +91,8 @@ class MapActivity : AppCompatActivity() {
         return Pair(intentLatitude, intentLongitude)
     }
 
-    private fun getLocationByPreference(): Pair<String?, String?> {
-        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
-        val preferencesLatitude = preferences.getString("latitude", null)
-        val preferencesLongitude = preferences.getString("longitude", null)
-        return Pair(preferencesLatitude, preferencesLongitude)
-    }
-
     fun saveLocation() {
-        val preferences: SharedPreferences = getSharedPreferences("locationInfo", MODE_PRIVATE)
-        val editor: Editor = preferences.edit()
+        val editor: Editor = sharedPreferences.edit()
         editor.putString("latitude", latitude)
         editor.putString("longitude", longitude)
         editor.apply()
@@ -141,11 +143,9 @@ class MapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.map_layout)
-        mapView = findViewById(R.id.mapView)
-        etSearch = findViewById(R.id.etSearch)
-        mapView.start(lifeCycleCallback, readyCallback)
-        etSearch.setOnClickListener {
+        mapBinding = DataBindingUtil.setContentView(this, R.layout.map_layout)
+        mapBinding.mapView.start(lifeCycleCallback, readyCallback)
+        mapBinding.etSearch.setOnClickListener {
             val searchIntent = Intent(this, PlaceActivity::class.java)
             startActivity(searchIntent)
         }
@@ -153,15 +153,15 @@ class MapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        mapBinding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        mapBinding.mapView.pause()
     }
 
     private fun initializeMap() {
-        mapView.start(lifeCycleCallback, readyCallback)
+        mapBinding.mapView.start(lifeCycleCallback, readyCallback)
     }
 }

@@ -8,20 +8,20 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.PlaceDataModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.domain.Place
 
 class SearchRecyclerViewAdapter(
-    private val places: MutableList<PlaceDataModel>,
-    private val onItemClick: (PlaceDataModel) -> Unit,
-    private val onCloseButtonClick: (PlaceDataModel) -> Unit
-) : ListAdapter<PlaceDataModel, SearchRecyclerViewAdapter.SearchViewHolder>(
-    object : DiffUtil.ItemCallback<PlaceDataModel>() {
-        override fun areItemsTheSame(oldItem: PlaceDataModel, newItem: PlaceDataModel): Boolean {
+    private val places: MutableList<Place>,
+    private val onItemClick: (Place) -> Unit,
+    private val onCloseButtonClick: (Place) -> Unit
+) : ListAdapter<Place, SearchRecyclerViewAdapter.SearchViewHolder>(
+    object : DiffUtil.ItemCallback<Place>() {
+        override fun areItemsTheSame(oldItem: Place, newItem: Place): Boolean {
             return oldItem.name == newItem.name
         }
 
-        override fun areContentsTheSame(oldItem: PlaceDataModel, newItem: PlaceDataModel): Boolean {
+        override fun areContentsTheSame(oldItem: Place, newItem: Place): Boolean {
             return oldItem == newItem
         }
     }
@@ -59,10 +59,6 @@ class SearchRecyclerViewAdapter(
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val place = places[position]
         holder.placeName.text = place.name
-    }
-
-    override fun submitList(list: MutableList<PlaceDataModel>?) {
-        super.submitList(list)
     }
 
 }
