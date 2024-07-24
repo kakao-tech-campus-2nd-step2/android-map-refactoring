@@ -23,6 +23,7 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.Adapter
 import campus.tech.kakao.map.data.AppDatabase
 import campus.tech.kakao.map.data.Profile
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.network.Document
 import campus.tech.kakao.map.network.KakaoResponse
 import campus.tech.kakao.map.network.Network
@@ -45,36 +46,40 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var searchSave: SaveHelper
 
+    lateinit var binding: ActivityMainBinding
     lateinit var adapter: Adapter
     lateinit var tvNoResult: TextView
-    lateinit var llSave: LinearLayoutCompat
-    lateinit var hScrollView: HorizontalScrollView
+//    lateinit var llSave: LinearLayoutCompat
+//    lateinit var hScrollView: HorizontalScrollView
     lateinit var db: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         db = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java, "profiles"
         ).fallbackToDestructiveMigration().build()
-
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        tvNoResult = findViewById(R.id.tvNoResult)
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val btnClose = findViewById<Button>(R.id.btnClose)
-        llSave = findViewById(R.id.llSave)
-        hScrollView = findViewById(R.id.hScrollView)
+//
+//        val etSearch = findViewById<EditText>(R.id.etSearch)
+//        tvNoResult = findViewById(R.id.tvNoResult)
+//        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
+//        recyclerView.layoutManager = LinearLayoutManager(this)
+//        val btnClose = findViewById<Button>(R.id.btnClose)
+//        llSave = findViewById(R.id.llSave)
+//        hScrollView = findViewById(R.id.hScrollView)
 
         adapter = Adapter(mutableListOf())
 
-        recyclerView.adapter = adapter
+//        recyclerView.adapter = adapter
+//
+//        tvNoResult.visibility = TextView.VISIBLE
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.adapter = adapter
 
-        tvNoResult.visibility = TextView.VISIBLE
-
-        etSearch.addTextChangedListener(object : TextWatcher {
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
@@ -99,10 +104,10 @@ class MainActivity : AppCompatActivity() {
 
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
             override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
-                if (searchSave.isProfileInSearchSave(name, llSave)) {
-                    searchSave.removeSavedItem(name, llSave)
+                if (searchSave.isProfileInSearchSave(name, binding.llSave)) {
+                    searchSave.removeSavedItem(name, binding.llSave)
                 }
-                searchSave.addSavedItem(name, llSave, hScrollView, LayoutInflater.from(this@MainActivity), etSearch)
+                searchSave.addSavedItem(name, binding.llSave, binding.hScrollView, LayoutInflater.from(this@MainActivity), binding.etSearch)
                 val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
                     putExtra("name", name)
                     putExtra("address", address)
@@ -113,10 +118,10 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        btnClose.setOnClickListener {
-            etSearch.text.clear()
+        binding.btnClose.setOnClickListener {
+            binding.etSearch.text?.clear()
         }
-        searchSave.loadSavedItems(llSave, hScrollView, LayoutInflater.from(this), etSearch)
+        searchSave.loadSavedItems(binding.llSave, binding.hScrollView, LayoutInflater.from(this), binding.etSearch)
     }
 
     fun searchProfiles(searchResult: KakaoResponse?) {
@@ -131,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     db.profileDao().insertAll(*profiles.toTypedArray())
                 }
 
-                tvNoResult.visibility = View.GONE
+                binding.tvNoResult.visibility = View.GONE
             }
         } ?: showNoResults()
     }
@@ -147,6 +152,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        searchSave.saveSavedItems(llSave)
+        searchSave.saveSavedItems(binding.llSave)
     }
 }

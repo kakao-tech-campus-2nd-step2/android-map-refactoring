@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.Profile
+import campus.tech.kakao.map.databinding.ActivityItemViewBinding
 
 class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter<Adapter.ProfileViewHolder>() {
 
@@ -20,12 +21,7 @@ class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter
         this.listener = listener
     }
 
-    inner class ProfileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvName: TextView = itemView.findViewById(R.id.tvName)
-        val tvAddress: TextView = itemView.findViewById(R.id.tvAddress)
-        val tvType: TextView = itemView.findViewById(R.id.tvType)
-
-
+    inner class ProfileViewHolder(val binding: ActivityItemViewBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
                 bindingAdapterPosition.takeIf { it != RecyclerView.NO_POSITION }?.let { position ->
@@ -37,15 +33,15 @@ class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProfileViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_item_view, parent, false)
-        return ProfileViewHolder(view)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ActivityItemViewBinding.inflate(inflater, parent, false)
+        return ProfileViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ProfileViewHolder, position: Int) {
         val profile = profiles[position]
-        holder.tvName.text = profile.name
-        holder.tvAddress.text = profile.address
-        holder.tvType.text = profile.type
+        holder.binding.profile = profile
+        holder.binding.executePendingBindings()
     }
 
     override fun getItemCount(): Int {
