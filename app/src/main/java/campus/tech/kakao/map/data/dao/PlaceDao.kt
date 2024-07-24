@@ -1,8 +1,10 @@
-package campus.tech.kakao.map.data
+package campus.tech.kakao.map.data.dao
 
 import androidx.room.*
 import androidx.room.Insert
 import androidx.room.Query
+import campus.tech.kakao.map.data.entity.PlaceEntity
+import campus.tech.kakao.map.data.entity.PlaceLogEntity
 
 @Dao
 interface PlaceDao {

@@ -1,7 +1,10 @@
-package campus.tech.kakao.map.data
+package campus.tech.kakao.map.data.database
 
 import android.content.Context
 import androidx.room.*
+import campus.tech.kakao.map.data.dao.PlaceDao
+import campus.tech.kakao.map.data.entity.PlaceEntity
+import campus.tech.kakao.map.data.entity.PlaceLogEntity
 
 @Database(entities = [PlaceEntity::class, PlaceLogEntity::class], version = 1)
 abstract class AppDatabase: RoomDatabase(){

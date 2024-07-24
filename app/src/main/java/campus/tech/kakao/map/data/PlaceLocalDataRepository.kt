@@ -1,6 +1,9 @@
 package campus.tech.kakao.map.data
 
 import android.content.Context
+import campus.tech.kakao.map.data.database.AppDatabase
+import campus.tech.kakao.map.data.entity.PlaceEntity
+import campus.tech.kakao.map.data.entity.PlaceLogEntity
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import kotlinx.coroutines.Dispatchers
