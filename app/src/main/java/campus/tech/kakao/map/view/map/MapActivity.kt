@@ -12,7 +12,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
-import campus.tech.kakao.map.model.repository.LastLocationRepository
 import campus.tech.kakao.map.view.search.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -84,7 +83,7 @@ class MapActivity : AppCompatActivity() {
                 if (location != null) {
                     showLabel(location, kakaoMap)
                     showBottomSheet(location)
-                    lastLocationRepository.putLastLocation(location)
+                    lastLocationRepository.addLastLocation(location)
                 } else{
                     hideBottomSheet()
                 }

@@ -5,11 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.model.repository.LocationRepository
+import campus.tech.kakao.map.model.repository.DefaultLocationRepository
 import kotlinx.coroutines.launch
 
 class LocationViewModel(
-    private val locationRepository: LocationRepository
+    private val locationRepository: DefaultLocationRepository
 ) : ViewModel() {
     private val _locations = MutableLiveData<List<Location>>()
 
@@ -27,7 +27,7 @@ class LocationViewModel(
 
     fun searchLocationsFromKakaoAPI(query: String, handleNoResultMessage: (Int) -> Unit) {
         viewModelScope.launch {
-            _searchedLocations.value = locationRepository.getLocations(query)
+            _searchedLocations.value = locationRepository.getLocationAll(query)
             handleNoResultMessage(getSearchedLocationsSize())
         }
     }

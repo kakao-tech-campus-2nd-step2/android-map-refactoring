@@ -1,16 +1,15 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.repository.SavedLocationRepository
+import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
 import kotlinx.coroutines.launch
 
 class SavedLocationViewModel(
-    private val savedLocationRepository: SavedLocationRepository
+    private val savedLocationRepository: DefaultSavedLocationRepository
 ) : ViewModel() {
     private val _savedLocation = MutableLiveData<MutableList<SavedLocation>>()
     val savedLocation: LiveData<MutableList<SavedLocation>> get() = _savedLocation

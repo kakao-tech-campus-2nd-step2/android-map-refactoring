@@ -18,8 +18,8 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.datasource.AppDatabase
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.repository.LocationRepository
-import campus.tech.kakao.map.model.repository.SavedLocationRepository
+import campus.tech.kakao.map.model.repository.DefaultLocationRepository
+import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
 import campus.tech.kakao.map.view.map.MapActivity
 import campus.tech.kakao.map.viewmodel.ViewModelFactory.LocationViewModelFactory
 import campus.tech.kakao.map.viewmodel.ViewModelFactory.SavedLocationViewModelFactory
@@ -44,10 +44,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private val locationApi: LocationApi by lazy { LocationApi() }
-    private val locationRepository: LocationRepository by lazy { LocationRepository(locationApi) }
+    private val locationRepository: DefaultLocationRepository by lazy { DefaultLocationRepository(locationApi) }
 
     private val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(this) }
-    private val savedLocationRepository: SavedLocationRepository by lazy { SavedLocationRepository(appDatabase) }
+    private val savedLocationRepository: DefaultSavedLocationRepository by lazy { DefaultSavedLocationRepository(appDatabase) }
 
     private val clearButton: ImageView by lazy { findViewById(R.id.clearButton) }
     private val searchEditText: EditText by lazy { findViewById(R.id.SearchEditTextInMain) }

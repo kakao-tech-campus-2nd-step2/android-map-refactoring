@@ -3,12 +3,12 @@ package campus.tech.kakao.map.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.CreationExtras
-import campus.tech.kakao.map.model.repository.LocationRepository
-import campus.tech.kakao.map.model.repository.SavedLocationRepository
+import campus.tech.kakao.map.model.repository.DefaultLocationRepository
+import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
 
 class ViewModelFactory {
     class LocationViewModelFactory(
-        private val locationRepository: LocationRepository
+        private val locationRepository: DefaultLocationRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
             if (modelClass.isAssignableFrom(LocationViewModel::class.java)) {
@@ -20,7 +20,7 @@ class ViewModelFactory {
     }
 
     class SavedLocationViewModelFactory(
-        private val savedLocationRepository: SavedLocationRepository
+        private val savedLocationRepository: DefaultSavedLocationRepository
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
             if (modelClass.isAssignableFrom(SavedLocationViewModel::class.java)) {
