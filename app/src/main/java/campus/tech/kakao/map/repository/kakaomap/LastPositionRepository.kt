@@ -5,8 +5,9 @@ import campus.tech.kakao.map.view.ActivityKeys
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.kakao.vectormap.LatLng
+import javax.inject.Inject
 
-class LastPositionRepository(context: Context) {
+class LastPositionRepository @Inject constructor(context: Context) {
     private val sharedPreferences = context.getSharedPreferences(
         ActivityKeys.PREFS,
         Context.MODE_PRIVATE

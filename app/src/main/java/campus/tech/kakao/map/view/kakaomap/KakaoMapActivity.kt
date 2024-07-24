@@ -6,17 +6,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityKakaoMapBinding
 import campus.tech.kakao.map.model.search.Place
-import campus.tech.kakao.map.repository.kakaomap.LastPositionRepository
 import campus.tech.kakao.map.view.ActivityKeys
 import campus.tech.kakao.map.view.search.SearchWindowActivity
 import campus.tech.kakao.map.viewmodel.kakaomap.KakaoMapViewModel
-import campus.tech.kakao.map.viewmodel.kakaomap.KakaoMapViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -28,12 +26,14 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 
+@AndroidEntryPoint
 class KakaoMapActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityKakaoMapBinding
-    private lateinit var viewModel: KakaoMapViewModel
+    private val viewModel: KakaoMapViewModel by viewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private lateinit var kakaoMap: KakaoMap
     private lateinit var mapView: MapView
@@ -42,10 +42,6 @@ class KakaoMapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityKakaoMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val lastPositionRepository = LastPositionRepository(this)
-        val viewModelProviderFactory = KakaoMapViewModelFactory(lastPositionRepository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[KakaoMapViewModel::class.java]
 
         setUpKakaoMap()
         getSearchResult()
