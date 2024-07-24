@@ -29,7 +29,7 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "KAKAO_API_KEY", getApiKey("kakaoApiKey"))
+        resValue("string", "KAKAO_API_KEY", getApiKey("kakaoApiKey"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("kakaoRestApiKey"))
         buildConfigField("String", "KAKAO_BASE_URL", getApiKey("kakaoBaseUrl"))
     }
