@@ -39,7 +39,6 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-
         initViewModel()
         initMapView()
         initSearchView()
@@ -72,9 +71,9 @@ class MapActivity : AppCompatActivity() {
                     showErrorPage(Exception("네트워크 연결 오류"))
                 }else{
                     kakaoMap = map
+                    mapViewModel.loadLastVisitedPlace()
                     tvErrorMessage.visibility = View.GONE
                     mapView.visibility = View.VISIBLE
-                    mapViewModel.loadLastVisitedPlace()
                 }
             }
         })

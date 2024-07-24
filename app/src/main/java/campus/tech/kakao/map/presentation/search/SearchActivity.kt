@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,6 +19,7 @@ import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.presentation.ViewModelFactory
 import campus.tech.kakao.map.presentation.map.MapActivity
 import campus.tech.kakao.map.util.PlaceMapper
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class SearchActivity : AppCompatActivity() {
@@ -72,17 +72,23 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun handlePlaceClick(place: Place) {
-        val intent = Intent(this, MapActivity::class.java).apply {
-            putExtra("placeData", viewModel.getPlaceById(place.id))
+        lifecycleScope.launch {
+            val selectedPlace = viewModel.getPlaceById(place.id)
+            val intent = Intent(this@SearchActivity, MapActivity::class.java).apply {
+                putExtra("placeData", selectedPlace)
+            }
+            setResult(RESULT_OK, intent)
+            finish()
         }
-        setResult(RESULT_OK,intent)
-        finish()
     }
 
     private fun setupLogRecyclerView() {
         val logRecyclerView = binding.recyclerLog
-        logAdapter = LogAdapter { id -> viewModel.removeLog(id) }
-        logAdapter.submitList(viewModel.getLogs())
+        logAdapter = LogAdapter { id ->
+            lifecycleScope.launch {
+                viewModel.removeLog(id)
+            }
+        }
 
         logRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity, RecyclerView.HORIZONTAL, false)
@@ -91,16 +97,18 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-
         lifecycleScope.launch {
             viewModel.searchedPlaces.collect { places ->
                 updateSearchedPlaceList(places)
                 binding.tvHelpMessage.visibility = if (places.isEmpty()) View.VISIBLE else View.GONE
             }
         }
-        viewModel.logList.observe(this, Observer { logList ->
-            logAdapter.submitList(PlaceMapper.mapPlaces(logList))
-        })
+
+        lifecycleScope.launch {
+            viewModel.logList.collect { logList ->
+                logAdapter.submitList(PlaceMapper.mapPlaces(logList))
+            }
+        }
     }
 
     private fun updateSearchedPlaceList(places: List<Place>) {

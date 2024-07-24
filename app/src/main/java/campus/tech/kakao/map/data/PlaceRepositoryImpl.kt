@@ -3,36 +3,36 @@ package campus.tech.kakao.map.data
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 
-class PlaceRepositoryImpl(private val dbHelper: PlaceDBHelper):PlaceRepository{
+class PlaceRepositoryImpl(private val placeDB: PlaceDB):PlaceRepository{
     override suspend fun getPlaces(placeName: String): List<Place> {
-        return dbHelper.getPlaces(placeName)
+        return placeDB.getPlaces(placeName)
     }
 
     override suspend fun updatePlaces(places: List<Place>) {
-        dbHelper.updatePlaces(places)
+        placeDB.updatePlaces(places)
     }
 
-    override fun getPlaceById(id: String): Place? {
-        return dbHelper.getPlaceById(id)
+    override suspend fun getPlaceById(id: String): Place? {
+        return placeDB.getPlaceById(id)
     }
 
-    override fun getLogs(): List<Place> {
-        return dbHelper.getLogs()
+    override suspend fun getLogs(): List<Place> {
+        return placeDB.getLogs()
     }
 
-    override fun updateLogs(placeLog: List<Place>) {
-        dbHelper.updateLogs(placeLog)
+    override suspend fun updateLogs(placeLog: List<Place>) {
+        placeDB.updateLogs(placeLog)
     }
 
-    override fun removeLog(id: String) {
-        dbHelper.removeLog(id)
+    override suspend fun removeLog(id: String) {
+        placeDB.removeLog(id)
     }
 
-    override fun saveLastVisitedPlace(place: Place) {
-        dbHelper.saveLastVisitedPlace(place)
+    override suspend fun saveLastVisitedPlace(place: Place) {
+        placeDB.saveLastVisitedPlace(place)
     }
 
-    override fun getLastVisitedPlace(): Place? {
-        return dbHelper.getLastVisitedPlace()
+    override suspend fun getLastVisitedPlace(): Place? {
+        return placeDB.getLastVisitedPlace()
     }
 }
