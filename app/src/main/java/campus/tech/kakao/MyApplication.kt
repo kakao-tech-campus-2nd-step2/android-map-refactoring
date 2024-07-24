@@ -4,9 +4,11 @@ import android.app.Application
 import campus.tech.kakao.map.BuildConfig
 import com.kakao.vectormap.KakaoMapSdk
 import campus.tech.kakao.map.R
+import dagger.hilt.android.HiltAndroidApp
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+@HiltAndroidApp
 class MyApplication : Application() {
 
     companion object {
