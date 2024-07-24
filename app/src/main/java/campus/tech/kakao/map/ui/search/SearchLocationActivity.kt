@@ -46,7 +46,6 @@ class SearchLocationActivity : AppCompatActivity() {
             if (locationData == null) {
                 val errorString = "데이터를 가져오지 못했습니다. 잠시 후 다시 시도해주세요"
                 Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show()
-                binding.emptyResultTextView.isVisible = true
                 return@observe
             }
 

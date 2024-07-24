@@ -6,8 +6,10 @@ import campus.tech.kakao.map.domain.repository.SearchLocationRepository
 class SearchLocationRepositoryImpl(
     private val localSearchService: LocalSearchService
 ) : SearchLocationRepository {
-    override suspend fun searchLocation(category: String): List<Location>? =
-        try {
+    override suspend fun searchLocation(category: String): List<Location>? {
+        if (category.isEmpty()) return emptyList()
+
+        return try {
             val response = localSearchService.requestLocalSearch(query = category)
             if (response.isSuccessful) {
                 response.body()?.documents?.map {
@@ -24,4 +26,5 @@ class SearchLocationRepositoryImpl(
             Log.e("SearchLocationRepository", "searchLocation: ${e.message}", e)
             null
         }
+    }
 }
