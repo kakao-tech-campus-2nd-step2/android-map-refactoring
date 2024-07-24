@@ -17,6 +17,7 @@
         android:background="#FBFBFB"
         tools:context=".presentation.search.SearchActivity">
 
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/navSearch"
             android:layout_width="match_parent"

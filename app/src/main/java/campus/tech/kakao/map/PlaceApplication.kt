@@ -31,6 +31,7 @@ class PlaceApplication: Application() {
 
             return actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                     actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+
         }
     }
 }
