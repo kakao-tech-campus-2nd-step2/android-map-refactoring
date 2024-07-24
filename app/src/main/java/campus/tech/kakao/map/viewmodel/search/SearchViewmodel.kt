@@ -3,9 +3,14 @@ package campus.tech.kakao.map.viewmodel.search
 import androidx.lifecycle.*
 import campus.tech.kakao.map.api.KakaoLocalApi
 import campus.tech.kakao.map.model.Item
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(private val api: KakaoLocalApi) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val api: KakaoLocalApi
+) : ViewModel() {
     private val _items = MutableLiveData<List<Item>>()
     val items: LiveData<List<Item>>
         get() = _items
