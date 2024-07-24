@@ -2,13 +2,17 @@ package ksc.campus.tech.kakao.map.repositoriesImpl
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.runBlocking
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import ksc.campus.tech.kakao.map.models.repositories.SearchResultRepository
+import javax.inject.Inject
 
-class FakeSearchResultRepository: SearchResultRepository {
-    private val _searchResult: MutableLiveData<List<SearchResult>> = MutableLiveData(listOf())
+class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
+    private val _searchResult: MutableStateFlow<List<SearchResult>> = MutableStateFlow(listOf())
 
-    override val searchResult: LiveData<List<SearchResult>>
+    override val searchResult: Flow<List<SearchResult>>
         get() = _searchResult
 
     private fun getDummyData(prefix:String):List<SearchResult>{
@@ -30,6 +34,8 @@ class FakeSearchResultRepository: SearchResultRepository {
     }
 
     override fun search(text: String, apiKey: String) {
-        _searchResult.postValue(getDummyData(text))
+        runBlocking {
+            _searchResult.emit(getDummyData(text))
+        }
     }
 }

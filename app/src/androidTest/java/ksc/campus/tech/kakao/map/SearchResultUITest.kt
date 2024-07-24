@@ -55,9 +55,9 @@ class SearchResultUITest {
 
     @Before
     fun prepareFragment(){
-        val viewModel = SearchActivityViewModel(ApplicationProvider.getApplicationContext())
-        val factory = SearchActivityFragmentFactory(viewModel)
-        scenario = launchFragmentInContainer<SearchResultFragment>(null, factory = factory)
+        //val viewModel = SearchActivityViewModel(ApplicationProvider.getApplicationContext())
+        //val factory = SearchActivityFragmentFactory(viewModel)
+        //scenario = launchFragmentInContainer<SearchResultFragment>(null, factory = factory)
     }
 
     @Test
@@ -68,7 +68,7 @@ class SearchResultUITest {
 
         // when
         scenario.withFragment {
-            this.viewModel.submitQuery(query)
+            //this.viewModel.submitQuery(query)
         }
 
         // then

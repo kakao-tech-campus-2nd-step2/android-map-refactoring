@@ -3,19 +3,25 @@ package ksc.campus.tech.kakao.map.repositoriesImpl
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
+import javax.inject.Inject
 
 
-class FakeSearchKeywordRepository: SearchKeywordRepository {
-    private val _keywords: MutableLiveData<List<String>> = MutableLiveData(listOf())
-    override val keywords: LiveData<List<String>>
+class FakeSearchKeywordRepository @Inject constructor(): SearchKeywordRepository {
+    private val dummyData:List<String> = listOf(
+        "1", "2", "hello", "world"
+    )
+
+    private val _keywords: MutableStateFlow<List<String>> = MutableStateFlow(dummyData)
+    override val keywords: Flow<List<String>>
         get() = _keywords
 
     override suspend fun addKeyword(keyword: String) {
-        if(_keywords.value == null)
-            return
         Log.d("KSC", "adding $keyword")
-        _keywords.postValue(addElementWithoutDuplicates(_keywords.value!!, keyword))
+        _keywords.emit(addElementWithoutDuplicates(_keywords.value, keyword))
     }
 
     private fun <T>removeElement(list:List<T>, elem:T): List<T>{
@@ -35,18 +41,11 @@ class FakeSearchKeywordRepository: SearchKeywordRepository {
     }
 
     override suspend fun deleteKeyword(keyword: String) {
-        if(_keywords.value == null)
-            return
-
-        _keywords.postValue(removeElement(_keywords.value!!, keyword))
+        _keywords.emit(removeElement(_keywords.value, keyword))
     }
 
-    private val dummyData:List<String> = listOf(
-        "1", "2", "hello", "world"
-    )
-
     override suspend fun getKeywords() {
-        _keywords.postValue(dummyData)
+        _keywords.emit(dummyData)
     }
 
 }

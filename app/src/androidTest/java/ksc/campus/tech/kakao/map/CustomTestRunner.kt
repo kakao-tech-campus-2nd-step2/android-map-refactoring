@@ -8,6 +8,7 @@ import android.provider.Settings.Global.TRANSITION_ANIMATION_SCALE
 import android.provider.Settings.Global.WINDOW_ANIMATION_SCALE
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnitRunner
+import dagger.hilt.android.testing.HiltTestApplication
 
 class CustomTestRunner: AndroidJUnitRunner() {
     override fun newApplication(
@@ -15,7 +16,7 @@ class CustomTestRunner: AndroidJUnitRunner() {
         className: String?,
         context: Context?
     ): Application {
-        return super.newApplication(cl, TestApplication::class.java.name, context)
+        return super.newApplication(cl, HiltTestApplication::class.java.name, context)
     }
 
     override fun onCreate(arguments: Bundle?) {

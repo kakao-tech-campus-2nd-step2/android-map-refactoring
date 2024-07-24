@@ -4,24 +4,30 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kakao.vectormap.camera.CameraPosition
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
 import ksc.campus.tech.kakao.map.models.repositoriesImpl.MapViewRepositoryImpl
 import javax.inject.Inject
 
 class FakeMapViewRepository @Inject constructor(): MapViewRepository {
-    private val _selectedLocation: MutableLiveData<LocationInfo?> = MutableLiveData<LocationInfo?>(null)
-    private val _cameraPosition: MutableLiveData<CameraPosition> = MutableLiveData(
-        MapViewRepositoryImpl.initialCameraPosition
+
+    private var _selectedLocation = MutableSharedFlow<LocationInfo?>(
+        replay = 1,
+        extraBufferCapacity = 3,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
     )
-    override val selectedLocation: LiveData<LocationInfo?>
-        get() = _selectedLocation
+    private var _cameraPosition = MutableSharedFlow<CameraPosition>(
+        replay = 1,
+        extraBufferCapacity = 3,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
 
-    override val cameraPosition: LiveData<CameraPosition>
-        get() = _cameraPosition
 
-    override fun loadFromSharedPreference(context: Context) {
-        updateCameraPosition(context, initialCameraPosition)
+    override suspend fun loadFromSharedPreference() {
+        updateCameraPosition(initialCameraPosition)
     }
     private fun getZoomCameraPosition(latitude: Double, longitude: Double) = CameraPosition.from(
         latitude,
@@ -32,20 +38,20 @@ class FakeMapViewRepository @Inject constructor(): MapViewRepository {
         ZOOMED_CAMERA_HEIGHT
     )
 
-    override fun updateSelectedLocation(context: Context, locationInfo: LocationInfo) {
-        _selectedLocation.postValue(locationInfo)
+    override suspend fun updateSelectedLocation(locationInfo: LocationInfo) {
+        _selectedLocation.emit(locationInfo)
     }
 
-    override fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double) {
-        _cameraPosition.postValue(getZoomCameraPosition(latitude, longitude))
+    override suspend fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double) {
+        _cameraPosition.emit(getZoomCameraPosition(latitude, longitude))
     }
 
-    override fun updateCameraPosition(context: Context, position: CameraPosition) {
-        _cameraPosition.postValue(position)
+    override suspend fun updateCameraPosition(position: CameraPosition) {
+        _cameraPosition.emit(position)
     }
 
-    override fun clearSelectedLocation() {
-        _selectedLocation.postValue(null)
+    override suspend fun clearSelectedLocation() {
+        _selectedLocation.emit(null)
     }
 
     companion object {
@@ -63,4 +69,9 @@ class FakeMapViewRepository @Inject constructor(): MapViewRepository {
             -1.0
         )
     }
+
+    override val selectedLocation: SharedFlow<LocationInfo?>
+        get() = _selectedLocation
+    override val cameraPosition: SharedFlow<CameraPosition>
+        get() = _cameraPosition
 }

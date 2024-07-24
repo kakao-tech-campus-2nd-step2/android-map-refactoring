@@ -6,14 +6,19 @@ import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
 import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
 import ksc.campus.tech.kakao.map.views.MainActivity
 import org.hamcrest.Matchers.*
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
-
+@HiltAndroidTest
 class KeywordUITest {
     /**
      * UI 테스트를 위한 더미 레포지토리 클래스로 FakeKeywordRepository 사용
@@ -24,8 +29,18 @@ class KeywordUITest {
 
 
     @get:Rule
-    var activityScenarioRule: ActivityScenarioRule<MainActivity> =
-        ActivityScenarioRule(MainActivity::class.java)
+    var hiltRule: HiltAndroidRule = HiltAndroidRule(this)
+    @get:Rule
+    var activityScenarioRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @Inject
+    lateinit var keywordRepository: SearchKeywordRepository
+
+    @Before
+    fun setup(){
+        hiltRule.inject()
+    }
+
 
     @Test
     fun keywordAddOnMethodCalled(){
@@ -36,10 +51,9 @@ class KeywordUITest {
 
         // when
         activityScenarioRule.scenario.onActivity {
-            val repository = (it.application as MyApplication).appContainer.getSingleton<SearchKeywordRepository>()
 
             runBlocking {
-                repository.addKeyword(checkingKeyword)
+                keywordRepository.addKeyword(checkingKeyword)
             }
         }
 
@@ -56,11 +70,9 @@ class KeywordUITest {
 
         // when
         activityScenarioRule.scenario.onActivity {
-            val repository =
-                (it.application as MyApplication).appContainer.getSingleton<SearchKeywordRepository>()
 
             runBlocking {
-                repository.deleteKeyword(checkingKeyword)
+                keywordRepository.deleteKeyword(checkingKeyword)
             }
         }
 

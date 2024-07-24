@@ -11,17 +11,23 @@ import androidx.test.espresso.matcher.ViewMatchers.isRoot
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
+import kotlinx.coroutines.runBlocking
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
 import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
 import ksc.campus.tech.kakao.map.views.MainActivity
 import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
 import org.hamcrest.Matchers.allOf
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import javax.inject.Inject
 
 
+@HiltAndroidTest
 class MainActivityTest {
     /**
      * UI 테스트를 위한 더미 레포지토리 클래스로 FakeKeywordRepository 사용
@@ -30,7 +36,18 @@ class MainActivityTest {
      */
 
     @get:Rule
+    val hiltRule = HiltAndroidRule(this)
+
+    @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
+    @Inject
+    lateinit var mapViewRepository: MapViewRepository
+
+    @Before
+    fun setup(){
+        hiltRule.inject()
+    }
 
     private fun checkContainerHasKakaoMapFragment(){
         activityRule.scenario.onActivity {
@@ -128,8 +145,9 @@ class MainActivityTest {
 
         // when
         activityRule.scenario.onActivity {
-            (it.application as MyApplication).appContainer.getSingleton<MapViewRepository>()
-                .updateSelectedLocation(it, location)
+            runBlocking {
+                mapViewRepository.updateSelectedLocation(it, location)
+            }
         }
 
         // then
