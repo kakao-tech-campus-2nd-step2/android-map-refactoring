@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "android-map-refactoring"
 include(":app")
+include(":app")
+ 
