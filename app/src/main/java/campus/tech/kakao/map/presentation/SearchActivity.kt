@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.presentation
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,16 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.DatabaseListener
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.repository.HistoryRepositoryImpl
-import campus.tech.kakao.map.data.repository.LastLocationRepositoryImpl
-import campus.tech.kakao.map.data.repository.ResultRepositoryImpl
-import campus.tech.kakao.map.data.source.MapDbHelper
 import campus.tech.kakao.map.domain.model.History
+import campus.tech.kakao.map.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), DatabaseListener {
-    private val viewModel: MapViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var searchBox: EditText
     private lateinit var searchHistoryView: RecyclerView
     private lateinit var searchResultView: RecyclerView
