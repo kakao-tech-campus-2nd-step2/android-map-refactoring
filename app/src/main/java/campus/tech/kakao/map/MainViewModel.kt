@@ -13,7 +13,6 @@ import kotlin.concurrent.thread
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
 
-//	private val wordDbHelper = SearchWordDbHelper(application)
 	private val _wordList = MutableLiveData<List<SearchWord>>()
 	val wordList: LiveData<List<SearchWord>> get() =  _wordList
 
@@ -26,7 +25,6 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 	private val db = getDatabase(application)
 
 	fun addWord(document: Document){
-//		wordDbHelper.addWord(wordFromDocument(document))
 		val word = wordFromDocument(document)
 		thread {
 			deleteWord(word)
@@ -44,7 +42,6 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 			db.searchWordDao().delete(word.name, word.address, word.type)
 			loadWord()
 		}.join()
-//		wordDbHelper.deleteWord(id)
 	}
 
 	fun loadWord(){
