@@ -17,6 +17,7 @@ import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
 import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
+import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
 import ksc.campus.tech.kakao.map.views.MainActivity
 import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
@@ -132,9 +133,19 @@ class MainActivityTest {
     }
 
     @Test
-    fun bottomSheetHiddenWhenNoLocationSelected(){
-        onView(allOf(withId(R.id.text_location_name), isDisplayed()))
-            .check(doesNotExist())
+    fun bottomSheetShownOnMapView(){
+        onView(withId(R.id.text_location_name))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun bottomSheetShownOnSearchView(){
+        activityRule.scenario.onActivity {
+            it.searchViewModel.switchContent(SearchActivityViewModel.ContentType.SEARCH_LIST)
+        }
+
+        onView(withId(R.id.text_location_name))
+            .check(matches(isDisplayed()))
     }
 
     @Test
