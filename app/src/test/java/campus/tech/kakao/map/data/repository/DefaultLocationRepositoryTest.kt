@@ -1,54 +1,83 @@
 package campus.tech.kakao.map.data.repository
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import campus.tech.kakao.map.data.model.Location
-import dagger.hilt.android.scopes.ViewModelScoped
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
 
-@ViewModelScoped
-class DefaultLocationRepository
-@Inject
-constructor(
-    private val dataStore: DataStore<Location>,
-) : LocationRepository {
-    override suspend fun saveLocation(location: Location) {
-        dataStore.updateData {
-            Location(
-                name = location.name,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                address = location.address,
-            )
-        }
+@OptIn(ExperimentalCoroutinesApi::class)
+class DefaultLocationRepositoryTest {
+    private lateinit var dataStore: DataStore<Location>
+    private lateinit var locationRepository: DefaultLocationRepository
+    private val testDispatcher = StandardTestDispatcher()
+
+    @Before
+    fun setup() {
+        Dispatchers.setMain(testDispatcher)
+        dataStore = mockk()
+        locationRepository = DefaultLocationRepository(dataStore)
     }
 
-    override suspend fun loadLocation(): Location {
-        return try {
-            dataStore.data
-                .map { location ->
-                    Location(
-                        name = location.name,
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        address = location.address,
-                    )
-                }
-                .firstOrNull() ?: getDefaultLocation()
-        } catch (exception: Exception) {
-            Log.e("DefaultLocationRepository", "Failed to load location data", exception)
-            getDefaultLocation()
-        }
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
-    private fun getDefaultLocation(): Location {
-        return Location(
-            name = "부산대 컴공관",
-            latitude = 35.230934,
-            longitude = 129.082476,
-            address = "부산광역시 금정구 부산대학로 63번길 2",
-        )
+    @Test
+    fun testSaveLocation() = runTest(testDispatcher) {
+        // given
+        val location = Location("Test Place", 123.456, 78.90, "Test Address")
+        coEvery { dataStore.updateData(any()) } coAnswers {
+            val updateFunction = arg<suspend (Location) -> Location>(0)
+            updateFunction(location)
+            location
+        }
+
+        // when
+        locationRepository.saveLocation(location)
+
+        // then
+        coVerify { dataStore.updateData(any()) }
+    }
+
+    @Test
+    fun testLoadLocation() = runTest {
+        val location = Location("Test Place", 123.456, 78.90, "Test Address")
+        val locationFlow = MutableStateFlow(location)
+        coEvery { dataStore.data } returns locationFlow
+
+        // when
+        val result = locationRepository.loadLocation()
+
+        // then
+        assertEquals(location, result)
+    }
+
+    @Test
+    fun `loadLocation 함수는 저장된 데이터가 없을 때 기본값을 반환한다`() = runTest(testDispatcher) {
+        // given
+        coEvery { dataStore.data } returns flowOf()
+
+        // When
+        val result = locationRepository.loadLocation()
+
+        // Then
+        assertEquals("부산대 컴공관", result.name)
+        assertEquals(35.230934, result.latitude, 0.0)
+        assertEquals(129.082476, result.longitude, 0.0)
+        assertEquals("부산광역시 금정구 부산대학로 63번길 2", result.address)
     }
 }
