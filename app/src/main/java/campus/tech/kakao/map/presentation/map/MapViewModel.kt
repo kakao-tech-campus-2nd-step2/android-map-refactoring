@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.PlaceApplication
-import campus.tech.kakao.map.data.PlaceRepositoryImpl
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import kotlinx.coroutines.launch
