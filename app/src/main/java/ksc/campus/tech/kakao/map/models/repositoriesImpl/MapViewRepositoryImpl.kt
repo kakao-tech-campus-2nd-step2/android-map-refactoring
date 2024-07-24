@@ -51,44 +51,44 @@ class MapViewRepositoryImpl @Inject constructor(
         ZOOMED_CAMERA_TILT_ANGLE, ZOOMED_CAMERA_ROTATION_ANGLE,
         ZOOMED_CAMERA_HEIGHT)
 
-    private fun saveCurrentPositionToSharedPreference(context:Context, position: CameraPosition){
+    private fun saveCurrentPositionToSharedPreference(position: CameraPosition){
         mapPreferenceDataSource.saveCameraPosition(context, position)
     }
 
-    private fun saveSelectedLocation(context:Context, location: LocationInfo){
+    private fun saveSelectedLocation(location: LocationInfo){
         mapPreferenceDataSource.saveSelectedLocation(context, location)
     }
 
-    private fun loadSavedCurrentPosition(context:Context): CameraPosition {
+    private fun loadSavedCurrentPosition(): CameraPosition {
         val data = mapPreferenceDataSource.getCameraPosition(context)
         return data?: initialCameraPosition
     }
 
-    private fun loadSavedSelectedLocation(context:Context): LocationInfo? {
+    private fun loadSavedSelectedLocation(): LocationInfo? {
         return mapPreferenceDataSource.getSelectedLocation(context)
     }
 
-    override suspend fun loadFromSharedPreference(context:Context){
-        val cameraPosition = loadSavedCurrentPosition(context)
-        val selectedLocation = loadSavedSelectedLocation(context)
+    override suspend fun loadFromSharedPreference(){
+        val cameraPosition = loadSavedCurrentPosition()
+        val selectedLocation = loadSavedSelectedLocation()
 
-        updateCameraPosition(context, cameraPosition)
+        updateCameraPosition(cameraPosition)
         if(selectedLocation != null)
-            updateSelectedLocation(context, selectedLocation)
+            updateSelectedLocation(selectedLocation)
     }
 
-    override suspend fun updateSelectedLocation(context:Context, locationInfo: LocationInfo){
-        saveSelectedLocation(context, locationInfo)
+    override suspend fun updateSelectedLocation(locationInfo: LocationInfo){
+        saveSelectedLocation(locationInfo)
         _selectedLocation.emit(locationInfo)
     }
 
     override suspend fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double){
-        updateCameraPosition(context, getZoomCameraPosition(latitude, longitude))
+        updateCameraPosition(getZoomCameraPosition(latitude, longitude))
         Log.d("KSC", "(fixed zoom) updated position to ${latitude},${longitude}")
     }
 
-    override suspend fun updateCameraPosition(context:Context, position: CameraPosition){
-        saveCurrentPositionToSharedPreference(context, position)
+    override suspend fun updateCameraPosition(position: CameraPosition){
+        saveCurrentPositionToSharedPreference(position)
         Log.d("KSC", "updated position to ${position.position.latitude},${position.position.longitude}")
         _cameraPosition.emit(position)
     }

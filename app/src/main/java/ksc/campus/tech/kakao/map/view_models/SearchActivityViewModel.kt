@@ -63,7 +63,7 @@ class SearchActivityViewModel @Inject constructor(
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            mapViewRepository.loadFromSharedPreference(application)
+            mapViewRepository.loadFromSharedPreference()
         }
     }
 
@@ -92,7 +92,6 @@ class SearchActivityViewModel @Inject constructor(
     private fun updateLocation(address: String, name: String, latitude: Double, longitude: Double) {
         CoroutineScope(Dispatchers.Default).launch {
             mapViewRepository.updateSelectedLocation(
-                getApplication(),
                 LocationInfo(address, name, latitude, longitude)
             )
             mapViewRepository.updateCameraPositionWithFixedZoom(latitude, longitude)
@@ -130,7 +129,7 @@ class SearchActivityViewModel @Inject constructor(
 
     fun updateCameraPosition(position: CameraPosition) {
         CoroutineScope(Dispatchers.Default).launch {
-            mapViewRepository.updateCameraPosition(getApplication(), position)
+            mapViewRepository.updateCameraPosition(position)
         }
     }
 

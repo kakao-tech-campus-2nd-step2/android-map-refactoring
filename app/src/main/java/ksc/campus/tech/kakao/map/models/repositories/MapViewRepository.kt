@@ -23,10 +23,10 @@ interface MapViewRepository {
     val selectedLocation: SharedFlow<LocationInfo?>
     val cameraPosition: SharedFlow<CameraPosition>
 
-    suspend fun loadFromSharedPreference(context: Context)
-    suspend fun updateSelectedLocation(context: Context, locationInfo: LocationInfo)
+    suspend fun loadFromSharedPreference()
+    suspend fun updateSelectedLocation(locationInfo: LocationInfo)
     suspend fun updateCameraPositionWithFixedZoom(latitude: Double, longitude: Double)
-    suspend fun updateCameraPosition(context: Context, position: CameraPosition)
+    suspend fun updateCameraPosition(position: CameraPosition)
     suspend fun clearSelectedLocation()
 }
 
