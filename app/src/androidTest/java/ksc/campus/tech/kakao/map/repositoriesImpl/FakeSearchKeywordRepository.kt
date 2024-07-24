@@ -3,7 +3,7 @@ package ksc.campus.tech.kakao.map.repositoriesImpl
 import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
+import ksc.campus.tech.kakao.map.domain.repositories.SearchKeywordRepository
 import javax.inject.Inject
 
 

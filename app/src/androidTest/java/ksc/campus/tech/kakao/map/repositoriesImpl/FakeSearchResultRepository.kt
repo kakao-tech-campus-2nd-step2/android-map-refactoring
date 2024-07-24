@@ -3,8 +3,8 @@ package ksc.campus.tech.kakao.map.repositoriesImpl
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
-import ksc.campus.tech.kakao.map.models.repositories.SearchResult
-import ksc.campus.tech.kakao.map.models.repositories.SearchResultRepository
+import ksc.campus.tech.kakao.map.domain.models.SearchResult
+import ksc.campus.tech.kakao.map.domain.repositories.SearchResultRepository
 import javax.inject.Inject
 
 class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {

@@ -12,8 +12,8 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.runBlocking
-import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
-import ksc.campus.tech.kakao.map.views.MainActivity
+import ksc.campus.tech.kakao.map.domain.repositories.SearchKeywordRepository
+import ksc.campus.tech.kakao.map.presentation.views.MainActivity
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule

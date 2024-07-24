@@ -4,8 +4,8 @@ import com.kakao.vectormap.camera.CameraPosition
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
-import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
+import ksc.campus.tech.kakao.map.domain.models.LocationInfo
+import ksc.campus.tech.kakao.map.domain.repositories.MapViewRepository
 import javax.inject.Inject
 
 class FakeMapViewRepository @Inject constructor(): MapViewRepository {

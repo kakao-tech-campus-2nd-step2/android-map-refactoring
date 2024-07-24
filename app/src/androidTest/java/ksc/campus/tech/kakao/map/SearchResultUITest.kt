@@ -7,8 +7,8 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
-import ksc.campus.tech.kakao.map.views.MainActivity
+import ksc.campus.tech.kakao.map.presentation.viewmodels.SearchActivityViewModel
+import ksc.campus.tech.kakao.map.presentation.views.MainActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

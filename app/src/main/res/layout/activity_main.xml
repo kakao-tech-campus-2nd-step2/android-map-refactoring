@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main"
-        tools:context="ksc.campus.tech.kakao.map.views.MainActivity">
+        tools:context="ksc.campus.tech.kakao.map.presentation.views.MainActivity">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/input_search"

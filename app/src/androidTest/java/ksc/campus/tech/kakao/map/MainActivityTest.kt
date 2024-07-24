@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.*
+import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
@@ -15,12 +15,12 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
-import ksc.campus.tech.kakao.map.models.repositories.LocationInfo
-import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
-import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
-import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
-import ksc.campus.tech.kakao.map.views.MainActivity
-import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
+import ksc.campus.tech.kakao.map.domain.models.LocationInfo
+import ksc.campus.tech.kakao.map.domain.repositories.MapViewRepository
+import ksc.campus.tech.kakao.map.presentation.viewmodels.SearchActivityViewModel
+import ksc.campus.tech.kakao.map.presentation.views.MainActivity
+import ksc.campus.tech.kakao.map.presentation.views.fragments.KakaoMapFragment
+import ksc.campus.tech.kakao.map.presentation.views.fragments.SearchResultFragment
 import org.hamcrest.Matchers.allOf
 import org.junit.Before
 import org.junit.Rule
