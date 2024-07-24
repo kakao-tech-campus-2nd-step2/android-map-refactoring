@@ -1,18 +1,17 @@
 package campus.tech.kakao.map.data
 
-import android.content.Context
-import campus.tech.kakao.map.data.database.AppDatabase
+import campus.tech.kakao.map.data.dao.PlaceDao
 import campus.tech.kakao.map.data.entity.PlaceEntity
 import campus.tech.kakao.map.data.entity.PlaceLogEntity
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-open class PlaceLocalDataRepository(private val context: Context) : PlaceRepository {
-
-    private val placeDao = AppDatabase.getDatabase(context).placeDao()
-    private val lastVisitedPlaceManager = LastVisitedPlaceManager(context)
+open class PlaceLocalDataRepository @Inject constructor(
+    private val placeDao: PlaceDao,
+) : PlaceRepository {
 
     override suspend fun getPlaces(placeName: String): List<Place> {
         return withContext(Dispatchers.IO) {
@@ -60,13 +59,5 @@ open class PlaceLocalDataRepository(private val context: Context) : PlaceReposit
                 Place(it.id, it.place, "", "", "", "")
             }
         }
-    }
-
-    override suspend fun saveLastVisitedPlace(place: Place) {
-        lastVisitedPlaceManager.saveLastVisitedPlace(place)
-    }
-
-    override suspend fun getLastVisitedPlace(): Place? {
-        return lastVisitedPlaceManager.getLastVisitedPlace()
     }
 }

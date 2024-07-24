@@ -3,20 +3,18 @@ package campus.tech.kakao.map.presentation.map
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.presentation.search.SearchActivity
-import campus.tech.kakao.map.presentation.ViewModelFactory
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -26,8 +24,10 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private val mapView by lazy<MapView> { findViewById(R.id.mapView) }
     private val searchView by lazy<ConstraintLayout> { findViewById(R.id.searchView) }
@@ -35,24 +35,17 @@ class MapActivity : AppCompatActivity() {
     private lateinit var mapBottomSheet: MapBottomSheet
     private lateinit var tvErrorMessage: TextView
     private lateinit var kakaoMap: KakaoMap
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        initViewModel()
         observeViewModel()
         initMapView()
         initSearchView()
         setResultLauncher()
 
-    }
-
-    private fun initViewModel(){
-        val placeRepository = (application as PlaceApplication).placeRepository
-        mapViewModel = ViewModelProvider(this, ViewModelFactory(placeRepository))
-            .get(MapViewModel::class.java)
     }
 
     private fun initMapView() {

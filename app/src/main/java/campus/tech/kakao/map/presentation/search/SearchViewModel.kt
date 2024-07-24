@@ -3,10 +3,15 @@ package campus.tech.kakao.map.presentation.search
 import androidx.lifecycle.*
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(private val repository: PlaceRepository) : ViewModel() {
+@HiltViewModel
+class SearchViewModel
+@Inject
+constructor( private val repository: PlaceRepository) : ViewModel() {
 
     val searchText = MutableLiveData<String>()
 

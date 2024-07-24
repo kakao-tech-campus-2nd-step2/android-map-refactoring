@@ -1,29 +1,32 @@
 package campus.tech.kakao.map.presentation.map
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.data.LastVisitedPlaceManager
 import campus.tech.kakao.map.domain.model.Place
-import campus.tech.kakao.map.domain.repository.PlaceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MapViewModel(private val repository: PlaceRepository): ViewModel() {
+@HiltViewModel
+class MapViewModel
+@Inject
+constructor(private val manager: LastVisitedPlaceManager): ViewModel() {
 
     private val _lastVisitedPlace = MutableStateFlow<Place?>(null)
     val lastVisitedPlace: StateFlow<Place?> get() = _lastVisitedPlace.asStateFlow()
     fun loadLastVisitedPlace() {
         viewModelScope.launch {
-            val place = repository.getLastVisitedPlace()
+            val place = manager.getLastVisitedPlace()
             _lastVisitedPlace.value = place
         }
     }
     fun saveLastVisitedPlace(place: Place) {
         viewModelScope.launch {
-            repository.saveLastVisitedPlace(place)
+            manager.saveLastVisitedPlace(place)
             _lastVisitedPlace.value = place
         }
     }

@@ -9,6 +9,4 @@ interface PlaceRepository {
     suspend fun getLogs(): List<Place>
     suspend fun updateLogs(logs: List<Place>)
     suspend fun removeLog(id: String)
-    suspend fun saveLastVisitedPlace(place: Place)
-    suspend fun getLastVisitedPlace(): Place?
 }

@@ -7,10 +7,10 @@ import android.net.NetworkCapabilities
 import campus.tech.kakao.map.data.PlaceRemoteDataRepository
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import com.kakao.vectormap.KakaoMapSdk
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class PlaceApplication: Application() {
-
-    val placeRepository: PlaceRepository by lazy { PlaceRemoteDataRepository(this) }
 
     override fun onCreate() {
         super.onCreate()

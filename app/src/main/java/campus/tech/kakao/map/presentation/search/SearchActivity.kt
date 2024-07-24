@@ -3,30 +3,29 @@ package campus.tech.kakao.map.presentation.search
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.presentation.adapter.SearchedPlaceAdapter
 import campus.tech.kakao.map.presentation.adapter.LogAdapter
 import campus.tech.kakao.map.domain.model.Place
-import campus.tech.kakao.map.presentation.ViewModelFactory
 import campus.tech.kakao.map.presentation.map.MapActivity
 import campus.tech.kakao.map.util.PlaceMapper
-import kotlinx.coroutines.flow.collect
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var searchedPlaceAdapter: SearchedPlaceAdapter
     private lateinit var logAdapter: LogAdapter
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,17 +33,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        initViewModel()
         initBinding()
         setupRecyclerViews()
         observeViewModel()
     }
 
-    private fun initViewModel() {
-        val placeRepository = (application as PlaceApplication).placeRepository
-        viewModel = ViewModelProvider(this, ViewModelFactory(placeRepository))
-            .get(SearchViewModel::class.java)
-    }
 
     private fun initBinding() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
