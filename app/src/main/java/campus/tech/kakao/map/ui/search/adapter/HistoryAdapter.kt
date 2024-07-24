@@ -27,7 +27,7 @@ class HistoryAdapter(
         }
 
         fun bind(historyData: History) {
-            binding.locationHistoryNameTextView.text = historyData.name
+            binding.history = historyData
         }
     }
 

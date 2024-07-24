@@ -24,9 +24,7 @@ class SearchLocationAdapter(
         }
 
         fun bind(locationData: Location) {
-            binding.locationNameTextView.text = locationData.name
-            binding.locationAddressTextView.text = locationData.address
-            binding.locationTypeTextView.text = locationData.category
+            binding.location = locationData
         }
     }
 
