@@ -5,10 +5,8 @@ import campus.tech.kakao.map.domain.repository.HistoryRepository
 class HistoryRepositoryImpl(
     private val historyDao: HistoryDao
 ) : HistoryRepository {
-    override suspend fun getHistory(): List<String> {
-        return historyDao.getAll().map { history ->
-            history.name
-        }
+    override suspend fun getHistory(): List<History> {
+        return historyDao.getAll()
     }
 
     override suspend fun addHistory(locationName: String) {

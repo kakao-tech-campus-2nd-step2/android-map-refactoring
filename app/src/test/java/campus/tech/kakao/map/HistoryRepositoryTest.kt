@@ -9,7 +9,7 @@ import io.mockk.coVerify
 import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import org.junit.Assert.*
 import org.junit.Test
 
 class HistoryRepositoryTest {
@@ -30,7 +30,7 @@ class HistoryRepositoryTest {
         val result = repository.getHistory()
 
         // then
-        Assert.assertArrayEquals(arrayOf("test1", "test2", "test3"), result.toTypedArray())
+        assertEquals(testHistory, result)
     }
 
     @Test

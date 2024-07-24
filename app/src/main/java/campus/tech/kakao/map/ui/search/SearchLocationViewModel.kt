@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.data.local_search.Location
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.SearchLocationRepository
@@ -18,8 +19,8 @@ class SearchLocationViewModel @Inject constructor(
     private val _location = MutableLiveData<List<Location>?>()
     val location: LiveData<List<Location>?> = _location
 
-    private val _history = MutableLiveData<List<String>>()
-    val history: LiveData<List<String>> = _history
+    private val _history = MutableLiveData<List<History>>()
+    val history: LiveData<List<History>> = _history
 
     private val _searchInput = MutableLiveData<String>()
     val searchInput: LiveData<String> = _searchInput

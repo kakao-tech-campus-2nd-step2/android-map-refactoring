@@ -2,6 +2,7 @@ package campus.tech.kakao.map
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.data.local_search.Location
 import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.SearchLocationRepository
@@ -47,16 +48,17 @@ class SearchLocationViewModelTest {
     @Test
     fun testInitViewModel() {
         // given
+        val testHistory = listOf(History(name = "기록1"), History(name = "기록2"))
         val tempMockRepository = mockk<HistoryRepository>()
-        coEvery { tempMockRepository.getHistory() } returns listOf("History1", "History2")
+        coEvery { tempMockRepository.getHistory() } returns testHistory
 
         // when
         val tempViewModel = SearchLocationViewModel(tempMockRepository, mockLocationRepository)
 
         // then
         coVerify { tempMockRepository.getHistory() }
-        tempViewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
-        assertEquals(listOf("History1", "History2"), tempViewModel.history.value)
+        tempViewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
+        assertEquals(testHistory, tempViewModel.history.value)
     }
 
     @Test
@@ -82,10 +84,12 @@ class SearchLocationViewModelTest {
     @Test
     fun testAddHistory() {
         // given
-        val testHistory = listOf("History1", "History2")
+        val testHistory = listOf(
+            History(name = "History1"), History(name = "History2")
+        )
         coEvery { mockHistoryRepository.addHistory(any()) } just Runs
         coEvery { mockHistoryRepository.getHistory() } returns testHistory
-        viewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
+        viewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
 
         // when
         viewModel.addHistory("History2")
@@ -97,10 +101,10 @@ class SearchLocationViewModelTest {
     @Test
     fun testRemoveHistory() {
         // given
-        val testHistory = listOf("History1")
+        val testHistory = listOf(History(name="History1"))
         coEvery { mockHistoryRepository.removeHistory(any()) } just Runs
         coEvery { mockHistoryRepository.getHistory() } returns testHistory
-        viewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
+        viewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
 
         // when
         viewModel.removeHistory("History2")

@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.data.local_search.Location
 import campus.tech.kakao.map.di.RepositoryModule
 import campus.tech.kakao.map.domain.repository.HistoryRepository
@@ -28,7 +29,9 @@ object FakeRepositoryModule {
     @Singleton
     fun provideHistoryRepository(): HistoryRepository =
         mockk<HistoryRepository>().also {
-            coEvery { it.getHistory() } returns listOf("기록1", "기록2")
+            coEvery { it.getHistory() } returns listOf(
+                History(name = "기록1"), History(name = "기록2")
+            )
             coEvery { it.addHistory(any()) } just Runs
             coEvery { it.removeHistory(any()) } just Runs
         }
