@@ -33,9 +33,9 @@ class MapActivity : AppCompatActivity() {
     private val mapView by lazy<MapView> { findViewById(R.id.mapView) }
     private val searchView by lazy<ConstraintLayout> { findViewById(R.id.searchView) }
     private val swipeRefreshLayout by lazy<SwipeRefreshLayout> {findViewById(R.id.swipeRefreshLayout)}
+    private val tvErrorMessage by lazy<TextView> {findViewById(R.id.tvErrorMessage)}
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private lateinit var mapBottomSheet: MapBottomSheet
-    private lateinit var tvErrorMessage: TextView
     private lateinit var kakaoMap: KakaoMap
     private val mapViewModel: MapViewModel by viewModels()
 
@@ -63,7 +63,12 @@ class MapActivity : AppCompatActivity() {
     }
     private fun initSwipeRefreshLayout() {
         swipeRefreshLayout.setOnRefreshListener {
-            showMapPage()
+            if (!isNetworkAvailable()) {
+                showErrorPage(Exception("네트워크 연결 오류"))
+            }else{
+                showMapPage()
+                showBottomSheet(mapViewModel.lastVisitedPlace.value)
+            }
             swipeRefreshLayout.isRefreshing = false
         }
     }
@@ -76,28 +81,30 @@ class MapActivity : AppCompatActivity() {
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(map: KakaoMap) {
                 kakaoMap = map
-                showMapPage()
+                if (!isNetworkAvailable()) {
+                    showErrorPage(Exception("네트워크 연결 오류"))
+                }else{
+                    initMapPage()
+                }
             }
         })
     }
-
 
     private fun isNetworkAvailable(): Boolean {
         return PlaceApplication.isNetworkActive()
     }
 
+    private fun initMapPage(){
+        showMapPage()
+        mapViewModel.loadLastVisitedPlace()
+    }
+
     private fun showMapPage(){
-        if (!isNetworkAvailable()) {
-            showErrorPage(Exception("네트워크 연결 오류"))
-        } else {
-            mapViewModel.loadLastVisitedPlace()
-            tvErrorMessage.visibility = View.GONE
-            mapView.visibility = View.VISIBLE
-        }
+        tvErrorMessage.visibility = View.GONE
+        mapView.visibility = View.VISIBLE
     }
 
     private fun showErrorPage(error: Exception) {
-        tvErrorMessage = findViewById(R.id.tvErrorMessage)
         tvErrorMessage.visibility = View.VISIBLE
         mapView.visibility = View.GONE
         tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
@@ -138,7 +145,7 @@ class MapActivity : AppCompatActivity() {
         layer?.addLabel(options)
     }
 
-    private fun showBottomSheet(place: Place) {
+    private fun showBottomSheet(place: Place?) {
         mapBottomSheet = MapBottomSheet(place)
         mapBottomSheet.show(supportFragmentManager, mapBottomSheet.tag)
     }
