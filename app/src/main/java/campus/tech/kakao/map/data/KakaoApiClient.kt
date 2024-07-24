@@ -10,7 +10,7 @@ class KakaoApiClient {
         private const val BASE_URL = "https://dapi.kakao.com/"
         private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
 
-        private val client = OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader("Authorization", API_KEY)
