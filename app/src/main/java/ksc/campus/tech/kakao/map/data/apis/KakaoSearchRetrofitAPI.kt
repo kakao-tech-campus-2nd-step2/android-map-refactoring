@@ -1,10 +1,8 @@
 package ksc.campus.tech.kakao.map.data.apis
 
-import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ksc.campus.tech.kakao.map.BuildConfig
 import ksc.campus.tech.kakao.map.data.entities.KakaoSearchDTO
@@ -28,9 +26,7 @@ interface KakaoSearchRetrofitService {
 @InstallIn(SingletonComponent::class)
 object SearchKakaoRetrofitService {
     @Provides
-    fun provideSearchKakaoRetrofitService(
-        @ApplicationContext context: Context
-    ): KakaoSearchRetrofitService {
+    fun provideSearchKakaoRetrofitService(): KakaoSearchRetrofitService {
         return Retrofit.Builder()
             .baseUrl(BuildConfig.KAKAO_API_URL)
             .addConverterFactory(GsonConverterFactory.create())
