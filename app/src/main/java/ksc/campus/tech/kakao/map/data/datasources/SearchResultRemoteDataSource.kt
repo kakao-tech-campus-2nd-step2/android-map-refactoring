@@ -12,7 +12,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import javax.inject.Inject
 
-class KakaoSearchService @Inject constructor(
+class SearchResultRemoteDataSource @Inject constructor(
     private val retrofitService: KakaoSearchRetrofitService
 ) {
 
