@@ -67,7 +67,7 @@ class SearchLocationViewModelTest {
             Location("Location2", "Address2", "Category2", 135.0, 246.0)
         )
         coEvery { mockLocationRepository.searchLocation(any()) } returns testLocation
-        viewModel.location.observeForever(mockk<Observer<List<Location>>>(relaxed = true))
+        viewModel.location.observeForever(mockk<Observer<List<Location>?>>(relaxed = true))
 
         // when
         viewModel.searchLocation("testCategory")

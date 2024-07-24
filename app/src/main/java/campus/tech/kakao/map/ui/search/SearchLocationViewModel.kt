@@ -15,8 +15,8 @@ class SearchLocationViewModel @Inject constructor(
     private val searchLocationRepository: SearchLocationRepository
 ) : ViewModel() {
 
-    private val _location = MutableLiveData<List<Location>>()
-    val location: LiveData<List<Location>> = _location
+    private val _location = MutableLiveData<List<Location>?>()
+    val location: LiveData<List<Location>?> = _location
 
     private val _history = MutableLiveData<List<String>>()
     val history: LiveData<List<String>> = _history

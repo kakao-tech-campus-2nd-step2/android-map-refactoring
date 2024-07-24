@@ -3,6 +3,7 @@ package campus.tech.kakao.map.ui.search
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import campus.tech.kakao.map.databinding.ActivitySearchLocationBinding
@@ -13,7 +14,8 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchLocationActivity : AppCompatActivity() {
-    @Inject lateinit var viewModel: SearchLocationViewModel
+    @Inject
+    lateinit var viewModel: SearchLocationViewModel
     private lateinit var binding: ActivitySearchLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,12 +42,17 @@ class SearchLocationActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.location.observe(this) {
-            it?.let { locationData ->
-                binding.searchResultRecyclerView.adapter =
-                    SearchLocationAdapter(locationData, this, viewModel)
-                binding.emptyResultTextView.isVisible = locationData.isEmpty()
+        viewModel.location.observe(this) { locationData ->
+            if (locationData == null) {
+                val errorString = "데이터를 가져오지 못했습니다. 잠시 후 다시 시도해주세요"
+                Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show()
+                binding.emptyResultTextView.isVisible = true
+                return@observe
             }
+
+            binding.searchResultRecyclerView.adapter =
+                SearchLocationAdapter(locationData, this, viewModel)
+            binding.emptyResultTextView.isVisible = locationData.isEmpty()
         }
 
         viewModel.history.observe(this) {

@@ -47,7 +47,8 @@ class SearchLocationRepositoryTest {
         val result = repository.searchLocation("testCategory")
 
         // then
-        assertEquals(2, result.size)
+        assertNotNull(result)
+        assertEquals(2, result!!.size)
         assertEquals("place_name1", result[0].name)
         assertEquals("address_name1", result[0].address)
         assertEquals("category_group_name1", result[0].category)
