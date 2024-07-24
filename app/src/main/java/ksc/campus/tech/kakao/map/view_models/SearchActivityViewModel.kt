@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.lifecycle.viewModelScope
@@ -35,11 +36,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchActivityViewModel @Inject constructor(
-    application: Application,
     private val mapViewRepository: MapViewRepository,
     private val searchResultRepository: SearchResultRepository,
     private val keywordRepository: SearchKeywordRepository
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
     private val _searchText: MutableLiveData<String> = MutableLiveData("")
     private val _activeContent: MutableLiveData<ContentType> = MutableLiveData(ContentType.MAP)
