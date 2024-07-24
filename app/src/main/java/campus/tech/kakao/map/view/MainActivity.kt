@@ -28,17 +28,21 @@ import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.repository.location.LocationSearcher
 import campus.tech.kakao.map.view.SearchActivity
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
-import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModelFactory
 import campus.tech.kakao.map.viewmodel.main.MainViewModel
-import campus.tech.kakao.map.viewmodel.main.MainViewModelFactory
 import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
 
     private var mapView: MapView? = null
     private var kakaoMap: KakaoMap? = null
     private var labelLayer: LabelLayer? = null
+
+    @Inject
+    lateinit var locationSearcher: LocationSearcher
 
     private lateinit var errorLayout: RelativeLayout
     private lateinit var errorMessage: TextView
@@ -49,7 +53,6 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
     private lateinit var searchResultLauncher: ActivityResultLauncher<Intent>
-    private lateinit var locationSearcher: LocationSearcher
     private lateinit var keywordViewModel: KeywordViewModel
     private lateinit var mainViewModel: MainViewModel
 
@@ -57,11 +60,9 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        locationSearcher = LocationSearcher(this)
-
         // ViewModel 초기화
-        keywordViewModel = ViewModelProvider(this, KeywordViewModelFactory(applicationContext)).get(KeywordViewModel::class.java)
-        mainViewModel = ViewModelProvider(this, MainViewModelFactory(application)).get(MainViewModel::class.java)
+        keywordViewModel = ViewModelProvider(this).get(KeywordViewModel::class.java)
+        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
 
         // ActivityResultLauncher 초기화
         searchResultLauncher = registerForActivityResult(
