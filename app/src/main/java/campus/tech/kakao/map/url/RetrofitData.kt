@@ -12,7 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class RetrofitData private constructor() {
 	private val _documents = MutableLiveData<List<Document>>()
-	val retrofitService = Retrofit.Builder()
+	private val retrofitService: RetrofitService = Retrofit.Builder()
 		.baseUrl(UrlContract.BASE_URL)
 		.addConverterFactory(GsonConverterFactory.create())
 		.build()
