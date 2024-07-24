@@ -6,13 +6,16 @@ import campus.tech.kakao.map.model.search.Place
 import campus.tech.kakao.map.repository.search.SavedSearchKeywordRepository
 import campus.tech.kakao.map.model.search.SearchKeyword
 import campus.tech.kakao.map.repository.search.SearchRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(
-    private val searchRepository: SearchRepository,
-    private val savedSearchKeywordRepository: SavedSearchKeywordRepository
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private var searchRepository: SearchRepository,
+    private var savedSearchKeywordRepository: SavedSearchKeywordRepository
 ) : ViewModel() {
 
     private val _searchResults = MutableStateFlow<List<Place>>(emptyList())

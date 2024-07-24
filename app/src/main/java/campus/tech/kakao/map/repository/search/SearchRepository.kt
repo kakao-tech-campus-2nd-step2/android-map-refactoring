@@ -6,8 +6,9 @@ import campus.tech.kakao.map.model.search.SearchKeyword
 import kotlinx.coroutines.coroutineScope
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class SearchRepository {
+class SearchRepository @Inject constructor() {
     companion object {
         const val BASE_URL = "https://dapi.kakao.com"
         const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"

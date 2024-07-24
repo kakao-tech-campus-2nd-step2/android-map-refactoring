@@ -5,36 +5,29 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.repository.search.SavedSearchKeywordRepository
 import campus.tech.kakao.map.model.search.SearchKeyword
-import campus.tech.kakao.map.repository.search.SearchRepository
 import campus.tech.kakao.map.databinding.ActivitySearchWindowBinding
 import campus.tech.kakao.map.model.search.Place
 import campus.tech.kakao.map.view.ActivityKeys
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
-import campus.tech.kakao.map.viewmodel.search.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SearchWindowActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchWindowBinding
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchWindowBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val searchRepository = SearchRepository()
-        val savedSearchKeywordRepository = SavedSearchKeywordRepository(this)
-        val viewModelProviderFactory =
-            SearchViewModelFactory(searchRepository, savedSearchKeywordRepository)
-        viewModel = ViewModelProvider(this, viewModelProviderFactory)[SearchViewModel::class.java]
 
         delSearchKeywordListener()
         detectSearchWindowChangedListener()

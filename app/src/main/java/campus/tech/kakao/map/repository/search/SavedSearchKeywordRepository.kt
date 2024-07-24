@@ -5,8 +5,9 @@ import campus.tech.kakao.map.model.search.SearchKeyword
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SavedSearchKeywordRepository(context: Context) {
+class SavedSearchKeywordRepository @Inject constructor(context: Context) {
 
     private val db = SearchKeywordDB.getInstace(context)!!.searchKeywordDao()
 
