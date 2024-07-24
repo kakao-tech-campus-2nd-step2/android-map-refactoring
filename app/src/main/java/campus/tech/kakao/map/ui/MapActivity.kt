@@ -23,14 +23,22 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import javax.inject.Named
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+    @Inject
+    @Named("latitude")
+    lateinit var preferencesLatitude: String
+    @Inject
+    @Named("longitude")
+    lateinit var preferencesLongitude: String
 
     private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
+
     private val startZoomLevel = 15
     var latitude: String? = "35.234"
     var longitude: String? = "129.0807"
@@ -40,7 +48,6 @@ class MapActivity : AppCompatActivity() {
         override fun onMapReady(kakaoMap: KakaoMap) {
             labelManager = kakaoMap.labelManager!!
 
-            val (preferencesLatitude, preferencesLongitude) = getLocationByPreference()
             val (intentLatitude, intentLongitude) = getLocationByIntent()
             latitude = intentLatitude ?: preferencesLatitude
             longitude = intentLongitude ?: preferencesLongitude
@@ -82,12 +89,6 @@ class MapActivity : AppCompatActivity() {
         val intentLatitude = intent.getStringExtra("latitude")
         val intentLongitude = intent.getStringExtra("longitude")
         return Pair(intentLatitude, intentLongitude)
-    }
-
-    private fun getLocationByPreference(): Pair<String?, String?> {
-        val preferencesLatitude = sharedPreferences.getString("latitude", null)
-        val preferencesLongitude = sharedPreferences.getString("longitude", null)
-        return Pair(preferencesLatitude, preferencesLongitude)
     }
 
     fun saveLocation() {
