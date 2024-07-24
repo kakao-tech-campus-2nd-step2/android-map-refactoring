@@ -46,11 +46,12 @@ class SearchWordDbHelper(context: Context): SQLiteOpenHelper(
 		values.put(SearchWordContract.COLUMN_NAME_ADDRESS, word.address)
 		values.put(SearchWordContract.COLUMN_NAME_TYPE, word.type)
 		db.insert(SearchWordContract.TABLE_NAME, null, values)
-		db.close()
 		updateSearchWords()
+		db.close()
+
 	}
 
-	fun existWord(word: SearchWord, db: SQLiteDatabase): Boolean{
+	private fun existWord(word: SearchWord, db: SQLiteDatabase): Boolean{
 		val selection = searchSameSelection
 		val cursor = db.query(
 			SearchWordContract.TABLE_NAME,
