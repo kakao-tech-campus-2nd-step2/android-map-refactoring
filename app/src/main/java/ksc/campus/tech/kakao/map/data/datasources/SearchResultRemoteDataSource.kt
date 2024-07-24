@@ -35,7 +35,7 @@ class SearchResultRemoteDataSource @Inject constructor(
                     batchCount
                 )
                 Log.d("KSC", "Searched")
-                emit(result ?: listOf())
+                emit(result)
             } catch (e: HttpException) {
                 Log.e("KSC", e.message ?: "")
                 emit(listOf())

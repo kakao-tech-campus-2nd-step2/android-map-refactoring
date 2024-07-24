@@ -87,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setInitialValueToAdapter() {
-        searchViewModel.keywords.value?.let {
+        searchViewModel.keywords.value.let {
             (keywordRecyclerView.adapter as? SearchKeywordAdapter)?.submitList(it)
         }
     }

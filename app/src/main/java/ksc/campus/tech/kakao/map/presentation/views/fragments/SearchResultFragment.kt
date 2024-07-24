@@ -38,7 +38,7 @@ class SearchResultFragment @Inject constructor() :
     }
 
     private fun setInitialValueToAdapter() {
-        viewModel.searchResult.value?.let {
+        viewModel.searchResult.value.let {
             (searchResultRecyclerView.adapter as? SearchResultAdapter)?.submitList(it)
         }
     }
