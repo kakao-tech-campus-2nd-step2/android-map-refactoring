@@ -2,27 +2,19 @@ package ksc.campus.tech.kakao.map.models.datasources
 
 import android.content.Context
 import android.util.Log
-import androidx.fragment.app.testing.launchFragment
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.BuildConfig
 import ksc.campus.tech.kakao.map.models.dto.KeywordSearchResponse
 import ksc.campus.tech.kakao.map.models.repositories.SearchResult
 import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -31,7 +23,6 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 import javax.inject.Inject
-import kotlin.coroutines.coroutineContext
 
 interface KakaoSearchRetrofitService {
     @GET("/v2/local/search/keyword.json")

@@ -1,41 +1,17 @@
 package ksc.campus.tech.kakao.map
 
-import android.app.Application
-import android.content.Context.RECEIVER_EXPORTED
-import android.content.Context.RECEIVER_NOT_EXPORTED
-import android.content.IntentFilter
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentFactory
-import androidx.fragment.app.testing.FragmentScenario
-import androidx.fragment.app.testing.launchFragment
-import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.fragment.app.testing.withFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
-import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.MainActivity
-import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
-import ksc.campus.tech.kakao.map.views.fragments.SearchActivityFragmentFactory
-import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
-import org.hamcrest.Matchers
-import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.Objects
-import javax.inject.Inject
 
 @HiltAndroidTest
 class SearchResultUITest {

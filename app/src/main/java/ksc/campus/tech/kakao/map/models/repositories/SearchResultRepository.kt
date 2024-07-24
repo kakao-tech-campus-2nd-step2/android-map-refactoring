@@ -1,6 +1,5 @@
 package ksc.campus.tech.kakao.map.models.repositories
 
-import androidx.lifecycle.LiveData
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

@@ -11,22 +11,19 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.kakao.vectormap.KakaoMapSdk
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.R
 import ksc.campus.tech.kakao.map.view_models.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordAdapter
-import com.kakao.vectormap.KakaoMapSdk
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.views.adapters.SearchKeywordClickCallback
 import ksc.campus.tech.kakao.map.views.fragments.KakaoMapFragment
-import ksc.campus.tech.kakao.map.views.fragments.SearchActivityFragmentFactory
 import ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment
 
 @AndroidEntryPoint
