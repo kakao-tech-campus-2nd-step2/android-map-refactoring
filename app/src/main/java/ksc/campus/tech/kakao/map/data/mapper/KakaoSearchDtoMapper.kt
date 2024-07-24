@@ -3,7 +3,7 @@ package ksc.campus.tech.kakao.map.data.mapper
 import ksc.campus.tech.kakao.map.data.entities.Document
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
 
-object SearchResponseMapper {
+object KakaoSearchDtoMapper {
     private fun parseCategory(category: String) =
         category.split('>').last().trim().replace(",", ", ")
     fun mapSearchResponseToSearchResult(doc:Document): SearchResult{

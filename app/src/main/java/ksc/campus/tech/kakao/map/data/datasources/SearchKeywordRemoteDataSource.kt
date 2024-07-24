@@ -16,25 +16,25 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ksc.campus.tech.kakao.map.data.entities.SearchKeyword
+import ksc.campus.tech.kakao.map.data.entities.SearchKeywordEntity
 import javax.inject.Inject
 
 @Dao
 interface SearchKeywordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(entity: SearchKeyword)
+    fun insert(entity: SearchKeywordEntity)
 
     @Delete
-    fun delete(entity: SearchKeyword)
+    fun delete(entity: SearchKeywordEntity)
 
-    @Query("SELECT * FROM ${SearchKeyword.TABLE_NAME}")
-    fun queryAllKeywords(): Flow<List<SearchKeyword>>
+    @Query("SELECT * FROM ${SearchKeywordEntity.TABLE_NAME}")
+    fun queryAllKeywords(): Flow<List<SearchKeywordEntity>>
 
-    @Query("DELETE FROM ${SearchKeyword.TABLE_NAME} WHERE ${SearchKeyword.COLUMN_KEYWORD} = :name")
+    @Query("DELETE FROM ${SearchKeywordEntity.TABLE_NAME} WHERE ${SearchKeywordEntity.COLUMN_KEYWORD} = :name")
     fun deleteWhere(name: String)
 }
 
-@Database(entities = [SearchKeyword::class], version = 4)
+@Database(entities = [SearchKeywordEntity::class], version = 4)
 abstract class SearchKeywordDB : RoomDatabase() {
     abstract fun dao(): SearchKeywordDao
 }
@@ -43,7 +43,7 @@ class SearchKeywordRemoteDataSource @Inject constructor(
     private val roomDB: SearchKeywordDB
 ) {
     fun insertOrReplaceKeyword(keyword: String) {
-        val data = SearchKeyword(0, keyword)
+        val data = SearchKeywordEntity(0, keyword)
         roomDB.dao().insert(data)
     }
 

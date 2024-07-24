@@ -5,11 +5,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import ksc.campus.tech.kakao.map.data.entities.SearchKeyword.Companion.COLUMN_KEYWORD
-import ksc.campus.tech.kakao.map.data.entities.SearchKeyword.Companion.TABLE_NAME
+import ksc.campus.tech.kakao.map.data.entities.SearchKeywordEntity.Companion.COLUMN_KEYWORD
+import ksc.campus.tech.kakao.map.data.entities.SearchKeywordEntity.Companion.TABLE_NAME
 
 @Entity(tableName = TABLE_NAME, indices = [Index(value = [COLUMN_KEYWORD], unique = true)])
-data class SearchKeyword(
+data class SearchKeywordEntity(
     @ColumnInfo(name = BaseColumns._ID)
     @PrimaryKey(autoGenerate = true)
     val id: Int,

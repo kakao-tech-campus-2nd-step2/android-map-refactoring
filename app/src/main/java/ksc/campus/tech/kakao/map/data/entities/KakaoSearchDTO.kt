@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class KeywordSearchResponse(
+data class KakaoSearchDTO(
     val meta: Meta,
     val documents: List<Document>
 )
