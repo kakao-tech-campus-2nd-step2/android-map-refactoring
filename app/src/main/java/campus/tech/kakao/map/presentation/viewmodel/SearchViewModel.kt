@@ -10,6 +10,7 @@ import campus.tech.kakao.map.domain.repository.HistoryRepository
 import campus.tech.kakao.map.domain.repository.LastLocationRepository
 import campus.tech.kakao.map.domain.repository.ResultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,9 +24,12 @@ class SearchViewModel @Inject constructor(
     val searchResult: LiveData<List<Location>> = _searchResult
     private val _searchHistory = MutableLiveData<List<History>>()
     val searchHistory: LiveData<List<History>> = _searchHistory
+    private lateinit var prevJob: Job
 
     fun searchKeyword(keyword: String) {
-        viewModelScope.launch {
+        if (::prevJob.isInitialized)
+            prevJob.cancel()
+        prevJob = viewModelScope.launch {
             resultRepository.search(keyword)
             _searchResult.value = resultRepository.getAllResult()
         }
