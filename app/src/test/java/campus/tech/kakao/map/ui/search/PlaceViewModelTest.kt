@@ -143,7 +143,7 @@ class PlaceViewModelTest {
                 category = "대형마트",
                 address = "주소$index",
                 longitude = 12.3456 + index * 0.0001,
-                latitude = 123.4567 + index * 0.0001
+                latitude = 123.4567 + index * 0.0001,
             )
         }
 
@@ -196,13 +196,12 @@ class PlaceViewModelTest {
 
         // when
         viewModel.searchPlacesByCategory(categoryInput, totalPageCount)
-        viewModel.searchResults.first {it.size == 2}
+        viewModel.searchResults.first { it.size == 2 }
 
         // then
         assertEquals(placeList, viewModel.searchResults.value)
         coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
     }
-
 
     private fun mockLogClass() {
         mockkStatic(Log::class)

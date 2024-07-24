@@ -18,7 +18,7 @@ interface SavedSearchWordDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSearchWord(searchWord: SavedSearchWord)
 
-    @Query("DELETE FROM search_words_data WHERE placeId = :placeId")
+    @Query("DELETE FROM search_words_data WHERE place_id = :placeId")
     suspend fun deleteSearchWordByPlaceId(placeId: String)
 
     @Query("SELECT * FROM search_words_data")

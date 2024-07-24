@@ -6,15 +6,15 @@ import campus.tech.kakao.map.data.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object DatabaseModule {
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideDatabase(
         @ApplicationContext context: Context,
     ): AppDatabase {
@@ -22,5 +22,6 @@ object DatabaseModule {
     }
 
     @Provides
+    @ViewModelScoped
     fun provideSavedSearchWordDao(database: AppDatabase) = database.savedSearchWordDao()
 }

@@ -12,15 +12,15 @@ import campus.tech.kakao.map.domain.usecase.SaveLocationUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.components.ViewModelComponent
+import dagger.hilt.android.scopes.ViewModelScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object UseCaseModule {
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideGetPlacesByCategoryUseCase(
         placeRepository: PlaceRepository,
     ): GetPlacesByCategoryUseCase {
@@ -28,7 +28,7 @@ object UseCaseModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideInsertOrUpdateSearchWordUseCase(
         savedSearchWordRepository: SavedSearchWordRepository,
     ): InsertOrUpdateSearchWordUseCase {
@@ -36,7 +36,7 @@ object UseCaseModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideDeleteSearchWordByIdUseCase(
         savedSearchWordRepository: SavedSearchWordRepository,
     ): DeleteSearchWordByIdUseCase {
@@ -44,7 +44,7 @@ object UseCaseModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideGetAllSearchWordsUseCase(
         savedSearchWordRepository: SavedSearchWordRepository,
     ): GetAllSearchWordsUseCase {
@@ -52,7 +52,7 @@ object UseCaseModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideSaveLocationUseCase(
         locationRepository: LocationRepository,
     ): SaveLocationUseCase {
@@ -60,7 +60,7 @@ object UseCaseModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideLoadLocationUseCase(
         locationRepository: LocationRepository,
     ): LoadLocationUseCase {

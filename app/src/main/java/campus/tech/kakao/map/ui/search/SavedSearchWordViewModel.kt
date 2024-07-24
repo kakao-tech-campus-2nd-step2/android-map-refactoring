@@ -8,7 +8,7 @@ import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
 import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,6 +21,7 @@ constructor(
     private val insertOrUpdateSearchWordUseCase: InsertOrUpdateSearchWordUseCase,
     private val deleteSearchWordByIdUseCase: DeleteSearchWordByIdUseCase,
     private val getAllSearchWordsUseCase: GetAllSearchWordsUseCase,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _savedSearchWords = MutableStateFlow<List<SavedSearchWord>>(emptyList())
     val savedSearchWords: StateFlow<List<SavedSearchWord>> get() = _savedSearchWords
@@ -30,7 +31,7 @@ constructor(
     }
 
     fun insertSearchWord(savedSearchWord: SavedSearchWord) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             try {
                 insertOrUpdateSearchWordUseCase(savedSearchWord)
                 updateSavedSearchWords()
@@ -41,7 +42,7 @@ constructor(
     }
 
     fun deleteSearchWordById(savedSearchWord: SavedSearchWord) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(ioDispatcher) {
             try {
                 deleteSearchWordByIdUseCase(savedSearchWord.id)
                 updateSavedSearchWords()
@@ -51,8 +52,8 @@ constructor(
         }
     }
 
-    fun updateSavedSearchWords() {
-        viewModelScope.launch {
+    private fun updateSavedSearchWords() {
+        viewModelScope.launch(ioDispatcher) {
             try {
                 val searchWords = getAllSearchWordsUseCase()
                 _savedSearchWords.emit(searchWords)

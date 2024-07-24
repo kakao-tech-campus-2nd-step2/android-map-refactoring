@@ -29,7 +29,7 @@ class DefaultSavedSearchWordRepositoryTest {
     }
 
     @Test
-    fun testInsertOrUpdateSearchWord() = runTest{
+    fun testInsertOrUpdateSearchWord() = runTest {
         // Given
         val searchWord =
             SavedSearchWord(
@@ -80,7 +80,7 @@ class DefaultSavedSearchWordRepositoryTest {
     }
 
     @Test
-    fun testDeleteSearchWordById() = runTest{
+    fun testDeleteSearchWordById() = runTest {
         // Given
         val idToDelete = 1L
 

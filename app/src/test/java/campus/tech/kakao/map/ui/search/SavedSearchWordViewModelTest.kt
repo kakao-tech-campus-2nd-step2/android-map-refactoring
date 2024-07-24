@@ -44,7 +44,7 @@ class SavedSearchWordViewModelTest {
         viewModel = SavedSearchWordViewModel(
             insertOrUpdateSearchWordUseCase,
             deleteSearchWordByIdUseCase,
-            getAllSearchWordsUseCase
+            getAllSearchWordsUseCase,
         )
 
         searchWord1 =
@@ -102,7 +102,7 @@ class SavedSearchWordViewModelTest {
             coEvery { deleteSearchWordByIdUseCase(searchWord1.id) } just runs
             coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(
                 searchWord1,
-                searchWord2
+                searchWord2,
             ) andThen listOf(searchWord2)
 
             // When
@@ -119,7 +119,6 @@ class SavedSearchWordViewModelTest {
             coVerify(exactly = 4) { getAllSearchWordsUseCase() }
             coVerify { deleteSearchWordByIdUseCase(searchWord1.id) }
             assertEquals(listOf(searchWord2), viewModel.savedSearchWords.value)
-
         }
 
     private fun mockLogClass() {
