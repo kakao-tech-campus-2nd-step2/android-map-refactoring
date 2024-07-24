@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.model.datasource.LastLocationlDataSource
+import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
 import campus.tech.kakao.map.model.repository.LastLocationRepository
 import campus.tech.kakao.map.view.search.MainActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -34,8 +34,8 @@ class MapActivity : AppCompatActivity() {
     private val errorMessageTextView by lazy { findViewById<TextView>(R.id.errorMessageTextView) }
     private val bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout> by lazy { BottomSheetBehavior.from(bottomSheetLayout) }
 
-    private val lastLocationLocalDataSource: LastLocationlDataSource by lazy { LastLocationlDataSource() }
-    private val lastLocationRepository: LastLocationRepository by lazy { LastLocationRepository(lastLocationLocalDataSource) }
+    private val lastLocationlSharedPreferences: LastLocationlSharedPreferences by lazy { LastLocationlSharedPreferences() }
+    private val lastLocationRepository: LastLocationRepository by lazy { LastLocationRepository(lastLocationlSharedPreferences) }
 
     companion object{
         private val DEFAULT_LONGITUDE = 127.115587

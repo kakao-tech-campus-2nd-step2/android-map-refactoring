@@ -3,7 +3,7 @@ package campus.tech.kakao.map.model.datasource
 import campus.tech.kakao.map.App
 import campus.tech.kakao.map.model.Location
 
-class LastLocationlDataSource() {
+class LastLocationlSharedPreferences() {
 
     fun putLastLocation(location: Location) {
         App.sharedPreferencesManager.putString("id", location.id.toString())

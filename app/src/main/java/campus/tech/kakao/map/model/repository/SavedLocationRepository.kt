@@ -1,7 +1,6 @@
 package campus.tech.kakao.map.model.repository
 
-import android.util.Log
-import campus.tech.kakao.map.model.AppDatabase
+import campus.tech.kakao.map.model.datasource.AppDatabase
 import campus.tech.kakao.map.model.SavedLocation
 
 class SavedLocationRepository(

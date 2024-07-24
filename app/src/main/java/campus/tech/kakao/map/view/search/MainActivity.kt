@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -14,9 +13,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.model.datasource.LocationDataSource
+import campus.tech.kakao.map.model.datasource.LocationApi
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.AppDatabase
+import campus.tech.kakao.map.model.datasource.AppDatabase
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
 import campus.tech.kakao.map.model.repository.LocationRepository
@@ -44,8 +43,8 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         findViewById(R.id.savedLocationRecyclerView)
     }
 
-    private val locationRemoteDataSource: LocationDataSource by lazy { LocationDataSource() }
-    private val locationRepository: LocationRepository by lazy { LocationRepository(locationRemoteDataSource) }
+    private val locationApi: LocationApi by lazy { LocationApi() }
+    private val locationRepository: LocationRepository by lazy { LocationRepository(locationApi) }
 
     private val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(this) }
     private val savedLocationRepository: SavedLocationRepository by lazy { SavedLocationRepository(appDatabase) }

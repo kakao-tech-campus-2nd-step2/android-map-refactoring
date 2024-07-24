@@ -27,7 +27,7 @@ class LocationViewModel(
 
     fun searchLocationsFromKakaoAPI(query: String, handleNoResultMessage: (Int) -> Unit) {
         viewModelScope.launch {
-            _searchedLocations.value = locationRepository.getLocationRemote(query)
+            _searchedLocations.value = locationRepository.getLocations(query)
             handleNoResultMessage(getSearchedLocationsSize())
         }
     }
