@@ -8,12 +8,14 @@ import campus.tech.kakao.map.dto.MapPosition.getMapPosition
 import campus.tech.kakao.map.url.RetrofitData.Companion.getInstance
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.SearchWord
-import campus.tech.kakao.map.dto.SearchWordDbHelper
+import campus.tech.kakao.map.dto.SearchWordDatabase.Companion.getDatabase
+import kotlin.concurrent.thread
 
 class MainViewModel(application: Application): AndroidViewModel(application) {
 
-	private val wordDbHelper = SearchWordDbHelper(application)
-	val wordList: LiveData<List<SearchWord>> get() =  wordDbHelper.getSearchWords()
+//	private val wordDbHelper = SearchWordDbHelper(application)
+	private val _wordList = MutableLiveData<List<SearchWord>>()
+	val wordList: LiveData<List<SearchWord>> get() =  _wordList
 
 	private val retrofitData = getInstance()
 	val documentList: LiveData<List<Document>> get() = retrofitData.getDocuments()
@@ -21,19 +23,34 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 	private val _documentClicked = MutableLiveData<Boolean>()
 	val documentClicked: LiveData<Boolean> get() = _documentClicked
 
+	private val db = getDatabase(application)
+
 	fun addWord(document: Document){
-		wordDbHelper.addWord(wordFromDocument(document))
+//		wordDbHelper.addWord(wordFromDocument(document))
+		val word = wordFromDocument(document)
+		thread {
+			deleteWord(word)
+			db.searchWordDao().insert(word)
+			loadWord()
+		}
+
 	}
 
 	private fun wordFromDocument(document: Document): SearchWord {
 		return SearchWord(document.placeName, document.addressName, document.categoryGroupName)
 	}
 	fun deleteWord(word: SearchWord){
-		wordDbHelper.deleteWord(word)
+		thread {
+			db.searchWordDao().delete(word.name, word.address, word.type)
+			loadWord()
+		}.join()
+//		wordDbHelper.deleteWord(id)
 	}
 
 	fun loadWord(){
-		wordDbHelper.updateSearchWords()
+		thread {
+			_wordList.postValue(db.searchWordDao().getAll())
+		}
 	}
 
 	fun searchLocalAPI(query: String){
@@ -42,7 +59,7 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 
 	override fun onCleared() {
 		super.onCleared()
-		wordDbHelper.close()
+		db.close()
 	}
 
 	private fun setMapInfo(document: Document){
