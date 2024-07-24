@@ -11,6 +11,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.domain.model.Place
@@ -25,6 +26,7 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import kotlinx.coroutines.launch
 
 class MapActivity : AppCompatActivity() {
     private val mapView by lazy<MapView> { findViewById(R.id.mapView) }
@@ -40,6 +42,7 @@ class MapActivity : AppCompatActivity() {
         setContentView(R.layout.activity_map)
 
         initViewModel()
+        observeViewModel()
         initMapView()
         initSearchView()
         setResultLauncher()
@@ -50,13 +53,6 @@ class MapActivity : AppCompatActivity() {
         val placeRepository = (application as PlaceApplication).placeRepository
         mapViewModel = ViewModelProvider(this, ViewModelFactory(placeRepository))
             .get(MapViewModel::class.java)
-
-        mapViewModel.lastVisitedPlace.observe(this, { place ->
-            place?.let {
-                updateMapWithPlaceData(it)
-                showBottomSheet(it)
-            }
-        })
     }
 
     private fun initMapView() {
@@ -77,6 +73,17 @@ class MapActivity : AppCompatActivity() {
                 }
             }
         })
+    }
+
+    private fun observeViewModel() {
+        lifecycleScope.launch {
+            mapViewModel.lastVisitedPlace.collect { place ->
+                place?.let {
+                    updateMapWithPlaceData(it)
+                    showBottomSheet(it)
+                }
+            }
+        }
     }
 
     private fun isNetworkAvailable(): Boolean {
