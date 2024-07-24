@@ -7,6 +7,8 @@ import campus.tech.kakao.map.data.AppDatabase
 import campus.tech.kakao.map.data.KeywordDao
 import campus.tech.kakao.map.data.KakaoLocalApiService
 import campus.tech.kakao.map.repository.Repository
+import campus.tech.kakao.map.repository.RepositoryImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -50,14 +52,15 @@ object AppModule {
     fun provideSharedPreferences(@ApplicationContext appContext: Context): SharedPreferences {
         return appContext.getSharedPreferences("search_prefs", Context.MODE_PRIVATE)
     }
+}
 
-    @Provides
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class RepositoryModule {
+
+    @Binds
     @Singleton
-    fun provideRepository(
-        sharedPreferences: SharedPreferences,
-        keywordDao: KeywordDao,
-        kakaoLocalApiService: KakaoLocalApiService
-    ): Repository {
-        return Repository(sharedPreferences, keywordDao, kakaoLocalApiService)
-    }
+    abstract fun bindRepository(
+        repositoryImpl: RepositoryImpl
+    ): Repository
 }
