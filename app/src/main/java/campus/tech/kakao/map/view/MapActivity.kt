@@ -5,9 +5,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.PlaceInfo
@@ -25,10 +25,12 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private lateinit var mapView: MapView
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModels()
     private lateinit var searchFloatingBtn: ExtendedFloatingActionButton
     private lateinit var clickedPlaceNameView: TextView
     private lateinit var clickedPlaceAddressView: TextView
@@ -40,7 +42,6 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
         KakaoMapSdk.init(this, BuildConfig.KAKAO_APP_KEY)
-        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
 
         initView()
         setListeners()
@@ -143,6 +144,4 @@ class MapActivity : AppCompatActivity() {
         errorView.showError(error)
         mapView.visibility = View.GONE
     }
-
-
 }

@@ -8,9 +8,14 @@ import campus.tech.kakao.map.model.PlaceInfo
 import campus.tech.kakao.map.repository.MapRepository
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MapViewModel(application: Application) : AndroidViewModel(application) {
-    private val mapRepo: MapRepository = MapRepository(application)
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    application: Application,
+    private val mapRepo: MapRepository
+) : AndroidViewModel(application) {
     private val _kakaoMap = MutableLiveData<KakaoMap>()
     val kakaoMap: LiveData<KakaoMap> get() = _kakaoMap
 
