@@ -7,6 +7,7 @@ import javax.inject.Singleton
 
 @Singleton
 class PlaceRepository @Inject constructor(private val apiService: KakaoAPIRetrofitService, private val placeDao: PlaceDao) {
+
     suspend fun searchPlaces(query: String): List<Document> {
         return withContext(Dispatchers.IO) {
             try {

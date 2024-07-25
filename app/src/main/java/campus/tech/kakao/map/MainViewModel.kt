@@ -1,15 +1,12 @@
 package campus.tech.kakao.map
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -67,11 +64,6 @@ class MainViewModel @Inject constructor(application: Application, private val pl
             _savedSearches.postValue(searches.reversed())
         }
     }
-
-    /*
-    private fun saveSearchesToPreferences(searches: List<String>) {
-        preferencesRepository.saveSearches(searches)
-    }*/
 
     fun searchSavedPlace(savedQuery: String) {
         searchPlaces(savedQuery)
