@@ -3,7 +3,9 @@ package campus.tech.kakao.map.view
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.databinding.ActivityErrorBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ErrorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityErrorBinding
 

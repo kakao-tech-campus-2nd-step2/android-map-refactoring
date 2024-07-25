@@ -1,8 +1,10 @@
 package campus.tech.kakao.map.viewmodel
 
+import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,16 +12,20 @@ import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.model.PlaceResponse
 import campus.tech.kakao.map.model.RetrofitInstance
+import campus.tech.kakao.map.view.MainActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class PlaceViewModel(private val context: Context) : ViewModel() {
+class PlaceViewModel (
+    private val application: Application
+) : AndroidViewModel(application) {
 
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
     private val retrofit = RetrofitInstance.api
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("SavedQueries", Context.MODE_PRIVATE)
+    private val sharedPreferences: SharedPreferences = application.getSharedPreferences("SavedQueries", Context.MODE_PRIVATE)
     private val _places = MutableLiveData<List<Document>>()
     private val _savedQueries = MutableLiveData<MutableList<String>>()
     val places: LiveData<List<Document>> get() = _places
@@ -61,6 +67,18 @@ class PlaceViewModel(private val context: Context) : ViewModel() {
         val editor = sharedPreferences.edit()
         editor.putString("queries", queries.joinToString(","))
         editor.apply()
+    }
+
+    fun saveRecentLocation(document: Document) {
+        val sharedPreferences = getApplication<Application>().getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
+        Log.d("testt", document.x)
+        with(sharedPreferences.edit()) {
+            putString(MainActivity.EXTRA_PLACE_LONGITUDE, document.x)
+            putString(MainActivity.EXTRA_PLACE_LATITUDE, document.y)
+            putString(MainActivity.EXTRA_PLACE_NAME, document.placeName)
+            putString(MainActivity.EXTRA_PLACE_ADDRESSNAME, document.addressName)
+            apply()
+        }
     }
 
     private fun searchPlaces(query: String, categoryGroupName: String, callback: (List<Document>) -> Unit) {

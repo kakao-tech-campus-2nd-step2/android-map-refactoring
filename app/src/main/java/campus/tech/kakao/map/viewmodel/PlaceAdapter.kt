@@ -1,5 +1,7 @@
 package campus.tech.kakao.map.viewmodel
 
+import android.app.Activity
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.view.LayoutInflater
@@ -11,7 +13,6 @@ import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.view.MainActivity
 
 class PlaceAdapter(
-    private val context: Context,
     private var items: List<Document>,
     private val onItemClick: (Document) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
@@ -22,20 +23,6 @@ class PlaceAdapter(
             binding.placeLocation.text = document.addressName
             binding.root.setOnClickListener {
                 onItemClick(document)
-
-                
-                val sharedPreferences = context.getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-                val editor = sharedPreferences.edit()
-                editor.putString(MainActivity.EXTRA_PLACE_LONGITUDE, document.x)
-                editor.putString(MainActivity.EXTRA_PLACE_LATITUDE, document.y)
-                editor.putString(MainActivity.EXTRA_PLACE_NAME, document.placeName)
-                editor.putString(MainActivity.EXTRA_PLACE_ADDRESSNAME, document.addressName)
-                editor.apply()
-
-
-                val intent = Intent(context, MainActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                context.startActivity(intent)
             }
         }
     }

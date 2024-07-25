@@ -6,9 +6,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.viewmodel.PlaceViewModel
+//import campus.tech.kakao.map.viewmodel.PlaceViewModelFactory
 import com.kakao.sdk.common.util.Utility
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -22,8 +25,9 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -36,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,6 +106,7 @@ class MainActivity : AppCompatActivity() {
             sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
         val latitude =
             sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+        Log.d("testt", longitude.toString())
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
         Log.d("testt", longitude.toString())
         kakaoMap.moveCamera(cameraUpdate)
