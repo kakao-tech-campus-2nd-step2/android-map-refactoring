@@ -10,7 +10,9 @@ import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +28,9 @@ constructor(
 ) : ViewModel() {
     private val _savedSearchWords = MutableStateFlow<List<SavedSearchWord>>(emptyList())
     val savedSearchWords: StateFlow<List<SavedSearchWord>> get() = _savedSearchWords
+
+    private val _sideEffects = MutableSharedFlow<SideEffect>()
+    val sideEffects: SharedFlow<SideEffect> get() = _sideEffects
 
     init {
         updateSavedSearchWords()
@@ -62,5 +67,43 @@ constructor(
                 Log.e("SavedSearchWordViewModel", "Error updating search words", e)
             }
         }
+    }
+
+    private fun onPlaceItemClicked(savedSearchWord: SavedSearchWord) {
+        viewModelScope.launch(ioDispatcher) {
+            try {
+                insertOrUpdateSearchWordUseCase(savedSearchWord)
+
+                _sideEffects.emit(SideEffect.NavigateToMapActivity(savedSearchWord))
+            } catch (e: Exception) {
+                Log.e("SavedSearchWordViewModel", "Error handling place item click", e)
+            }
+        }
+    }
+
+    private fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord) {
+        viewModelScope.launch(ioDispatcher) {
+            try {
+                deleteSearchWordByIdUseCase(savedSearchWord.id)
+                updateSavedSearchWords()
+            } catch (e: Exception) {
+                Log.e("SavedSearchWordViewModel", "Error handling saved search word clear", e)
+            }
+        }
+    }
+
+    fun handleUiEvent(event: UiEvent) {
+        when (event) {
+            is UiEvent.OnPlaceItemClicked -> onPlaceItemClicked(event.savedSearchWord)
+            is UiEvent.OnSavedSearchWordClearImageViewClicked -> onSavedSearchWordClearImageViewClicked(event.savedSearchWord)
+        }
+    }
+
+    sealed class UiEvent {
+        data class OnPlaceItemClicked(val savedSearchWord: SavedSearchWord) : UiEvent()
+        data class OnSavedSearchWordClearImageViewClicked(val savedSearchWord: SavedSearchWord) : UiEvent()
+    }
+    sealed class SideEffect {
+        data class NavigateToMapActivity(val savedSearchWord: SavedSearchWord) : SideEffect()
     }
 }

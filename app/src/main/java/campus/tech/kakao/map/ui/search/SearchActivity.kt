@@ -89,38 +89,13 @@ class SearchActivity : AppCompatActivity() {
         val placeItemClickListener =
             object : OnPlaceItemClickListener {
                 override fun onPlaceItemClicked(place: Place) {
-                    insertSearchWord(place)
-                    navigateToMapActivity(place)
+                    savedSearchWordViewModel.handleUiEvent(
+                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWord())
+                    )
                 }
             }
         binding.searchResultRecyclerView.adapter = ResultRecyclerViewAdapter(placeItemClickListener)
         binding.searchResultRecyclerView.layoutManager = LinearLayoutManager(this)
-    }
-
-    /**
-     * 검색된 장소 정보를 저장하고 업데이트 함수.
-     *
-     * @param place 저장할 장소 정보를 담고 있는 Place 객체
-     */
-    private fun insertSearchWord(place: Place) {
-        savedSearchWordViewModel.insertSearchWord(
-            place.toSavedSearchWord(),
-        )
-    }
-
-    /**
-     * MapActivity로 이동하는 함수.
-     *
-     * @param place 이동할 장소의 정보를 담고 있는 Place 객체.
-     */
-    private fun navigateToMapActivity(place: Place) {
-        val intent = Intent()
-        intent.putExtra(EXTRA_PLACE_NAME, place.name)
-        intent.putExtra(EXTRA_PLACE_ADDRESS, place.address)
-        intent.putExtra(EXTRA_PLACE_LONGITUDE, place.longitude)
-        intent.putExtra(EXTRA_PLACE_LATITUDE, place.latitude)
-        setResult(RESULT_OK, intent)
-        finish()
     }
 
     /**
@@ -148,7 +123,9 @@ class SearchActivity : AppCompatActivity() {
         val savedSearchWordClearImageViewClickListener =
             object : OnSavedSearchWordClearImageViewClickListener {
                 override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord) {
-                    savedSearchWordViewModel.deleteSearchWordById(savedSearchWord)
+                    savedSearchWordViewModel.handleUiEvent(
+                        SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(savedSearchWord)
+                    )
                 }
             }
         val savedSearchWordTextViewClickListener =
@@ -172,6 +149,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupObservers() {
         collectSearchResults()
         collectSavedSearchWords()
+        collectSideEffects()
     }
 
     /**
@@ -203,6 +181,23 @@ class SearchActivity : AppCompatActivity() {
                     )
                     binding.savedSearchWordRecyclerView.visibility =
                         if (savedSearchWords.isEmpty()) View.GONE else View.VISIBLE
+                }
+            }
+        }
+    }
+
+    /**
+     * viewModel의 사이드 이펙트를 관찰하고 처리하는 함수.
+     */
+    private fun collectSideEffects() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                savedSearchWordViewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        is SavedSearchWordViewModel.SideEffect.NavigateToMapActivity -> {
+                            navigateToMapActivity(sideEffect.savedSearchWord)
+                        }
+                    }
                 }
             }
         }
