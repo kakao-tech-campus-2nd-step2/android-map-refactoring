@@ -15,7 +15,7 @@ class MapViewModel @Inject constructor(
     private val lastLocationRepository: LastLocationRepository
 ) : ViewModel() {
     private val _lastLocation = MutableLiveData<Location>()
-    val lastLocation: LiveData<Location> = _lastLocation
+    val lastLocation: LiveData<Location> get() = _lastLocation
 
     fun updateLastLocation() {
         viewModelScope.launch {

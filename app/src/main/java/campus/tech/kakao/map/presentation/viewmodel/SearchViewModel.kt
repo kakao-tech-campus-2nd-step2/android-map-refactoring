@@ -21,9 +21,9 @@ class SearchViewModel @Inject constructor(
     private val lastLocationRepository: LastLocationRepository
 ) : ViewModel() {
     private val _searchResult = MutableLiveData<List<Location>>()
-    val searchResult: LiveData<List<Location>> = _searchResult
+    val searchResult: LiveData<List<Location>> get() = _searchResult
     private val _searchHistory = MutableLiveData<List<History>>()
-    val searchHistory: LiveData<List<History>> = _searchHistory
+    val searchHistory: LiveData<List<History>> get() = _searchHistory
     private lateinit var prevJob: Job
 
     fun searchKeyword(keyword: String) {

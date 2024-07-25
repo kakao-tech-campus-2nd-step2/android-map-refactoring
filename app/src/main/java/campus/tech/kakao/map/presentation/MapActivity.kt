@@ -10,8 +10,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.presentation.viewmodel.MapViewModel
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -28,35 +30,22 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private val TAG = "KAKAOMAP"
-    private lateinit var kakaoMapView: MapView
-    private lateinit var kakaoMap: KakaoMap
-    private lateinit var searchBox: TextView
-    private lateinit var infoSheetLayout: LinearLayout
-    private lateinit var infoSheetName: TextView
-    private lateinit var infoSheetAddress: TextView
-    private lateinit var errorLayout: ConstraintLayout
-    private lateinit var errorCode: TextView
 
     private val viewModel : MapViewModel by viewModels()
+    private lateinit var binding: ActivityMapBinding
+    private lateinit var kakaoMap: KakaoMap
     private lateinit var lastLoc: Location
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
-        kakaoMapView = findViewById(R.id.kakao_map_view)
-        searchBox = findViewById(R.id.search_box)
-        infoSheetLayout = findViewById(R.id.info_sheet)
-        infoSheetName = findViewById(R.id.info_sheet_name)
-        infoSheetAddress = findViewById(R.id.info_sheet_address)
-        errorLayout = findViewById(R.id.error_layout)
-        errorCode = findViewById(R.id.error_code)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+
         viewModel.lastLocation.observe(this) {
             it?.let {
                 lastLoc = it
                 updateView(it)
             }
         }
-        kakaoMapView.start(object : MapLifeCycleCallback() {
+        binding.kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // TODO: 필요시 구현 예정
             }
@@ -73,20 +62,20 @@ class MapActivity : AppCompatActivity() {
             }
         })
 
-        searchBox.setOnClickListener {
+        binding.searchBox.setOnClickListener {
             startActivity(Intent(this, SearchActivity::class.java))
         }
     }
 
     override fun onResume() {
         super.onResume()
-        kakaoMapView.resume()
+        binding.kakaoMapView.resume()
         viewModel.updateLastLocation()
     }
 
     override fun onPause() {
         super.onPause()
-        kakaoMapView.pause()
+        binding.kakaoMapView.pause()
         Log.d("KAKAOMAP", "onPause")
     }
 
@@ -98,16 +87,16 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showInfo(target: Location) {
-        infoSheetLayout.isVisible = true
-        infoSheetName.text = target.name
-        infoSheetAddress.text = target.address
+        binding.infoSheet.isVisible = true
+        binding.infoSheetName.text = target.name
+        binding.infoSheetAddress.text = target.address
     }
 
     private fun hideInfo(exception: Exception?) {
-        errorCode.text = exception?.message
-        errorLayout.isVisible = true
-        kakaoMapView.isVisible = false
-        searchBox.isVisible = false
+        binding.errorCode.text = exception?.message
+        binding.errorLayout.isVisible = true
+        binding.kakaoMapView.isVisible = false
+        binding.searchBox.isVisible = false
     }
 
     private fun setPin(labelManager: LabelManager, target: Location) {
@@ -120,7 +109,8 @@ class MapActivity : AppCompatActivity() {
             )
         labelManager.layer
             ?.addLabel(
-                LabelOptions.from(LatLng.from(target.y, target.x)).setStyles(style)
+                LabelOptions.from(LatLng.from(target.y, target.x))
+                    .setStyles(style)
                     .setTexts(target.name)
             )
     }

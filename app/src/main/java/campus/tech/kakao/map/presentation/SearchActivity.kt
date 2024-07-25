@@ -9,43 +9,36 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.DatabaseListener
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.domain.model.History
 import campus.tech.kakao.map.presentation.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), DatabaseListener {
-    private val viewModel: SearchViewModel by viewModels()
-    private lateinit var searchBox: EditText
-    private lateinit var searchHistoryView: RecyclerView
-    private lateinit var searchResultView: RecyclerView
-    private lateinit var message: TextView
-    private lateinit var clear: ImageButton
 
+    private val viewModel: SearchViewModel by viewModels()
+    private lateinit var binding: ActivitySearchBinding
     private lateinit var searchResultAdapter: ResultRecyclerAdapter
     private lateinit var searchHistoryAdapter: HistoryRecyclerAdapter
     private val searchBoxWatcher = getSearchBoxWatcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        binding.main = this
 
-        searchBox = findViewById(R.id.search_box)
-        searchHistoryView = findViewById(R.id.search_history)
-        searchResultView = findViewById(R.id.search_result)
-        message = findViewById(R.id.message)
-        clear = findViewById(R.id.clear)
+        binding.searchBox.addTextChangedListener(searchBoxWatcher)
 
-        searchBox.addTextChangedListener(searchBoxWatcher)
-
-        clear.setOnClickListener {
-            searchBox.text.clear()
+        binding.clear.setOnClickListener {
+            binding.searchBox.text.clear()
         }
 
         initSearchResultView()
@@ -70,9 +63,9 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
     }
 
     override fun searchHistory(locName: String, isExactMatch: Boolean) {
-        searchBox.removeTextChangedListener(searchBoxWatcher)
-        searchBox.setText(locName)
-        searchBox.addTextChangedListener(searchBoxWatcher)
+        binding.searchBox.removeTextChangedListener(searchBoxWatcher)
+        binding.searchBox.setText(locName)
+        binding.searchBox.addTextChangedListener(searchBoxWatcher)
         viewModel.searchKeyword(locName)
     }
 
@@ -81,27 +74,27 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
     }
 
     private fun hideResult() {
-        searchResultView.isVisible = false
-        message.isVisible = true
+        binding.searchResult.isVisible = false
+        binding.message.isVisible = true
     }
     private fun showResult() {
-        searchResultView.isVisible = true
-        message.isVisible = false
+        binding.searchResult.isVisible = true
+        binding. message.isVisible = false
     }
 
     private fun initSearchResultView() {
         searchResultAdapter =
             ResultRecyclerAdapter(viewModel.getAllResult(), layoutInflater, this)
-        searchResultView.adapter = searchResultAdapter
-        searchResultView.layoutManager =
+        binding.searchResult.adapter = searchResultAdapter
+        binding.searchResult.layoutManager =
             LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun initSearchHistoryView() {
         searchHistoryAdapter =
             HistoryRecyclerAdapter(viewModel.getAllHistory(), layoutInflater, this)
-        searchHistoryView.adapter = searchHistoryAdapter
-        searchHistoryView.layoutManager =
+        binding.searchHistory.adapter = searchHistoryAdapter
+        binding.searchHistory.layoutManager =
             LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
     }
 
@@ -112,7 +105,7 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
         })
         viewModel.searchResult.observe(this, Observer {
             searchResultAdapter.searchResult = it
-            if (it.isNotEmpty() && searchBox.text.isNotEmpty()) {
+            if (it.isNotEmpty() && binding.searchBox.text.isNotEmpty()) {
                 showResult()
             } else {
                 hideResult()
