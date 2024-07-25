@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -65,8 +66,11 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.4.0")
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
-    implementation ("androidx.room:room-ktx:2.4.2")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("androidx.room:room-ktx:2.4.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0")
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    kapt("com.google.dagger:hilt-compiler:2.48.1")
+    implementation("androidx.activity:activity-ktx:1.2.3")
 }
 
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)
