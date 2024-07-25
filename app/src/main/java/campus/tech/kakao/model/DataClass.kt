@@ -1,4 +1,4 @@
-package campus.tech.kakao.Model
+package campus.tech.kakao.model
 
 import com.google.gson.annotations.SerializedName
 

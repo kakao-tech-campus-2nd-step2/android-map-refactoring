@@ -1,10 +1,10 @@
-package campus.tech.kakao.Model.Database
+package campus.tech.kakao.model.database
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import campus.tech.kakao.Model.Dao.SelectedDataDao
-import campus.tech.kakao.Model.Entity.SelectedData
+import campus.tech.kakao.model.dao.SelectedDataDao
+import campus.tech.kakao.model.entity.SelectedData
 
 @Database(entities = [SelectedData::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {

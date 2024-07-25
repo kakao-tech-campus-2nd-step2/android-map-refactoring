@@ -1,9 +1,9 @@
-package campus.tech.kakao.Model.Dao
+package campus.tech.kakao.model.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import campus.tech.kakao.Model.Entity.SelectedData
+import campus.tech.kakao.model.entity.SelectedData
 
 @Dao
 interface SelectedDataDao {

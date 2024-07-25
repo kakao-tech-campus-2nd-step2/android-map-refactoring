@@ -1,6 +1,6 @@
-package campus.tech.kakao.Model.Network
+package campus.tech.kakao.model.network
 
-import campus.tech.kakao.Model.ResultSearchKeyword
+import campus.tech.kakao.model.ResultSearchKeyword
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Header

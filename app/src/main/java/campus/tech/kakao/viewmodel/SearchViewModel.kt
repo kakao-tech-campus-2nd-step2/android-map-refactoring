@@ -1,13 +1,13 @@
-package campus.tech.kakao.ViewModel
+package campus.tech.kakao.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.Model.Network.KakaoApiService
-import campus.tech.kakao.Model.Place
-import campus.tech.kakao.Model.ResultSearchKeyword
-import campus.tech.kakao.Model.Database.RoomDb
+import campus.tech.kakao.model.network.KakaoApiService
+import campus.tech.kakao.model.Place
+import campus.tech.kakao.model.ResultSearchKeyword
+import campus.tech.kakao.model.database.RoomDb
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call

@@ -1,4 +1,4 @@
-package campus.tech.kakao.ViewModel
+package campus.tech.kakao.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel

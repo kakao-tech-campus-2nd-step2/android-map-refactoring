@@ -1,4 +1,4 @@
-package campus.tech.kakao.ViewModel
+package campus.tech.kakao.viewmodel
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.View.Fragment.MapFragment
-import campus.tech.kakao.View.Fragment.SearchFragment
+import campus.tech.kakao.view.fragment.MapFragment
+import campus.tech.kakao.view.fragment.SearchFragment
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
