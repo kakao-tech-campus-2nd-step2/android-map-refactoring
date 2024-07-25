@@ -18,4 +18,7 @@ interface PlaceDao {
 
     @Query("DELETE FROM places WHERE name = :name AND address = :address AND category = :category")
     fun deletePlace(name: String, address: String, category: String)
+
+    @Query("DELETE FROM places WHERE name = :name")
+    fun deleteName(name: String)
 }
