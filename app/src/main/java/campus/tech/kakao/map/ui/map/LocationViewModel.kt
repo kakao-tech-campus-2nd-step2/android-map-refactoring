@@ -3,7 +3,7 @@ package campus.tech.kakao.map.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.domain.model.Location
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.LoadLocationUseCase
 import campus.tech.kakao.map.domain.usecase.SaveLocationUseCase
@@ -23,13 +23,13 @@ constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _location = MutableStateFlow(getDefaultLocation())
-    val location: StateFlow<Location> get() = _location
+    val location: StateFlow<LocationDomain> get() = _location
 
     init {
         loadLocation()
     }
 
-    fun saveLocation(newLocation: Location) {
+    fun saveLocation(newLocation: LocationDomain) {
         viewModelScope.launch(ioDispatcher) {
             try {
                 saveLocationUseCase(newLocation)
@@ -52,8 +52,8 @@ constructor(
         }
     }
 
-    private fun getDefaultLocation(): Location {
-        return Location(
+    private fun getDefaultLocation(): LocationDomain {
+        return LocationDomain(
             name = "부산대 컴공관",
             latitude = 35.230934,
             longitude = 129.082476,

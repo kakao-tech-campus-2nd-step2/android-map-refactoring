@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.ui.search
 
 import android.util.Log
-import campus.tech.kakao.map.domain.model.Place
+import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -49,7 +49,7 @@ class PlaceViewModelTest {
             val totalPageCount = 1
             val placeList =
                 listOf(
-                    Place(
+                    PlaceDomain(
                         id = "1234",
                         name = "마트 1",
                         category = "대형마트",
@@ -57,7 +57,7 @@ class PlaceViewModelTest {
                         longitude = 12.3456,
                         latitude = 123.4567,
                     ),
-                    Place(
+                    PlaceDomain(
                         id = "1235",
                         name = "마트 2",
                         category = "대형마트",
@@ -89,7 +89,7 @@ class PlaceViewModelTest {
         val categoryInput = "대형마트"
         val totalPageCount = 1
         val largePlaceList = List(1000) { index ->
-            Place(
+            PlaceDomain(
                 id = "1234$index",
                 name = "마트 $index",
                 category = "대형마트",
@@ -121,7 +121,7 @@ class PlaceViewModelTest {
         val categoryInput = "대형마트"
         val totalPageCount = Int.MAX_VALUE
         val placeList = listOf(
-            Place(
+            PlaceDomain(
                 id = "1234",
                 name = "마트 1",
                 category = "대형마트",
@@ -129,7 +129,7 @@ class PlaceViewModelTest {
                 longitude = 12.3456,
                 latitude = 123.4567,
             ),
-            Place(
+            PlaceDomain(
                 id = "1235",
                 name = "마트 2",
                 category = "대형마트",

@@ -13,7 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.domain.model.Location
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_MAP_ERROR_MESSAGE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
@@ -94,7 +94,7 @@ class MapActivity : AppCompatActivity() {
             val longitude = data?.getDoubleExtra(EXTRA_PLACE_LONGITUDE, 0.0) ?: 0.0
             val latitude = data?.getDoubleExtra(EXTRA_PLACE_LATITUDE, 0.0) ?: 0.0
 
-            val newLocation = Location(name, latitude, longitude, address)
+            val newLocation = LocationDomain(name, latitude, longitude, address)
 
             saveLocationAndWaitForUpdate(newLocation)
         }
@@ -105,7 +105,7 @@ class MapActivity : AppCompatActivity() {
      *
      * @param newLocation 저장할 새로운 위치 객체.
      */
-    private fun saveLocationAndWaitForUpdate(newLocation: Location) {
+    private fun saveLocationAndWaitForUpdate(newLocation: LocationDomain) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 locationViewModel.saveLocation(newLocation)

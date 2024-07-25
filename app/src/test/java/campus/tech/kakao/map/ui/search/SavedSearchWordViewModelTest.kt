@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.ui.search
 
 import android.util.Log
-import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
 import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
@@ -32,8 +32,8 @@ class SavedSearchWordViewModelTest {
     private lateinit var insertOrUpdateSearchWordUseCase: InsertOrUpdateSearchWordUseCase
     private lateinit var deleteSearchWordByIdUseCase: DeleteSearchWordByIdUseCase
     private lateinit var getAllSearchWordsUseCase: GetAllSearchWordsUseCase
-    private lateinit var searchWord1: SavedSearchWord
-    private lateinit var searchWord2: SavedSearchWord
+    private lateinit var searchWord1: SavedSearchWordDomain
+    private lateinit var searchWord2: SavedSearchWordDomain
 
     @Before
     fun setup() {
@@ -49,7 +49,7 @@ class SavedSearchWordViewModelTest {
         )
 
         searchWord1 =
-            SavedSearchWord(
+            SavedSearchWordDomain(
                 id = 1L,
                 name = "부산대병원",
                 placeId = "1234",
@@ -58,7 +58,7 @@ class SavedSearchWordViewModelTest {
                 longitude = 12.34,
             )
         searchWord2 =
-            SavedSearchWord(
+            SavedSearchWordDomain(
                 id = 2L,
                 name = "부산대학교",
                 placeId = "1235",

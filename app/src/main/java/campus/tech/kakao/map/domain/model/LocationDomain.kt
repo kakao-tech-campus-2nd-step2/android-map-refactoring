@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.domain.model
 
-data class Location(
+data class LocationDomain(
     val name: String,
     val latitude: Double,
     val longitude: Double,

@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.repository
 
 import androidx.datastore.core.DataStore
-import campus.tech.kakao.map.domain.model.Location
+import campus.tech.kakao.map.domain.model.LocationDomain
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -20,7 +20,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultLocationRepositoryTest {
-    private lateinit var dataStore: DataStore<Location>
+    private lateinit var dataStore: DataStore<LocationDomain>
     private lateinit var locationRepository: DefaultLocationRepository
     private val testDispatcher = StandardTestDispatcher()
 
@@ -39,9 +39,9 @@ class DefaultLocationRepositoryTest {
     @Test
     fun testSaveLocation() = runTest(testDispatcher) {
         // given
-        val location = Location("Test Place", 123.456, 78.90, "Test Address")
+        val location = LocationDomain("Test Place", 123.456, 78.90, "Test Address")
         coEvery { dataStore.updateData(any()) } coAnswers {
-            val updateFunction = arg<suspend (Location) -> Location>(0)
+            val updateFunction = arg<suspend (LocationDomain) -> LocationDomain>(0)
             updateFunction(location)
             location
         }
@@ -55,7 +55,7 @@ class DefaultLocationRepositoryTest {
 
     @Test
     fun testLoadLocation() = runTest {
-        val location = Location("Test Place", 123.456, 78.90, "Test Address")
+        val location = LocationDomain("Test Place", 123.456, 78.90, "Test Address")
         val locationFlow = MutableStateFlow(location)
         coEvery { dataStore.data } returns locationFlow
 

@@ -2,6 +2,7 @@ package campus.tech.kakao.map.data.repository
 
 import campus.tech.kakao.map.data.dao.SavedSearchWordDao
 import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
@@ -32,7 +33,7 @@ class DefaultSavedSearchWordRepositoryTest {
     fun testInsertOrUpdateSearchWord() = runTest {
         // Given
         val searchWord =
-            SavedSearchWord(
+            SavedSearchWordDomain(
                 name = "부산대병원",
                 placeId = "1234",
                 address = "부산광역시 서구 구덕로 179",
@@ -41,11 +42,11 @@ class DefaultSavedSearchWordRepositoryTest {
             )
 
         // When
-        coEvery { savedSearchWordDao.insertOrUpdateSearchWord(searchWord) } just Runs
+        coEvery { savedSearchWordDao.insertOrUpdateSearchWord(searchWord.toSavedSearchWord()) } just Runs
         repository.insertOrUpdateSearchWord(searchWord)
 
         // Then
-        coVerify { savedSearchWordDao.insertOrUpdateSearchWord(searchWord) }
+        coVerify { savedSearchWordDao.insertOrUpdateSearchWord(searchWord.toSavedSearchWord()) }
     }
 
     @Test
@@ -53,14 +54,14 @@ class DefaultSavedSearchWordRepositoryTest {
         // Given
         val expectedList =
             listOf(
-                SavedSearchWord(
+                SavedSearchWordDomain(
                     name = "부산대병원",
                     placeId = "1234",
                     address = "부산광역시 서구 구덕로 179",
                     latitude = 123.456,
                     longitude = 12.34,
                 ),
-                SavedSearchWord(
+                SavedSearchWordDomain(
                     name = "부산대학교",
                     placeId = "1235",
                     address = "부산광역시 금정구 부산대학로63번길 2",
@@ -70,7 +71,7 @@ class DefaultSavedSearchWordRepositoryTest {
             )
 
         // When
-        coEvery { savedSearchWordDao.getAllSearchWords() } returns expectedList
+        coEvery { savedSearchWordDao.getAllSearchWords() } returns expectedList.map { it.toSavedSearchWord() }
         val result = repository.getAllSearchWords()
 
         // Then
@@ -91,4 +92,13 @@ class DefaultSavedSearchWordRepositoryTest {
         // Then
         coVerify { savedSearchWordDao.deleteSearchWordById(idToDelete) }
     }
+
+    private fun SavedSearchWordDomain.toSavedSearchWord() = SavedSearchWord(
+        id = this.id,
+        name = this.name,
+        placeId = this.placeId,
+        address = this.address,
+        latitude = this.latitude,
+        longitude = this.longitude
+    )
 }

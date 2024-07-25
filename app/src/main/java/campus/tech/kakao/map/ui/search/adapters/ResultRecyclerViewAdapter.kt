@@ -5,12 +5,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.domain.model.Place
+import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.databinding.ItemPlaceBinding
 import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
 
 class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListener) :
-    ListAdapter<Place, ResultRecyclerViewAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
+    ListAdapter<PlaceDomain, ResultRecyclerViewAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
@@ -32,7 +32,7 @@ class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListe
         private val clickListener: OnPlaceItemClickListener,
     ) :
         RecyclerView.ViewHolder(binding.root) {
-        private lateinit var currentPlace: Place
+        private lateinit var currentPlace: PlaceDomain
 
         init {
             itemView.setOnClickListener {
@@ -40,7 +40,7 @@ class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListe
             }
         }
 
-        fun bind(place: Place) {
+        fun bind(place: PlaceDomain) {
             currentPlace = place
             binding.placeNameTextView.text = place.name
             binding.placeCategoryTextView.text = place.category
@@ -48,17 +48,17 @@ class ResultRecyclerViewAdapter(private val clickListener: OnPlaceItemClickListe
         }
     }
 
-    private class PlaceDiffCallback : DiffUtil.ItemCallback<Place>() {
+    private class PlaceDiffCallback : DiffUtil.ItemCallback<PlaceDomain>() {
         override fun areItemsTheSame(
-            oldItem: Place,
-            newItem: Place,
+            oldItem: PlaceDomain,
+            newItem: PlaceDomain,
         ): Boolean {
             return oldItem.id == newItem.id
         }
 
         override fun areContentsTheSame(
-            oldItem: Place,
-            newItem: Place,
+            oldItem: PlaceDomain,
+            newItem: PlaceDomain,
         ): Boolean {
             return oldItem == newItem
         }

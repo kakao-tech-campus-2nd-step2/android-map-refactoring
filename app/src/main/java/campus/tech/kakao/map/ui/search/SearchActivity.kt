@@ -10,9 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.domain.model.Place
-import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
@@ -88,9 +88,9 @@ class SearchActivity : AppCompatActivity() {
     private fun setSearchResultRecyclerView() {
         val placeItemClickListener =
             object : OnPlaceItemClickListener {
-                override fun onPlaceItemClicked(place: Place) {
+                override fun onPlaceItemClicked(place: PlaceDomain) {
                     savedSearchWordViewModel.handleUiEvent(
-                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWord())
+                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWordDomain())
                     )
                 }
             }
@@ -103,7 +103,7 @@ class SearchActivity : AppCompatActivity() {
      *
      * @param savedSearchWord 이동할 장소의 정보를 담고 있는 SavedSearchWord 객체.
      */
-    private fun navigateToMapActivity(savedSearchWord: SavedSearchWord) {
+    private fun navigateToMapActivity(savedSearchWord: SavedSearchWordDomain) {
         val intent = Intent()
         intent.putExtra(EXTRA_PLACE_NAME, savedSearchWord.name)
         intent.putExtra(EXTRA_PLACE_ADDRESS, savedSearchWord.address)
@@ -122,7 +122,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setSavedSearchWordRecyclerView() {
         val savedSearchWordClearImageViewClickListener =
             object : OnSavedSearchWordClearImageViewClickListener {
-                override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord) {
+                override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWordDomain) {
                     savedSearchWordViewModel.handleUiEvent(
                         SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(savedSearchWord)
                     )
@@ -130,7 +130,7 @@ class SearchActivity : AppCompatActivity() {
             }
         val savedSearchWordTextViewClickListener =
             object : OnSavedSearchWordTextViewClickListener {
-                override fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWord) {
+                override fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWordDomain) {
                     navigateToMapActivity(savedSearchWord)
                 }
             }
@@ -208,8 +208,8 @@ class SearchActivity : AppCompatActivity() {
      *
      * @return 변환된 SavedSearchWord 객체.
      */
-    private fun Place.toSavedSearchWord(): SavedSearchWord {
-        return SavedSearchWord(
+    private fun PlaceDomain.toSavedSearchWordDomain(): SavedSearchWordDomain {
+        return SavedSearchWordDomain(
             name = this.name,
             placeId = this.id,
             address = this.address,

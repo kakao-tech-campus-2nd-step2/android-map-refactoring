@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.room.Room
 import campus.tech.kakao.map.data.database.AppDatabase
-import campus.tech.kakao.map.domain.model.Location
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.data.repository.LocationSerializer
 import dagger.Module
 import dagger.Provides
@@ -18,7 +18,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 @InstallIn(ViewModelComponent::class)
 object DatabaseModule {
 
-    private val Context.dataStore: DataStore<Location> by dataStore(
+    private val Context.dataStore: DataStore<LocationDomain> by dataStore(
         fileName = "location_data.pb",
         serializer = LocationSerializer,
     )
@@ -28,7 +28,7 @@ object DatabaseModule {
     @LocationDataStore
     fun provideDataStore(
         @ApplicationContext context: Context,
-    ): DataStore<Location> {
+    ): DataStore<LocationDomain> {
         return context.dataStore
     }
 

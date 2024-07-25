@@ -3,7 +3,7 @@ package campus.tech.kakao.map.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.domain.model.Place
+import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,8 +25,8 @@ constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) :
     ViewModel() {
-    private val _searchResults = MutableStateFlow<List<Place>>(emptyList())
-    val searchResults: StateFlow<List<Place>> get() = _searchResults
+    private val _searchResults = MutableStateFlow<List<PlaceDomain>>(emptyList())
+    val searchResults: StateFlow<List<PlaceDomain>> get() = _searchResults
 
     private val _categoryInput = MutableStateFlow<String>("")
     private val _totalPageCount = MutableStateFlow<Int>(0)

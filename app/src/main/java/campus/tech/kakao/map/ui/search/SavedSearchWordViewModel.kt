@@ -3,8 +3,8 @@ package campus.tech.kakao.map.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.di.IoDispatcher
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
 import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
@@ -26,8 +26,8 @@ constructor(
     private val getAllSearchWordsUseCase: GetAllSearchWordsUseCase,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
-    private val _savedSearchWords = MutableStateFlow<List<SavedSearchWord>>(emptyList())
-    val savedSearchWords: StateFlow<List<SavedSearchWord>> get() = _savedSearchWords
+    private val _savedSearchWords = MutableStateFlow<List<SavedSearchWordDomain>>(emptyList())
+    val savedSearchWords: StateFlow<List<SavedSearchWordDomain>> get() = _savedSearchWords
 
     private val _sideEffects = MutableSharedFlow<SideEffect>()
     val sideEffects: SharedFlow<SideEffect> get() = _sideEffects
@@ -36,7 +36,7 @@ constructor(
         updateSavedSearchWords()
     }
 
-    fun insertSearchWord(savedSearchWord: SavedSearchWord) {
+    fun insertSearchWord(savedSearchWord: SavedSearchWordDomain) {
         viewModelScope.launch(ioDispatcher) {
             try {
                 insertOrUpdateSearchWordUseCase(savedSearchWord)
@@ -47,7 +47,7 @@ constructor(
         }
     }
 
-    fun deleteSearchWordById(savedSearchWord: SavedSearchWord) {
+    fun deleteSearchWordById(savedSearchWord: SavedSearchWordDomain) {
         viewModelScope.launch(ioDispatcher) {
             try {
                 deleteSearchWordByIdUseCase(savedSearchWord.id)
@@ -69,7 +69,7 @@ constructor(
         }
     }
 
-    private fun onPlaceItemClicked(savedSearchWord: SavedSearchWord) {
+    private fun onPlaceItemClicked(savedSearchWord: SavedSearchWordDomain) {
         viewModelScope.launch(ioDispatcher) {
             try {
                 insertOrUpdateSearchWordUseCase(savedSearchWord)
@@ -81,7 +81,7 @@ constructor(
         }
     }
 
-    private fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord) {
+    private fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWordDomain) {
         viewModelScope.launch(ioDispatcher) {
             try {
                 deleteSearchWordByIdUseCase(savedSearchWord.id)
@@ -100,10 +100,10 @@ constructor(
     }
 
     sealed class UiEvent {
-        data class OnPlaceItemClicked(val savedSearchWord: SavedSearchWord) : UiEvent()
-        data class OnSavedSearchWordClearImageViewClicked(val savedSearchWord: SavedSearchWord) : UiEvent()
+        data class OnPlaceItemClicked(val savedSearchWord: SavedSearchWordDomain) : UiEvent()
+        data class OnSavedSearchWordClearImageViewClicked(val savedSearchWord: SavedSearchWordDomain) : UiEvent()
     }
     sealed class SideEffect {
-        data class NavigateToMapActivity(val savedSearchWord: SavedSearchWord) : SideEffect()
+        data class NavigateToMapActivity(val savedSearchWord: SavedSearchWordDomain) : SideEffect()
     }
 }

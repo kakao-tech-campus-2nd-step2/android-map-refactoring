@@ -2,7 +2,8 @@ package campus.tech.kakao.map.data.repository
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import campus.tech.kakao.map.domain.model.Location
+import campus.tech.kakao.map.data.mapper.LocationMapper
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.di.LocationDataStore
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.firstOrNull
@@ -13,39 +14,25 @@ import javax.inject.Inject
 class DefaultLocationRepository
 @Inject
 constructor(
-    @LocationDataStore private val dataStore: DataStore<Location>,
+    @LocationDataStore private val dataStore: DataStore<LocationDomain>,
 ) : LocationRepository {
-    override suspend fun saveLocation(location: Location) {
+    override suspend fun saveLocation(location: LocationDomain) {
         dataStore.updateData {
-            Location(
-                name = location.name,
-                latitude = location.latitude,
-                longitude = location.longitude,
-                address = location.address,
-            )
+            location
         }
     }
 
-    override suspend fun loadLocation(): Location {
+    override suspend fun loadLocation(): LocationDomain {
         return try {
-            dataStore.data
-                .map { location ->
-                    Location(
-                        name = location.name,
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        address = location.address,
-                    )
-                }
-                .firstOrNull() ?: getDefaultLocation()
+            dataStore.data.firstOrNull() ?: getDefaultLocation()
         } catch (exception: Exception) {
             Log.e("DefaultLocationRepository", "Failed to load location data", exception)
             getDefaultLocation()
         }
     }
 
-    private fun getDefaultLocation(): Location {
-        return Location(
+    private fun getDefaultLocation(): LocationDomain {
+        return LocationDomain(
             name = "부산대 컴공관",
             latitude = 35.230934,
             longitude = 129.082476,
