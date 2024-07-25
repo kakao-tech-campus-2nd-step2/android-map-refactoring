@@ -15,6 +15,6 @@ object PlaceContract{
 
     object SavedPlaceEntry : BaseColumns{
         const val TABLE_NAME = "SAVED_PLACE"
-        const val COLUMN_NAME = "SAVED_NAME"
+        const val COLUMN_NAME = "name"
     }
 }

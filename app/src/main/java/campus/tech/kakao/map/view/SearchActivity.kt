@@ -23,6 +23,8 @@ import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.model.SavedPlaceDao
+import campus.tech.kakao.map.model.SavedPlaceDatabase
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
@@ -76,9 +78,8 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
         searchRecyclerView = findViewById<RecyclerView>(R.id.search_result_recyclerView)
         inputSearchField = findViewById<EditText>(R.id.input_search_field)
         savedPlaceRecyclerView = findViewById<RecyclerView>(R.id.saved_search_recyclerView)
-        dbHelper = PlaceDBHelper(this)
         placeRepository = PlaceRepository(dbHelper)
-        savedPlaceRepository = SavedPlaceRepository(dbHelper)
+        savedPlaceRepository = SavedPlaceRepository(SavedPlaceDatabase.getInstance(this).savedPlaceDao())
         searchDeleteButton = findViewById<ImageView>(R.id.button_X)
         viewModel =
             ViewModelProvider(

@@ -3,10 +3,13 @@ package campus.tech.kakao.map.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class SearchActivityViewModel(
@@ -31,17 +34,23 @@ class SearchActivityViewModel(
     }
 
     fun getSavedPlace() {
-        _savedPlace.value = (savedPlaceRepository.getAllSavedPlace())
+        viewModelScope.launch(Dispatchers.IO) {
+            _savedPlace.postValue(savedPlaceRepository.getAllSavedPlace())
+        }
     }
 
     fun savePlace(place: Place) {
-        savedPlaceRepository.writePlace(place)
-        getSavedPlace()
+        viewModelScope.launch(Dispatchers.IO) {
+            savedPlaceRepository.writePlace(place)
+            getSavedPlace()
+        }
     }
 
     fun deleteSavedPlace(savedPlace: SavedPlace) {
-        savedPlaceRepository.deleteSavedPlace(savedPlace)
-        getSavedPlace()
+        viewModelScope.launch(Dispatchers.IO){
+            savedPlaceRepository.deleteSavedPlace(savedPlace)
+            getSavedPlace()
+        }
     }
 
 
