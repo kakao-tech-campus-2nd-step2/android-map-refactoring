@@ -15,20 +15,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.viewmodel.DataDbHelper
 import campus.tech.kakao.map.Adapter.LocationAdapter
 import campus.tech.kakao.map.Model.LocationData
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.viewmodel.MainViewModel
 import campus.tech.kakao.map.Adapter.SearchViewAdapter
+import campus.tech.kakao.map.Model.LocationDao
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var db: DataDbHelper
     private lateinit var recyclerView: RecyclerView
     private lateinit var inputText: EditText
     private lateinit var cancelBtn: Button
@@ -38,6 +38,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchAdapter: SearchViewAdapter
     private var locationList = ArrayList<LocationData>()
     private var searchList = ArrayList<LocationData>()
+
+    @Inject
+    lateinit var locationDao: LocationDao
 
     private val mainViewModel: MainViewModel by viewModels()
 
@@ -173,10 +176,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (::db.isInitialized) {
-            db.close()
-            Log.d("MainActivity", "Database closed")
-        }
-
     }
 }
