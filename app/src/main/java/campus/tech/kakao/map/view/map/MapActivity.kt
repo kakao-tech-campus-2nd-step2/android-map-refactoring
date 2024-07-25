@@ -7,12 +7,14 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
 import campus.tech.kakao.map.view.search.MainActivity
+import campus.tech.kakao.map.viewmodel.LocationViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -22,9 +24,13 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+    private val locationViewModel: LocationViewModel by viewModels()
+
     private val searchEditText by lazy { findViewById<EditText>(R.id.SearchEditTextInMap) }
     private val mapView by lazy { findViewById<MapView>(R.id.map_view) }
     private val bottomSheetLayout by lazy { findViewById<ConstraintLayout>(R.id.bottom_sheet_layout) }
@@ -32,9 +38,6 @@ class MapActivity : AppCompatActivity() {
     private val bottom_sheet_address by lazy { findViewById<TextView>(R.id.bottom_sheet_address) }
     private val errorMessageTextView by lazy { findViewById<TextView>(R.id.errorMessageTextView) }
     private val bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout> by lazy { BottomSheetBehavior.from(bottomSheetLayout) }
-
-    private val lastLocationlSharedPreferences: LastLocationlSharedPreferences by lazy { LastLocationlSharedPreferences() }
-    private val lastLocationRepository: LastLocationRepository by lazy { LastLocationRepository(lastLocationlSharedPreferences) }
 
     companion object{
         private val DEFAULT_LONGITUDE = 127.115587
@@ -83,7 +86,7 @@ class MapActivity : AppCompatActivity() {
                 if (location != null) {
                     showLabel(location, kakaoMap)
                     showBottomSheet(location)
-                    lastLocationRepository.addLastLocation(location)
+                    locationViewModel.addLastLocation(location)
                 } else{
                     hideBottomSheet()
                 }
@@ -140,7 +143,7 @@ class MapActivity : AppCompatActivity() {
     private fun getLocation(): Location? {
         var location = getLocationByIntent()
         if(location == null) {
-            location = lastLocationRepository.getLastLocation()
+            location = locationViewModel.getLastLocation()
         }
         return location
 

@@ -12,7 +12,6 @@ class LastLocationlSharedPreferences() {
         App.sharedPreferencesManager.putString("title", location.title.toString())
         App.sharedPreferencesManager.putString("address", location.address.toString())
         App.sharedPreferencesManager.putString("category", location.category.toString())
-
     }
 
     fun getLastLocation(): Location? {

@@ -8,47 +8,37 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.model.datasource.LocationApi
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.datasource.AppDatabase
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.repository.DefaultLocationRepository
+import campus.tech.kakao.map.model.datasource.SavedLocationDatabase
 import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
+import campus.tech.kakao.map.model.repository.LocationRepository
 import campus.tech.kakao.map.view.map.MapActivity
-import campus.tech.kakao.map.viewmodel.ViewModelFactory.LocationViewModelFactory
-import campus.tech.kakao.map.viewmodel.ViewModelFactory.SavedLocationViewModelFactory
 import campus.tech.kakao.map.viewmodel.LocationViewModel
 import campus.tech.kakao.map.viewmodel.SavedLocationViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
-    private val locationViewModel: LocationViewModel by lazy {
-        ViewModelProvider(this, LocationViewModelFactory(locationRepository))
-        .get(LocationViewModel::class.java)
-    }
+    private val locationViewModel: LocationViewModel by viewModels()
+    private val savedLocationViewModel: SavedLocationViewModel by viewModels()
+
+
     private val locationAdapter: LocationAdapter by lazy { LocationAdapter(this) }
     private val locationRecyclerView: RecyclerView by lazy { findViewById(R.id.locationRecyclerView) }
 
-    private val savedLocationViewModel: SavedLocationViewModel by lazy {
-        ViewModelProvider(this, SavedLocationViewModelFactory(savedLocationRepository))
-        .get(SavedLocationViewModel::class.java)
-    }
     private val savedLocationAdapter: SavedLocationAdapter by lazy { SavedLocationAdapter(this) }
     private val savedLocationRecyclerView: RecyclerView by lazy {
         findViewById(R.id.savedLocationRecyclerView)
     }
-
-    private val locationApi: LocationApi by lazy { LocationApi() }
-    private val locationRepository: DefaultLocationRepository by lazy { DefaultLocationRepository(locationApi) }
-
-    private val appDatabase: AppDatabase by lazy { AppDatabase.getDatabase(this) }
-    private val savedLocationRepository: DefaultSavedLocationRepository by lazy { DefaultSavedLocationRepository(appDatabase) }
-
     private val clearButton: ImageView by lazy { findViewById(R.id.clearButton) }
     private val searchEditText: EditText by lazy { findViewById(R.id.SearchEditTextInMain) }
     private val noResultTextView: TextView by lazy { findViewById(R.id.NoResultTextView) }

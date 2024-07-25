@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.repository.DefaultLocationRepository
+import campus.tech.kakao.map.model.repository.LocationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class LocationViewModel(
-    private val locationRepository: DefaultLocationRepository
+@HiltViewModel
+class LocationViewModel @Inject constructor(
+    private val locationRepository: LocationRepository
 ) : ViewModel() {
     private val _locations = MutableLiveData<List<Location>>()
 
@@ -30,6 +34,13 @@ class LocationViewModel(
             _searchedLocations.value = locationRepository.getLocationAll(query)
             handleNoResultMessage(getSearchedLocationsSize())
         }
+    }
+    fun addLastLocation(location: Location){
+        locationRepository.addLastLocation(location)
+    }
+
+    fun getLastLocation(): Location? {
+        return locationRepository.getLastLocation()
     }
 
 }

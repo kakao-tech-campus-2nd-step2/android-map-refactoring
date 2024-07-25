@@ -6,10 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.SavedLocation
 import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
+import campus.tech.kakao.map.model.repository.SavedLocationRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SavedLocationViewModel(
-    private val savedLocationRepository: DefaultSavedLocationRepository
+@HiltViewModel
+class SavedLocationViewModel @Inject constructor(
+    private val savedLocationRepository: SavedLocationRepository
 ) : ViewModel() {
     private val _savedLocation = MutableLiveData<MutableList<SavedLocation>>()
     val savedLocation: LiveData<MutableList<SavedLocation>> get() = _savedLocation
