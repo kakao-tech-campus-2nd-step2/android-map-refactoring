@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.ui.search.SearchLocationViewModel" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -13,7 +19,9 @@
             android:id="@+id/searchInputEditText"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:afterTextChanged="@{(s)->viewModel.searchLocation(String.valueOf(s))}"
             android:hint="@string/SearchHint"
+            android:text="@{viewModel.searchInput}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -33,7 +41,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
-            android:visibility="gone"
+            app:isVisible="@{viewModel.history.size > 0}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toTopOf="@+id/searchResultRecyclerView"
             app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +68,7 @@
             android:gravity="center"
             android:text="@string/EmptyResult"
             android:textSize="18sp"
+            app:isVisible="@{viewModel.location == null ? false : viewModel.location.size == 0}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

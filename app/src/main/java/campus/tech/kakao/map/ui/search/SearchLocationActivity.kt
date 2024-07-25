@@ -1,11 +1,10 @@
 package campus.tech.kakao.map.ui.search
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchLocationBinding
 import campus.tech.kakao.map.ui.search.adapter.HistoryAdapter
 import campus.tech.kakao.map.ui.search.adapter.SearchLocationAdapter
@@ -20,26 +19,12 @@ class SearchLocationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySearchLocationBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search_location)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
         binding.removeSearchInputButton.setOnClickListener {
             binding.searchInputEditText.text.clear()
-        }
-
-        binding.searchInputEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.searchLocation(s.toString())
-            }
-        })
-
-        viewModel.searchInput.observe(this) {
-            it?.let { searchInput ->
-                binding.searchInputEditText.setText(searchInput)
-                binding.searchInputEditText.setSelection(searchInput.length)
-            }
         }
 
         viewModel.location.observe(this) { locationData ->
@@ -51,7 +36,6 @@ class SearchLocationActivity : AppCompatActivity() {
 
             binding.searchResultRecyclerView.adapter =
                 SearchLocationAdapter(locationData, this, viewModel)
-            binding.emptyResultTextView.isVisible = locationData.isEmpty()
         }
 
         viewModel.history.observe(this) {
@@ -63,8 +47,6 @@ class SearchLocationActivity : AppCompatActivity() {
                 }
 
                 adapter.submitList(historyData)
-                binding.searchHistoryRecyclerView.isVisible = historyData.isNotEmpty()
-                binding.executePendingBindings()
             }
         }
 
