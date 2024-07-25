@@ -47,15 +47,4 @@ class RetrofitData @Inject constructor() {
 		})
 	}
 	fun getDocuments() = _documents
-
-//	companion object {
-//		private var instance: RetrofitData? = null
-//
-//		fun getInstance(): RetrofitData {
-//			if (instance == null) {
-//				instance = RetrofitData()
-//			}
-//			return instance!!
-//		}
-//	}
 }
