@@ -6,17 +6,20 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class MainViewModel @Inject constructor(application: Application, private val placeRepository: PlaceRepository) : AndroidViewModel(application) {
 
     private val placeDao: PlaceDao = AppDatabase.getDatabase(application).placeDao()
 
     private val apiService = KakaoAPIRetrofitClient.retrofitService
-    var repository = PlaceRepository(apiService)
-    var preferencesRepository = PreferencesRepository(application.applicationContext)
+    //var repository = PlaceRepository(apiService)
+    //var preferencesRepository = PreferencesRepository(application.applicationContext)
 
     private val _searchResults = MutableLiveData<List<Place>>()
     val searchResults: LiveData<List<Place>> get() = _searchResults
@@ -30,9 +33,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun searchPlaces(query: String) {
         viewModelScope.launch {
-            val results = withContext(Dispatchers.IO) {
-                val response = apiService.getSearchKeyword(query)
-                response.documents.map { document ->
+            val results = placeRepository.searchPlaces(query).map {document ->
                     Place(
                         name = document.place_name,
                         address = document.address_name,
@@ -41,7 +42,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         y = document.y
                     )
                 }
-            }
             _searchResults.postValue(results)
         }
     }
@@ -49,28 +49,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun addSearch(name: String, address: String, category: String, x: String, y: String) {
         viewModelScope.launch {
             val place = Place(name = name, address = address, category = category, x = x, y = y)
-            withContext(Dispatchers.IO) {
-                placeDao.deletePlace(name, address, category)
-                placeDao.insert(place)
-            }
+            placeRepository.savePlace(place)
             loadSavedSearches()
         }
     }
 
     fun removeSearch(name: String, address: String, category: String) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                placeDao.deletePlace(name, address, category)
-            }
+            placeRepository.deletePlace(name, address, category)
             loadSavedSearches()
         }
     }
 
     fun loadSavedSearches() {
         viewModelScope.launch {
-            val searches = withContext(Dispatchers.IO) {
-                placeDao.searchDatabase("%")
-            }
+            val searches = placeRepository.getSavedPlaces()
             _savedSearches.postValue(searches.reversed())
         }
     }
