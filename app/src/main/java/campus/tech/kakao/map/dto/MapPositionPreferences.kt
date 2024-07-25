@@ -1,12 +1,13 @@
 package campus.tech.kakao.map.dto
 
 import android.content.Context
+import javax.inject.Inject
 
-class MapPositionPreferences(context: Context) {
+class MapPositionPreferences @Inject constructor(context: Context) {
 
 	private val mapPosition = context.getSharedPreferences(MapPositionContract.PREFERENCE_NAME, Context.MODE_PRIVATE)
 
-	fun setPreferences(key: String, value: String) {
+	private fun setPreferences(key: String, value: String) {
 		mapPosition.edit().putString(key, value).apply()
 	}
 

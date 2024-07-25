@@ -9,8 +9,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
 
-class RetrofitData private constructor() {
+class RetrofitData @Inject constructor() {
 	private val _documents = MutableLiveData<List<Document>>()
 	private val retrofitService: RetrofitService = Retrofit.Builder()
 		.baseUrl(UrlContract.BASE_URL)
@@ -47,14 +48,14 @@ class RetrofitData private constructor() {
 	}
 	fun getDocuments() = _documents
 
-	companion object {
-		private var instance: RetrofitData? = null
-
-		fun getInstance(): RetrofitData {
-			if (instance == null) {
-				instance = RetrofitData()
-			}
-			return instance!!
-		}
-	}
+//	companion object {
+//		private var instance: RetrofitData? = null
+//
+//		fun getInstance(): RetrofitData {
+//			if (instance == null) {
+//				instance = RetrofitData()
+//			}
+//			return instance!!
+//		}
+//	}
 }

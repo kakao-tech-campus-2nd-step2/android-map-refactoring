@@ -17,7 +17,10 @@ import campus.tech.kakao.map.adapter.DocumentAdapter
 import campus.tech.kakao.map.adapter.WordAdapter
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.SearchWord
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchFragment : Fragment(), AdapterCallback {
 
 	private val model: MainViewModel by activityViewModels()

@@ -4,31 +4,35 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import campus.tech.kakao.map.dto.MapPosition.getMapPosition
-import campus.tech.kakao.map.url.RetrofitData.Companion.getInstance
 import campus.tech.kakao.map.dto.Document
+import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
-import campus.tech.kakao.map.dto.SearchWordDatabase.Companion.getDatabase
+import campus.tech.kakao.map.dto.SearchWordDao
+import campus.tech.kakao.map.url.RetrofitData
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlin.concurrent.thread
 
-class MainViewModel(application: Application): AndroidViewModel(application) {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+	application: Application, private val retrofitData: RetrofitData,
+	private val searchWordDao: SearchWordDao, private val mapPosition: MapPositionPreferences
+) : AndroidViewModel(application) {
 
 	private val _wordList = MutableLiveData<List<SearchWord>>()
 	val wordList: LiveData<List<SearchWord>> get() =  _wordList
 
-	private val retrofitData = getInstance()
 	val documentList: LiveData<List<Document>> get() = retrofitData.getDocuments()
 
 	private val _documentClicked = MutableLiveData<Boolean>()
 	val documentClicked: LiveData<Boolean> get() = _documentClicked
 
-	private val db = getDatabase(application)
 
 	fun addWord(document: Document){
 		val word = wordFromDocument(document)
 		thread {
 			deleteWord(word)
-			db.searchWordDao().insert(word)
+			searchWordDao.insert(word)
 			loadWord()
 		}
 
@@ -39,14 +43,14 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 	}
 	fun deleteWord(word: SearchWord){
 		thread {
-			db.searchWordDao().delete(word.name, word.address, word.type)
+			searchWordDao.delete(word.name, word.address, word.type)
 			loadWord()
 		}.join()
 	}
 
 	fun loadWord(){
 		thread {
-			_wordList.postValue(db.searchWordDao().getAll())
+			_wordList.postValue(searchWordDao.getAll())
 		}
 	}
 
@@ -54,20 +58,16 @@ class MainViewModel(application: Application): AndroidViewModel(application) {
 		retrofitData.searchPlace(query)
 	}
 
-	override fun onCleared() {
-		super.onCleared()
-		db.close()
-	}
 
 	private fun setMapInfo(document: Document){
-		getMapPosition(getApplication()).setMapInfo(document)
+		mapPosition.setMapInfo(document)
 	}
 
 	fun getMapInfo():List<String>{
-		val latitude = getMapPosition(getApplication()).getPreferences(LATITUDE,INIT_LATITUDE)
-		val longitude = getMapPosition(getApplication()).getPreferences(LONGITUDE,INIT_LONGITUDE)
-		val placeName = getMapPosition(getApplication()).getPreferences(PLACE_NAME,"")
-		val addressName = getMapPosition(getApplication()).getPreferences(ADDRESS_NAME,"")
+		val latitude = mapPosition.getPreferences(LATITUDE,INIT_LATITUDE)
+		val longitude = mapPosition.getPreferences(LONGITUDE,INIT_LONGITUDE)
+		val placeName = mapPosition.getPreferences(PLACE_NAME,"")
+		val addressName = mapPosition.getPreferences(ADDRESS_NAME,"")
 		return listOf(latitude, longitude, placeName, addressName)
 	}
 

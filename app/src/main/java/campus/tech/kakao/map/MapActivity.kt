@@ -23,9 +23,10 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.Exception
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
 	private lateinit var mapView: MapView
 	private var map: KakaoMap? = null
