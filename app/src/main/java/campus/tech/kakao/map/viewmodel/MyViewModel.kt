@@ -25,26 +25,27 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class MyViewModel @Inject constructor(private val repository: MyRepository) : ViewModel(){
+class MyViewModel @Inject constructor(private val repository: MyRepository) : ViewModel() {
 
     private val _searchText = MutableLiveData<String>()  //검색어를 입력하는 editText
-    val searchText get()=_searchText
+    val searchText get() = _searchText
 
     private var _isIntent: MutableLiveData<Boolean> = MutableLiveData(false) //위치한 액티비티를 나타내는 변수
-    val isIntent get()=_isIntent
+    val isIntent get() = _isIntent
 
-    private var _placeAdapterUpdateData = MutableLiveData<List<Place>>() //업데이트 해야하는 PlaceAdapter List<Place>
-    val placeAdapterUpdateData get()=_placeAdapterUpdateData
+    private var _placeAdapterUpdateData =
+        MutableLiveData<List<Place>>() //업데이트 해야하는 PlaceAdapter List<Place>
+    val placeAdapterUpdateData get() = _placeAdapterUpdateData
 
-    private var _savedSearchAdapterUpdateData = MutableLiveData<List<SavedSearch>>() //업데이트 해야하는 SavedSearchAdapter List<SavedSearch)
-    val savedSearchAdapterUpdateData get()=_savedSearchAdapterUpdateData
+    private var _savedSearchAdapterUpdateData =
+        MutableLiveData<List<SavedSearch>>() //업데이트 해야하는 SavedSearchAdapter List<SavedSearch)
+    val savedSearchAdapterUpdateData get() = _savedSearchAdapterUpdateData
 
     private var _itemClick = MutableLiveData<Place>() //Place의 item
-    val itemClick get()=_itemClick
+    val itemClick get() = _itemClick
 
     private var _nameClick = MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
-    val nameClick get()=_nameClick
-
+    val nameClick get() = _nameClick
 
 
     //PlaceAdapter 초기화
@@ -52,7 +53,7 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
         repository.insertSavedsearch(place.id, place.name)  //SavedSearch에 item 추가
         updateSavedSearch() //SavedSearch Ui업데이트
         repository.setSharedPreferences(place.toLocation()) //sharedPreference에 카메라 이동할 정보 저장
-        itemClick.value = place //액티비티 이동하기 위한 전달
+        _itemClick.value = place //액티비티 이동하기 위한 전달
     }
 
     //SavedSearchAdapter 초기화
@@ -62,21 +63,21 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
             updateSavedSearch() //Savedsearch Ui업데이트
         },
         onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
-            nameClick.value = SavedSearch   //화면에 보이는 text 설정
-            searchText.value = SavedSearch.name //검색 쿼리
+            _nameClick.value = SavedSearch   //화면에 보이는 text 설정
+            _searchText.value = SavedSearch.name //검색 쿼리
         }
     )
 
 
     // true일 때 SearchPlaceActivity에 위치하고있음
     fun intentSearchPlace() {
-        isIntent.value = true
+        _isIntent.value = true
     }
 
     //editText를 지우는 closeIcon 클릭이벤트
     fun clickCloseIcon() {
         //햅틱 진동 기능 추가하고 싶다..
-        searchText.value = " " //editText빈칸으로 만들기
+        _searchText.value = " " //editText빈칸으로 만들기
     }
 
     //(비동기) 카카오 키워드 검색, 검색 결과는 placeAdapterUpdateData에 List<Place>로 저장
@@ -85,7 +86,7 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
             try {
                 val response: Response<KakaoSearchResponse> = repository.searchKeyword(query)
                 if (response.isSuccessful) {
-                    placeAdapterUpdateData.value = response.body()?.documents?.map { document ->
+                    _placeAdapterUpdateData.value = response.body()?.documents?.map { document ->
                         Place(
                             id = document.id.toInt(),
                             name = document.place_name,
@@ -105,10 +106,9 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     }
 
 
-
     //Repository에서 List(SavedSearch) 가져와서  savedSearchAdapterUpdateData에 저장
     fun updateSavedSearch() {
-        savedSearchAdapterUpdateData.value = repository.getSavedSearches()
+        _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
     }
 
 
