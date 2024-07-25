@@ -29,7 +29,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
     private lateinit var mapView: MapView
     private lateinit var errorLayout: RelativeLayout
     private lateinit var errorMessage: TextView
@@ -42,10 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
     private var selectedItems = mutableListOf<MapItem>()
-
     private val viewModel: MapViewModel by viewModels()
-
-    companion object {
+    
+  companion object {
         const val SEARCH_REQUEST_CODE = 1
         const val PREFS_NAME = "LastMarkerPrefs"
         const val PREF_LATITUDE = "lastLatitude"
@@ -76,14 +74,12 @@ class MainActivity : AppCompatActivity() {
                 labelLayer = kakaoMap.labelManager?.layer!!
                 // 마지막 마커 위치 불러오기
                 loadLastMarkerPosition()
-                Log.d("MainActivity", "Map is ready")
             }
         })
 
         // 검색창 클릭 시 검색 페이지로 이동
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         searchEditText.setOnClickListener {
-            Log.d("MainActivity", "Search edit text clicked")
             val intent = Intent(this, SearchActivity::class.java)
             intent.putExtra("selectedItemsSize", selectedItems.size)
             selectedItems.forEachIndexed { index, mapItem ->
@@ -114,13 +110,11 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mapView.resume()  // MapView의 resume 호출
-        Log.d("MainActivity", "MapView resumed")
     }
 
     override fun onPause() {
         super.onPause()
         mapView.pause()  // MapView의 pause 호출
-        Log.d("MainActivity", "MapView paused")
     }
 
     fun showErrorScreen(error: Exception) {

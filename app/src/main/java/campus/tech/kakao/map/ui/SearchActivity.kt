@@ -90,7 +90,6 @@ class SearchActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {}
         })
-
     }
 
     private fun setupClearTextButton() {
