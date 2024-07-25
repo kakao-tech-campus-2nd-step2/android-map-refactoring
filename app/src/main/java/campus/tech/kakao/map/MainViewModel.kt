@@ -1,10 +1,15 @@
 package campus.tech.kakao.map
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel(
-    private val preferenceManager: PreferenceManager
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val context: Context,
+    private val preferenceManager: PreferenceManager,
 ) : ViewModel() {
 
     fun setLocation(latitude: Double? = null, longitude: Double? = null): LatLng? {

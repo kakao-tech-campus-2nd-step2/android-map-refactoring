@@ -16,14 +16,17 @@ import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 import okhttp3.Address
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var mainViewBinding: ActivityMainBinding
     private lateinit var mapView: MapView
-    private val mainViewModel: MainViewModel by viewModels {
-        ViewModelFactory(applicationContext, MapApplication.prefs)
-    }
+    @Inject lateinit var preferenceManager: PreferenceManager
+
+    private val mainViewModel: MainViewModel by viewModels()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,15 +6,20 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SearchViewModel(context: Context) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    context: Context,
+    private val preferenceManager: PreferenceManager,
+    var repository: RetrofitRepository
+) : ViewModel() {
     private val dbHelper: DBHelper = DBHelper(context)
     private val db = dbHelper.writableDatabase
-    private val preferenceManager = MapApplication.prefs
-    var repository = RetrofitRepository()
 
     private var _placeList = MutableLiveData<List<Place>>()
     private val _searchHistoryList = MutableLiveData<List<SearchHistory>>()

@@ -5,8 +5,11 @@ import campus.tech.kakao.map.RetrofitInstance.retrofitService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-open class RetrofitRepository {
+open class RetrofitRepository @Inject constructor(
+    private val retrofitService: RetrofitService
+) {
     open suspend fun getPlace(query: String): List<Document> {
         if (query.isEmpty()) {
             return emptyList()
