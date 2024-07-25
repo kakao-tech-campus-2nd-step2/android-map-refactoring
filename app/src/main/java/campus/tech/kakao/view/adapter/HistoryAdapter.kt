@@ -1,12 +1,9 @@
-package campus.tech.kakao.View.Adapter
+package campus.tech.kakao.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ItemHistoryBinding
 
 class HistoryAdapter(
     private var historyList: MutableList<Pair<Long, String>>,
@@ -15,19 +12,19 @@ class HistoryAdapter(
 ) : RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_history, parent, false)
-        return HistoryViewHolder(view)
+        val binding = ItemHistoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return HistoryViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
         val (id, historyItem) = historyList[position]
         holder.bind(historyItem)
 
-        holder.delButton.setOnClickListener {
+        holder.binding.delButton.setOnClickListener {
             itemClickListener(id)
         }
 
-        holder.itemView.setOnClickListener {
+        holder.binding.root.setOnClickListener {
             itemViewClickListener(historyItem)
         }
     }
@@ -42,12 +39,10 @@ class HistoryAdapter(
         notifyDataSetChanged()
     }
 
-    inner class HistoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val historyTextView: TextView = itemView.findViewById(R.id.historyTextView)
-        internal val delButton: ImageButton = itemView.findViewById(R.id.delButton)
-
+    inner class HistoryViewHolder(val binding: ItemHistoryBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: String) {
-            historyTextView.text = item
+            binding.historyItem = item
+            binding.executePendingBindings()
         }
     }
 }
