@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
-            android:paddingTop="24dp"
+            android:paddingTop="48dp"
             android:paddingHorizontal="16dp"
             android:paddingBottom="12dp"
             android:background="#FBFBFB"
@@ -49,7 +49,7 @@
                 <EditText
                     android:id="@+id/edtSearch"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:hint="검색어를 입력해 주세요"
                     android:text="@={viewModel.searchText}"
                     android:paddingStart="16dp"
@@ -74,7 +74,7 @@
                 android:id="@+id/recyclerLog"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/searchBar">
             </androidx.recyclerview.widget.RecyclerView>
