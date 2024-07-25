@@ -61,4 +61,9 @@ class SearchRecyclerViewAdapter(
         holder.placeName.text = place.name
     }
 
+    fun updateData(newPlace: List<Place>) {
+        places.clear()
+        places.addAll(newPlace)
+    }
+
 }
