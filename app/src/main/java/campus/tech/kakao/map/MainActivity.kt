@@ -13,7 +13,9 @@ import campus.tech.kakao.map.databinding.ActivityMainBinding
 import android.util.Log
 import com.kakao.sdk.common.util.Utility
 import android.content.Intent
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -87,7 +89,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setupRecyclerViews() {
+    private fun setupRecyclerViews() {
         searchAdapter = SearchAdapter { result ->
             viewModel.addSearch(result.name, result.address, result.category, result.x, result.y)
             val intent = Intent(this, MapActivity::class.java).apply {
