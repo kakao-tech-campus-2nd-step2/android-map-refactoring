@@ -18,11 +18,11 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     var repository = PlaceRepository(apiService)
     var preferencesRepository = PreferencesRepository(application.applicationContext)
 
-    private val _searchResults = MutableLiveData<List<Document>>()
-    val searchResults: LiveData<List<Document>> get() = _searchResults
+    private val _searchResults = MutableLiveData<List<Place>>()
+    val searchResults: LiveData<List<Place>> get() = _searchResults
 
-    private val _savedSearches = MutableLiveData<List<String>>()
-    val savedSearches: LiveData<List<String>> get() = _savedSearches
+    private val _savedSearches = MutableLiveData<List<Place>>()
+    val savedSearches: LiveData<List<Place>> get() = _savedSearches
 
     init {
         loadSavedSearches()
@@ -71,8 +71,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             val searches = withContext(Dispatchers.IO) {
                 placeDao.searchDatabase("%")
             }
+            _savedSearches.postValue(searches.reversed())
         }
-        _savedSearches.postValue(searches.reversed)
     }
 
     /*

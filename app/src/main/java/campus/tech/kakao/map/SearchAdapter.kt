@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import campus.tech.kakao.map.databinding.ItemResultBinding
 import android.util.Log
 
-class SearchAdapter(private val onItemClicked: (Document) -> Unit) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+class SearchAdapter(private val onItemClicked: (Place) -> Unit) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
     private val results = mutableListOf<Place>()
 
