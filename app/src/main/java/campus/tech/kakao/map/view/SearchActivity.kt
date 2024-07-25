@@ -83,7 +83,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.adapter = searchAdapter
 
         savePlaceAdapter = SavePlaceAdapter(emptyList()) {
-            viewModel.deleteSavedPlace(it.savePlace)
+            viewModel.deleteSavedPlace(it.savePlaceName)
         }
         saveRecyclerView.adapter = savePlaceAdapter
     }

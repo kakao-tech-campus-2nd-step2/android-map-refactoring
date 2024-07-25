@@ -6,12 +6,14 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.KakaoLocalObject
 import campus.tech.kakao.map.model.PlaceInfo
 import campus.tech.kakao.map.model.SavePlace
 import campus.tech.kakao.map.model.SearchPlace
 import campus.tech.kakao.map.repository.SearchRepository
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,15 +29,21 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     val savePlaces: LiveData<List<SavePlace>> get() = _savePlaces
 
     init {
-        _savePlaces.value = searchRepo.showSavePlace()
+        viewModelScope.launch {
+            _savePlaces.value = searchRepo.showSavePlace()
+        }
     }
 
     fun savePlaces(placeName: String) {
-        _savePlaces.value = searchRepo.savePlacesAndUpdate(placeName)
+        viewModelScope.launch {
+            _savePlaces.value = searchRepo.savePlacesAndUpdate(placeName)
+        }
     }
 
     fun deleteSavedPlace(savedPlaceName: String) {
-        _savePlaces.value = searchRepo.deleteSavedPlacesAndUpdate(savedPlaceName)
+        viewModelScope.launch {
+            _savePlaces.value = searchRepo.deleteSavedPlacesAndUpdate(savedPlaceName)
+        }
     }
 
     fun getPlaceList(categoryGroupName: String) {
@@ -51,6 +59,4 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             }
         })
     }
-
-
 }

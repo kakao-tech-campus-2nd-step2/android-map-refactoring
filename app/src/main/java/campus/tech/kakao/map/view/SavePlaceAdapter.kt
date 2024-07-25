@@ -21,7 +21,7 @@ class SavePlaceAdapter(
         private val savePlaceDeleteBtn: ImageView = itemView.findViewById(R.id.saveCancelBtn)
 
         fun bind(savePlace: SavePlace) {
-            savePlaceTextView.text = savePlace.savePlace
+            savePlaceTextView.text = savePlace.savePlaceName
             savePlaceDeleteBtn.setOnClickListener {
                 onItemClickListener(savePlace)
             }
