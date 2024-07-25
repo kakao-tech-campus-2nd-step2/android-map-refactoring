@@ -1,4 +1,4 @@
-package campus.tech.kakao.View.Activity
+package campus.tech.kakao.view.activity
 
 import android.os.Bundle
 import android.widget.Toast
@@ -7,17 +7,22 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
-import campus.tech.kakao.ViewModel.MainViewModel
+import campus.tech.kakao.viewmodel.MainViewModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private val mainViewModel: MainViewModel by viewModels()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding.viewModel = mainViewModel
+        binding.lifecycleOwner = this
+        setContentView(binding.root)
 
         observeNetworkAvailability()
         setInitialFragment(savedInstanceState)
