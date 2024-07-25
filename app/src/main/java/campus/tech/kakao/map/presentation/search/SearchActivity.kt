@@ -1,6 +1,7 @@
 package campus.tech.kakao.map.presentation.search
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -33,11 +34,19 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        setStatusBarTransparent()
         initBinding()
         setupRecyclerViews()
         observeViewModel()
     }
 
+    private fun setStatusBarTransparent() {
+        this.window?.apply {
+            this.statusBarColor = Color.TRANSPARENT
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
+    }
 
     private fun initBinding() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)

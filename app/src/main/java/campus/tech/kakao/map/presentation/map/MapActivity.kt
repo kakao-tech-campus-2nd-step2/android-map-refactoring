@@ -2,8 +2,12 @@ package campus.tech.kakao.map.presentation.map
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.WindowInsets
+import android.view.WindowInsetsController
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -41,12 +45,21 @@ class MapActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setStatusBarTransparent()
         initBinding()
         collectViewModel()
         initSwipeRefreshLayout()
         initMapView()
         initSearchView()
         setResultLauncher()
+    }
+
+    private fun setStatusBarTransparent() {
+        this.window?.apply {
+            this.statusBarColor = Color.TRANSPARENT
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        }
     }
 
     private fun initBinding(){
