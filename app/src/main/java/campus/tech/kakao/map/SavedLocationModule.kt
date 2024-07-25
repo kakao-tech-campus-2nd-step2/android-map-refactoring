@@ -13,13 +13,14 @@ import campus.tech.kakao.map.model.repository.SavedLocationRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class SavedLocationModule {
+object SavedLocationModule {
     @Singleton
     @Provides
     fun provideSavedLocationDatabase(@ApplicationContext context: Context): SavedLocationDatabase {
@@ -35,13 +36,4 @@ class SavedLocationModule {
     fun provideSavedLocationDao(savedLocationDatabase: SavedLocationDatabase): SavedLocationDao {
         return savedLocationDatabase.savedLocationDao()
     }
-
-    @Singleton
-    @Provides
-    fun provideDefaultSavedLocationRepository(
-        savedLocationDao: SavedLocationDao
-    ): SavedLocationRepository {
-        return DefaultSavedLocationRepository(savedLocationDao)
-    }
-
 }

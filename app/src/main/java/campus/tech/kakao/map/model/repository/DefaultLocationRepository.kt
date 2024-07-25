@@ -7,7 +7,9 @@ import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
 import campus.tech.kakao.map.model.datasource.LocationApi
 import javax.inject.Inject
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
+@Singleton
 class DefaultLocationRepository @Inject constructor(
     private val locationApi: LocationApi,
     private val lastLocationlSharedPreferences: LastLocationlSharedPreferences

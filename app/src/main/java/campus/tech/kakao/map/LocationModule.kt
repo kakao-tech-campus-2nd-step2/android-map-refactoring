@@ -10,6 +10,7 @@ import campus.tech.kakao.map.model.repository.DefaultLocationRepository
 import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
 import campus.tech.kakao.map.model.repository.LocationRepository
 import campus.tech.kakao.map.model.repository.SavedLocationRepository
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,14 +31,5 @@ class LocationModule {
     @Provides
     fun provideLastLocationlSharedPreferences(): LastLocationlSharedPreferences {
         return LastLocationlSharedPreferences()
-    }
-
-    @Singleton
-    @Provides
-    fun provideDefaultLocationRepository(
-        locationApi: LocationApi,
-        lastLocationlSharedPreferences: LastLocationlSharedPreferences
-    ): LocationRepository {
-        return DefaultLocationRepository(locationApi, lastLocationlSharedPreferences)
     }
 }
