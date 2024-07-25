@@ -7,7 +7,6 @@ import campus.tech.kakao.map.dto.SearchWordContract
 import campus.tech.kakao.map.dto.SearchWordDao
 import campus.tech.kakao.map.dto.SearchWordDatabase
 import campus.tech.kakao.map.url.RetrofitData
-import com.kakao.vectormap.KakaoMap
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
