@@ -14,6 +14,7 @@ import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.model.data.Location
 import campus.tech.kakao.map.model.repository.MyRepository
 import campus.tech.kakao.map.util.BottomSheetManager
 import campus.tech.kakao.map.viewmodel.MyViewModelFactory
@@ -27,13 +28,13 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val viewModel: MyViewModel by viewModels {
-        MyViewModelFactory(this, MyRepository(applicationContext))
-    }
+    private val viewModel: MyViewModel by viewModels()  //hilt를 이용하여 viewModel 인스턴스화
     private var mapView: MapView? = null
     private var kakaoMap: KakaoMap? = null
     private val KAKAO_LATITUDE: Double = 37.39571538711179
@@ -44,6 +45,8 @@ class MainActivity : AppCompatActivity() {
     private var address: String = "주소"
     private var latitude: Double = 37.39571538711179
     private var longitude: Double = 127.11051285266876
+
+    private val location : Location =Location("kakao","주소",)
 
     private var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
     lateinit var sharedPreferences: SharedPreferences

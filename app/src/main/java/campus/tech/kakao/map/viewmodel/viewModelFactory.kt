@@ -10,7 +10,7 @@ class MyViewModelFactory(
     private val repository: MyRepository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MyViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(MyViewModel::class.java)) { //isAssignableFrom->modelClass가 MyViewModel 클래스인지 확인
             @Suppress("UNCHECKED_CAST")
             return MyViewModel(context, repository) as T
         }
