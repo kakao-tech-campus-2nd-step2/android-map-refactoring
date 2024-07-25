@@ -72,6 +72,7 @@ class MapActivity : AppCompatActivity() {
             }else{
                 showMapPage()
                 showBottomSheet(mapViewModel.lastVisitedPlace.value)
+                binding.swipeRefreshLayout.isEnabled = false
             }
             binding.swipeRefreshLayout.isRefreshing = false
         }
@@ -88,6 +89,7 @@ class MapActivity : AppCompatActivity() {
                 if (!isNetworkAvailable()) {
                     showErrorPage(Exception("네트워크 연결 오류"))
                 }else{
+                    binding.swipeRefreshLayout.isEnabled = false
                     initMapPage()
                 }
             }
