@@ -6,7 +6,7 @@
 
 - 실행 영상
   
-![week4_1](https://github.com/user-attachments/assets/d05c8ac7-06cf-48c3-ac21-809567de23c3)
+![week5_2](https://github.com/user-attachments/assets/8f1d5e09-d3f0-4578-ab3b-9b6a8d8c81c0)
 
 - 인증 에러시 화면
   
