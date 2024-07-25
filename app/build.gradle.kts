@@ -6,7 +6,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
     id("kotlin-parcelize")
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
