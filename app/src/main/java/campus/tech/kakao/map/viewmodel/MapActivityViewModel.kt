@@ -11,11 +11,13 @@ import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.repository.SharedPreferenceRepository
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class MapActivityViewModel(
+@HiltViewModel
+class MapActivityViewModel @Inject constructor(
     private val sharedPreferenceRepository: SharedPreferenceRepository
 ) : ViewModel() {
     private val _recentPos = MutableLiveData<LatLng>()

@@ -8,11 +8,13 @@ import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class SearchActivityViewModel(
+@HiltViewModel
+class SearchActivityViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
     private val savedPlaceRepository: SavedPlaceRepository
 ) : ViewModel() {
@@ -23,14 +25,6 @@ class SearchActivityViewModel(
 
     init {
         getSavedPlace()
-    }
-
-    fun getPlace() {
-        _place.value = (placeRepository.getAllPlace())
-    }
-
-    fun getPlaceWithCategory(category: String) {
-        _place.value = (placeRepository.getPlaceWithCategory(category))
     }
 
     fun getSavedPlace() {
@@ -52,7 +46,6 @@ class SearchActivityViewModel(
             getSavedPlace()
         }
     }
-
 
     suspend fun getKakaoLocalData(text: String) {
         if (text.isNotEmpty()) {

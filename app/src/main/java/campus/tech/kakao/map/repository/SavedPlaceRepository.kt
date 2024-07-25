@@ -6,8 +6,11 @@ import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.model.SavedPlaceDao
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SavedPlaceRepository (private val savedPlaceDao : SavedPlaceDao){
+@Singleton
+class SavedPlaceRepository @Inject constructor(private val savedPlaceDao : SavedPlaceDao){
     suspend fun getAllSavedPlace() : List<SavedPlace> = savedPlaceDao.readSavedPlaceData()
 
 

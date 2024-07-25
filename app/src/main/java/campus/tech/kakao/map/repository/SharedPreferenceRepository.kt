@@ -7,8 +7,11 @@ import androidx.datastore.preferences.core.edit
 import campus.tech.kakao.map.view.MapActivity
 import com.kakao.vectormap.LatLng
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SharedPreferenceRepository(private val dataStore: DataStore<Preferences>) {
+@Singleton
+class SharedPreferenceRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         val KEY_LATITUDE = doublePreferencesKey("latitude")

@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
@@ -36,10 +37,10 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-
-    val Context.dataStore by preferencesDataStore(name = Constants.DataStore.PREFERENCES_NAME)
 
     lateinit var map: MapView
     lateinit var inputField: EditText
@@ -47,12 +48,11 @@ class MapActivity : AppCompatActivity() {
     lateinit var errorTextView: TextView
     lateinit var kakaoMap : KakaoMap
     lateinit var resultLauncher : ActivityResultLauncher<Intent>
-    lateinit var sharedPreferencesRepository: SharedPreferenceRepository
     lateinit var bottomSheetLayout : ConstraintLayout
     lateinit var placeNameField : TextView
     lateinit var placeLocationField : TextView
     lateinit var bottomSheetBehavior : BottomSheetBehavior<ConstraintLayout>
-    lateinit var viewModel : MapActivityViewModel
+    private val viewModel : MapActivityViewModel by viewModels()
     lateinit var editor : Editor
     var isMapDisplay = false
 
@@ -103,10 +103,6 @@ class MapActivity : AppCompatActivity() {
         errorTextView = findViewById<TextView>(R.id.error_text)
         placeNameField = findViewById<TextView>(R.id.place_name)
         placeLocationField = findViewById<TextView>(R.id.place_location)
-        sharedPreferencesRepository = SharedPreferenceRepository(dataStore)
-        viewModel = ViewModelProvider(
-            this, MapViewModelFactory(sharedPreferencesRepository)
-        )[MapActivityViewModel::class.java]
         bringFrontSearchField()
     }
 

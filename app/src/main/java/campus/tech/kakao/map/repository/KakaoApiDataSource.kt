@@ -10,6 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 class KakaoApiDataSource {
+
     object KakaoRetrofitInstance {
 
         val kakaoLocalApi : KakaoLocalApi = getApiClient().create()

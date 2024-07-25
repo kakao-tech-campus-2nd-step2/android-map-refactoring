@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,21 +30,20 @@ import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
 import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPlaceListener {
     lateinit var noResultText: TextView
     lateinit var inputSearchField: EditText
-    lateinit var viewModel: SearchActivityViewModel
     lateinit var savedPlaceRecyclerView: RecyclerView
     lateinit var searchRecyclerView: RecyclerView
-    lateinit var dbHelper: PlaceDBHelper
-    lateinit var placeRepository: PlaceRepository
-    lateinit var savedPlaceRepository: SavedPlaceRepository
     lateinit var searchDeleteButton: ImageView
     lateinit var savedPlaceRecyclerViewAdapter: SavedPlaceViewAdapter
     lateinit var searchRecyclerViewAdapter: PlaceViewAdapter
+    private val viewModel: SearchActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,14 +78,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
         searchRecyclerView = findViewById<RecyclerView>(R.id.search_result_recyclerView)
         inputSearchField = findViewById<EditText>(R.id.input_search_field)
         savedPlaceRecyclerView = findViewById<RecyclerView>(R.id.saved_search_recyclerView)
-        placeRepository = PlaceRepository(dbHelper)
-        savedPlaceRepository = SavedPlaceRepository(SavedPlaceDatabase.getInstance(this).savedPlaceDao())
         searchDeleteButton = findViewById<ImageView>(R.id.button_X)
-        viewModel =
-            ViewModelProvider(
-                this,
-                SearchViewModelFactory(placeRepository, savedPlaceRepository)
-            )[SearchActivityViewModel::class.java]
     }
 
     fun initListeners() {
@@ -165,11 +158,6 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
             if (savedPlace?.isEmpty() == true) savedPlaceRecyclerView.visibility = View.GONE
             else savedPlaceRecyclerView.visibility = View.VISIBLE
         })
-    }
-
-    override fun onDestroy() {
-        dbHelper.close()
-        super.onDestroy()
     }
 }
 

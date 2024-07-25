@@ -4,7 +4,7 @@ import android.provider.BaseColumns
 
 object PlaceContract{
     const val DATABASE_NAME = "PLACE.DB"
-    const val VERSION = 2
+    const val VERSION = 1
 
     object PlaceEntry : BaseColumns {
         const val TABLE_NAME = "PLACE"
