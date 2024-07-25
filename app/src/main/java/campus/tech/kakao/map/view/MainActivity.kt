@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private var latitude: Double = 37.39571538711179
     private var longitude: Double = 127.11051285266876
 
-    private val location : Location =Location("kakao","주소",)
+    private val location : Location =Location("kakao","주소", KAKAO_LATITUDE, KAKAO_LONGITUDE)
 
     private var cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
     lateinit var sharedPreferences: SharedPreferences
@@ -108,8 +108,6 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         mapView?.resume()
-        Log.d("KakaoMap", "onMapResume")
-        Log.d("KakaoMap", "kakaoMap : $kakaoMap")
         getSharedPreferences()
         updateCamera()
         addMarker(kakaoMap, latitude, longitude, name)

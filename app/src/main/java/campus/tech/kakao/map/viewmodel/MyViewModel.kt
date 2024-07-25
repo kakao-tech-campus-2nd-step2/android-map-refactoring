@@ -25,16 +25,26 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class MyViewModel @Inject constructor(private val application : Application, private val repository: MyRepository) : AndroidViewModel(application) {
+class MyViewModel @Inject constructor(private val repository: MyRepository) : ViewModel(){
 
-    val searchText = MutableLiveData<String>()  //검색어를 입력하는 editText
-    var isIntent: MutableLiveData<Boolean> = MutableLiveData(false) //위치한 액티비티를 나타내는 변수
-    var placeAdapterUpdateData = MutableLiveData<List<Place>>() //업데이트 해야하는 PlaceAdapter List<Place>
-    var savedSearchAdapterUpdateData = MutableLiveData<List<SavedSearch>>() //업데이트 해야하는 SavedSearchAdapter List<SavedSearch)
-    var itemClick = MutableLiveData<Place>() //Place의 item
-    var nameClick = MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
-    var closeClick = MutableLiveData<SavedSearch>() // savedSearch의 x부분
-//    private val _searchResults = MutableLiveData<List<Place>>()
+    private val _searchText = MutableLiveData<String>()  //검색어를 입력하는 editText
+    val searchText get()=_searchText
+
+    private var _isIntent: MutableLiveData<Boolean> = MutableLiveData(false) //위치한 액티비티를 나타내는 변수
+    val isIntent get()=_isIntent
+
+    private var _placeAdapterUpdateData = MutableLiveData<List<Place>>() //업데이트 해야하는 PlaceAdapter List<Place>
+    val placeAdapterUpdateData get()=_placeAdapterUpdateData
+
+    private var _savedSearchAdapterUpdateData = MutableLiveData<List<SavedSearch>>() //업데이트 해야하는 SavedSearchAdapter List<SavedSearch)
+    val savedSearchAdapterUpdateData get()=_savedSearchAdapterUpdateData
+
+    private var _itemClick = MutableLiveData<Place>() //Place의 item
+    val itemClick get()=_itemClick
+
+    private var _nameClick = MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
+    val nameClick get()=_nameClick
+
 
 
     //PlaceAdapter 초기화
@@ -56,20 +66,6 @@ class MyViewModel @Inject constructor(private val application : Application, pri
             searchText.value = SavedSearch.name //검색 쿼리
         }
     )
-
-    //SharedPreferences에 item의 이름, 주소, 위도, 경도 저장하기
-    fun setSharedPreferences(place: Place) {
-        //sharedPreference를 이용해서 name,address,latitude,longitude 저장하기
-        val sharedPreferences =context.getSharedPreferences(
-            "PlacePreferences", AppCompatActivity.MODE_PRIVATE
-        )
-        val editor = sharedPreferences.edit()
-        editor.putString("name", place.name)
-        editor.putString("address", place.address)
-        editor.putString("longitude", place.longitude)
-        editor.putString("latitude", place.latitude)
-        editor.apply()
-    }
 
 
     // true일 때 SearchPlaceActivity에 위치하고있음
