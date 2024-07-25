@@ -1,10 +1,6 @@
 package ksc.campus.tech.kakao.map.data.datasources
 
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import ksc.campus.tech.kakao.map.data.apis.KakaoSearchRetrofitService
 import ksc.campus.tech.kakao.map.data.entities.Document
 import ksc.campus.tech.kakao.map.data.entities.KakaoSearchDTO
@@ -25,25 +21,23 @@ class SearchResultRemoteDataSource @Inject constructor(
         query: String,
         apiKey: String,
         batchCount: Int
-    ): Flow<List<Document>> {
-        return flow {
-            try {
-                val result = if (query == "") listOf() else batchSearchByKeyword(
-                    query,
-                    apiKey,
-                    1,
-                    batchCount
-                )
-                Log.d("KSC", "Searched")
-                emit(result)
-            } catch (e: HttpException) {
-                Log.e("KSC", e.message ?: "")
-                emit(listOf())
-            } catch (e: Exception) {
-                Log.e("KSC", e.message ?: "")
-                emit(listOf())
-            }
-        }.flowOn(Dispatchers.IO)
+    ): List<Document> {
+        try {
+            val result = if (query == "") listOf() else batchSearchByKeyword(
+                query,
+                apiKey,
+                1,
+                batchCount
+            )
+            Log.d("KSC", "Searched")
+            return result
+        } catch (e: HttpException) {
+            Log.e("KSC", e.message ?: "")
+            return listOf()
+        } catch (e: Exception) {
+            Log.e("KSC", e.message ?: "")
+            return listOf()
+        }
     }
 
     private fun batchSearchByKeyword(

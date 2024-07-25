@@ -5,13 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kakao.vectormap.camera.CameraPosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.BuildConfig
@@ -32,8 +29,6 @@ class SearchActivityViewModel @Inject constructor(
     private val _searchText: MutableLiveData<String> = MutableLiveData("")
     private val _activeContent: MutableLiveData<ContentType> = MutableLiveData(ContentType.MAP)
 
-    private val _searchResult = MutableStateFlow<List<SearchResult>>(listOf())
-
     val keywords = keywordRepository.keywords.stateIn(
         scope = viewModelScope,
         initialValue = listOf(),
@@ -41,14 +36,11 @@ class SearchActivityViewModel @Inject constructor(
     )
 
     val selectedLocation = mapViewRepository.selectedLocation
-    val cameraPosition = mapViewRepository.cameraPosition
 
-    val searchResult: StateFlow<List<SearchResult>> = _searchResult
     val searchText: LiveData<String>
         get() = _searchText
     val activeContent: LiveData<ContentType>
         get() = _activeContent
-
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -59,32 +51,25 @@ class SearchActivityViewModel @Inject constructor(
     private fun search(query: String) {
         searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY)
         switchContent(ContentType.SEARCH_LIST)
-        viewModelScope.launch {
-            _searchResult.emit(listOf())
-            searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY).collect {
-                _searchResult.emit(it)
-            }
-        }
     }
 
-    private fun addKeyword(keyword: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            keywordRepository.addKeyword(keyword)
-        }
-    }
 
     private fun deleteKeyword(keyword: String) {
         CoroutineScope(Dispatchers.IO).launch {
             keywordRepository.deleteKeyword(keyword)
         }
     }
-
-    private fun updateLocation(address: String, name: String, latitude: Double, longitude: Double) {
+    private fun addKeyword(keyword: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            keywordRepository.addKeyword(keyword)
+        }
+    }
+    private fun updateLocation(item: LocationInfo) {
         CoroutineScope(Dispatchers.Default).launch {
             mapViewRepository.updateSelectedLocation(
-                LocationInfo(address, name, latitude, longitude)
+                item
             )
-            mapViewRepository.updateCameraPositionWithFixedZoom(latitude, longitude)
+            mapViewRepository.updateCameraPositionWithFixedZoom(item.latitude, item.longitude)
         }
     }
 
@@ -92,14 +77,13 @@ class SearchActivityViewModel @Inject constructor(
         addKeyword(selectedItem.name)
         Log.d("KSC", "lat: ${selectedItem.latitude}, lon: ${selectedItem.longitude}")
         updateLocation(
-            selectedItem.address,
-            selectedItem.name,
-            selectedItem.latitude,
-            selectedItem.longitude
+            LocationInfo(selectedItem.address,
+                selectedItem.name,
+                selectedItem.latitude,
+                selectedItem.longitude)
         )
         switchContent(ContentType.MAP)
     }
-
     fun submitQuery(value: String) {
         search(value)
     }
@@ -115,12 +99,6 @@ class SearchActivityViewModel @Inject constructor(
 
     fun switchContent(type: ContentType) {
         _activeContent.postValue(type)
-    }
-
-    fun updateCameraPosition(position: CameraPosition) {
-        CoroutineScope(Dispatchers.Default).launch {
-            mapViewRepository.updateCameraPosition(position)
-        }
     }
 
     enum class ContentType { MAP, SEARCH_LIST }

@@ -6,9 +6,8 @@ import com.kakao.vectormap.camera.CameraPosition
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.BufferOverflow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import ksc.campus.tech.kakao.map.data.datasources.MapPreferenceLocalDataSource
 import ksc.campus.tech.kakao.map.data.datasources.OnMapPreferenceChanged
@@ -22,21 +21,13 @@ class MapViewRepositoryImpl @Inject constructor(
     @ApplicationContext private val context:Context
 ) : MapViewRepository {
 
-    private var _selectedLocation = MutableSharedFlow<LocationInfo?>(
-        replay = 1,
-        extraBufferCapacity = 3,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    private var _cameraPosition = MutableSharedFlow<CameraPosition>(
-        replay = 1,
-        extraBufferCapacity = 3,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private var _selectedLocation = MutableStateFlow<LocationInfo?>(null)
+    private var _cameraPosition = MutableStateFlow(initialCameraPosition)
 
-    override val selectedLocation: SharedFlow<LocationInfo?>
+    override val selectedLocation: StateFlow<LocationInfo?>
         get() = _selectedLocation
 
-    override val cameraPosition: SharedFlow<CameraPosition>
+    override val cameraPosition: StateFlow<CameraPosition>
         get() = _cameraPosition
 
     private fun getZoomCameraPosition(latitude: Double, longitude: Double) = CameraPosition.from(

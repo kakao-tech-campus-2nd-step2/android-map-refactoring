@@ -1,15 +1,12 @@
 package ksc.campus.tech.kakao.map.presentation.views.adapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ksc.campus.tech.kakao.map.R
+import ksc.campus.tech.kakao.map.databinding.ItemSearchResultBinding
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
-
 
 class SearchResultAdapter(
     val onItemClicked: ((item: SearchResult, index: Int) -> Unit)
@@ -23,37 +20,31 @@ class SearchResultAdapter(
             oldItem == newItem
 
     }) {
-    class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var holdingData: SearchResult = SearchResult("-1", "", "", "", 0.0, 0.0)
-            private set
-        private val resultName: TextView
-        private val resultAddress: TextView
-        private val resultType: TextView
+    class SearchResultViewHolder(private val binding: ItemSearchResultBinding) : RecyclerView.ViewHolder(binding.root) {
+        private var onClickCallback: ((SearchResult, Int)->Unit)? = null
 
-        init {
-            resultName = itemView.findViewById(R.id.text_result_name)
-            resultAddress = itemView.findViewById(R.id.text_result_address)
-            resultType = itemView.findViewById(R.id.text_result_type)
+        init{
+            binding.viewHolder = this
+        }
+
+        fun clickItem(){
+            binding.searchResult?.let {
+                onClickCallback?.invoke(it, bindingAdapterPosition)
+            }
+        }
+
+        fun setOnClickListener(listener: (SearchResult, Int)->Unit){
+            onClickCallback = listener
         }
 
         fun bindData(item: SearchResult) {
-            holdingData = item
-            resultName.text = item.name
-            resultAddress.text = item.address
-            resultType.text = item.type
+            binding.searchResult = item
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_search_result, parent, false)
-        val holder = SearchResultViewHolder(view)
-        view.setOnClickListener {
-            onItemClicked(
-                holder.holdingData,
-                holder.bindingAdapterPosition
-            )
-        }
+        val holder = SearchResultViewHolder(ItemSearchResultBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        holder.setOnClickListener(onItemClicked)
         return holder
     }
 
