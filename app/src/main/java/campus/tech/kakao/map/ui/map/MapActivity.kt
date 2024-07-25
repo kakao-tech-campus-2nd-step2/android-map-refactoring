@@ -30,6 +30,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -95,14 +96,23 @@ class MapActivity : AppCompatActivity() {
 
             val newLocation = Location(name, latitude, longitude, address)
 
-            lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    locationViewModel.saveLocation(newLocation)
-                    locationViewModel.location.collectLatest { location ->
-                        if (location == newLocation) {
-                            Log.d("testtt", "aaaa")
-                            startMapView()
-                        }
+            saveLocationAndWaitForUpdate(newLocation)
+        }
+    }
+
+    /**
+     * 위치를 저장하고 업데이트를 기다리는 함수.
+     *
+     * @param newLocation 저장할 새로운 위치 객체.
+     */
+    private fun saveLocationAndWaitForUpdate(newLocation: Location) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                locationViewModel.saveLocation(newLocation)
+                locationViewModel.location.collectLatest { location ->
+                    if (location == newLocation) {
+                        startMapView()
+                        cancel()
                     }
                 }
             }
