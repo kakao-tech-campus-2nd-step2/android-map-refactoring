@@ -8,7 +8,7 @@ import androidx.room.Query
 @Dao
 interface HistoryDao {
     @Query("SELECT * FROM HISTORY ORDER BY timestamp DESC")
-    suspend fun getAll(): List<History>
+    suspend fun getAllHistoryOrderByTime(): List<History>
 
     @Query("DELETE FROM HISTORY WHERE location_name = :name")
     suspend fun deleteByName(name: String)

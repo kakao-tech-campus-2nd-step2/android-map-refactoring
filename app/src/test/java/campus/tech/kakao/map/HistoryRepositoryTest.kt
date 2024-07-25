@@ -27,7 +27,7 @@ class HistoryRepositoryTest {
             History("test2", 2),
             History("test3", 1)
         )
-        coEvery { mockHistoryDao.getAll() } returns testHistory
+        coEvery { mockHistoryDao.getAllHistoryOrderByTime() } returns testHistory
 
         // when
         val result = repository.getHistory()
@@ -42,7 +42,7 @@ class HistoryRepositoryTest {
         val testHistory = listOf(
             History("testCategory", 2), History("testCategory2", 1)
         )
-        coEvery { mockHistoryDao.getAll() } returns testHistory
+        coEvery { mockHistoryDao.getAllHistoryOrderByTime() } returns testHistory
         coEvery { mockHistoryDao.deleteByName(any()) } just Runs
         coEvery { mockHistoryDao.insertHistory(any()) } just Runs
 

@@ -6,7 +6,7 @@ class HistoryRepositoryImpl(
     private val historyDao: HistoryDao
 ) : HistoryRepository {
     override suspend fun getHistory(): List<History> {
-        return historyDao.getAll()
+        return historyDao.getAllHistoryOrderByTime()
     }
 
     override suspend fun addHistory(locationName: String) {
