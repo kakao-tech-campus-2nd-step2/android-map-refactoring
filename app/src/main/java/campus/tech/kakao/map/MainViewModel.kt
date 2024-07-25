@@ -6,10 +6,13 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
+    private val placeDao: PlaceDao = AppDatabase.getDatabase(application).placeDao()
 
     private val apiService = KakaoAPIRetrofitClient.retrofitService
     var repository = PlaceRepository(apiService)
@@ -27,33 +30,55 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun searchPlaces(query: String) {
         viewModelScope.launch {
-            val results = repository.searchPlaces(query)
+            val results = withContext(Dispatchers.IO) {
+                val response = apiService.getSearchKeyword(query)
+                response.documents.map { document ->
+                    Place(
+                        name = document.place_name,
+                        address = document.address_name,
+                        category = document.category_group_name,
+                        x = document.x,
+                        y = document.y
+                    )
+                }
+            }
             _searchResults.postValue(results)
         }
     }
 
-    fun addSearch(search: String) {
-        val old = _savedSearches.value ?: emptyList()
-        val new = listOf(search) + (old - setOf(search))
-        _savedSearches.postValue(new)
-        saveSearchesToPreferences(new)
+    fun addSearch(name: String, address: String, category: String, x: String, y: String) {
+        viewModelScope.launch {
+            val place = Place(name = name, address = address, category = category, x = x, y = y)
+            withContext(Dispatchers.IO) {
+                placeDao.deletePlace(name, address, category)
+                placeDao.insert(place)
+            }
+            loadSavedSearches()
+        }
     }
 
-    fun removeSearch(search: String) {
-        val old = _savedSearches.value ?: emptyList()
-        val new = old - search
-        _savedSearches.postValue(new)
-        saveSearchesToPreferences(new)
+    fun removeSearch(name: String, address: String, category: String) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                placeDao.deletePlace(name, address, category)
+            }
+            loadSavedSearches()
+        }
     }
 
     fun loadSavedSearches() {
-        val searches = preferencesRepository.getSavedSearches()
-        _savedSearches.postValue(searches)
+        viewModelScope.launch {
+            val searches = withContext(Dispatchers.IO) {
+                placeDao.searchDatabase("%")
+            }
+        }
+        _savedSearches.postValue(searches.reversed)
     }
 
+    /*
     private fun saveSearchesToPreferences(searches: List<String>) {
         preferencesRepository.saveSearches(searches)
-    }
+    }*/
 
     fun searchSavedPlace(savedQuery: String) {
         searchPlaces(savedQuery)

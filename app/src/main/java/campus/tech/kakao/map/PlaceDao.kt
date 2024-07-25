@@ -17,5 +17,5 @@ interface PlaceDao {
     fun isDBEmpty(): Int
 
     @Query("DELETE FROM places WHERE name = :name AND address = :address AND category = :category")
-    fun deleteByNameAddressCategory(name: String, address: String, category: String)
+    fun deletePlace(name: String, address: String, category: String)
 }
