@@ -30,7 +30,7 @@ object FakeRepositoryModule {
     fun provideHistoryRepository(): HistoryRepository =
         mockk<HistoryRepository>().also {
             coEvery { it.getHistory() } returns listOf(
-                History(name = "기록1"), History(name = "기록2")
+                History("기록1", 2), History("기록2", 1)
             )
             coEvery { it.addHistory(any()) } just Runs
             coEvery { it.removeHistory(any()) } just Runs

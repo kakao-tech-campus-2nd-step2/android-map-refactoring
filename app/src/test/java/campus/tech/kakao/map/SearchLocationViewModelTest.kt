@@ -48,7 +48,7 @@ class SearchLocationViewModelTest {
     @Test
     fun testInitViewModel() {
         // given
-        val testHistory = listOf(History(name = "기록1"), History(name = "기록2"))
+        val testHistory = listOf(History("기록1", 2), History("기록2", 1))
         val tempMockRepository = mockk<HistoryRepository>()
         coEvery { tempMockRepository.getHistory() } returns testHistory
 
@@ -85,7 +85,7 @@ class SearchLocationViewModelTest {
     fun testAddHistory() {
         // given
         val testHistory = listOf(
-            History(name = "History1"), History(name = "History2")
+            History("History1", 2), History("History2", 1)
         )
         coEvery { mockHistoryRepository.addHistory(any()) } just Runs
         coEvery { mockHistoryRepository.getHistory() } returns testHistory
@@ -101,7 +101,7 @@ class SearchLocationViewModelTest {
     @Test
     fun testRemoveHistory() {
         // given
-        val testHistory = listOf(History(name="History1"))
+        val testHistory = listOf(History("History1", 1))
         coEvery { mockHistoryRepository.removeHistory(any()) } just Runs
         coEvery { mockHistoryRepository.getHistory() } returns testHistory
         viewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))

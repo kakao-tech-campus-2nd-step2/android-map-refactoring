@@ -22,8 +22,11 @@ class HistoryRepositoryTest {
     @Test
     fun testGetHistory() = runBlocking {
         // given
-        val testHistory =
-            listOf(History(name = "test1"), History(name = "test2"), History(name = "test3"))
+        val testHistory = listOf(
+            History("test1", 3),
+            History("test2", 2),
+            History("test3", 1)
+        )
         coEvery { mockHistoryDao.getAll() } returns testHistory
 
         // when
@@ -34,9 +37,11 @@ class HistoryRepositoryTest {
     }
 
     @Test
-    fun testAddHistory_ItemExist() = runBlocking {
+    fun testAddHistory() = runBlocking {
         // given
-        val testHistory = listOf(History(name = "testCategory"), History(name = "testCategory2"))
+        val testHistory = listOf(
+            History("testCategory", 2), History("testCategory2", 1)
+        )
         coEvery { mockHistoryDao.getAll() } returns testHistory
         coEvery { mockHistoryDao.deleteByName(any()) } just Runs
         coEvery { mockHistoryDao.insertHistory(any()) } just Runs
@@ -45,24 +50,6 @@ class HistoryRepositoryTest {
         repository.addHistory("testCategory")
 
         // then
-        coVerify { mockHistoryDao.deleteByName("testCategory") }
-        coVerify { mockHistoryDao.insertHistory(any()) }
-    }
-
-    @Test
-    fun testAddHistory_ItemNotExist() = runBlocking {
-        // given
-        val testHistory = listOf(History(name = "testCategory"))
-        coEvery { mockHistoryDao.getAll() } returns testHistory
-        coEvery { mockHistoryDao.deleteByName(any()) } just Runs
-        coEvery { mockHistoryDao.insertHistory(any()) } just Runs
-
-
-        // when
-        repository.addHistory("testCategory2")
-
-        // then
-        coVerify { mockHistoryDao.deleteByName("testCategory2") }
         coVerify { mockHistoryDao.insertHistory(any()) }
     }
 

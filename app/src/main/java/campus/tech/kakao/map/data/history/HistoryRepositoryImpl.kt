@@ -10,8 +10,10 @@ class HistoryRepositoryImpl(
     }
 
     override suspend fun addHistory(locationName: String) {
-        historyDao.deleteByName(locationName)
-        historyDao.insertHistory(History(name = locationName))
+        historyDao.insertHistory(History(
+            name = locationName,
+            timestamp = System.currentTimeMillis()
+        ))
     }
 
     override suspend fun removeHistory(locationName: String) {

@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "HISTORY")
 data class History(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "location_name") val name: String
+    @PrimaryKey @ColumnInfo(name = "location_name") val name: String,
+    @ColumnInfo(name = "timestamp") val timestamp: Long
 )
