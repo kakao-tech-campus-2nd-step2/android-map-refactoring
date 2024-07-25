@@ -2,7 +2,6 @@ package campus.tech.kakao.map.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.health.connect.datatypes.ExerciseRoute.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,18 +21,21 @@ import campus.tech.kakao.map.listener.SearchAdapterListener
 import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
 import campus.tech.kakao.map.dataContract.LocationDataContract
-import campus.tech.kakao.map.viewModel.RecentViewModel
+import campus.tech.kakao.map.dataRepository.SearchHistoryRepository
+import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
+import campus.tech.kakao.map.viewModel.factory.DBViewModelFactory
 
 class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAdapterListener {
     private lateinit var searchViewModel: SearchViewModel
-    private lateinit var recentViewModel: RecentViewModel
+    private lateinit var recentViewModel: DBViewModel
     private lateinit var editText: EditText
     private lateinit var resultDataAdapter: SearchDataAdapter
     private lateinit var searchDataListView: RecyclerView
     private lateinit var recentSearchListView: RecyclerView
     private lateinit var noResultNotice: TextView
     private lateinit var deleteBtn: ImageButton
+    private lateinit var dbRepo: SearchHistoryRepository
 
 
     @SuppressLint("MissingInflatedId")
@@ -50,7 +52,9 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
 
         //ViewModel 생성
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        recentViewModel = ViewModelProvider(this)[RecentViewModel::class.java]
+        dbRepo = SearchHistoryRepository(this)
+        recentViewModel =
+            ViewModelProvider(this, DBViewModelFactory(dbRepo))[DBViewModel::class.java]
 
         //검색 결과 목록 세로 스크롤 설정
         searchDataListView.layoutManager = LinearLayoutManager(this)
