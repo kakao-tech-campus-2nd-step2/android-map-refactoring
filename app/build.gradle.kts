@@ -4,13 +4,18 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jlleitschuh.gradle.ktlint")
     id("kotlin-parcelize")
-    id("kotlin-kapt")
+    id("org.jetbrains.kotlin.kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.room")
 }
 
 android {
     namespace = "campus.tech.kakao.map"
     compileSdk = 34
+
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 
     defaultConfig {
         applicationId = "campus.tech.kakao.map"
@@ -59,7 +64,6 @@ android {
 
 dependencies {
     val lifecycle_version = "2.8.3"
-    val room_version = "2.6.1"
 
     implementation("androidx.activity:activity:1.9.0")
     implementation("androidx.core:core-ktx:1.13.1")
@@ -77,28 +81,30 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version")
-    implementation("androidx.room:room-runtime:$room_version")
-    implementation("androidx.room:room-ktx:$room_version")
-    implementation("com.google.dagger:hilt-android:2.48.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("com.google.dagger:hilt-android:2.51.1")
     implementation("androidx.databinding:databinding-runtime:8.5.1")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("androidx.fragment:fragment-ktx:1.8.1")
     implementation("com.jakewharton.rxbinding4:rxbinding:4.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
-    kapt("androidx.room:room-compiler:$room_version")
-    kapt("com.google.dagger:hilt-compiler:2.48.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+    kapt("org.xerial:sqlite-jdbc:3.41.2.2")
     kapt("androidx.lifecycle:lifecycle-compiler:$lifecycle_version")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("io.mockk:mockk-android:1.13.11")
     testImplementation("io.mockk:mockk-agent:1.13.11")
     testImplementation("androidx.arch.core:core-testing:2.2.0")
-    testImplementation("org.robolectric:robolectric:4.11.1")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    testImplementation("org.robolectric:robolectric:4.13")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
 
-    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+    androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
@@ -106,8 +112,8 @@ dependencies {
     androidTestImplementation("androidx.test:rules:1.6.1")
     androidTestImplementation("org.hamcrest:hamcrest-library:2.2")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.6.1")
-    androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
-    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.51.1")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.51.1")
 }
 
 fun getApiKey(key: String): String {
