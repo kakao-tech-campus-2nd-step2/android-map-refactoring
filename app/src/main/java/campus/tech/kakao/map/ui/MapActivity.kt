@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -31,6 +33,8 @@ class MapActivity : AppCompatActivity() {
     private lateinit var errorLayout: View
     private lateinit var searchLayout: View
 
+    private val mapViewModel: MapViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
@@ -44,6 +48,7 @@ class MapActivity : AppCompatActivity() {
 
         val etMapSearch = findViewById<EditText>(R.id.etMapSearch)
         etMapSearch.setOnClickListener {
+            mapViewModel.clearMapItems()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

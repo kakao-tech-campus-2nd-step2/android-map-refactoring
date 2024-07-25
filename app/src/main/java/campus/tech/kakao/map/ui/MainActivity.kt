@@ -15,9 +15,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.viewmodel.MapItem
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.model.MapItem
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -97,6 +97,10 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
         })
 
         mapViewModel.getSavedMapItems()
+
+        etKeywords.setOnClickListener {
+            mapViewModel.clearMapItems()
+        }
     }
 
     override fun onItemClick(item: MapItem) {
