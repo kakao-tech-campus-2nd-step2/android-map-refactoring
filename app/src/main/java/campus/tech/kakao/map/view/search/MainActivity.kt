@@ -8,49 +8,37 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.model.datasource.SavedLocationDataSource
-import campus.tech.kakao.map.model.datasource.LocationDataSource
+import campus.tech.kakao.map.model.datasource.LocationApi
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.LocationDbHelper
+import campus.tech.kakao.map.model.datasource.SavedLocationDatabase
+import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
 import campus.tech.kakao.map.model.repository.LocationRepository
-import campus.tech.kakao.map.model.repository.SavedLocationRepository
 import campus.tech.kakao.map.view.map.MapActivity
-import campus.tech.kakao.map.viewmodel.ViewModelFactory.LocationViewModelFactory
-import campus.tech.kakao.map.viewmodel.ViewModelFactory.SavedLocationViewModelFactory
 import campus.tech.kakao.map.viewmodel.LocationViewModel
 import campus.tech.kakao.map.viewmodel.SavedLocationViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
-    private val locationViewModel: LocationViewModel by lazy {
-        ViewModelProvider(this, LocationViewModelFactory(locationRepository))
-        .get(LocationViewModel::class.java)
-    }
+    private val locationViewModel: LocationViewModel by viewModels()
+    private val savedLocationViewModel: SavedLocationViewModel by viewModels()
+
+
     private val locationAdapter: LocationAdapter by lazy { LocationAdapter(this) }
     private val locationRecyclerView: RecyclerView by lazy { findViewById(R.id.locationRecyclerView) }
-
-    private val savedLocationViewModel: SavedLocationViewModel by lazy {
-        ViewModelProvider(this, SavedLocationViewModelFactory(savedLocationRepository))
-        .get(SavedLocationViewModel::class.java)
-    }
 
     private val savedLocationAdapter: SavedLocationAdapter by lazy { SavedLocationAdapter(this) }
     private val savedLocationRecyclerView: RecyclerView by lazy {
         findViewById(R.id.savedLocationRecyclerView)
     }
-
-    private val locationDbHelper: LocationDbHelper by lazy { LocationDbHelper(this) }
-    private val locationLocalDataSource: SavedLocationDataSource by lazy { SavedLocationDataSource(locationDbHelper) }
-    private val locationRemoteDataSource: LocationDataSource by lazy { LocationDataSource() }
-    private val locationRepository: LocationRepository by lazy { LocationRepository(locationRemoteDataSource) }
-    private val savedLocationRepository: SavedLocationRepository by lazy { SavedLocationRepository(locationLocalDataSource) }
-
     private val clearButton: ImageView by lazy { findViewById(R.id.clearButton) }
     private val searchEditText: EditText by lazy { findViewById(R.id.SearchEditTextInMain) }
     private val noResultTextView: TextView by lazy { findViewById(R.id.NoResultTextView) }
@@ -122,19 +110,15 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     override fun onLocationViewClicked(location: Location) {
-        savedLocationViewModel.addSavedLocation(location.title)
+        savedLocationViewModel.addSavedLocation(location.id, location.title)
 
         val intent = Intent(this@MainActivity, MapActivity::class.java)
-        intent.putExtra("title", location.title)
-        intent.putExtra("address", location.address)
-        intent.putExtra("category", location.category)
-        intent.putExtra("longitude", location.longitude)
-        intent.putExtra("latitude", location.latitude)
+        intent.putExtra("location", location)
         startActivity(intent)
     }
 
-    override fun onSavedLocationXButtonClicked(item: SavedLocation) {
-        savedLocationViewModel.deleteSavedLocation(item)
+    override fun onSavedLocationXButtonClicked(savedLocation: SavedLocation) {
+        savedLocationViewModel.deleteSavedLocation(savedLocation)
     }
 
     override fun onSavedLocationViewClicked(title: String) {

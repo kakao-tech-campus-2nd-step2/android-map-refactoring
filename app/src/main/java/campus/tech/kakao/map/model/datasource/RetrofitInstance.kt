@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model.repository
+package campus.tech.kakao.map.model.datasource
 
 import android.os.Looper
 import campus.tech.kakao.map.BuildConfig

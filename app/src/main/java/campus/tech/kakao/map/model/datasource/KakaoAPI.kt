@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.model.repository
+package campus.tech.kakao.map.model.datasource
 
 import campus.tech.kakao.map.model.SearchFromKeywordResponse
 import retrofit2.Response

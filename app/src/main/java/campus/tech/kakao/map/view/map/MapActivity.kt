@@ -7,13 +7,14 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.model.datasource.LastLocationlDataSource
-import campus.tech.kakao.map.model.repository.LastLocationRepository
+import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
 import campus.tech.kakao.map.view.search.MainActivity
+import campus.tech.kakao.map.viewmodel.LocationViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -23,9 +24,13 @@ import com.kakao.vectormap.MapView
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
+    private val locationViewModel: LocationViewModel by viewModels()
+
     private val searchEditText by lazy { findViewById<EditText>(R.id.SearchEditTextInMap) }
     private val mapView by lazy { findViewById<MapView>(R.id.map_view) }
     private val bottomSheetLayout by lazy { findViewById<ConstraintLayout>(R.id.bottom_sheet_layout) }
@@ -33,9 +38,6 @@ class MapActivity : AppCompatActivity() {
     private val bottom_sheet_address by lazy { findViewById<TextView>(R.id.bottom_sheet_address) }
     private val errorMessageTextView by lazy { findViewById<TextView>(R.id.errorMessageTextView) }
     private val bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout> by lazy { BottomSheetBehavior.from(bottomSheetLayout) }
-
-    private val lastLocationLocalDataSource: LastLocationlDataSource by lazy { LastLocationlDataSource() }
-    private val lastLocationRepository: LastLocationRepository by lazy { LastLocationRepository(lastLocationLocalDataSource) }
 
     companion object{
         private val DEFAULT_LONGITUDE = 127.115587
@@ -78,14 +80,13 @@ class MapActivity : AppCompatActivity() {
                 showErrorMessage(error)
             }
         }, object : KakaoMapReadyCallback() {
-            val location = getCoordinates()
+            val location = getLocation()
             override fun onMapReady(kakaoMap: KakaoMap) { // 인증 후 API 가 정상적으로 실행될 때 호출됨
-                Log.d("jieun", "onMapReady coordinates: " + location.toString())
+                Log.d("jieun", "onMapReady location: " + location.toString())
                 if (location != null) {
                     showLabel(location, kakaoMap)
                     showBottomSheet(location)
-                    lastLocationRepository.putLastLocation(location)
-//                    Log.d("jieun", "onMapReady setSharedData: " + getSharedData("pref"))
+                    locationViewModel.addLastLocation(location)
                 } else{
                     hideBottomSheet()
                 }
@@ -139,26 +140,21 @@ class MapActivity : AppCompatActivity() {
         bottom_sheet_address.text = location.address
     }
 
-    private fun getCoordinates(): Location? {
-        var location = getCoordinatesByIntent()
+    private fun getLocation(): Location? {
+        var location = getLocationByIntent()
         if(location == null) {
-            location = lastLocationRepository.getLastLocation()
+            location = locationViewModel.getLastLocation()
         }
         return location
 
     }
 
-    private fun getCoordinatesByIntent(): Location? {
-        if (intent.hasExtra("title") && intent.hasExtra("longitude")
-            && intent.hasExtra("latitude") && intent.hasExtra("address")) {
-            val title = intent.getStringExtra("title")
-            val longitude = intent.getDoubleExtra("longitude", 0.0)
-            val latitude = intent.getDoubleExtra("latitude", 0.0)
-            val address = intent.getStringExtra("address").toString()
-            val category = intent.getStringExtra("category").toString()
-            if (title != null) {
-                return Location(title, address, category, longitude, latitude)
-            } else return null
-        } else return null
+    private fun getLocationByIntent(): Location? {
+        if (intent.hasExtra("location")) {
+            val location = intent.getSerializableExtra("location") as Location
+            Log.d("jieun","getLocationByIntent location "+location.toString())
+            return location
+        }
+        return null
     }
 }
