@@ -57,6 +57,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.test.espresso:espresso-core:3.6.1")
+    implementation("androidx.test.ext:junit-ktx:1.2.1")
     testImplementation("io.mockk:mockk-android:1.13.11")
     testImplementation("io.mockk:mockk-agent:1.13.11")
     testImplementation("org.mockito.kotlin:mockito-kotlin:4.1.0")

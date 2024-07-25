@@ -7,8 +7,8 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
+import androidx.test.runner.AndroidJUnit4
 import campus.tech.kakao.map.View.ErrorActivity
 import campus.tech.kakao.map.View.Map_Activity
 import org.junit.After
