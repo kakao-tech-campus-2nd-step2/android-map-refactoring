@@ -1,3 +1,4 @@
+/*
 package campus.tech.kakao.map
 
 import android.content.ContentValues
@@ -105,4 +106,4 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null
         Log.d("DbHelper", "Search results: $results")
         return results
     }
-}
+}*/
