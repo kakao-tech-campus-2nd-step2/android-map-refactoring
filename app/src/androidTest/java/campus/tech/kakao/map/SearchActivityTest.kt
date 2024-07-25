@@ -52,7 +52,6 @@ class SearchActivityTest {
             .perform(typeText("도서관"), pressImeActionButton())
 
         Thread.sleep(2000)
-        //recyclerver에 담긴 데이터를 클릭하면 그 데이터 위치로 이동하고 서칭을 해야하는데, actionOnItemAtPosition함수를 어떻게 구현해야할지 모르겠습니다.
     }
 
 }

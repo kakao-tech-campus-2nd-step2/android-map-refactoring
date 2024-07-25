@@ -35,7 +35,7 @@ class Search_Activity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        Places.initialize(applicationContext, "AIzaSyCuRN1J-MzN5Xiuk7RRyhN6xDkobbcRy4U")
+        Places.initialize(applicationContext, "AIzaSyCUncz7v8nwT3m5OHasVJTep1e1549yAKM")
         placesClient = Places.createClient(this)
 
         initViews()

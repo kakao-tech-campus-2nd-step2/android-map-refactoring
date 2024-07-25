@@ -49,7 +49,6 @@ class MapActivityTest {
 
         scenario.onActivity { activity ->
             activity.onMapReady(mockMap)
-            // Verify that the map is not null or that mapReady was called
             assertNotNull(mockMap)
         }
     }
