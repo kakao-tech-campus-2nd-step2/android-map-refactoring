@@ -10,7 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.data.model.SavedSearchWord
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS

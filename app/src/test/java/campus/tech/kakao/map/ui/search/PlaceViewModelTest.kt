@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.ui.search
 
 import android.util.Log
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -11,7 +11,6 @@ import io.mockk.mockkStatic
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest

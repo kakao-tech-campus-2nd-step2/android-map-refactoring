@@ -2,7 +2,7 @@ package campus.tech.kakao.map.data.repository
 
 import androidx.datastore.core.Serializer
 import campus.tech.kakao.map.LocationDataProto.LocationData
-import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.domain.model.Location
 import java.io.InputStream
 import java.io.OutputStream
 

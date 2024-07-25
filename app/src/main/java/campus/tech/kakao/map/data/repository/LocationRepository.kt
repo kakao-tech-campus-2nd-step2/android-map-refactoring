@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.data.repository
 
-import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.domain.model.Location
 
 interface LocationRepository {
     suspend fun saveLocation(location: Location)

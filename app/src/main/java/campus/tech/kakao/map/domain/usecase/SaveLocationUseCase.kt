@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.domain.usecase
 
-import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.data.repository.LocationRepository
 import javax.inject.Inject
 

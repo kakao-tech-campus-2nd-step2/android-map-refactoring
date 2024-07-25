@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.databinding.ItemPlaceBinding
 import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
 

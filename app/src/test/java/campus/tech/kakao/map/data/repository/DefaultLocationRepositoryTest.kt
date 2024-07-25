@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.repository
 
 import androidx.datastore.core.DataStore
-import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.domain.model.Location
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

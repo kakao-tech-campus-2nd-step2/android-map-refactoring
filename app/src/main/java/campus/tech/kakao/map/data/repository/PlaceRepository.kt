@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.data.repository
 
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 
 interface PlaceRepository {
     suspend fun getPlacesByCategory(

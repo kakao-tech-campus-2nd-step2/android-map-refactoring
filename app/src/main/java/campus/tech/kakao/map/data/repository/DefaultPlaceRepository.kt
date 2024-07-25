@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.repository
 
 import android.util.Log
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.data.network.PlaceResponse
 import campus.tech.kakao.map.data.network.service.KakaoLocalService
 import dagger.hilt.android.scopes.ViewModelScoped

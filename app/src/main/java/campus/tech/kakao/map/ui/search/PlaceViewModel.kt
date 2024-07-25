@@ -3,7 +3,7 @@ package campus.tech.kakao.map.ui.search
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
