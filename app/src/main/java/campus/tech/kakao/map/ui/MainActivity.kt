@@ -42,8 +42,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomSheetLayout: FrameLayout
     private var selectedItems = mutableListOf<MapItem>()
     private val viewModel: MapViewModel by viewModels()
-    
-  companion object {
+
+    companion object {
         const val SEARCH_REQUEST_CODE = 1
         const val PREFS_NAME = "LastMarkerPrefs"
         const val PREF_LATITUDE = "lastLatitude"
