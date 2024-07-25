@@ -94,8 +94,18 @@ class MapActivity : AppCompatActivity() {
             val latitude = data?.getDoubleExtra(EXTRA_PLACE_LATITUDE, 0.0) ?: 0.0
 
             val newLocation = Location(name, latitude, longitude, address)
-            locationViewModel.saveLocation(newLocation)
-            startMapView()
+
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    locationViewModel.saveLocation(newLocation)
+                    locationViewModel.location.collectLatest { location ->
+                        if (location == newLocation) {
+                            Log.d("testtt", "aaaa")
+                            startMapView()
+                        }
+                    }
+                }
+            }
         }
     }
 
