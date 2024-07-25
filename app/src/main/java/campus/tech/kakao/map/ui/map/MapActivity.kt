@@ -46,7 +46,6 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         collectLocationUpdates()
-        setBottomSheet()
         startMapView()
         setSearchBoxClickListener()
         setSearchActivityResultLauncher()
@@ -96,19 +95,7 @@ class MapActivity : AppCompatActivity() {
 
             val newLocation = Location(name, latitude, longitude, address)
             locationViewModel.saveLocation(newLocation)
-            setBottomSheet()
             startMapView()
-        }
-    }
-
-    /**
-     * bottom sheet의 name과 address의 text를 설정하는 함수.
-     *
-     */
-    private fun setBottomSheet() {
-        locationViewModel.location.value.let { location ->
-            binding.bottomSheetPlaceNameTextView.text = location.name
-            binding.bottomSheetPlaceAddressTextView.text = location.address
         }
     }
 
