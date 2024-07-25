@@ -8,8 +8,12 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.utility.BottomSheetHelper
 import campus.tech.kakao.map.utility.MapUtility
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -35,31 +39,31 @@ class MapActivity : AppCompatActivity() {
     @Inject
     lateinit var bottomSheetHelper: BottomSheetHelper
 
-    lateinit var mapView: MapView
+    lateinit var mapBinding: ActivityMapBinding
     lateinit var startMainActivityForResult: ActivityResultLauncher<Intent>
     var map: KakaoMap? = null
     var savedLatitude: Double = 37.5642
     var savedLongitude: Double = 127.00
+    val mapViewModel: MapViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
-
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        mapView = findViewById(R.id.map_view)
-        loadData()  // 저장 위치 가져오기
+        mapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        mapBinding.lifecycleOwner = this
+        mapBinding.mapViewModel = mapViewModel
 
         startMainActivityForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
             }
         }
 
-        etSearch.setOnClickListener {
+        mapViewModel.searchClickEvent.observe(this, Observer {
             val intent = Intent(this, MainActivity::class.java)
             startMainActivityForResult.launch(intent)
-        }
+        })
+        loadData()  // 저장 위치 가져오기
 
-        mapView.start(object : MapLifeCycleCallback() {
+        mapBinding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 Log.d("KakaoMap", "onMapDestroy")
             }
@@ -96,12 +100,12 @@ class MapActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        mapBinding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        mapBinding.mapView.pause()
         saveData(savedLatitude.toString(), savedLongitude.toString())
     }
 
