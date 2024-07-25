@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.vectormap.KakaoMap
@@ -33,7 +33,7 @@ class KakaoMapFragment @Inject constructor() :
     Fragment() {
 
     private val viewModel: SearchActivityViewModel by activityViewModels()
-    private val mapViewModel: KakaoMapViewModel by viewModels()
+    private val mapViewModel: KakaoMapViewModel by lazy{ViewModelProvider(requireActivity())[KakaoMapViewModel::class.java]}
 
     private lateinit var binding: FragmentKakaoMapBinding
 
@@ -94,10 +94,10 @@ class KakaoMapFragment @Inject constructor() :
     }
 
     private fun moveCamera(position: CameraPosition) {
-        skipNextCameraMoveListener()
         if (kakaoMap?.isVisible != true) {
             return
         }
+        skipNextCameraMoveListener()
 
         val camUpdate =
             CameraUpdateFactory.newCameraPosition(position)

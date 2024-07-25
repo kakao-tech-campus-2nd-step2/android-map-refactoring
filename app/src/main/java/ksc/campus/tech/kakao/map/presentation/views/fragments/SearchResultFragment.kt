@@ -9,7 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.databinding.BindingAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +34,7 @@ fun attachList(recyclerView: RecyclerView, items: StateFlow<List<SearchResult>>?
 class SearchResultFragment @Inject constructor() :
     Fragment() {
     private val viewModel: SearchActivityViewModel by activityViewModels()
-    private val searchViewModel: SearchResultViewModel by viewModels()
+    private val searchViewModel: SearchResultViewModel by lazy{ ViewModelProvider(requireActivity())[SearchResultViewModel::class.java] }
     private lateinit var binding: FragmentSearchResultBinding
 
     override fun onCreateView(
