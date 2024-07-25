@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.await
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -32,13 +33,13 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getAllSavedKeywordsFromPrefs(): List<Keyword> {
+    override suspend fun getAllSavedKeywordsFromPrefs(): List<Keyword> {
         val savedKeywordsJson = sharedPreferences.getString("saved_keywords", null) ?: return emptyList()
         val type = object : TypeToken<List<Keyword>>() {}.type
         return Gson().fromJson(savedKeywordsJson, type)
     }
 
-    override fun saveKeywordToPrefs(keyword: Keyword) {
+    override suspend fun saveKeywordToPrefs(keyword: Keyword) = withContext(Dispatchers.IO) {
         val savedKeywords = getAllSavedKeywordsFromPrefs().toMutableList()
         savedKeywords.add(0, keyword)
         val editor = sharedPreferences.edit()
@@ -46,7 +47,7 @@ class RepositoryImpl @Inject constructor(
         editor.apply()
     }
 
-    override fun deleteKeywordFromPrefs(keyword: Keyword) {
+    override suspend fun deleteKeywordFromPrefs(keyword: Keyword) = withContext(Dispatchers.IO) {
         val savedKeywords = getAllSavedKeywordsFromPrefs().toMutableList()
         savedKeywords.remove(keyword)
         val editor = sharedPreferences.edit()
@@ -54,7 +55,7 @@ class RepositoryImpl @Inject constructor(
         editor.apply()
     }
 
-    override fun saveLastMarkerPosition(latitude: Double, longitude: Double, placeName: String, roadAddressName: String) {
+    override suspend fun saveLastMarkerPosition(latitude: Double, longitude: Double, placeName: String, roadAddressName: String) = withContext(Dispatchers.IO) {
         val sharedPreferences = sharedPreferences
         with(sharedPreferences.edit()) {
             putFloat(PREF_LATITUDE, latitude.toFloat())
@@ -65,9 +66,9 @@ class RepositoryImpl @Inject constructor(
         }
     }
 
-    override fun loadLastMarkerPosition(): Keyword? {
+    override suspend fun loadLastMarkerPosition(): Keyword? = withContext(Dispatchers.IO) {
         val sharedPreferences = sharedPreferences
-        return if (sharedPreferences.contains(PREF_LATITUDE) && sharedPreferences.contains(PREF_LONGITUDE)) {
+        if (sharedPreferences.contains(PREF_LATITUDE) && sharedPreferences.contains(PREF_LONGITUDE)) {
             val latitude = sharedPreferences.getFloat(PREF_LATITUDE, 0.0f).toDouble()
             val longitude = sharedPreferences.getFloat(PREF_LONGITUDE, 0.0f).toDouble()
             val placeName = sharedPreferences.getString(PREF_PLACE_NAME, "") ?: ""

@@ -26,8 +26,10 @@ class SearchViewModel @Inject constructor(
     val lastMarker: LiveData<Keyword> = _lastMarker
 
     init {
-        _savedKeywords.value = repository.getAllSavedKeywordsFromPrefs()
-        loadLastMarkerPosition()
+        viewModelScope.launch {
+            _savedKeywords.value = repository.getAllSavedKeywordsFromPrefs()
+            loadLastMarkerPosition()
+        }
     }
 
     fun search(query: String) {
@@ -38,19 +40,23 @@ class SearchViewModel @Inject constructor(
     }
 
     fun saveKeyword(keyword: Keyword) {
-        val currentSavedKeywords = _savedKeywords.value?.toMutableList() ?: mutableListOf()
-        if (!currentSavedKeywords.contains(keyword)) {
-            currentSavedKeywords.add(0, keyword)
-            _savedKeywords.value = currentSavedKeywords
-            repository.saveKeywordToPrefs(keyword)
+        viewModelScope.launch {
+            val currentSavedKeywords = _savedKeywords.value?.toMutableList() ?: mutableListOf()
+            if (!currentSavedKeywords.contains(keyword)) {
+                currentSavedKeywords.add(0, keyword)
+                _savedKeywords.value = currentSavedKeywords
+                repository.saveKeywordToPrefs(keyword)
+            }
         }
     }
 
     fun deleteKeyword(keyword: Keyword) {
-        val currentSavedKeywords = _savedKeywords.value?.toMutableList() ?: mutableListOf()
-        currentSavedKeywords.remove(keyword)
-        _savedKeywords.value = currentSavedKeywords
-        repository.deleteKeywordFromPrefs(keyword)
+        viewModelScope.launch {
+            val currentSavedKeywords = _savedKeywords.value?.toMutableList() ?: mutableListOf()
+            currentSavedKeywords.remove(keyword)
+            _savedKeywords.value = currentSavedKeywords
+            repository.deleteKeywordFromPrefs(keyword)
+        }
     }
 
     fun processActivityResult(data: Intent) {
@@ -66,13 +72,17 @@ class SearchViewModel @Inject constructor(
     }
 
     fun saveLastMarkerPosition(keyword: Keyword) {
-        repository.saveLastMarkerPosition(keyword.x, keyword.y, keyword.name, keyword.address)
+        viewModelScope.launch {
+            repository.saveLastMarkerPosition(keyword.x, keyword.y, keyword.name, keyword.address)
+        }
     }
 
     fun loadLastMarkerPosition() {
-        val keyword = repository.loadLastMarkerPosition()
-        if (keyword != null) {
-            _lastMarker.value = keyword
+        viewModelScope.launch {
+            val keyword = repository.loadLastMarkerPosition()
+            if (keyword != null) {
+                _lastMarker.value = keyword
+            }
         }
     }
 }
