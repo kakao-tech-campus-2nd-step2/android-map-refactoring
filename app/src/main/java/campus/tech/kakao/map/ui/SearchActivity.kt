@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.RecyclerView
 import android.app.Activity
 import android.content.Intent
 import campus.tech.kakao.map.viewmodel.MapViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.util.SQLiteHelper
 import campus.tech.kakao.map.model.MapItem

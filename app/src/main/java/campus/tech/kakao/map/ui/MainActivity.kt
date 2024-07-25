@@ -19,7 +19,6 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import android.app.Activity
 import android.widget.FrameLayout
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.MapItem
 import com.google.android.material.bottomsheet.BottomSheetBehavior
