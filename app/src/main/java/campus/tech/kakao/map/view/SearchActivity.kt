@@ -24,8 +24,6 @@ import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.model.SavedPlaceDao
-import campus.tech.kakao.map.model.SavedPlaceDatabase
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
