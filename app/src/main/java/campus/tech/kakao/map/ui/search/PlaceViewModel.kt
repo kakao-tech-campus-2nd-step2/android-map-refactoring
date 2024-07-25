@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,7 +18,7 @@ class PlaceViewModel
 @Inject
 constructor(
     private val getPlacesByCategoryUseCase: GetPlacesByCategoryUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) :
     ViewModel() {
     private val _searchResults = MutableStateFlow<List<Place>>(emptyList())

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
 import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
@@ -21,7 +22,7 @@ constructor(
     private val insertOrUpdateSearchWordUseCase: InsertOrUpdateSearchWordUseCase,
     private val deleteSearchWordByIdUseCase: DeleteSearchWordByIdUseCase,
     private val getAllSearchWordsUseCase: GetAllSearchWordsUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _savedSearchWords = MutableStateFlow<List<SavedSearchWord>>(emptyList())
     val savedSearchWords: StateFlow<List<SavedSearchWord>> get() = _savedSearchWords

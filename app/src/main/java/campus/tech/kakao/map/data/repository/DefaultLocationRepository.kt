@@ -3,6 +3,7 @@ package campus.tech.kakao.map.data.repository
 import android.util.Log
 import androidx.datastore.core.DataStore
 import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.di.LocationDataStore
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -12,7 +13,7 @@ import javax.inject.Inject
 class DefaultLocationRepository
 @Inject
 constructor(
-    private val dataStore: DataStore<Location>,
+    @LocationDataStore private val dataStore: DataStore<Location>,
 ) : LocationRepository {
     override suspend fun saveLocation(location: Location) {
         dataStore.updateData {

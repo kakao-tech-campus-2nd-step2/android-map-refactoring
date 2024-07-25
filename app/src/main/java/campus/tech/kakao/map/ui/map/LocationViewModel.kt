@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.model.Location
+import campus.tech.kakao.map.di.IoDispatcher
 import campus.tech.kakao.map.domain.usecase.LoadLocationUseCase
 import campus.tech.kakao.map.domain.usecase.SaveLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,7 @@ class LocationViewModel
 constructor(
     private val loadLocationUseCase: LoadLocationUseCase,
     private val saveLocationUseCase: SaveLocationUseCase,
-    private val ioDispatcher: CoroutineDispatcher,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
     private val _location = MutableStateFlow(getDefaultLocation())
     val location: StateFlow<Location> get() = _location
