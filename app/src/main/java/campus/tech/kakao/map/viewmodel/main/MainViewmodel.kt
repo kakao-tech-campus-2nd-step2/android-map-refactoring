@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(
             val roadAddressName = sharedPreferences.getString(PREF_ROAD_ADDRESS_NAME, "") ?: ""
 
             _lastMarkerPosition.value = if (placeName.isNotEmpty() && roadAddressName.isNotEmpty()) {
-                Item(placeName, roadAddressName, "", latitude, longitude)
+                Item(place = placeName, address = roadAddressName, category = "", latitude = latitude, longitude = longitude)
             } else {
                 null
             }
