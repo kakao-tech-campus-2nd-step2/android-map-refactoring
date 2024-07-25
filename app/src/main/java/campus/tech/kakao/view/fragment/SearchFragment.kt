@@ -1,44 +1,41 @@
-package campus.tech.kakao.View.Fragment
+package campus.tech.kakao.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.View.Adapter.HistoryAdapter
-import campus.tech.kakao.View.Adapter.PlacesAdapter
-import campus.tech.kakao.View.Activity.MainActivity
-import campus.tech.kakao.ViewModel.SearchViewModel
+import campus.tech.kakao.view.adapter.HistoryAdapter
+import campus.tech.kakao.view.adapter.PlacesAdapter
+import campus.tech.kakao.view.activity.MainActivity
+import campus.tech.kakao.viewmodel.SearchViewModel
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.FragmentSearchBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
-    lateinit var searchView: SearchView
-    lateinit var recyclerView: RecyclerView
-    lateinit var noResultTextView: TextView
-    lateinit var historyRecyclerView: RecyclerView
+    private lateinit var binding: FragmentSearchBinding
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var historyAdapter: HistoryAdapter
     private lateinit var adapter: PlacesAdapter
-
-    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false).apply {
+            viewModel = this@SearchFragment.viewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeViews(view)
         setupRecyclerViews()
         setupSearchView()
         observeViewModel()
@@ -50,33 +47,26 @@ class SearchFragment : Fragment() {
         viewModel.loadSelectedData()
     }
 
-    private fun initializeViews(view: View) {
-        searchView = view.findViewById(R.id.searchView2)
-        recyclerView = view.findViewById(R.id.recyclerView)
-        noResultTextView = view.findViewById(R.id.noResultTextView)
-        historyRecyclerView = view.findViewById(R.id.historyRecyclerView)
-    }
-
     private fun setupRecyclerViews() {
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        historyRecyclerView.layoutManager =
+        binding.recyclerView.layoutManager = LinearLayoutManager(context)
+        binding.historyRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         historyAdapter = HistoryAdapter(mutableListOf(), { id ->
             viewModel.deleteSelectedData(id)
-        }, { historyItem -> searchView.setQuery(historyItem, true) })
-        historyRecyclerView.adapter = historyAdapter
+        }, { historyItem -> binding.searchView2.setQuery(historyItem, true) })
+        binding.historyRecyclerView.adapter = historyAdapter
 
         adapter = PlacesAdapter(listOf()) { place ->
             viewModel.insertSelectedData(place.placeName)
             viewModel.selectPlace(place)
             navigateToMapFragment()
         }
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
     }
 
     private fun setupSearchView() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchView2.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (!query.isNullOrEmpty()) {
                     viewModel.searchPlaces(BuildConfig.KAKAO_REST_API_KEY, query)
@@ -97,23 +87,23 @@ class SearchFragment : Fragment() {
     }
 
     private fun showNoResultMessage() {
-        noResultTextView.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-        historyRecyclerView.visibility =
+        binding.noResultTextView.visibility = View.VISIBLE
+        binding.recyclerView.visibility = View.GONE
+        binding.historyRecyclerView.visibility =
             if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
     }
 
     private fun hideNoResultMessage() {
-        noResultTextView.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
-        historyRecyclerView.visibility =
+        binding.noResultTextView.visibility = View.GONE
+        binding.recyclerView.visibility = View.VISIBLE
+        binding.historyRecyclerView.visibility =
             if (historyAdapter.itemCount > 0) View.VISIBLE else View.GONE
     }
 
     private fun observeViewModel() {
         viewModel.selectedData.observe(viewLifecycleOwner) { historyData ->
             historyAdapter.updateData(historyData)
-            historyRecyclerView.visibility =
+            binding.historyRecyclerView.visibility =
                 if (historyData.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
