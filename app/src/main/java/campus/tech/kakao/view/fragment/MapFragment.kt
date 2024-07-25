@@ -1,4 +1,4 @@
-package campus.tech.kakao.View.Fragment
+package campus.tech.kakao.view.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,20 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import campus.tech.kakao.View.Activity.MainActivity
-import campus.tech.kakao.View.Activity.OnMapErrorActivity
-import campus.tech.kakao.View.PlaceInfoBottomSheet
-import campus.tech.kakao.ViewModel.MapViewModel
-import campus.tech.kakao.ViewModel.MainViewModel
+import campus.tech.kakao.view.activity.OnMapErrorActivity
+import campus.tech.kakao.view.PlaceInfoBottomSheet
+import campus.tech.kakao.viewmodel.MapViewModel
+import campus.tech.kakao.viewmodel.MainViewModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.FragmentMapBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
@@ -29,8 +27,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MapFragment : Fragment() {
-    private lateinit var mapView: MapView
-    private lateinit var searchView: SearchView
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
     var x: Double = 127.108621
     var y: Double = 37.402005
     private var kakaoMap: KakaoMap? = null
@@ -50,8 +48,6 @@ class MapFragment : Fragment() {
             y = it.getDouble("y", y)
             val placeName = it.getString("placeName", "")
             val roadAddressName = it.getString("roadAddressName", "")
-
-            Log.d("MapFragment", "Received Data - x: $x, y: $y, placeName: $placeName, roadAddressName: $roadAddressName")
         }
     }
 
@@ -59,13 +55,15 @@ class MapFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_map, container, false)
+        _binding = FragmentMapBinding.inflate(inflater, container, false).apply {
+            viewModel = this@MapFragment.mapViewModel
+            lifecycleOwner = viewLifecycleOwner
+        }
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mapView = view.findViewById(R.id.KakaoMapView)
-        searchView = view.findViewById(R.id.searchView1)
 
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -73,7 +71,7 @@ class MapFragment : Fragment() {
             }
         })
 
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.KakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {}
 
             override fun onMapError(p0: Exception) {
@@ -106,13 +104,12 @@ class MapFragment : Fragment() {
                     val y = it.getDouble("y", this@MapFragment.y)
                     val placeName = it.getString("placeName", "")
                     val roadAddressName = it.getString("roadAddressName", "")
-                    Log.d("MapFragment", "Setting Coordinates - x: $x, y: $y, placeName: $placeName, roadAddressName: $roadAddressName")
                     setCoordinates(x, y, placeName, roadAddressName)
                 }
             }
         })
 
-        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+        binding.searchView1.setOnQueryTextFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 mainViewModel.setSearchFragment()
             }
@@ -121,12 +118,17 @@ class MapFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        binding.KakaoMapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        binding.KakaoMapView.pause()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     fun setCoordinates(newX: Double, newY: Double, placeName: String, roadAddressName: String) {
