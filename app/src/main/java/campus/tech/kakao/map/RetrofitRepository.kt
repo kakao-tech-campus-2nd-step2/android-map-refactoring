@@ -10,6 +10,7 @@ import javax.inject.Inject
 open class RetrofitRepository @Inject constructor(
     private val retrofitService: RetrofitService
 ) {
+
     open suspend fun getPlace(query: String): List<Document> {
         if (query.isEmpty()) {
             return emptyList()
