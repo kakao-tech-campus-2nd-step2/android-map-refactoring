@@ -33,16 +33,20 @@ constructor(
         categoryInput: String,
         totalPageCount: Int,
     ): List<Place> {
-        val categoryGroupCode = categoryCodeMap[categoryInput] ?: return emptyList()
-        return fetchPlacesByCategory(categoryGroupCode, totalPageCount)
+        val categoryGroupCodes = categoryCodeMap.filterKeys { it.contains(categoryInput) }.values
+        if (categoryGroupCodes.isEmpty()) {
+            return emptyList()
+        }
+        return fetchPlacesByCategories(categoryGroupCodes, totalPageCount)
     }
 
-    private suspend fun fetchPlacesByCategory(
-        categoryGroupCode: String,
+    private suspend fun fetchPlacesByCategories(
+        categoryCodes: Collection<String>,
         totalPageCount: Int,
     ): List<Place> {
-        val deferredResults =
-            createDeferredResults(categoryGroupCode, totalPageCount)
+        val deferredResults = categoryCodes.flatMap { categoryCode ->
+            createDeferredResults(categoryCode, totalPageCount)
+        }
 
         return processDeferredResults(deferredResults)
     }

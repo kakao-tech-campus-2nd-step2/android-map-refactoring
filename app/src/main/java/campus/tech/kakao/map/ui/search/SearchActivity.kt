@@ -65,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setSearchEditText() {
         binding.searchEditText.addTextChangedListener { editable ->
             val categoryInput = editable.toString().trim()
-            placeViewModel.searchPlacesByCategory(categoryInput, totalPageCount = 3)
+            placeViewModel.updateCategoryInput(categoryInput, totalPageCount = 2)
         }
     }
 
