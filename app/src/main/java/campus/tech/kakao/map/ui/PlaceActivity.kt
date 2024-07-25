@@ -14,7 +14,7 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.NetworkRepository
 import campus.tech.kakao.map.data.PlaceEntity
 import campus.tech.kakao.map.data.PlaceRepository
-import campus.tech.kakao.map.databinding.SearchLayoutBinding
+import campus.tech.kakao.map.databinding.PlaceLayoutBinding
 import campus.tech.kakao.map.domain.Place
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +26,7 @@ import javax.inject.Inject
 class PlaceActivity : AppCompatActivity() {
     private lateinit var placeAdapter: PlaceRecyclerViewAdapter
     private lateinit var searchAdapter: SearchRecyclerViewAdapter
-    private lateinit var placeBinding: SearchLayoutBinding
+    private lateinit var placeBinding: PlaceLayoutBinding
 
     @Inject
     lateinit var networkRepository: NetworkRepository
@@ -35,7 +35,7 @@ class PlaceActivity : AppCompatActivity() {
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        placeBinding = DataBindingUtil.setContentView(this, R.layout.search_layout)
+        placeBinding = DataBindingUtil.setContentView(this, R.layout.place_layout)
 
         val searchList: MutableList<Place> = mutableListOf()
         val keywordList: MutableList<Place> = mutableListOf()
