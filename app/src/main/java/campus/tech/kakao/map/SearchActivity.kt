@@ -13,16 +13,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
-    private val viewModel: SearchViewModel by viewModels {
-        ViewModelFactory(applicationContext, MapApplication.prefs)
-    }
+    @Inject lateinit var preferenceManager: PreferenceManager
+    private val viewModel: SearchViewModel by viewModels()
 
     private val placeAdapter: PlaceAdapter by lazy {
         PlaceAdapter(
