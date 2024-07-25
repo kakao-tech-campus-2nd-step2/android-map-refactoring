@@ -1,40 +1,36 @@
-package campus.tech.kakao.View
+package campus.tech.kakao.view
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import campus.tech.kakao.map.databinding.BottomsheetBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import campus.tech.kakao.map.R
 
 class PlaceInfoBottomSheet : BottomSheetDialogFragment() {
 
-    private var placeName: String? = null
-    private var roadAddressName: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            placeName = it.getString("placeName")
-            roadAddressName = it.getString("roadAddressName")
-        }
-    }
+    private var _binding: BottomsheetBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.bottomsheet, container, false)
+        _binding = BottomsheetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val placeNameTextView: TextView = view.findViewById(R.id.placeNameTextView)
-        val roadAddressTextView: TextView = view.findViewById(R.id.roadAddressTextView)
+        arguments?.let {
+            binding.placeName = it.getString("placeName")
+            binding.roadAddressName = it.getString("roadAddressName")
+        }
+    }
 
-        placeNameTextView.text = placeName
-        roadAddressTextView.text = roadAddressName
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     companion object {
