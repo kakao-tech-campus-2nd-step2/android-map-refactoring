@@ -10,10 +10,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import campus.tech.kakao.map.PlaceApplication
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.presentation.search.SearchActivity
 import com.kakao.vectormap.KakaoMap
@@ -30,10 +32,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    private val mapView by lazy<MapView> { findViewById(R.id.mapView) }
-    private val searchView by lazy<ConstraintLayout> { findViewById(R.id.searchView) }
-    private val swipeRefreshLayout by lazy<SwipeRefreshLayout> {findViewById(R.id.swipeRefreshLayout)}
-    private val tvErrorMessage by lazy<TextView> {findViewById(R.id.tvErrorMessage)}
+    private lateinit var binding: ActivityMapBinding
     private lateinit var resultLauncher: ActivityResultLauncher<Intent>
     private lateinit var mapBottomSheet: MapBottomSheet
     private lateinit var kakaoMap: KakaoMap
@@ -41,14 +40,19 @@ class MapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
 
+        initBinding()
         collectViewModel()
         initSwipeRefreshLayout()
         initMapView()
         initSearchView()
         setResultLauncher()
+    }
 
+    private fun initBinding(){
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.lifecycleOwner = this
+        binding.viewModel = mapViewModel
     }
 
     private fun collectViewModel() {
@@ -62,18 +66,18 @@ class MapActivity : AppCompatActivity() {
         }
     }
     private fun initSwipeRefreshLayout() {
-        swipeRefreshLayout.setOnRefreshListener {
+        binding.swipeRefreshLayout.setOnRefreshListener {
             if (!isNetworkAvailable()) {
                 showErrorPage(Exception("네트워크 연결 오류"))
             }else{
                 showMapPage()
                 showBottomSheet(mapViewModel.lastVisitedPlace.value)
             }
-            swipeRefreshLayout.isRefreshing = false
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
     private fun initMapView() {
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {}
             override fun onMapError(error: Exception) {
                 showErrorPage(error)
@@ -100,18 +104,18 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showMapPage(){
-        tvErrorMessage.visibility = View.GONE
-        mapView.visibility = View.VISIBLE
+        binding.tvErrorMessage.visibility = View.GONE
+        binding.mapView.visibility = View.VISIBLE
     }
 
     private fun showErrorPage(error: Exception) {
-        tvErrorMessage.visibility = View.VISIBLE
-        mapView.visibility = View.GONE
-        tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
+        binding.tvErrorMessage.visibility = View.VISIBLE
+        binding.mapView.visibility = View.GONE
+        binding.tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
     }
 
     private fun initSearchView() {
-        searchView.setOnClickListener {
+        binding.searchView.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             resultLauncher.launch(intent)
         }
@@ -152,11 +156,11 @@ class MapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        binding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        binding.mapView.pause()
     }
 }
