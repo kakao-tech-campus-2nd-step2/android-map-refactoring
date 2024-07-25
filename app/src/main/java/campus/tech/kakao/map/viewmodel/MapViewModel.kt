@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.database.AppDatabase
 import campus.tech.kakao.map.model.KakaoMapProductResponse
-import campus.tech.kakao.map.model.MapItemEntity
+import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.toEntity
 import campus.tech.kakao.map.network.RetrofitClient
 import campus.tech.kakao.map.repository.MapItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -29,11 +29,6 @@ class MapViewModel @Inject constructor(
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
-
-    init {
-        val mapItemDao = AppDatabase.getDatabase(application).mapItemDao()
-        repository = MapItemRepository(mapItemDao)
-    }
 
     fun searchPlaces(keyword: String) {
         val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
@@ -60,16 +55,9 @@ class MapViewModel @Inject constructor(
 
     private fun saveResultsToDatabase(results: List<MapItem>) {
         viewModelScope.launch {
-            results.forEach { mapItem ->
-                val entity = MapItemEntity(
-                    name = mapItem.name,
-                    address = mapItem.address,
-                    category = mapItem.category,
-                    longitude = mapItem.longitude,
-                    latitude = mapItem.latitude
-                )
-                repository.insert(entity)
-            }
+            repository.deleteAll()
+            val entities = results.map { it.toEntity() }
+            repository.insertAll(entities)
         }
     }
 
@@ -80,12 +68,10 @@ class MapViewModel @Inject constructor(
             })
         }
     }
-}
 
-data class MapItem(
-    val name: String,
-    val address: String,
-    val category: String,
-    val longitude: Double,
-    val latitude: Double
-)
+    fun clearMapItems() {
+        viewModelScope.launch {
+            repository.deleteAll()
+        }
+    }
+}
