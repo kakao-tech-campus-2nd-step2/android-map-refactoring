@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.ui.search.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -8,21 +7,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.databinding.ItemHistoryBinding
-import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 
 class HistoryAdapter(
-    private val context: Context,
-    private val viewModel: SearchLocationViewModel
+    private val searchLocationByHistory: (String) -> Unit,
+    private val removeHistory: (String) -> Unit
 ) : ListAdapter<History, HistoryAdapter.MyViewHolder>(diffUtil) {
     inner class MyViewHolder(private val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.locationHistoryNameTextView.setOnClickListener {
-                viewModel.searchLocationByHistory(currentList[bindingAdapterPosition].name)
+                searchLocationByHistory(currentList[bindingAdapterPosition].name)
             }
 
             binding.removeLocationHistoryButton.setOnClickListener {
-                viewModel.removeHistory(currentList[bindingAdapterPosition].name)
+                removeHistory(currentList[bindingAdapterPosition].name)
             }
         }
 
@@ -34,7 +32,7 @@ class HistoryAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
             ItemHistoryBinding.inflate(
-                LayoutInflater.from(context),
+                LayoutInflater.from(parent.context),
                 parent,
                 false
             )

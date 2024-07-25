@@ -35,17 +35,15 @@ class SearchLocationActivity : AppCompatActivity() {
             }
 
             binding.searchResultRecyclerView.adapter =
-                SearchLocationAdapter(locationData, this, viewModel)
+                SearchLocationAdapter(locationData, viewModel::addHistory, viewModel::addMarker)
         }
+
+        binding.searchHistoryRecyclerView.adapter =
+            HistoryAdapter(viewModel::searchLocationByHistory, viewModel::removeHistory)
 
         viewModel.history.observe(this) {
             it?.let { historyData ->
-                var adapter = binding.searchHistoryRecyclerView.adapter as? HistoryAdapter
-                if (adapter == null) {
-                    adapter = HistoryAdapter(this, viewModel)
-                    binding.searchHistoryRecyclerView.adapter = adapter
-                }
-
+                val adapter = binding.searchHistoryRecyclerView.adapter as HistoryAdapter
                 adapter.submitList(historyData)
             }
         }
