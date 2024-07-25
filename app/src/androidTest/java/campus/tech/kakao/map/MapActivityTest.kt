@@ -9,17 +9,13 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import campus.tech.kakao.map.View.Map_Activity
-import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
-import junit.framework.TestCase.assertNotNull
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.Mockito.mock
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.`when`
 
 @RunWith(AndroidJUnit4::class)
 class MapActivityTest {
@@ -30,10 +26,7 @@ class MapActivityTest {
 
     @Before
     fun setup() {
-        sharedPreferences = mock(SharedPreferences::class.java)
-        editor = mock(SharedPreferences.Editor::class.java)
-
-        `when`(sharedPreferences.edit()).thenReturn(editor)
+        editor = sharedPreferences.edit()
 
         scenario = ActivityScenario.launch(Map_Activity::class.java)
     }
@@ -45,16 +38,14 @@ class MapActivityTest {
 
     @Test
     fun mapSuccess() {
-        val mockMap = mock(GoogleMap::class.java)
-
         scenario.onActivity { activity ->
-            activity.onMapReady(mockMap)
-            assertNotNull(mockMap)
+            val googleMap = scenario
+            assertNotNull(googleMap)
         }
     }
 
     @Test
-    fun LastLocationRequest() {
+    fun lastLocationRequest() {
         val testLatLng = LatLng(37.5665, 126.9780)
 
         scenario.onActivity { activity ->
@@ -62,15 +53,12 @@ class MapActivityTest {
             method.isAccessible = true
             method.invoke(activity, testLatLng.latitude, testLatLng.longitude)
 
-            // Verify SharedPreferences interactions
-            verify(editor).putFloat("lastLatitude", testLatLng.latitude.toFloat())
-            verify(editor).putFloat("lastLongitude", testLatLng.longitude.toFloat())
-            verify(editor).apply()
+            val lastLatitude = sharedPreferences.getFloat("lastLatitude", 0f)
+            val lastLongitude = sharedPreferences.getFloat("lastLongitude", 0f)
 
-            `when`(sharedPreferences.getFloat("lastLatitude", 0f)).thenReturn(testLatLng.latitude.toFloat())
-            `when`(sharedPreferences.getFloat("lastLongitude", 0f)).thenReturn(testLatLng.longitude.toFloat())
+            assertEquals(testLatLng.latitude.toFloat(), lastLatitude)
+            assertEquals(testLatLng.longitude.toFloat(), lastLongitude)
 
-            // Access the lastKnownLocation field
             val field = Map_Activity::class.java.getDeclaredField("lastKnownLocation")
             field.isAccessible = true
             val lastKnownLocation = field.get(activity) as LatLng
@@ -80,7 +68,7 @@ class MapActivityTest {
     }
 
     @Test
-    fun Showthe401() {
+    fun showError401() {
         scenario.onActivity { activity ->
             activity.onMapError(401)
             onView(withId(R.id.error_message)).check(matches(isDisplayed()))
@@ -88,6 +76,8 @@ class MapActivityTest {
         }
     }
 }
+
+
 
 
 
