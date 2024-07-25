@@ -6,14 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.data.local_search.Location
-import campus.tech.kakao.map.domain.repository.HistoryRepository
-import campus.tech.kakao.map.domain.repository.SearchLocationRepository
+import campus.tech.kakao.map.domain.usecase.GetHistoryUseCase
+import campus.tech.kakao.map.domain.usecase.RemoveHistoryUseCase
+import campus.tech.kakao.map.domain.usecase.SearchLocationUseCase
+import campus.tech.kakao.map.domain.usecase.UpdateHistoryUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SearchLocationViewModel @Inject constructor(
-    private val historyRepository: HistoryRepository,
-    private val searchLocationRepository: SearchLocationRepository
+    private val getHistoryUseCase: GetHistoryUseCase,
+    private val updateHistoryUseCase: UpdateHistoryUseCase,
+    private val removeHistoryUseCase: RemoveHistoryUseCase,
+    private val searchLocationUseCase: SearchLocationUseCase
 ) : ViewModel() {
 
     private val _location = MutableLiveData<List<Location>?>(emptyList())
@@ -30,7 +34,7 @@ class SearchLocationViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            _history.postValue(historyRepository.getHistory())
+            _history.postValue(getHistoryUseCase())
         }
     }
 
@@ -40,21 +44,21 @@ class SearchLocationViewModel @Inject constructor(
 
     fun searchLocation(category: String) {
         viewModelScope.launch {
-            _location.postValue(searchLocationRepository.searchLocation(category))
+            _location.postValue(searchLocationUseCase(category))
         }
     }
 
     fun addHistory(locationName: String) {
         viewModelScope.launch {
-            historyRepository.addHistory(locationName)
-            _history.postValue(historyRepository.getHistory())
+            updateHistoryUseCase(locationName)
+            _history.postValue(getHistoryUseCase())
         }
     }
 
     fun removeHistory(locationName: String) {
         viewModelScope.launch {
-            historyRepository.removeHistory(locationName)
-            _history.postValue(historyRepository.getHistory())
+            removeHistoryUseCase(locationName)
+            _history.postValue(getHistoryUseCase())
         }
     }
 
