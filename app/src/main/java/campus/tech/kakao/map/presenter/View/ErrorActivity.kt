@@ -6,17 +6,17 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.base.ErrorEnum
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityErrorBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.Serializable
 
 
 @AndroidEntryPoint
 class ErrorActivity : AppCompatActivity() {
-    private lateinit var errorText : TextView
-    private lateinit var errorMsg : TextView
-    private lateinit var retry : Button
+    private lateinit var binding: ActivityErrorBinding
     private lateinit var type : ErrorEnum
     private lateinit var msg : String
 
@@ -24,9 +24,7 @@ class ErrorActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_error)
 
-        errorText = findViewById<TextView>(R.id.errorText)
-        errorMsg = findViewById<TextView>(R.id.errorMsg)
-        retry = findViewById<Button>(R.id.retryBtn)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_error)
 
         getExtras()
         settingText()
@@ -39,16 +37,16 @@ class ErrorActivity : AppCompatActivity() {
     }
 
     private fun settingText(){
-        errorText.text = when(type){
+        binding.errorText.text = when(type){
             ErrorEnum.MAP_LOAD_ERROR -> getString(R.string.map_error)
             else -> getString(R.string.else_error)
         }
 
-        errorMsg.text = msg
+        binding.errorMsg.text = msg
     }
 
     private fun setRetryListener(){
-        retry.setOnClickListener{
+        binding.retryBtn.setOnClickListener{
             val intent = when(type){
                 ErrorEnum.MAP_LOAD_ERROR -> Intent(this,MapActivity::class.java)
                 else -> null
