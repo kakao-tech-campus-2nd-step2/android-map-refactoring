@@ -8,6 +8,7 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.domain.dto.PlaceVO
@@ -65,8 +66,10 @@ class MapActivity : AppCompatActivity() {
 
     private fun setUpMap() {
         if (mapViewModel.lastPlace.value != null) {
+            Log.d("testt", "last place: ${mapViewModel.lastPlace.value}")
             startMap(mapViewModel.lastPlace.value as PlaceVO)
         } else {
+            Log.d("testt", "디폴트 맵")
             startDefaultMap()
         }
     }
@@ -75,7 +78,9 @@ class MapActivity : AppCompatActivity() {
         val placeFromIntent = intent.getSerializableExtra("place")
         if (placeFromIntent != null) {
             mapViewModel.setLastPlace(placeFromIntent)
+            Log.d("testt", "place from intent: $placeFromIntent")
         }
+        Log.d("testt", "null 임")
     }
 
     private fun startMap(place: PlaceVO) {
@@ -90,6 +95,7 @@ class MapActivity : AppCompatActivity() {
             }
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
+                Log.d("testt", "지도 마커 표시 준비됨")
                 this@MapActivity.kakaoMap = kakaoMap
                 setCameraPosition(place.latitude, place.longitude)
                 addMarker(place)

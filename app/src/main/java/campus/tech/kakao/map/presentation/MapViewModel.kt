@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.presentation
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import campus.tech.kakao.map.domain.usecase.SaveLastPlaceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.Serializable
 import javax.inject.Inject
 
@@ -25,7 +28,9 @@ class MapViewModel @Inject constructor(
 
 
     init {
+        Log.d("testt", "MapViewModel init")
         getLastPlace()
+        Log.d("testt", "MapViewModel init: ${_lastPlace.value}")
     }
 
 
@@ -37,8 +42,10 @@ class MapViewModel @Inject constructor(
     }
 
     private fun getLastPlace() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _lastPlace.postValue(getLastPlaceUseCase())
+        runBlocking {
+            val place = getLastPlaceUseCase()
+            _lastPlace.value = place
+            Log.d("testt", "Updated lastPlace LiveData: ${_lastPlace.value}")
         }
     }
 

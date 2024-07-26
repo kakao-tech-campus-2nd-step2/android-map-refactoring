@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.data.repositoryImpl
 
+import android.util.Log
 import campus.tech.kakao.map.data.local.db.SearchQueryDao
 import campus.tech.kakao.map.data.local.db.VisitedPlaceDao
 import campus.tech.kakao.map.data.local.entity.SearchQueryEntity
@@ -62,6 +63,7 @@ class PlaceRepositoryImpl @Inject constructor(
 
     override suspend fun getLastPlace(): PlaceVO? = withContext(ioDispatcher) {
         val lastPlace = visitedPlaceDao.getLastPlace()
+        Log.d("testt", "이곳은 리포지토리! ${lastPlace}")
         lastPlace?.let {
             PlaceVO(
                 placeName = it.placeName,
