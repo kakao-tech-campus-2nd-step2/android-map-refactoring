@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.database
 
 import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase

@@ -7,7 +7,9 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -31,14 +33,13 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        val inputSpace = findViewById<TextView>(R.id.toSearchActivity)
-        val bottomSheet = findViewById<LinearLayoutCompat>(R.id.bottomSheet)
-        val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        val nameText = findViewById<TextView>(R.id.name)
-        val addressText = findViewById<TextView>(R.id.address)
-        mapView = findViewById<MapView>(R.id.mapView)
+        val binding : ActivityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.map = this
 
-        inputSpace.setOnClickListener {
+        val sheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap.bottomSheet)
+        mapView = binding.mapView
+
+        binding.toSearchActivity.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
@@ -49,7 +50,7 @@ class MapActivity : AppCompatActivity() {
         val name: String? = intent.extras?.getString("name")
         val address: String? = intent.extras?.getString("address")
 
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API 가 정상적으로 종료될 때 호출됨
             }
@@ -79,8 +80,8 @@ class MapActivity : AppCompatActivity() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 // 인증 후 API 가 정상적으로 실행될 때 호출됨
                 if (x != null && y != null && name != null && address != null) {
-                    nameText.text = name
-                    addressText.text = address
+                    binding.bottomSheetMap.nameText.text = name
+                    binding.bottomSheetMap.addressText.text = address
                     sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
                     sharedPreferences.edit().putString("x", x.toString()).apply()

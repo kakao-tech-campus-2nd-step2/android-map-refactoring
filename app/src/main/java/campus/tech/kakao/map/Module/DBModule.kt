@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.Module
 
 import android.content.Context
 import android.content.SharedPreferences
