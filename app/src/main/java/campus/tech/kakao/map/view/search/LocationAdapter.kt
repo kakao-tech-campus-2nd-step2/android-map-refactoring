@@ -20,30 +20,31 @@ class LocationAdapter(
             return oldItem == newItem
         }
     }) {
-    inner class LocationViewHolder( //
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): LocationViewHolder { // ViewHolder 생성
+        val inflater = LayoutInflater.from(parent.context)
+        val itemLocationBinding = ItemLocationBinding.inflate(inflater, parent, false)
+        return LocationViewHolder(itemLocationBinding, itemSelectedListener)
+    }
+
+    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) { // bind를 통해 데이터를 연결
+        holder.bind(getItem(position))
+    }
+
+    class LocationViewHolder( //
         private val itemLocationBinding: ItemLocationBinding,
-        itemSelectedListener: OnItemSelectedListener
+        private val itemSelectedListener: OnItemSelectedListener
     ) : RecyclerView.ViewHolder(
         itemLocationBinding.root
     ) {
         fun bind(item: Location) { // ViewHolder와 itemLocationBinding 연동
             itemLocationBinding.location = item
-        }
-        init {
+
             itemView.setOnClickListener {
-                val location = getItem(bindingAdapterPosition)
-                itemSelectedListener.onLocationViewClicked(location)
+                itemSelectedListener.onLocationViewClicked(item)
             }
         }
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder { // ViewHolder 생성
-        val inflater = LayoutInflater.from(parent.context)
-        val listItemBinding = ItemLocationBinding.inflate(inflater, parent, false)
-        return LocationViewHolder(listItemBinding, itemSelectedListener)
-    }
-
-    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) { // bind를 통해 데이터를 연결
-        holder.bind(getItem(position))
     }
 }
