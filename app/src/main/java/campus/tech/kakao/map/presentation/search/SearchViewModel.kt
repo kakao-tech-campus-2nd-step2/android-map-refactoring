@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import campus.tech.kakao.map.domain.model.Place
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,9 +16,6 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
 
     val searchText = MutableLiveData<String>()
 
-    private val _uiState = MutableStateFlow(SearchUiState(true, false))
-    val uiState: StateFlow<SearchUiState> = _uiState.asStateFlow()
-
     private val _logList = MutableStateFlow<List<Place>>(emptyList())
     val logList: StateFlow<List<Place>> get() = _logList.asStateFlow()
 
@@ -25,10 +23,7 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
         .debounce(500L)
         .flatMapLatest { keyword ->
             if (keyword.isNotBlank()) {
-                flow {
-                    val places = getPlaces(keyword)
-                    emit(places)
-                }
+                   flowOf(getPlaces(keyword))
             } else {
                 flowOf(emptyList())
             }
@@ -37,7 +32,7 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
     val searchedPlaces: StateFlow<List<Place>> get() = _searchedPlaces
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             _logList.value = getLogs()
         }
     }
@@ -59,7 +54,7 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
     }
 
     fun updateLogs(place: Place) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val updatedList = _logList.value.toMutableList()
             val existingLog = updatedList.find { it.id == place.id }
             if (existingLog != null) {
@@ -74,7 +69,7 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
     }
 
     fun removeLog(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             repository.removeLog(id)
             _logList.value = getLogs()
         }
