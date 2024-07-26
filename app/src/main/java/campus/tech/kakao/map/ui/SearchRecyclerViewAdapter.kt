@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.SearchItemBinding
 import campus.tech.kakao.map.domain.Place
 
 class SearchRecyclerViewAdapter(
@@ -27,18 +28,16 @@ class SearchRecyclerViewAdapter(
     }
 ) {
 
-    inner class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val placeName: TextView = itemView.findViewById(R.id.tvSearchName)
-        val btnClose: ImageButton = itemView.findViewById(R.id.btnClose)
+    inner class SearchViewHolder(val binding: SearchItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         init {
-            placeName.setOnClickListener {
+            binding.tvSearchName.setOnClickListener {
                 val position: Int = bindingAdapterPosition
                 val place = places[position]
                 onItemClick(place)
             }
 
-            btnClose.setOnClickListener {
+            binding.btnClose.setOnClickListener {
                 val position: Int = bindingAdapterPosition
                 val place = places[position]
                 onCloseButtonClick(place)
@@ -47,9 +46,8 @@ class SearchRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.search_item, parent, false)
-        return SearchViewHolder(view)
+        val binding = SearchItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return SearchViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -58,7 +56,8 @@ class SearchRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val place = places[position]
-        holder.placeName.text = place.name
+        holder.binding.place = place
+        holder.binding.executePendingBindings()
     }
 
     fun updateData(newPlace: List<Place>) {
