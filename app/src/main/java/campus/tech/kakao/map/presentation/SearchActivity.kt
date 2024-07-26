@@ -3,16 +3,12 @@ package campus.tech.kakao.map.presentation
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.DatabaseListener
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
@@ -25,10 +21,11 @@ import dagger.hilt.android.AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), DatabaseListener {
 
     private val viewModel: SearchViewModel by viewModels()
+    private val searchBoxWatcher = getSearchBoxWatcher()
+
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchResultAdapter: ResultRecyclerAdapter
     private lateinit var searchHistoryAdapter: HistoryRecyclerAdapter
-    private val searchBoxWatcher = getSearchBoxWatcher()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,7 +97,7 @@ class SearchActivity : AppCompatActivity(), DatabaseListener {
 
     private fun observeData() {
         viewModel.searchHistory.observe(this, Observer {
-            searchHistoryAdapter.history = it
+            searchHistoryAdapter.searchHistory = it
             searchHistoryAdapter.refreshList()
         })
         viewModel.searchResult.observe(this, Observer {

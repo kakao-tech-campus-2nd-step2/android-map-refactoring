@@ -9,16 +9,19 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import campus.tech.kakao.map.DatabaseListener
 import campus.tech.kakao.map.domain.model.Location
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ItemSearchResultBinding
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 class ResultRecyclerAdapter(
     var searchResult: List<Location>,
     val layoutInflater: LayoutInflater,
     val databaseListener: DatabaseListener
 ) : RecyclerView.Adapter<ResultRecyclerAdapter.MapViewHolder>() {
-    inner class MapViewHolder(itemView: View) : ViewHolder(itemView) {
-        val name: TextView = itemView.findViewById(R.id.location_name)
-        val category: TextView = itemView.findViewById(R.id.location_category)
-        val address: TextView = itemView.findViewById(R.id.location_address)
+    inner class MapViewHolder(val binding: ItemSearchResultBinding) : ViewHolder(binding.root) {
+
+        fun bind(locationItem: Location) {
+            binding.location = locationItem
+        }
 
         init {
             itemView.setOnClickListener {
@@ -33,7 +36,7 @@ class ResultRecyclerAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MapViewHolder {
-        val view = layoutInflater.inflate(R.layout.item_search_result, parent, false)
+        val view = ItemSearchResultBinding.inflate(layoutInflater, parent, false)
         return MapViewHolder(view)
     }
 
@@ -42,9 +45,7 @@ class ResultRecyclerAdapter(
     }
 
     override fun onBindViewHolder(holder: MapViewHolder, position: Int) {
-        holder.name.text = searchResult[position].name
-        holder.category.text = searchResult[position].category
-        holder.address.text = searchResult[position].address
+        holder.bind(searchResult[position])
     }
 
     fun refreshList() {

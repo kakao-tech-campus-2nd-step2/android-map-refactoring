@@ -4,11 +4,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.domain.model.Location
@@ -19,7 +16,6 @@ import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelManager
 import com.kakao.vectormap.label.LabelOptions
@@ -34,16 +30,12 @@ class MapActivity : AppCompatActivity() {
     private val viewModel : MapViewModel by viewModels()
     private lateinit var binding: ActivityMapBinding
     private lateinit var kakaoMap: KakaoMap
-    private lateinit var lastLoc: Location
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
 
         viewModel.lastLocation.observe(this) {
-            it?.let {
-                lastLoc = it
-                updateView(it)
-            }
+            it?.let { updateView(it) }
         }
         binding.kakaoMapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
@@ -51,7 +43,7 @@ class MapActivity : AppCompatActivity() {
             }
 
             override fun onMapError(exception: Exception?) {
-                hideInfo(exception)
+                showErrorPage(exception)
             }
 
         }, object : KakaoMapReadyCallback() {
@@ -86,13 +78,7 @@ class MapActivity : AppCompatActivity() {
         labelManager?.let { setPin(labelManager, target) }
     }
 
-    private fun showInfo(target: Location) {
-        binding.infoSheet.isVisible = true
-        binding.infoSheetName.text = target.name
-        binding.infoSheetAddress.text = target.address
-    }
-
-    private fun hideInfo(exception: Exception?) {
+    private fun showErrorPage(exception: Exception?) {
         binding.errorCode.text = exception?.message
         binding.errorLayout.isVisible = true
         binding.kakaoMapView.isVisible = false
@@ -117,8 +103,9 @@ class MapActivity : AppCompatActivity() {
 
     fun updateView(lastLocation: Location) {
         if (::kakaoMap.isInitialized) {
+            binding.lastLoc = lastLocation
             moveToTargetLocation(kakaoMap, lastLocation)
-            showInfo(lastLocation)
+            binding.infoSheet.isVisible = true
         }
     }
 }

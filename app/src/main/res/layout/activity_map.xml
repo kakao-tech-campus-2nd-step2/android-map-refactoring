@@ -3,6 +3,11 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="last_loc"
+            type="campus.tech.kakao.map.domain.model.Location" />
+    </data>
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -95,12 +100,14 @@
                 android:id="@+id/info_sheet_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@{last_loc.name}"
                 android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/info_sheet_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@{last_loc.address}"
                 android:textSize="18sp" />
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
