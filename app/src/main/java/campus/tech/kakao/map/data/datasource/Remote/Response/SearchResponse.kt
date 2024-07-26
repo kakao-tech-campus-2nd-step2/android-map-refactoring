@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.datasource.Remote.Response
 
-import campus.tech.kakao.map.domain.VO.Place
-import campus.tech.kakao.map.domain.VO.PlaceCategory.Companion.groupCodeToPlaceCategory
+import campus.tech.kakao.map.domain.vo.Place
+import campus.tech.kakao.map.domain.vo.PlaceCategory.Companion.groupCodeToPlaceCategory
 import com.google.gson.annotations.SerializedName
 
 data class SearchResponse(

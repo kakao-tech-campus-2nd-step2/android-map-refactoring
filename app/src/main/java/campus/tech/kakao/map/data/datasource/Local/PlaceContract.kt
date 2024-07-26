@@ -2,8 +2,8 @@ package campus.tech.kakao.map.data.datasource.Local
 
 import android.database.Cursor
 import android.provider.BaseColumns
-import campus.tech.kakao.map.domain.VO.Place
-import campus.tech.kakao.map.domain.VO.PlaceCategory
+import campus.tech.kakao.map.domain.vo.Place
+import campus.tech.kakao.map.domain.vo.PlaceCategory
 
 object PlaceContract {
     const val DATABASE_NAME = "Place.db"

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presenter.View.observer
+package campus.tech.kakao.map.presenter.view.observer
 
 import android.view.View.GONE
 import android.view.View.VISIBLE

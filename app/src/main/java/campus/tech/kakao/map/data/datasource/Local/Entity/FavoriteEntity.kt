@@ -3,8 +3,8 @@ package campus.tech.kakao.map.data.datasource.Local.Entity
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import campus.tech.kakao.map.domain.VO.Place
-import campus.tech.kakao.map.domain.VO.PlaceCategory
+import campus.tech.kakao.map.domain.vo.Place
+import campus.tech.kakao.map.domain.vo.PlaceCategory
 import campus.tech.kakao.map.data.datasource.Local.PlaceContract
 
 @Entity(tableName = PlaceContract.FavoriteEntry.TABLE_NAME)

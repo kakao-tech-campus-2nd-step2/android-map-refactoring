@@ -8,7 +8,7 @@ import campus.tech.kakao.map.data.datasource.Remote.RemoteService
 import campus.tech.kakao.map.data.datasource.Remote.Response.toVO
 import campus.tech.kakao.map.data.datasource.Remote.RetrofitService
 import campus.tech.kakao.map.domain.PlaceRepository
-import campus.tech.kakao.map.domain.VO.Place
+import campus.tech.kakao.map.domain.vo.Place
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

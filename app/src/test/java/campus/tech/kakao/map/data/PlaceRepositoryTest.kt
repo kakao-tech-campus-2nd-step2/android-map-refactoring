@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data
 
 import androidx.test.runner.AndroidJUnit4
-import campus.tech.kakao.map.domain.VO.PlaceCategory
+import campus.tech.kakao.map.domain.vo.PlaceCategory
 import campus.tech.kakao.map.domain.PlaceRepository
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest

@@ -10,9 +10,9 @@ import androidx.test.espresso.intent.matcher.IntentMatchers
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.presenter.View.adapter.SearchResultAdapter
-import campus.tech.kakao.map.presenter.View.MapActivity
-import campus.tech.kakao.map.presenter.View.PlaceSearchActivity
+import campus.tech.kakao.map.presenter.view.adapter.SearchResultAdapter
+import campus.tech.kakao.map.presenter.view.MapActivity
+import campus.tech.kakao.map.presenter.view.PlaceSearchActivity
 import org.hamcrest.Matchers.instanceOf
 import org.junit.Rule
 import org.junit.Test

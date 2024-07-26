@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.domain
 
-import campus.tech.kakao.map.domain.VO.Place
+import campus.tech.kakao.map.domain.vo.Place
 
 interface PlaceRepository {
     suspend fun getCurrentFavorite() : List<Place>

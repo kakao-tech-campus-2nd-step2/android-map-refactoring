@@ -3,7 +3,7 @@ package campus.tech.kakao.map.data
 import androidx.test.runner.AndroidJUnit4
 import campus.tech.kakao.map.data.datasource.Local.DB.RoomDB
 import campus.tech.kakao.map.data.datasource.Local.Entity.FavoriteEntity
-import campus.tech.kakao.map.domain.VO.PlaceCategory
+import campus.tech.kakao.map.domain.vo.PlaceCategory
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication

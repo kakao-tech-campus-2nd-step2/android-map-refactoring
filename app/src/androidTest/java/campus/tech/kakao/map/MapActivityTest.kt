@@ -9,8 +9,8 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.presenter.View.MapActivity
-import campus.tech.kakao.map.presenter.View.PlaceSearchActivity
+import campus.tech.kakao.map.presenter.view.MapActivity
+import campus.tech.kakao.map.presenter.view.PlaceSearchActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
