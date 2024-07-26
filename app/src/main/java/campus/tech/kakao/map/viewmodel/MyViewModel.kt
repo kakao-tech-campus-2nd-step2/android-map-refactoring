@@ -1,13 +1,19 @@
 package campus.tech.kakao.map.viewmodel
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.util.Log
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.data.KAKAO_LATITUDE
+import campus.tech.kakao.map.model.data.KAKAO_LONGITUDE
+import campus.tech.kakao.map.model.data.Location
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.model.data.SavedSearch
 import campus.tech.kakao.map.model.data.toLocation
@@ -30,26 +36,30 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     private val _searchText = MutableLiveData<String>()  //검색어를 입력하는 editText
     val searchText get() = _searchText
 
-    private var _isIntent: MutableLiveData<Boolean> = MutableLiveData(false) //위치한 액티비티를 나타내는 변수
+    private val _isIntent: MutableLiveData<Boolean> = MutableLiveData(false) //위치한 액티비티를 나타내는 변수
     val isIntent get() = _isIntent
 
-    private var _placeAdapterUpdateData =
+    private val _placeAdapterUpdateData =
         MutableLiveData<List<Place>>() //업데이트 해야하는 PlaceAdapter List<Place>
     val placeAdapterUpdateData get() = _placeAdapterUpdateData
 
-    private var _savedSearchAdapterUpdateData =
+    private val _savedSearchAdapterUpdateData =
         MutableLiveData<List<SavedSearch>>() //업데이트 해야하는 SavedSearchAdapter List<SavedSearch)
     val savedSearchAdapterUpdateData get() = _savedSearchAdapterUpdateData
 
-    private var _itemClick = MutableLiveData<Place>() //Place의 item
+    private val _itemClick = MutableLiveData<Place>() //Place의 item
     val itemClick get() = _itemClick
 
-    private var _nameClick = MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
+    private val _nameClick = MutableLiveData<SavedSearch>() //savedSearch의 이름 부분
     val nameClick get() = _nameClick
+
+    private val _location = MutableLiveData<Location>()
+    val location get() = _location
 
 
     //PlaceAdapter 초기화
     val vmPlaceAdapter: PlaceAdapter = PlaceAdapter(listOf()) { place ->  //리사이클러뷰의 아이템을 누르면
+
         repository.insertSavedsearch(place.id, place.name)  //SavedSearch에 item 추가
         updateSavedSearch() //SavedSearch Ui업데이트
         repository.setSharedPreferences(place.toLocation()) //sharedPreference에 카메라 이동할 정보 저장
@@ -109,6 +119,10 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     //Repository에서 List(SavedSearch) 가져와서  savedSearchAdapterUpdateData에 저장
     fun updateSavedSearch() {
         _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
+    }
+
+    fun getSharedPreferences(){
+        _location.value = repository.getSharedPreferences()
     }
 
 

@@ -1,7 +1,9 @@
 package campus.tech.kakao.map.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -11,8 +13,8 @@ import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
+import campus.tech.kakao.map.model.data.toLocation
 import campus.tech.kakao.map.model.repository.MyRepository
-import campus.tech.kakao.map.viewmodel.MyViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,13 +46,22 @@ class SearchPlaceActivity : AppCompatActivity() {
 
         viewModel.updateSavedSearch()
 
+
+
+
         //-----viewModel observe-----------------------------------------
         val activity = this
         with(viewModel) {
 
             //PlaceAdapter
             itemClick.observe(activity, Observer { place ->  //Place 클릭 했을 때
-                finish()    //Place item 클릭하면 현재 Activity를 파괴하여 지도 화면으로 이동
+                val resultIntent = Intent()
+                resultIntent.putExtra("name", place.name)
+                resultIntent.putExtra("address", place.address)
+                resultIntent.putExtra("latitude", place.latitude)
+                resultIntent.putExtra("longitude", place.longitude)
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
             })
 
             //SavedSearchAdapter

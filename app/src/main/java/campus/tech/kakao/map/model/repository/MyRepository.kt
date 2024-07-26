@@ -5,6 +5,8 @@ import android.content.SharedPreferences
 import android.health.connect.datatypes.ExerciseRoute
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import campus.tech.kakao.map.model.data.KAKAO_LATITUDE
+import campus.tech.kakao.map.model.data.KAKAO_LONGITUDE
 import campus.tech.kakao.map.model.data.Location
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.model.data.SavedSearch
@@ -27,15 +29,28 @@ class MyRepository(context: Context) {
     )
     private val editor = sharedPreferences.edit()
 
+
+
     //sharedPreferences 저장하기
     fun setSharedPreferences(location : Location){
         with(editor){
             putString("name", location.name)
             putString("address", location.address)
-            putString("longitude", location.longitude.toString())
             putString("latitude", location.latitude.toString())
+            putString("longitude", location.longitude.toString())
+
             apply()
         }
+    }
+
+    //sharedPreferences 값 불러오기
+    fun getSharedPreferences() : Location{
+        return Location(
+            sharedPreferences.getString("name", "") ?: "",
+            sharedPreferences.getString("address", "") ?: "",
+            sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE,
+            sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
+        )
     }
 
     //Place item 클릭하면 호출
