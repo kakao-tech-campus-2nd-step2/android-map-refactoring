@@ -39,9 +39,6 @@ class MainActivity : AppCompatActivity() {
     private var locationList = ArrayList<LocationData>()
     private var searchList = ArrayList<LocationData>()
 
-    @Inject
-    lateinit var locationDao: LocationDao
-
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
