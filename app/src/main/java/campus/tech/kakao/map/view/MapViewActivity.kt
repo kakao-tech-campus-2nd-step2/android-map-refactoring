@@ -47,6 +47,27 @@ class MapViewActivity : AppCompatActivity() {
         observeBottomSheetStateChanges()
         mapViewModel.setPlaceInfo(placeName, placeAddr)
 
+        startMap(lastLocation, placeName, placeAddr, placeX, placeY)
+    }
+
+    fun onSearchTextViewClick() {
+        startActivity(Intent(this@MapViewActivity, MainActivity::class.java))
+    }
+    private fun setupBinding(){
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map_view)
+        binding.view = this
+        binding.viewModel = mapViewModel
+        binding.lifecycleOwner = this
+    }
+    private fun setupBottomSheetBehavior(){
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomView.bottomSheetLayout)
+    }
+    private fun observeBottomSheetStateChanges(){
+        mapViewModel.bottomSheetState.observe(this) { state ->
+            bottomSheetBehavior.state = state
+        }
+    }
+    private fun startMap(lastLocation: Pair<Double, Double>?, placeName: String?, placeAddr: String?, placeX: String, placeY: String){
         try {
             binding.map.start(object : MapLifeCycleCallback() {
                 override fun onMapDestroy() {
@@ -58,7 +79,7 @@ class MapViewActivity : AppCompatActivity() {
                     val intent = Intent(this@MapViewActivity, ErrorActivity::class.java)
                     intent.putExtra(EXTRA_ERROR_MSG, errorMsg)
                     startActivity(intent)
-                    Log.d("KakaoMap", errorMsg.toString())
+                    Log.d("KakaoMap", errorMsg)
                 }
             }, object : KakaoMapReadyCallback() {
                 override fun onMapReady(map: KakaoMap) {
@@ -83,29 +104,10 @@ class MapViewActivity : AppCompatActivity() {
                     val cameraUpdate = CameraUpdateFactory.newCenterPosition(position)
                     map.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
                 }
-
             })
             Log.d("MapViewActivity", "mapView start called")
         } catch (e: Exception) {
             Log.e("MapViewActivity", "Exception during mapView.start", e)
-        }
-    }
-
-    fun onSearchTextViewClick() {
-        startActivity(Intent(this@MapViewActivity, MainActivity::class.java))
-    }
-    private fun setupBinding(){
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_map_view)
-        binding.view = this
-        binding.viewModel = mapViewModel
-        binding.lifecycleOwner = this
-    }
-    private fun setupBottomSheetBehavior(){
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomView.bottomSheetLayout)
-    }
-    private fun observeBottomSheetStateChanges(){
-        mapViewModel.bottomSheetState.observe(this) { state ->
-            bottomSheetBehavior.state = state
         }
     }
     override fun onResume() {
