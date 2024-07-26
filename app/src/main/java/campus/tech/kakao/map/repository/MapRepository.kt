@@ -3,6 +3,7 @@ package campus.tech.kakao.map.repository
 import campus.tech.kakao.map.database.MapItemDao
 import campus.tech.kakao.map.network.KakaoApiService
 import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -18,7 +19,7 @@ class MapRepositoryImpl @Inject constructor(
 
     override suspend fun searchItems(query: String): List<MapItem> {
         return withContext(Dispatchers.IO) {
-            val response = apiService.searchPlaces("KakaoAK your_api_key", query)
+            val response = apiService.searchPlaces(Constants.KAKAO_API_KEY, query)
             if (response.isSuccessful) {
                 response.body()?.documents ?: emptyList()
             } else {
