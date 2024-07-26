@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.Data.Place
+import campus.tech.kakao.map.Data.SearchResult
 import campus.tech.kakao.map.R
 
 class PlaceAdapter : ListAdapter<Place, PlaceAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
@@ -22,7 +23,8 @@ class PlaceAdapter : ListAdapter<Place, PlaceAdapter.PlaceViewHolder>(PlaceDiffC
         holder.bind(place)
     }
 
-    fun submitList(results: Unit?) {
+
+    fun submitList(results: List<SearchResult>?) {
 
     }
 

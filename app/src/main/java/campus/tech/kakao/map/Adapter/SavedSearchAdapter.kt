@@ -27,7 +27,7 @@ open class SavedSearchAdapter(
     override fun getItemCount(): Int = data.size
 
     fun updateData(newData: String) {
-        data = newData
+        data = listOf(newData)
         notifyDataSetChanged()
     }
 

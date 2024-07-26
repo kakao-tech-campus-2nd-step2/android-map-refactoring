@@ -40,7 +40,7 @@ class searchActivity : AppCompatActivity() {
 
     private fun observeSearchResults() {
         searchViewModel.searchResults.observe(this, Observer { results ->
-            searchViewModel.searchResultAdapter.submitList(results)
+            searchViewModel.searchResultAdapter.notifyDataSetChanged()
         })
     }
 
