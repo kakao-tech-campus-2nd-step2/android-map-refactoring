@@ -18,9 +18,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class PlaceViewModel (
-    private val application: Application
-) : AndroidViewModel(application) {
+class PlaceViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 

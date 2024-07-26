@@ -15,6 +15,8 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.databinding.BottomSheetBinding
 import campus.tech.kakao.map.model.BottomSheetData
+import campus.tech.kakao.map.repository.local.PlaceDatabase
+import campus.tech.kakao.map.repository.local.RepositoryImpl
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -47,6 +49,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
+    private val placeViewModel: PlaceViewModel by viewModels()
+    private lateinit var placeDatabase: PlaceDatabase
+    private lateinit var repository: RepositoryImpl
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
 
