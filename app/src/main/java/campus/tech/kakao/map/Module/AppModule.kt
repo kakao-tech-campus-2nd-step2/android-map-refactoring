@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.View
+package campus.tech.kakao.map.Module
 
 import android.content.Context
 import androidx.test.espresso.core.internal.deps.dagger.Module
@@ -13,7 +13,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
-
     @Provides
     @Singleton
     fun providePlacesClient(@ApplicationContext context: Context): PlacesClient {

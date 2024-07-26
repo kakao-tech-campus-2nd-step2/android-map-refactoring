@@ -1,32 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_text"
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.Model.SearchViewModel" />
+    </data>
+
+    <FrameLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/search_hint" />
+        android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/search_hint"
+            app:queryText="@={viewModel.searchQuery}"
+            app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
+            app:onQueryTextChange="@{viewModel::onSearchQueryChanged}" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerHor"
-        android:layout_marginTop="55dp"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerHor"
+            android:layout_marginTop="55dp"
+            android:visibility="@{viewModel.isSavedSearchesVisible ? recyclerHor.VISIBLE : recyclerHor.GONE}"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            app:adapter="@{viewModel.savedSearchAdapter}" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/RecyclerVer"
+            android:layout_marginTop="55dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:adapter="@{viewModel.searchResultAdapter}" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/RecyclerVer"
-        android:layout_marginTop="55dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical" />
+    </FrameLayout>
+</layout>
 
-</FrameLayout>

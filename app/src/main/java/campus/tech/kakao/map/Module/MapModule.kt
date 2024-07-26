@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.View
+package campus.tech.kakao.map.Module
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object mapModule {
+object MapModule {
 
     @Provides
     @Singleton

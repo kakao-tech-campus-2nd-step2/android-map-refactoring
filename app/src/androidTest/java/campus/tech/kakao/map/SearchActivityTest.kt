@@ -8,7 +8,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.runner.AndroidJUnit4
-import campus.tech.kakao.map.View.Search_Activity
+import campus.tech.kakao.map.View.searchActivity
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -17,7 +17,7 @@ import org.junit.runner.RunWith
 class SearchActivityTest {
 
     @get:Rule
-    val activityRule = ActivityScenarioRule(Search_Activity::class.java)
+    val activityRule = ActivityScenarioRule(searchActivity::class.java)
 
     @Test
     fun testSearchView_isDisplayed() {

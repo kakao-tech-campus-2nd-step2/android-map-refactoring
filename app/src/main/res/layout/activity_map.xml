@@ -1,23 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".View.Map_Activity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.SearchView
-        android:id="@+id/search_text"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/search_hint" />
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.Model.MapViewModel" />
+    </data>
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/map_view"
+    <FrameLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:importantForAccessibility="no"
-        android:layout_marginTop="50dp"/>
+        tools:context=".View.Map_Activity">
 
-</FrameLayout>
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="@string/search_hint"
+            app:queryText="@={viewModel.searchQuery}"
+            app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
+            app:onQueryTextChange="@{viewModel::onSearchQueryChanged}" />
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="no"
+            android:layout_marginTop="50dp"
+            app:mapReady="@{viewModel.mapReady}" />
+
+    </FrameLayout>
+</layout>
