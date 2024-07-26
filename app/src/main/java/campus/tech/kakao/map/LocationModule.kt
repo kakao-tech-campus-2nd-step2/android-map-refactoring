@@ -1,16 +1,10 @@
 package campus.tech.kakao.map
 
 import android.content.Context
-import androidx.room.Room
+import campus.tech.kakao.map.model.datasource.KakaoAPI
 import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
-import campus.tech.kakao.map.model.datasource.LocationApi
-import campus.tech.kakao.map.model.datasource.SavedLocationDao
-import campus.tech.kakao.map.model.datasource.SavedLocationDatabase
-import campus.tech.kakao.map.model.repository.DefaultLocationRepository
-import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
-import campus.tech.kakao.map.model.repository.LocationRepository
-import campus.tech.kakao.map.model.repository.SavedLocationRepository
-import dagger.Binds
+import campus.tech.kakao.map.model.datasource.LocationRemoteDataSource
+import campus.tech.kakao.map.model.datasource.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,15 +15,22 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class LocationModule {
-    @Singleton
-    @Provides
-    fun provideLocationApi(): LocationApi {
-        return LocationApi()
-    }
 
     @Singleton
     @Provides
-    fun provideLastLocationlSharedPreferences(): LastLocationlSharedPreferences {
-        return LastLocationlSharedPreferences()
+    fun provideLocationRemoteDataSource(kakaoAPI: KakaoAPI): LocationRemoteDataSource {
+        return LocationRemoteDataSource(kakaoAPI)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return SharedPreferences(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLastLocationSharedPreferences(sharedPreferences: SharedPreferences): LastLocationlSharedPreferences {
+        return LastLocationlSharedPreferences(sharedPreferences)
     }
 }

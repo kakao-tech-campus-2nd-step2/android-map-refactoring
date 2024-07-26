@@ -13,8 +13,6 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-// ViewModelComponent로 설정해도 될까요? Repository가 ViewModel에서 쓰이니까 ViewModelComponent를 쓰면 되겠다고 생각했는데요..
-// 적절한 Component를 선택하는 기준이 뭔지 모르겠습니다!
 abstract class RepositoryModule {
     @Binds
     @Singleton

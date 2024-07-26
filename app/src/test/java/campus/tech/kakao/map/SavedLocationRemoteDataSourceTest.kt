@@ -11,7 +11,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class SavedLocationApiTest {
+class SavedLocationRemoteDataSourceTest {
     private lateinit var locationLocalDataSource: SavedLocationDataSource
     private lateinit var locationDbHelper: LocationDbHelper
     private lateinit var sqLiteDatabase: SQLiteDatabase

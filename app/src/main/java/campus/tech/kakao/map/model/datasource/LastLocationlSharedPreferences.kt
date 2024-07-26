@@ -2,26 +2,28 @@ package campus.tech.kakao.map.model.datasource
 
 import campus.tech.kakao.map.App
 import campus.tech.kakao.map.model.Location
+import javax.inject.Inject
 
-class LastLocationlSharedPreferences() {
-
+class LastLocationlSharedPreferences @Inject constructor(
+    private val sharedPreferences: SharedPreferences
+) {
     fun putLastLocation(location: Location) {
-        App.sharedPreferencesManager.putString("id", location.id.toString())
-        App.sharedPreferencesManager.putString("longitude", location.longitude.toString())
-        App.sharedPreferencesManager.putString("latitude", location.latitude.toString())
-        App.sharedPreferencesManager.putString("title", location.title.toString())
-        App.sharedPreferencesManager.putString("address", location.address.toString())
-        App.sharedPreferencesManager.putString("category", location.category.toString())
+        sharedPreferences.putString("id", location.id.toString())
+        sharedPreferences.putString("longitude", location.longitude.toString())
+        sharedPreferences.putString("latitude", location.latitude.toString())
+        sharedPreferences.putString("title", location.title.toString())
+        sharedPreferences.putString("address", location.address.toString())
+        sharedPreferences.putString("category", location.category.toString())
     }
 
     fun getLastLocation(): Location? {
-        val id = App.sharedPreferencesManager.getString("id", "").toString()
+        val id = sharedPreferences.getString("id", "").toString()
         if(id == "") return null
-        val title = App.sharedPreferencesManager.getString("title", "")
-        val longitude = App.sharedPreferencesManager.getString("longitude", "").toString().toDouble()
-        val latitude = App.sharedPreferencesManager.getString("latitude", "").toString().toDouble()
-        val address = App.sharedPreferencesManager.getString("address", "").toString()
-        val category = App.sharedPreferencesManager.getString("category", "").toString()
+        val title = sharedPreferences.getString("title", "")
+        val longitude = sharedPreferences.getString("longitude", "").toString().toDouble()
+        val latitude = sharedPreferences.getString("latitude", "").toString().toDouble()
+        val address = sharedPreferences.getString("address", "").toString()
+        val category = sharedPreferences.getString("category", "").toString()
         return Location(id.toLong(), title, address, category, longitude, latitude)
     }
 }
