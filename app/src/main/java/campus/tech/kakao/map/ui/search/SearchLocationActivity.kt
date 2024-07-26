@@ -1,10 +1,10 @@
 package campus.tech.kakao.map.ui.search
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
+import androidx.databinding.DataBindingUtil
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchLocationBinding
 import campus.tech.kakao.map.ui.search.adapter.HistoryAdapter
 import campus.tech.kakao.map.ui.search.adapter.SearchLocationAdapter
@@ -13,54 +13,38 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchLocationActivity : AppCompatActivity() {
-    @Inject lateinit var viewModel: SearchLocationViewModel
+    @Inject
+    lateinit var viewModel: SearchLocationViewModel
     private lateinit var binding: ActivitySearchLocationBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySearchLocationBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search_location)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
         binding.removeSearchInputButton.setOnClickListener {
             binding.searchInputEditText.text.clear()
         }
 
-        binding.searchInputEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.searchLocation(s.toString())
+        viewModel.location.observe(this) { locationData ->
+            if (locationData == null) {
+                val errorString = "데이터를 가져오지 못했습니다. 잠시 후 다시 시도해주세요"
+                Toast.makeText(this, errorString, Toast.LENGTH_SHORT).show()
+                return@observe
             }
-        })
 
-        viewModel.searchInput.observe(this) {
-            it?.let { searchInput ->
-                binding.searchInputEditText.setText(searchInput)
-                binding.searchInputEditText.setSelection(searchInput.length)
-            }
+            binding.searchResultRecyclerView.adapter =
+                SearchLocationAdapter(locationData, viewModel::addHistory, viewModel::addMarker)
         }
 
-        viewModel.location.observe(this) {
-            it?.let { locationData ->
-                binding.searchResultRecyclerView.adapter =
-                    SearchLocationAdapter(locationData, this, viewModel)
-                binding.emptyResultTextView.isVisible = locationData.isEmpty()
-            }
-        }
+        binding.searchHistoryRecyclerView.adapter =
+            HistoryAdapter(viewModel::searchLocationByHistory, viewModel::removeHistory)
 
         viewModel.history.observe(this) {
             it?.let { historyData ->
-                var adapter = binding.searchHistoryRecyclerView.adapter as? HistoryAdapter
-
-                if (adapter == null) {
-                    adapter = HistoryAdapter(historyData, this, viewModel)
-                    binding.searchHistoryRecyclerView.adapter = adapter
-                } else {
-                    adapter.updateDataList(historyData)
-                }
-
-                binding.searchHistoryRecyclerView.isVisible = historyData.isNotEmpty()
-                binding.executePendingBindings()
+                val adapter = binding.searchHistoryRecyclerView.adapter as HistoryAdapter
+                adapter.submitList(historyData)
             }
         }
 

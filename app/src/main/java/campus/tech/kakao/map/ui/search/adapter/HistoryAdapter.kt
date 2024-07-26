@@ -1,48 +1,38 @@
 package campus.tech.kakao.map.ui.search.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.databinding.ItemHistoryBinding
-import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 
 class HistoryAdapter(
-    private var dataList: List<String>,
-    private val context: Context,
-    private val viewModel: SearchLocationViewModel
-) : RecyclerView.Adapter<HistoryAdapter.MyViewHolder>() {
-
+    private val searchLocationByHistory: (String) -> Unit,
+    private val removeHistory: (String) -> Unit
+) : ListAdapter<History, HistoryAdapter.MyViewHolder>(diffUtil) {
     inner class MyViewHolder(private val binding: ItemHistoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.locationHistoryNameTextView.setOnClickListener {
-                viewModel.searchLocationByHistory(dataList[bindingAdapterPosition])
+                searchLocationByHistory(currentList[bindingAdapterPosition].name)
             }
 
             binding.removeLocationHistoryButton.setOnClickListener {
-                viewModel.removeHistory(dataList[bindingAdapterPosition])
+                removeHistory(currentList[bindingAdapterPosition].name)
             }
         }
 
-        fun binding(historyData: String) {
-            binding.locationHistoryNameTextView.text = historyData
+        fun bind(historyData: History) {
+            binding.history = historyData
         }
-    }
-
-    fun updateDataList(newDataList: List<String>) {
-        val diffUtil = HistoryDiffUtilCallback(dataList, newDataList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
-
-        dataList = newDataList
-        diffResult.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return MyViewHolder(
             ItemHistoryBinding.inflate(
-                LayoutInflater.from(context),
+                LayoutInflater.from(parent.context),
                 parent,
                 false
             )
@@ -50,8 +40,21 @@ class HistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.binding(dataList[position])
+        holder.bind(currentList[position])
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = currentList.size
+
+
+    companion object {
+        private val diffUtil = object : DiffUtil.ItemCallback<History>() {
+            override fun areItemsTheSame(oldItem: History, newItem: History): Boolean {
+                return oldItem.name == newItem.name
+            }
+
+            override fun areContentsTheSame(oldItem: History, newItem: History): Boolean {
+                return oldItem == newItem
+            }
+        }
+    }
 }

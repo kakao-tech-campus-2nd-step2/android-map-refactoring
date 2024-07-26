@@ -2,9 +2,12 @@ package campus.tech.kakao.map
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
+import campus.tech.kakao.map.data.history.History
 import campus.tech.kakao.map.data.local_search.Location
-import campus.tech.kakao.map.domain.repository.HistoryRepository
-import campus.tech.kakao.map.domain.repository.SearchLocationRepository
+import campus.tech.kakao.map.domain.usecase.GetHistoryUseCase
+import campus.tech.kakao.map.domain.usecase.RemoveHistoryUseCase
+import campus.tech.kakao.map.domain.usecase.SearchLocationUseCase
+import campus.tech.kakao.map.domain.usecase.UpdateHistoryUseCase
 import campus.tech.kakao.map.ui.search.SearchLocationViewModel
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -27,15 +30,22 @@ class SearchLocationViewModelTest {
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
 
-    private val mockHistoryRepository = mockk<HistoryRepository>()
-    private val mockLocationRepository = mockk<SearchLocationRepository>()
+    private val mockGetHistoryUseCase = mockk<GetHistoryUseCase>()
+    private val mockUpdateHistoryUseCase = mockk<UpdateHistoryUseCase>()
+    private val mockRemoveHistoryUseCase = mockk<RemoveHistoryUseCase>()
+    private val mockSearchLocationUseCase = mockk<SearchLocationUseCase>()
     private lateinit var viewModel: SearchLocationViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(Dispatchers.Unconfined)
-        coEvery { mockHistoryRepository.getHistory() } returns emptyList()
-        viewModel = SearchLocationViewModel(mockHistoryRepository, mockLocationRepository)
+        coEvery { mockGetHistoryUseCase() } returns emptyList()
+        viewModel = SearchLocationViewModel(
+            mockGetHistoryUseCase,
+            mockUpdateHistoryUseCase,
+            mockRemoveHistoryUseCase,
+            mockSearchLocationUseCase
+        )
     }
 
     @After
@@ -47,16 +57,22 @@ class SearchLocationViewModelTest {
     @Test
     fun testInitViewModel() {
         // given
-        val tempMockRepository = mockk<HistoryRepository>()
-        coEvery { tempMockRepository.getHistory() } returns listOf("History1", "History2")
+        val testHistory = listOf(History("기록1", 2), History("기록2", 1))
+        val tempMockGetHistoryUseCase = mockk<GetHistoryUseCase>()
+        coEvery { tempMockGetHistoryUseCase() } returns testHistory
 
         // when
-        val tempViewModel = SearchLocationViewModel(tempMockRepository, mockLocationRepository)
+        val tempViewModel = SearchLocationViewModel(
+            tempMockGetHistoryUseCase,
+            mockUpdateHistoryUseCase,
+            mockRemoveHistoryUseCase,
+            mockSearchLocationUseCase
+        )
 
         // then
-        coVerify { tempMockRepository.getHistory() }
-        tempViewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
-        assertEquals(listOf("History1", "History2"), tempViewModel.history.value)
+        coVerify { tempMockGetHistoryUseCase() }
+        tempViewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
+        assertEquals(testHistory, tempViewModel.history.value)
     }
 
     @Test
@@ -66,14 +82,14 @@ class SearchLocationViewModelTest {
             Location("Location1", "Address1", "Category1", 123.0, 456.0),
             Location("Location2", "Address2", "Category2", 135.0, 246.0)
         )
-        coEvery { mockLocationRepository.searchLocation(any()) } returns testLocation
-        viewModel.location.observeForever(mockk<Observer<List<Location>>>(relaxed = true))
+        coEvery { mockSearchLocationUseCase(any()) } returns testLocation
+        viewModel.location.observeForever(mockk<Observer<List<Location>?>>(relaxed = true))
 
         // when
         viewModel.searchLocation("testCategory")
 
         // then
-        coVerify { mockLocationRepository.searchLocation("testCategory") }
+        coVerify { mockSearchLocationUseCase("testCategory") }
         assertEquals(2, viewModel.location.value?.size)
         assertEquals(testLocation[0], viewModel.location.value?.get(0))
         assertEquals(testLocation[1], viewModel.location.value?.get(1))
@@ -82,31 +98,33 @@ class SearchLocationViewModelTest {
     @Test
     fun testAddHistory() {
         // given
-        val testHistory = listOf("History1", "History2")
-        coEvery { mockHistoryRepository.addHistory(any()) } just Runs
-        coEvery { mockHistoryRepository.getHistory() } returns testHistory
-        viewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
+        val testHistory = listOf(
+            History("History1", 2), History("History2", 1)
+        )
+        coEvery { mockUpdateHistoryUseCase(any()) } just Runs
+        coEvery { mockGetHistoryUseCase() } returns testHistory
+        viewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
 
         // when
         viewModel.addHistory("History2")
 
         // then
-        coVerify { mockHistoryRepository.addHistory("History2") }
+        coVerify { mockUpdateHistoryUseCase("History2") }
     }
 
     @Test
     fun testRemoveHistory() {
         // given
-        val testHistory = listOf("History1")
-        coEvery { mockHistoryRepository.removeHistory(any()) } just Runs
-        coEvery { mockHistoryRepository.getHistory() } returns testHistory
-        viewModel.history.observeForever(mockk<Observer<List<String>>>(relaxed = true))
+        val testHistory = listOf(History("History1", 1))
+        coEvery { mockRemoveHistoryUseCase(any()) } just Runs
+        coEvery { mockGetHistoryUseCase() } returns testHistory
+        viewModel.history.observeForever(mockk<Observer<List<History>>>(relaxed = true))
 
         // when
         viewModel.removeHistory("History2")
 
         // then
-        coVerify { mockHistoryRepository.removeHistory("History2") }
+        coVerify { mockRemoveHistoryUseCase("History2") }
     }
 
     @Test
