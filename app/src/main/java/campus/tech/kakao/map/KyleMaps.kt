@@ -7,7 +7,7 @@ import com.kakao.vectormap.KakaoMapSdk
 
 class KyleMaps : Application() {
 
-//    var isTestMode: Boolean = false
+    var isTestMode: Boolean = false
     lateinit var database: DataBase
     override fun onCreate() {
         super.onCreate()
