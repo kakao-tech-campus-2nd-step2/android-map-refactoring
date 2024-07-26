@@ -21,14 +21,20 @@ import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import campus.tech.kakao.map.Data.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class Search_Activity : AppCompatActivity() {
+
+    @Inject
+    lateinit var placesClient: PlacesClient
+
     private lateinit var searchView: SearchView
     private lateinit var searchRecyclerView: RecyclerView
     private lateinit var searchResultAdapter: PlaceAdapter
     private lateinit var savedSearchRecyclerView: RecyclerView
     private lateinit var savedSearchAdapter: SavedSearchAdapter
-    private lateinit var placesClient: PlacesClient
     private val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,7 +42,6 @@ class Search_Activity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         Places.initialize(applicationContext, "AIzaSyCUncz7v8nwT3m5OHasVJTep1e1549yAKM")
-        placesClient = Places.createClient(this)
 
         initViews()
         initAdapters()
@@ -62,8 +67,7 @@ class Search_Activity : AppCompatActivity() {
 
     private fun setupRecyclerViews() {
         searchRecyclerView.layoutManager = LinearLayoutManager(this)
-        savedSearchRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        savedSearchRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         searchRecyclerView.adapter = searchResultAdapter
         savedSearchRecyclerView.adapter = savedSearchAdapter
@@ -121,12 +125,10 @@ class Search_Activity : AppCompatActivity() {
         })
     }
 
-    inner class PlaceAdapter(private var data: List<Map<String, String>>) :
-        RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
+    inner class PlaceAdapter(private var data: List<Map<String, String>>) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-            val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.activity_place_item, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_place_item, parent, false)
             return PlaceViewHolder(view)
         }
 
@@ -171,16 +173,7 @@ class Search_Activity : AppCompatActivity() {
                         val placeAddress = place.address ?: "Unknown"
 
                         val intent = Intent(itemView.context, Map_Activity::class.java).apply {
-                            putExtra(
-                                "selectedPlace",
-                                campus.tech.kakao.map.Data.Place(
-                                    placeName,
-                                    placeAddress,
-                                    "",
-                                    latLng.latitude,
-                                    latLng.longitude
-                                )
-                            )
+                            putExtra("selectedPlace", campus.tech.kakao.map.Data.Place(placeName, placeAddress, "", latLng.latitude, latLng.longitude))
                         }
                         itemView.context.startActivity(intent)
                     } else {
@@ -194,6 +187,7 @@ class Search_Activity : AppCompatActivity() {
         }
     }
 }
+
 
 
 

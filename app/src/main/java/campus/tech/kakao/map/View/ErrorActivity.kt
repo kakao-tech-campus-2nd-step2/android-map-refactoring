@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ErrorActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
