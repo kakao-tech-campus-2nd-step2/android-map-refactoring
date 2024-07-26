@@ -4,7 +4,7 @@
     <data>
         <variable
             name="place"
-            type="campus.tech.kakao.map.domain.model.PlaceVO" />
+            type="campus.tech.kakao.map.domain.dto.PlaceVO" />
         <variable
             name="clickListener"
             type="android.view.View.OnClickListener" />
