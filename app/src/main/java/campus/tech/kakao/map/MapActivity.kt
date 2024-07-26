@@ -91,9 +91,9 @@ class MapActivity : AppCompatActivity() {
 		val fragmentManager = supportFragmentManager
 		val searchFragment = SearchFragment()
 		val transaction = fragmentManager.beginTransaction()
-		transaction.replace(R.id.activity_map, searchFragment)
+		transaction.replace(binding.activityMap.id, searchFragment)
 		transaction.addToBackStack(null)
-		findViewById<FrameLayout>(R.id.activity_map_frameLayout).setOnTouchListener(View.OnTouchListener { v, event -> true })
+		binding.activityMapFrameLayout.setOnTouchListener(View.OnTouchListener { v, event -> true })
 		transaction.commit()
 	}
 
@@ -146,7 +146,7 @@ class MapActivity : AppCompatActivity() {
 	}
 
 	private fun initBottomSheet(){
-		bottomSheetBehavior = BottomSheetBehavior.from(binding.root.findViewById(R.id.bottom_sheet))
+		bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetInclude.bottomSheet)
 		bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
 			override fun onStateChanged(bottomSheet: View, newState: Int) {
 			}

@@ -45,6 +45,7 @@
             </LinearLayout>
         </FrameLayout>
         <include
+            android:id="@+id/bottom_sheet_include"
             layout="@layout/bottom_sheet"
             app:placeName="@{map.placeName}"
             app:addressName="@{map.addressName}"/>
