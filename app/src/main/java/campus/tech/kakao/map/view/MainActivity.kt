@@ -5,12 +5,19 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.databinding.BottomSheetBinding
+import campus.tech.kakao.map.model.BottomSheetData
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 //import campus.tech.kakao.map.viewmodel.PlaceViewModelFactory
 import com.kakao.sdk.common.util.Utility
 import com.kakao.vectormap.KakaoMap
@@ -40,19 +47,16 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
-
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         initKakaoMap()
         initSearchEditText()
         initMapView()
-
     }
 
     private fun initKakaoMap() {
@@ -95,7 +99,6 @@ class MainActivity : AppCompatActivity() {
                 setCameraPosition()
                 setMarker()
                 setBottomSheet()
-
             }
         })
     }
@@ -132,14 +135,19 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    /* DataBing */
     private fun setBottomSheet() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
+        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
         val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unknown Place").toString()
         val addressName =
             sharedPreferences.getString(EXTRA_PLACE_ADDRESSNAME, "Unknown Address").toString()
 
-        binding.bottomSheetTitle.text = placeName
-        binding.bottomSheetDescription.text = addressName
+        val bottomSheetData = BottomSheetData(
+            title = placeName,
+            description = addressName
+        )
+        val bottomSheetFragment = BottomSheetFragment.newInstance(bottomSheetData)
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
 
     override fun onResume() {
