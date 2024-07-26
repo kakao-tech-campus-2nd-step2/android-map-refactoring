@@ -61,6 +61,8 @@ class SearchResultUITest {
             it.searchViewModel.submitQuery(query)
         }
 
+        Thread.sleep(500)
+
         // then
         for(i in 0..5) {
             checkTextExists("name Hello $i")
@@ -78,6 +80,8 @@ class SearchResultUITest {
         activityRule.scenario.onActivity {
             it.searchViewModel.submitQuery(query)
         }
+
+        Thread.sleep(500)
 
         // then
         for(expect in expectedSearchResults){

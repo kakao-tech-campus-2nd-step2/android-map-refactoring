@@ -161,6 +161,8 @@ class MainActivityTest {
             }
         }
 
+        Thread.sleep(100)
+
         // then
         onView(withId(R.id.text_location_name))
             .check(matches(withText(location.name)))

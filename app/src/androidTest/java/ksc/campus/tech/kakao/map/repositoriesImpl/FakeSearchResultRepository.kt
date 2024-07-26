@@ -1,5 +1,6 @@
 package ksc.campus.tech.kakao.map.repositoriesImpl
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
@@ -25,7 +26,16 @@ class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
         return result
     }
 
-    override fun search(text: String, apiKey: String): Flow<List<SearchResult>> = flow{
-        emit(getDummyData(text))
+    private var _searchValue = listOf<SearchResult>()
+    override val searchResult: Flow<List<SearchResult>>
+        get() = flow {
+            while (true){
+                emit(_searchValue)
+                delay(500)
+            }
+        }
+
+    override fun search(text: String, apiKey: String){
+        _searchValue = getDummyData(text)
     }
 }

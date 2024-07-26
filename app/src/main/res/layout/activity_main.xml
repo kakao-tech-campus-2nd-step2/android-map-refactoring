@@ -81,6 +81,7 @@
             <TextView
                 android:textSize="24dp"
                 android:gravity="bottom|start"
+                android:id="@+id/text_location_name"
                 android:text="@{viewModel.selectedLocation.name}"
                 android:paddingHorizontal="15dp"
                 android:paddingBottom="5dp"
@@ -90,6 +91,7 @@
             <TextView
                 android:textSize="18dp"
                 android:gravity="top|start"
+                android:id="@+id/text_location_address"
                 android:paddingHorizontal="15dp"
                 android:text="@{viewModel.selectedLocation.address}"
 

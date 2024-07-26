@@ -59,6 +59,7 @@ class KeywordUITest {
             }
         }
 
+        Thread.sleep(100)
         // then
         checkTextExists(checkingKeyword)
     }

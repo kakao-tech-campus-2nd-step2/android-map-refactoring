@@ -1,7 +1,6 @@
 package ksc.campus.tech.kakao.map.repositoriesImpl
 
 import com.kakao.vectormap.camera.CameraPosition
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import ksc.campus.tech.kakao.map.domain.models.LocationInfo
@@ -10,16 +9,8 @@ import javax.inject.Inject
 
 class FakeMapViewRepository @Inject constructor(): MapViewRepository {
 
-    private var _selectedLocation = MutableSharedFlow<LocationInfo?>(
-        replay = 1,
-        extraBufferCapacity = 3,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    private var _cameraPosition = MutableSharedFlow<CameraPosition>(
-        replay = 1,
-        extraBufferCapacity = 3,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
+    private var _selectedLocation = MutableSharedFlow<LocationInfo?>()
+    private var _cameraPosition = MutableSharedFlow<CameraPosition>()
 
 
     override suspend fun loadFromSharedPreference() {
