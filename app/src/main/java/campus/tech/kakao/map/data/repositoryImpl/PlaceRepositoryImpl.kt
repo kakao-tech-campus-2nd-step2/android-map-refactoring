@@ -8,6 +8,7 @@ import campus.tech.kakao.map.data.local.entity.VisitedPlaceEntity
 import campus.tech.kakao.map.data.remote.network.HttpService
 import campus.tech.kakao.map.domain.dto.PlaceVO
 import campus.tech.kakao.map.domain.repository.PlaceRepository
+import campus.tech.kakao.map.utils.PlaceMapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -51,27 +52,14 @@ class PlaceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun saveLastPlace(place: PlaceVO) = withContext(ioDispatcher) {
-        val visitedPlaceEntity = VisitedPlaceEntity(
-            placeName = place.placeName,
-            addressName = place.addressName,
-            categoryName = place.categoryName,
-            latitude = place.latitude,
-            longitude = place.longitude
-        )
+        val visitedPlaceEntity = PlaceMapper().mapToEntity(place)
         visitedPlaceDao.insert(visitedPlaceEntity)
     }
 
     override suspend fun getLastPlace(): PlaceVO? = withContext(ioDispatcher) {
         val lastPlace = visitedPlaceDao.getLastPlace()
-        Log.d("testt", "이곳은 리포지토리! ${lastPlace}")
         lastPlace?.let {
-            PlaceVO(
-                placeName = it.placeName,
-                addressName = it.addressName,
-                categoryName = it.categoryName,
-                latitude = it.latitude,
-                longitude = it.longitude
-            )
+            PlaceMapper().mapFromEntity(it)
         }
     }
 }
