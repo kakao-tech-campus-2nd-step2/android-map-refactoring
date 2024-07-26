@@ -1,23 +1,16 @@
-package campus.tech.kakao.map.adapter
+package campus.tech.kakao.map.view
 
-import android.database.DatabaseUtils
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.view.OnClickSavedPlaceListener
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.SavedPlaceItemBinding
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.data.SavedPlace
 
 class SavedPlaceViewAdapter(
     val listener: OnClickSavedPlaceListener

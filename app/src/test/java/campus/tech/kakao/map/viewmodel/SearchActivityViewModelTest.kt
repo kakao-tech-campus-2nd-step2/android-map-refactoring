@@ -2,15 +2,13 @@ package campus.tech.kakao.map.viewmodel
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.repository.PlaceRepository
-import campus.tech.kakao.map.repository.SavedPlaceRepository
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.SavedPlace
+import campus.tech.kakao.map.data.PlaceRepository
+import campus.tech.kakao.map.data.SavedPlaceRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before

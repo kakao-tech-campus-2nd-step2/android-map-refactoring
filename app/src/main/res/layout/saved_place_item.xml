@@ -7,7 +7,7 @@
     <data>
         <variable
             name="savedPlace"
-            type="campus.tech.kakao.map.model.SavedPlace"/>
+            type="campus.tech.kakao.map.data.SavedPlace"/>
 
         <variable
             name="listener"

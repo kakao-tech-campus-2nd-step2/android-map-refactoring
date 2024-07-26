@@ -1,15 +1,10 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.repository.PlaceRepository
-import campus.tech.kakao.map.repository.SavedPlaceRepository
-import campus.tech.kakao.map.repository.SharedPreferenceRepository
+import campus.tech.kakao.map.data.SharedPreferenceRepository
 import com.kakao.vectormap.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest

@@ -1,9 +1,12 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import campus.tech.kakao.map.utilities.Constants
+import campus.tech.kakao.map.data.SavedPlaceDao
+import campus.tech.kakao.map.data.SavedPlaceDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

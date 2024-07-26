@@ -16,12 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.adapter.PlaceViewAdapter
-import campus.tech.kakao.map.adapter.SavedPlaceViewAdapter
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Constants
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.utilities.Constants
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.SavedPlace
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

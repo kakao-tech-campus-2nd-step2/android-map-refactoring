@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.repository.PlaceRepository
-import campus.tech.kakao.map.repository.SavedPlaceRepository
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.SavedPlace
+import campus.tech.kakao.map.data.PlaceRepository
+import campus.tech.kakao.map.data.SavedPlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

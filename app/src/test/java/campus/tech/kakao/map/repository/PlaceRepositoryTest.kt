@@ -2,12 +2,13 @@ package campus.tech.kakao.map.repository
 
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import campus.tech.kakao.map.api.KakaoApiDataSource
+import campus.tech.kakao.map.data.PlaceRepository
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 

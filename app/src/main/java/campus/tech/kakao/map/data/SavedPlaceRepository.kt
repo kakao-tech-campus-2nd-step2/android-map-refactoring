@@ -1,9 +1,6 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.data
 
 import android.util.Log
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.model.SavedPlaceDao
 import javax.inject.Inject
 import javax.inject.Singleton
 

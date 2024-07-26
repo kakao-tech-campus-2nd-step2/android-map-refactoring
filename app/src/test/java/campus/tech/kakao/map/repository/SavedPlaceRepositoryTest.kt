@@ -2,8 +2,9 @@ package campus.tech.kakao.map.repository
 
 import android.database.Cursor
 import android.util.Log
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.SavedPlace
+import campus.tech.kakao.map.data.SavedPlaceRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic

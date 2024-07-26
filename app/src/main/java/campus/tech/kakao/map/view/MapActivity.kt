@@ -1,15 +1,10 @@
 package campus.tech.kakao.map.view
 
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,8 +18,8 @@ import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.databinding.BottomSheetBinding
-import campus.tech.kakao.map.model.Constants
-import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.utilities.Constants
+import campus.tech.kakao.map.data.Place
 import campus.tech.kakao.map.viewmodel.MapActivityViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap

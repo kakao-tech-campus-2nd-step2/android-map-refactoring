@@ -1,11 +1,10 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
-import campus.tech.kakao.map.db.PlaceContract
+import campus.tech.kakao.map.utilities.PlaceContract
 import kotlin.concurrent.Volatile
 
 @Database(entities = [SavedPlace::class], version = PlaceContract.VERSION, exportSchema = false)
