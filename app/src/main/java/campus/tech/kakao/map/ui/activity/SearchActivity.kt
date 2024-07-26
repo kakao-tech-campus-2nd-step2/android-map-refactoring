@@ -6,48 +6,35 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.KyleMaps
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.db.SearchHistory
+import campus.tech.kakao.map.repository.KakaoRepository
 import campus.tech.kakao.map.ui.adapter.ResultRecyclerViewAdapter
 import campus.tech.kakao.map.ui.adapter.SearchHistoryRecyclerViewAdapter
-import campus.tech.kakao.map.di.AppModule
-import campus.tech.kakao.map.data.db.DataBase
-import campus.tech.kakao.map.data.db.SearchHistory
-import campus.tech.kakao.map.data.db.SearchHistoryDao
-import campus.tech.kakao.map.data.remote.api.dto.Place
-import campus.tech.kakao.map.repository.KakaoRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
+import campus.tech.kakao.map.ui.viewmodel.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
-    private val coroutineScope = CoroutineScope(Dispatchers.Main)
+
     private lateinit var searchEditText: EditText
     private lateinit var resultRecyclerView: RecyclerView
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var noResults: TextView
-    private lateinit var retrofit: Retrofit
-    private lateinit var kakaoRepository: KakaoRepository
-    private lateinit var database: DataBase
-    private lateinit var searchHistoryDao: SearchHistoryDao
+    private lateinit var backButton: ImageButton
     private lateinit var resultRecyclerViewAdapter: ResultRecyclerViewAdapter
     private lateinit var searchHistoryRecyclerViewAdapter: SearchHistoryRecyclerViewAdapter
-    private lateinit var placeList: List<Place>
-    private lateinit var searchHistoryList: MutableList<SearchHistory>
-    private lateinit var backButton: ImageButton
-    private lateinit var mapX: String
-    private lateinit var mapY: String
-    private lateinit var name: String
-    private lateinit var address: String
+
+    private val searchViewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("here", "I'm in SearchActivity")
         setContentView(R.layout.activity_search)
 
         searchEditText = findViewById(R.id.search_edit_text)
@@ -56,51 +43,11 @@ class SearchActivity : AppCompatActivity() {
         noResults = findViewById(R.id.no_results)
         backButton = findViewById(R.id.back_button)
 
-        retrofit = AppModule.provideRetrofit()
-        database = (application as KyleMaps).database
-        searchHistoryDao = AppModule.provideSearchHistoryDao(database)
-        kakaoRepository = AppModule.provideKakaoRepository(retrofit)
-
-        coroutineScope.launch {
-            searchHistoryList = searchHistoryDao.getAllSearchHistory().toMutableList()
-            searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
-                searchHistory = searchHistoryList,
-                onItemClick = { history ->
-                    searchEditText.setText(history.placeName)
-                    searchEditText.clearFocus()
-                    searchEditText.isFocusable = false
-                },
-                onItemDelete = { history ->
-                    coroutineScope.launch {
-                        searchHistoryDao.deleteSearchHistoryById(history.id)
-                        searchHistoryList.remove(history)
-                        searchHistoryRecyclerViewAdapter.notifyDataSetChanged()
-                    }
-                }
-            )
-
-            searchHistoryRecyclerView.adapter = searchHistoryRecyclerViewAdapter
-            searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
-        }
-
-        resultRecyclerViewAdapter = ResultRecyclerViewAdapter(
-            places = emptyList(),
-            onItemClick = { place ->
-                coroutineScope.launch {
-                    val searchHistory = SearchHistory(placeName = place.place_name)
-                    searchHistoryDao.insertSearchHistory(searchHistory)
-                    updateSearchHistoryRecyclerView(searchHistory)
-                    updateMapPosition(place)
-                    goBackToMap()
-                }
-            }
-        )
-
-        resultRecyclerView.adapter = resultRecyclerViewAdapter
-        resultRecyclerView.layoutManager = LinearLayoutManager(this)
+        initRecyclerViews()
+        observeViewModel()
 
         searchEditText.addTextChangedListener { text ->
-            text?.let { searchPlaces(it.toString()) }
+            text?.let { searchViewModel.searchPlaces(it.toString()) }
         }
 
         backButton.setOnClickListener {
@@ -108,51 +55,64 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    fun searchPlaces(query: String) {
-        kakaoRepository.searchPlaces(query) { places ->
-            runOnUiThread {
-                placeList = places
-                resultRecyclerViewAdapter.setPlaces(places)
-                showNoResultsMessage(places.isEmpty())
-                Log.d("searchPlaces", "searchPlaces: ${resultRecyclerViewAdapter.itemCount}")
+    private fun initRecyclerViews() {
+        searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
+            searchHistory = mutableListOf(),
+            onItemClick = { history ->
+                searchEditText.setText(history.placeName)
+                searchEditText.clearFocus()
+                searchEditText.isFocusable = false
+            },
+            onItemDelete = { history ->
+                searchViewModel.deleteSearchHistory(history)
             }
-        }
+        )
+
+        searchHistoryRecyclerView.adapter = searchHistoryRecyclerViewAdapter
+        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        resultRecyclerViewAdapter = ResultRecyclerViewAdapter(
+            places = emptyList(),
+            onItemClick = { place ->
+                val searchHistory = SearchHistory(placeName = place.place_name)
+                searchViewModel.addSearchHistory(searchHistory)
+                searchViewModel.updateMapPosition(place)
+                goBackToMap()
+            }
+        )
+
+        resultRecyclerView.adapter = resultRecyclerViewAdapter
+        resultRecyclerView.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun observeViewModel() {
+        searchViewModel.searchResults.observe(this, Observer { places ->
+            resultRecyclerViewAdapter.updatePlaces(places)
+            showNoResultsMessage(places.isEmpty())
+        })
+
+        searchViewModel.searchHistory.observe(this, Observer { searchHistoryList ->
+            searchHistoryRecyclerViewAdapter.updateSearchHistory(searchHistoryList)
+        })
     }
 
     private fun showNoResultsMessage(show: Boolean) {
         if (show) {
             noResults.visibility = TextView.VISIBLE
             resultRecyclerView.visibility = RecyclerView.GONE
-            Log.d("visibility", "noresult: ${noResults.visibility}, recycler: ${resultRecyclerView.visibility} ")
         } else {
             noResults.visibility = TextView.GONE
             resultRecyclerView.visibility = RecyclerView.VISIBLE
-            Log.d("visibility", "noresult: ${noResults.visibility}, recycler: ${resultRecyclerView.visibility} ")
         }
-    }
-
-    private fun updateSearchHistoryRecyclerView(searchHistory: SearchHistory) {
-        Log.d("updateSearchHistoryRecyclerView", "I'm executed")
-        searchHistoryList.add(searchHistory)
-        searchHistoryRecyclerViewAdapter.notifyDataSetChanged()
     }
 
     private fun goBackToMap() {
         val searchToMapIntent = Intent(this, MapActivity::class.java)
-        searchToMapIntent.putExtra("mapX", mapX)
-        searchToMapIntent.putExtra("mapY", mapY)
-        searchToMapIntent.putExtra("name", name)
-        searchToMapIntent.putExtra("address", address)
-        Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
+        searchToMapIntent.putExtra("mapX", searchViewModel.mapX.value)
+        searchToMapIntent.putExtra("mapY", searchViewModel.mapY.value)
+        searchToMapIntent.putExtra("name", searchViewModel.name.value)
+        searchToMapIntent.putExtra("address", searchViewModel.address.value)
         finish()
         startActivity(searchToMapIntent)
-    }
-
-    private fun updateMapPosition(place: Place) {
-        mapX = place.x
-        mapY = place.y
-        name = place.place_name
-        address = place.address_name
-        Log.d("goBackToMap", "updateMapPosition: $mapX, $mapY")
     }
 }

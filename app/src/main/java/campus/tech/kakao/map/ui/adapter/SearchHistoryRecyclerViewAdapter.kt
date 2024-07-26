@@ -10,7 +10,7 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.db.SearchHistory
 
 class SearchHistoryRecyclerViewAdapter(
-    private val searchHistory: MutableList<SearchHistory>,
+    private var searchHistory: List<SearchHistory>,
     private val onItemClick: (SearchHistory) -> Unit,
     private val onItemDelete: (SearchHistory) -> Unit
 ) : RecyclerView.Adapter<SearchHistoryRecyclerViewAdapter.ViewHolder>() {
@@ -25,8 +25,11 @@ class SearchHistoryRecyclerViewAdapter(
         holder.bind(history)
     }
 
-    override fun getItemCount(): Int {
-        return searchHistory.size
+    override fun getItemCount(): Int = searchHistory.size
+
+    fun updateSearchHistory(newSearchHistory: List<SearchHistory>) {
+        searchHistory = newSearchHistory
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -38,12 +41,6 @@ class SearchHistoryRecyclerViewAdapter(
             searchHistoryBtn.setOnClickListener { onItemClick(history) }
             searchHistoryDeleteBtn.setOnClickListener {
                 onItemDelete(history)
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    searchHistory.removeAt(position)
-                    notifyItemRemoved(position)
-                    notifyItemRangeChanged(position, itemCount)
-                }
             }
         }
     }
