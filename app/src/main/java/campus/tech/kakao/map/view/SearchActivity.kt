@@ -5,34 +5,27 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.viewmodel.MapViewModel
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.viewmodel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private val viewModel: SearchViewModel by viewModels()
-    private lateinit var editText: EditText
-    private lateinit var cancelBtn: ImageView
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var noSearchLayout: LinearLayout
+    private lateinit var binding: ActivitySearchBinding
     private lateinit var searchAdapter: SearchAdapter
-    private lateinit var saveRecyclerView: RecyclerView
     private lateinit var savePlaceAdapter: SavePlaceAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
-
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
         initView()
         setListeners()
@@ -41,24 +34,18 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        editText = findViewById(R.id.searchText)
-        cancelBtn = findViewById(R.id.cancelBtn)
-        recyclerView = findViewById(R.id.searchPlaceView)
-        noSearchLayout = findViewById(R.id.noSearch)
-        saveRecyclerView = findViewById(R.id.savePlaceView)
-
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        saveRecyclerView.layoutManager =
+        binding.searchPlaceView.layoutManager = LinearLayoutManager(this)
+        binding.savePlaceView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun setListeners() {
-        cancelBtn.setOnClickListener {
-            editText.setText("")
+        binding.cancelBtn.setOnClickListener {
+            binding.searchText.setText("")
             updateViewVisibility(false)
         }
 
-        editText.addTextChangedListener(object : TextWatcher {
+        binding.searchText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -80,12 +67,12 @@ class SearchActivity : AppCompatActivity() {
             intent.putExtra("placeInfo", it)
             startActivity(intent)
         }
-        recyclerView.adapter = searchAdapter
+        binding.searchPlaceView.adapter = searchAdapter
 
         savePlaceAdapter = SavePlaceAdapter(emptyList()) {
             viewModel.deleteSavedPlace(it.savePlaceName)
         }
-        saveRecyclerView.adapter = savePlaceAdapter
+        binding.savePlaceView.adapter = savePlaceAdapter
     }
 
     private fun observeViewModel() {
@@ -101,13 +88,11 @@ class SearchActivity : AppCompatActivity() {
 
     private fun updateViewVisibility(hasPlaces: Boolean) {
         if (hasPlaces) {
-            recyclerView.visibility = View.VISIBLE
-            noSearchLayout.visibility = View.GONE
+            binding.searchPlaceView.visibility = View.VISIBLE
+            binding.noSearch.visibility = View.GONE
         } else {
-            recyclerView.visibility = View.GONE
-            noSearchLayout.visibility = View.VISIBLE
+            binding.searchPlaceView.visibility = View.GONE
+            binding.noSearch.visibility = View.VISIBLE
         }
     }
-
-
 }
