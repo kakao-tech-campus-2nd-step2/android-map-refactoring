@@ -10,7 +10,7 @@
     android:background="@color/white">
 
     <EditText
-        android:id="@+id/SearchEditTextInMain"
+        android:id="@+id/searchEditTextMain"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:hint="검색어를 입력해주세요."
@@ -28,8 +28,8 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/x_mark"
-        app:layout_constraintBottom_toBottomOf="@+id/SearchEditTextInMain"
-        app:layout_constraintEnd_toEndOf="@+id/SearchEditTextInMain"
+        app:layout_constraintBottom_toBottomOf="@+id/searchEditTextMain"
+        app:layout_constraintEnd_toEndOf="@+id/searchEditTextMain"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="10dp"/>
 
@@ -39,7 +39,7 @@
         android:layout_height="45dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/SearchEditTextInMain"
+        app:layout_constraintTop_toBottomOf="@id/searchEditTextMain"
         android:visibility="visible"
         android:orientation="horizontal"/>
 
@@ -54,14 +54,14 @@
         app:layout_constraintTop_toBottomOf="@id/savedLocationRecyclerView" />
 
     <TextView
-        android:id="@+id/NoResultTextView"
+        android:id="@+id/noResultTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="검색 결과가 없습니다."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/SearchEditTextInMain"
+        app:layout_constraintTop_toBottomOf="@id/searchEditTextMain"
         android:textColor="@color/black"/>
 
 

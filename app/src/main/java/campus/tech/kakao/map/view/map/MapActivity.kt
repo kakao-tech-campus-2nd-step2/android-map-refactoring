@@ -11,8 +11,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.databinding.ErrorMapBinding
+import campus.tech.kakao.map.databinding.MapBottomSheetBinding
 import campus.tech.kakao.map.model.Location
-import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
 import campus.tech.kakao.map.view.search.MainActivity
 import campus.tech.kakao.map.viewmodel.LocationViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -25,28 +27,29 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private val locationViewModel: LocationViewModel by viewModels()
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
-    private val searchEditText by lazy { findViewById<EditText>(R.id.SearchEditTextInMap) }
-    private val mapView by lazy { findViewById<MapView>(R.id.map_view) }
-    private val bottomSheetLayout by lazy { findViewById<ConstraintLayout>(R.id.bottom_sheet_layout) }
-    private val bottom_sheet_title by lazy { findViewById<TextView>(R.id.bottom_sheet_title) }
-    private val bottom_sheet_address by lazy { findViewById<TextView>(R.id.bottom_sheet_address) }
-    private val errorMessageTextView by lazy { findViewById<TextView>(R.id.errorMessageTextView) }
-    private val bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout> by lazy { BottomSheetBehavior.from(bottomSheetLayout) }
+    private lateinit var activityMapBinding: ActivityMapBinding
+    private lateinit var errorMapBinding: ErrorMapBinding
+    private lateinit var mapBottomSheetBinding: MapBottomSheetBinding
 
     companion object{
-        private val DEFAULT_LONGITUDE = 127.115587
-        private val DEFAULT_LATITUDE = 37.406960
+        private const val DEFAULT_LONGITUDE = 127.115587
+        private const val DEFAULT_LATITUDE = 37.406960
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+        activityMapBinding = ActivityMapBinding.inflate(layoutInflater)
+        setContentView(activityMapBinding.root)
+
+        errorMapBinding = ErrorMapBinding.inflate(layoutInflater)
+        mapBottomSheetBinding = activityMapBinding.mapBottomSheet
+        bottomSheetBehavior = BottomSheetBehavior.from(mapBottomSheetBinding.bottomSheetLayout)
 
         setupEditText()
         setupMapView()
@@ -54,29 +57,29 @@ class MapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume() // MapView 의 resume 호출
+        activityMapBinding.mapView.resume() // MapView 의 resume 호출
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause() // MapView 의 pause 호출
+        activityMapBinding.mapView.pause() // MapView 의 pause 호출
     }
 
     private fun setupEditText() {
-        searchEditText.setOnClickListener {
+        activityMapBinding.searchEditTextInMap.setOnClickListener {
             val intent: Intent = Intent(this@MapActivity, MainActivity::class.java)
             startActivity(intent)
         }
     }
 
     private fun setupMapView() {
-        mapView.start(object : MapLifeCycleCallback() {
+        activityMapBinding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 Log.d("jieun", "onMapDestroy")
             }
 
             override fun onMapError(error: Exception) {  // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출됨
-                Log.d("jieun", "onMapError" + error)
+                Log.d("jieun", "onMapError$error")
                 showErrorMessage(error)
             }
         }, object : KakaoMapReadyCallback() {
@@ -93,7 +96,6 @@ class MapActivity : AppCompatActivity() {
             }
 
             override fun getPosition(): LatLng {
-//                Log.d("jieun", "getPosition coordinates: " + coordinates.toString())
                 if (location != null) {
                     return LatLng.from(location.latitude, location.longitude)
                 } else{
@@ -107,8 +109,8 @@ class MapActivity : AppCompatActivity() {
 
     private fun showErrorMessage(error: Exception) {
         runOnUiThread {
-            setContentView(R.layout.error_map)
-            errorMessageTextView.text = "지도 인증을 실패했습니다.\n다시 시도해주세요.\n\n" + error.message
+            setContentView(errorMapBinding.root)
+            errorMapBinding.errorMessageTextView.text = "지도 인증을 실패했습니다.\n다시 시도해주세요.\n\n" + error.message
         }
     }
 
@@ -122,7 +124,7 @@ class MapActivity : AppCompatActivity() {
                 .setTextStyles(32, Color.BLACK, 1, Color.GRAY).setZoomLevel(15)
         )
         val position = LatLng.from(location.latitude, location.longitude)
-        kakaoMap.labelManager?.getLayer()?.addLabel(
+        kakaoMap.labelManager?.layer?.addLabel(
             LabelOptions.from(position)
                 .setStyles(labelStyles)
                 .setTexts(location.title)
@@ -130,14 +132,15 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun hideBottomSheet() {
-        bottomSheetLayout.visibility = View.GONE
+        mapBottomSheetBinding.bottomSheetLayout.visibility = View.GONE
     }
 
     private fun showBottomSheet(location: Location) {
-        bottomSheetLayout.visibility = View.VISIBLE
+        mapBottomSheetBinding.bottomSheetLayout.visibility = View.VISIBLE
+        mapBottomSheetBinding.bottomSheetTitle.text = location.title
+        Log.d("jieun", "mapBottomSheetBinding.bottomSheetTitle.text:"+mapBottomSheetBinding.bottomSheetTitle.text)
+        mapBottomSheetBinding.bottomSheetAddress.text = location.address
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-        bottom_sheet_title.text = location.title
-        bottom_sheet_address.text = location.address
     }
 
     private fun getLocation(): Location? {

@@ -5,47 +5,34 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.model.datasource.LocationApi
-import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.SavedLocation
-import campus.tech.kakao.map.model.datasource.SavedLocationDatabase
-import campus.tech.kakao.map.model.repository.DefaultSavedLocationRepository
-import campus.tech.kakao.map.model.repository.LocationRepository
 import campus.tech.kakao.map.view.map.MapActivity
 import campus.tech.kakao.map.viewmodel.LocationViewModel
 import campus.tech.kakao.map.viewmodel.SavedLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     private val locationViewModel: LocationViewModel by viewModels()
     private val savedLocationViewModel: SavedLocationViewModel by viewModels()
 
-
-    private val locationAdapter: LocationAdapter by lazy { LocationAdapter(this) }
-    private val locationRecyclerView: RecyclerView by lazy { findViewById(R.id.locationRecyclerView) }
-
-    private val savedLocationAdapter: SavedLocationAdapter by lazy { SavedLocationAdapter(this) }
-    private val savedLocationRecyclerView: RecyclerView by lazy {
-        findViewById(R.id.savedLocationRecyclerView)
-    }
-    private val clearButton: ImageView by lazy { findViewById(R.id.clearButton) }
-    private val searchEditText: EditText by lazy { findViewById(R.id.SearchEditTextInMain) }
-    private val noResultTextView: TextView by lazy { findViewById(R.id.NoResultTextView) }
+    private lateinit var locationAdapter: LocationAdapter
+    private lateinit var savedLocationAdapter: SavedLocationAdapter
+    private lateinit var activityMainBinding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        activityMainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(activityMainBinding.root)
+
+        locationAdapter = LocationAdapter(this)
+        savedLocationAdapter = SavedLocationAdapter(this)
 
         setupSearchEditText()
         setupClearButton()
@@ -54,7 +41,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private fun setupSearchEditText() {
-        searchEditText.addTextChangedListener(object : TextWatcher {
+        activityMainBinding.searchEditTextMain.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -66,12 +53,12 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
 
             override fun afterTextChanged(s: Editable?) {}
         })
-        searchEditText.requestFocus()
+        activityMainBinding.searchEditTextMain.requestFocus()
     }
 
     private fun setupClearButton() {
-        clearButton.setOnClickListener {
-            searchEditText.setText("")
+        activityMainBinding.clearButton.setOnClickListener {
+            activityMainBinding.searchEditTextMain.setText("")
         }
     }
 
@@ -87,9 +74,9 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         savedLocationViewModel.savedLocation.observe(this, Observer {
             savedLocationAdapter.submitList(it?.toList() ?: emptyList())
             if (it.size > 0) {
-                savedLocationRecyclerView.visibility = View.VISIBLE
+                activityMainBinding.savedLocationRecyclerView.visibility = View.VISIBLE
             } else {
-                savedLocationRecyclerView.visibility = View.GONE
+                activityMainBinding.savedLocationRecyclerView.visibility = View.GONE
             }
         })
     }
@@ -101,12 +88,12 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private fun setupRecyclerViews() {
-        locationRecyclerView.layoutManager = LinearLayoutManager(this)
-        locationRecyclerView.adapter = locationAdapter
+        activityMainBinding.locationRecyclerView.layoutManager = LinearLayoutManager(this)
+        activityMainBinding.locationRecyclerView.adapter = locationAdapter
 
-        savedLocationRecyclerView.layoutManager =
+        activityMainBinding.savedLocationRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        savedLocationRecyclerView.adapter = savedLocationAdapter
+        activityMainBinding.savedLocationRecyclerView.adapter = savedLocationAdapter
     }
 
     override fun onLocationViewClicked(location: Location) {
@@ -129,15 +116,15 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private fun updateEditText(title: String) {
-        searchEditText.setText(title)
-        searchEditText.setSelection(searchEditText.text.length)
+        activityMainBinding.searchEditTextMain.setText(title)
+        activityMainBinding.searchEditTextMain.setSelection(activityMainBinding.searchEditTextMain.text.length)
     }
 
     private fun handleNoResultMessage(searchLocationsSize: Int) {
         if (searchLocationsSize > 0) {
-            noResultTextView.visibility = View.GONE
+            activityMainBinding.noResultTextView.visibility = View.GONE
         } else {
-            noResultTextView.visibility = View.VISIBLE
+            activityMainBinding.noResultTextView.visibility = View.VISIBLE
         }
     }
 }

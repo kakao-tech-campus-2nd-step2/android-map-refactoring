@@ -13,6 +13,7 @@ android {
     buildFeatures {
         buildConfig = true
         dataBinding = true
+        viewBinding = true
     }
     defaultConfig {
         applicationId = "campus.tech.kakao.map"

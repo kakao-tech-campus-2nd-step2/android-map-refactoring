@@ -17,7 +17,7 @@
         app:layout_constraintTop_toBottomOf="parent" />
 
     <EditText
-        android:id="@+id/SearchEditTextInMap"
+        android:id="@+id/searchEditTextInMap"
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:hint="검색어를 입력해주세요."
@@ -34,8 +34,8 @@
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:src="@drawable/search_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/SearchEditTextInMap"
-        app:layout_constraintEnd_toEndOf="@+id/SearchEditTextInMap"
+        app:layout_constraintBottom_toBottomOf="@+id/searchEditTextInMap"
+        app:layout_constraintEnd_toEndOf="@+id/searchEditTextInMap"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="10dp"
         android:elevation="4dp"/>
@@ -48,6 +48,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <include
+            android:id="@+id/mapBottomSheet"
             layout="@layout/map_bottom_sheet"
             android:visibility="visible" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
