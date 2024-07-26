@@ -3,12 +3,11 @@ package campus.tech.kakao.map.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.dto.Document
-import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.PlaceItemBinding
 
 class DocumentAdapter(
 	private val callback: AdapterCallback
@@ -24,12 +23,10 @@ class DocumentAdapter(
 
 	}
 ) {
+	private lateinit var documentBinding: PlaceItemBinding
 	inner class ViewHolder(
 		itemView: View
 	): RecyclerView.ViewHolder(itemView) {
-		val name:TextView = itemView.findViewById(R.id.name)
-		val address:TextView = itemView.findViewById(R.id.address)
-		val type:TextView = itemView.findViewById(R.id.type)
 		init {
 			itemView.setOnClickListener {
 				callback.onPlaceClicked(getItem(bindingAdapterPosition))
@@ -38,14 +35,14 @@ class DocumentAdapter(
 	}
 
 	override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-		return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.place_item, parent, false))
+		val inflater = LayoutInflater.from(parent.context)
+		documentBinding = PlaceItemBinding.inflate(inflater, parent, false)
+		return ViewHolder(documentBinding.root)
 	}
 
 	override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 		val document: Document = getItem(position)
-		holder.name.text = document.placeName
-		holder.address.text = document.addressName
-		holder.type.text = document.categoryGroupName
+		documentBinding.document = document
 	}
 }
 
