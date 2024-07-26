@@ -1,14 +1,17 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.*
 import campus.tech.kakao.map.data.Keyword
 import campus.tech.kakao.map.repository.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(private val context: Context) : ViewModel() {
-    private val repository: Repository = Repository(context)
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val repository: Repository
+) : ViewModel() {
 
     private val _searchResults = MutableLiveData<List<Keyword>>()
     val searchResults: LiveData<List<Keyword>> = _searchResults
@@ -71,15 +74,5 @@ class SearchViewModel(private val context: Context) : ViewModel() {
         if (keyword != null) {
             _lastMarker.value = keyword
         }
-    }
-}
-
-class SearchViewModelFactory(private val context: Context) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SearchViewModel(context) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

@@ -1,7 +1,6 @@
 package campus.tech.kakao.map.ui
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,7 +12,6 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.Keyword
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.viewmodel.SearchViewModel
-import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -26,13 +24,15 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var kakaoMap: KakaoMap
+    private var kakaoMap: KakaoMap? = null
     private lateinit var labelLayer: LabelLayer
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<FrameLayout>
-    private val viewModel: SearchViewModel by viewModels { SearchViewModelFactory(applicationContext) }
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(map: KakaoMap) {
                 kakaoMap = map
-                val labelManager = kakaoMap.labelManager
+                val labelManager = kakaoMap?.labelManager
                 if (labelManager != null) {
                     labelLayer = labelManager.layer!!
                 } else {
@@ -109,9 +109,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addMarker(placeName: String?, roadAddressName: String?, x: Double, y: Double) {
-        if (placeName != null && roadAddressName != null) {
+        val map = kakaoMap
+        if (placeName != null && roadAddressName != null && map != null) {
             val position = LatLng.from(y, x)
-            val styles = kakaoMap.labelManager?.addLabelStyles(
+            val styles = map.labelManager?.addLabelStyles(
                 LabelStyles.from(
                     LabelStyle.from(R.drawable.marker).setZoomLevel(1),
                     LabelStyle.from(R.drawable.marker).setZoomLevel(1)
@@ -132,7 +133,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveCamera(position: LatLng) {
-        kakaoMap.moveCamera(
+        kakaoMap?.moveCamera(
             CameraUpdateFactory.newCenterPosition(position),
             CameraAnimation.from(10, false, false)
         )

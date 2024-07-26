@@ -9,16 +9,17 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.viewmodel.SearchViewModel
-import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
 import campus.tech.kakao.map.adapter.SavedKeywordsAdapter
 import campus.tech.kakao.map.adapter.SearchResultsAdapter
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-    private val viewModel: SearchViewModel by viewModels { SearchViewModelFactory(applicationContext) }
     private lateinit var searchResultsAdapter: SearchResultsAdapter
     private lateinit var savedKeywordsAdapter: SavedKeywordsAdapter
+    private val viewModel: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
