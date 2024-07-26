@@ -14,6 +14,7 @@ import campus.tech.kakao.map.MapViewModelFactory
 import campus.tech.kakao.map.PreferenceRepository
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.dataContract.LocationDataContract
+import campus.tech.kakao.map.viewModel.MapErrorViewModel
 import campus.tech.kakao.map.viewModel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -55,6 +56,7 @@ class HomeMapActivity : AppCompatActivity() {
         placeAddressTextView = findViewById(R.id.placeAddress)
 
         bottomBehavior = BottomSheetBehavior.from(bottomSheet)
+        val mapErrorViewModel: MapErrorViewModel = ViewModelProvider(this)[MapErrorViewModel::class.java]
         val intentError = Intent(this, MapErrorActivity::class.java)
 
         //KaKao Map UI에 띄우기
@@ -63,7 +65,7 @@ class HomeMapActivity : AppCompatActivity() {
             }
 
             override fun onMapError(p0: Exception?) {
-                intentError.putExtra("errorMessage", p0.toString())
+                mapErrorViewModel.setErrorDetail(p0.toString())
                 startActivity(intentError)
             }
 
