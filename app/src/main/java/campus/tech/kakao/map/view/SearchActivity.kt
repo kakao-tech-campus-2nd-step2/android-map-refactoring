@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.PlaceViewAdapter
 import campus.tech.kakao.map.adapter.SavedPlaceViewAdapter
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
@@ -34,8 +36,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPlaceListener {
-    lateinit var noResultText: TextView
-    lateinit var inputSearchField: EditText
+    private lateinit var binding : ActivitySearchBinding
     lateinit var savedPlaceRecyclerView: RecyclerView
     lateinit var searchRecyclerView: RecyclerView
     lateinit var searchDeleteButton: ImageView
@@ -45,12 +46,13 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+
         initVar()
         initListeners()
         initRecyclerViews()
         initObserver()
-        inputSearchField.requestFocus()
+        binding.inputSearchField.requestFocus()
     }
 
     override fun deleteSavedPlace(savedPlace: SavedPlace, position: Int) {
@@ -59,7 +61,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     }
 
     override fun loadPlace(savedPlace: SavedPlace){
-        inputSearchField.setText(savedPlace.name)
+        binding.inputSearchField.setText(savedPlace.name)
     }
 
     override fun savePlace(place: Place) {
@@ -72,9 +74,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     }
 
     fun initVar() {
-        noResultText = findViewById<TextView>(R.id.no_search_result)
         searchRecyclerView = findViewById<RecyclerView>(R.id.search_result_recyclerView)
-        inputSearchField = findViewById<EditText>(R.id.input_search_field)
         savedPlaceRecyclerView = findViewById<RecyclerView>(R.id.saved_search_recyclerView)
         searchDeleteButton = findViewById<ImageView>(R.id.button_X)
     }
@@ -86,16 +86,16 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
 
     fun initDeleteButtonListener() {
         searchDeleteButton.setOnClickListener {
-            inputSearchField.setText("")
-            inputSearchField.clearFocus()
-            inputSearchField.parent.clearChildFocus(inputSearchField)
+            binding.inputSearchField.setText("")
+            binding.inputSearchField.clearFocus()
+            binding.inputSearchField.parent.clearChildFocus(binding.inputSearchField)
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(window.decorView.applicationWindowToken, 0)
         }
     }
 
     fun initInputFieldListener() {
-        inputSearchField.addTextChangedListener(object : TextWatcher {
+        binding.inputSearchField.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
 
@@ -143,8 +143,8 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
             val placeList = viewModel.place.value
             Log.d("testt", "${placeList}")
             searchRecyclerViewAdapter.submitList(placeList)
-            if (placeList?.isEmpty() == true) noResultText.visibility = View.VISIBLE
-            else noResultText.visibility = View.INVISIBLE
+            if (placeList?.isEmpty() == true) binding.noSearchResult.visibility = View.VISIBLE
+            else binding.noSearchResult.visibility = View.INVISIBLE
         })
     }
 
