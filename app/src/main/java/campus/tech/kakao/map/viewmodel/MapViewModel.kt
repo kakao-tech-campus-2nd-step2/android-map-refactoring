@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel @Inject constructor(
     application: Application,
-    private var repository: MapItemRepository
+    private val repository: MapItemRepository
 ) : AndroidViewModel(application) {
 
     val keyword = MutableLiveData<String>()
