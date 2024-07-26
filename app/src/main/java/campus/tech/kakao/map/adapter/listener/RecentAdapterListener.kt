@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.listener
+package campus.tech.kakao.map.adapter.listener
 
 interface RecentAdapterListener {
     fun autoSearch(searchData: String)

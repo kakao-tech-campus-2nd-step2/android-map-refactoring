@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.listener.SearchAdapterListener
+import campus.tech.kakao.map.adapter.listener.SearchAdapterListener
 import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.retrofit.Document
 import kotlinx.coroutines.launch

@@ -1,18 +1,13 @@
 package campus.tech.kakao.map.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import campus.tech.kakao.map.retrofit.CategoryData
 import campus.tech.kakao.map.retrofit.Document
 import campus.tech.kakao.map.retrofit.RetrofitAPI.getResultFromAPI
 
-class SearchDataRepository(){
-    private val _searchDataList = MutableLiveData<List<Document>>()
-    val searchResults: LiveData<List<Document>>
-        get() = _searchDataList
+class SearchResultRepository {
 
-    //검색 결과 가공 후 LiveData에 저장
-    fun loadResultMapData(data: String) {
+    //검색 결과 가공
+    fun loadResultMapData(data: String, callback: (List<Document>) -> Unit) {
         getResultFromAPI(data) { response ->
             if (response.isSuccessful) {
                 val body = response.body()
@@ -20,13 +15,12 @@ class SearchDataRepository(){
                     val updatedDocuments = documents.map { document ->
                         val descriptionFromCode = CategoryData.descriptions[document.categoryCode]
                         val descriptionFromCategory = getTailCategory(document.category)
-                        val updateDocument = document.copy(
+                        document.copy(
                             categoryDescription = descriptionFromCode,
                             categoryTail = descriptionFromCategory
                         )
-                        updateDocument
                     }
-                    _searchDataList.postValue(updatedDocuments)
+                    callback(updatedDocuments)
                 }
             }
         }

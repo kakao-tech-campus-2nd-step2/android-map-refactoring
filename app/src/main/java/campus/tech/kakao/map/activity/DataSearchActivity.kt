@@ -1,110 +1,98 @@
 package campus.tech.kakao.map.activity
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.listener.RecentAdapterListener
-import campus.tech.kakao.map.listener.SearchAdapterListener
+import campus.tech.kakao.map.adapter.listener.RecentAdapterListener
+import campus.tech.kakao.map.adapter.listener.SearchAdapterListener
 import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
 import campus.tech.kakao.map.data.LocationDataContract
+import campus.tech.kakao.map.databinding.ActivityDataSearchBinding
 import campus.tech.kakao.map.repository.SearchHistoryRepository
+import campus.tech.kakao.map.repository.SearchResultRepository
 import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
 import campus.tech.kakao.map.viewModel.factory.DBViewModelFactory
+import campus.tech.kakao.map.viewModel.factory.SearchViewModelFactory
 
 class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAdapterListener {
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var recentViewModel: DBViewModel
-    private lateinit var editText: EditText
-    private lateinit var resultDataAdapter: SearchDataAdapter
-    private lateinit var searchDataListView: RecyclerView
-    private lateinit var recentSearchListView: RecyclerView
-    private lateinit var noResultNotice: TextView
-    private lateinit var deleteBtn: ImageButton
-    private lateinit var dbRepo: SearchHistoryRepository
+    private lateinit var searchResultRepo: SearchResultRepository   //검색 결과 관리
+    private lateinit var dbRepo: SearchHistoryRepository    //최근 검색어 데이터 관리
+    private lateinit var searchViewModel: SearchViewModel   //검색 결과 관리
+    private lateinit var recentViewModel: DBViewModel   //최근 검색어 관리
+    private lateinit var searchResultDataAdapter: SearchDataAdapter   //검색 결과 표시 위함
+    private lateinit var binding: ActivityDataSearchBinding
 
-
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_data_search)
-
-        //View 초기화
-        searchDataListView = findViewById(R.id.searchResulListView)
-        editText = findViewById(R.id.searchBar)
-        noResultNotice = findViewById(R.id.noResult)
-        deleteBtn = findViewById(R.id.deleteInput)
-        recentSearchListView = findViewById(R.id.recentSearchListView)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_data_search)
 
         //ViewModel 생성
-        searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
+        searchResultRepo = SearchResultRepository()
+        searchViewModel = ViewModelProvider(
+            this,
+            SearchViewModelFactory(searchResultRepo)
+        )[SearchViewModel::class.java]
+
         dbRepo = SearchHistoryRepository(this)
         recentViewModel =
             ViewModelProvider(this, DBViewModelFactory(dbRepo))[DBViewModel::class.java]
 
-        //검색 결과 목록 세로 스크롤 설정
-        searchDataListView.layoutManager = LinearLayoutManager(this)
-        //최근 검색어 목록 가로 스크롤 설정
-        recentSearchListView.layoutManager =
+        //RecyclerView Layout 매니저 설정 (스크롤 방향 설정)
+        binding.searchResulListView.layoutManager = LinearLayoutManager(this)
+        binding.recentSearchListView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        //어뎁터 초기화
-        resultDataAdapter = SearchDataAdapter(emptyList(), recentViewModel, this)
-        searchDataListView.adapter = resultDataAdapter
+        //Adapter 초기화
+        // Adapter 초기화
+        searchResultDataAdapter = SearchDataAdapter(emptyList(), recentViewModel, this)
+        binding.searchResulListView.adapter = searchResultDataAdapter
+        binding.recentSearchListView.adapter =
+            RecentSearchAdapter(emptyList(), recentViewModel, this)
 
-        resetButtonListener()
-        setTextWatcher()
+        resetButtonListener()   //x버튼 눌러 검색 입력 필드 내용 삭제
+        setTextWatcher()    //검색 입력 필드 텍스트 변경 리스너
 
-        recentViewModel.getRecentDataLiveData().observe(this, Observer { recentData ->
-            recentSearchListView.adapter = RecentSearchAdapter(recentData, recentViewModel, this)
-        })
-
-        searchViewModel.searchResults.observe(this, Observer { documentsList ->
+        //검색 결과 데이터 관찰 -> searchResultAdapter 데이터 넘기기
+        searchViewModel.getSearchDataLiveData().observe(this, Observer { documentsList ->
             if (documentsList.isNotEmpty()) {
-                noResultNotice.visibility = View.GONE
-                resultDataAdapter.updateData(documentsList)
+                binding.noResult.visibility = View.GONE
+                searchResultDataAdapter.updateData(documentsList)
             } else {
-                noResultNotice.visibility = View.VISIBLE
-                resultDataAdapter.updateData(emptyList())
+                binding.noResult.visibility = View.VISIBLE
+                searchResultDataAdapter.updateData(emptyList())
             }
         })
 
-        val onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                val intent = Intent(this@DataSearchActivity, HomeMapActivity::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
-            }
-        }
-        this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        //검색 history 데이터 관찰
+        recentViewModel.getRecentDataLiveData().observe(this, Observer { recentData ->
+            binding.recentSearchListView.adapter =
+                RecentSearchAdapter(recentData, recentViewModel, this)
+        })
     }
 
     private fun setTextWatcher() {
-        editText.addTextChangedListener(object : TextWatcher {
+        binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val searchInput = editText.text.trim().toString()
+                val searchInput = binding.searchBar.text.trim().toString()
 
                 if (searchInput.isNotEmpty()) {
                     searchViewModel.loadResultData(searchInput)
                 } else {
-                    noResultNotice.visibility = View.VISIBLE
-                    resultDataAdapter.updateData(emptyList())
+                    binding.noResult.visibility = View.VISIBLE
+                    searchResultDataAdapter.updateData(emptyList())
                 }
             }
 
@@ -114,14 +102,14 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
     }
 
     private fun resetButtonListener() {
-        deleteBtn.setOnClickListener {
-            editText.text.clear()
+        binding.deleteInput.setOnClickListener {
+            binding.searchBar.text.clear()
         }
     }
 
     //클릭한 검색어가 자동으로 입력되는 기능 구현
     override fun autoSearch(searchData: String) {
-        editText.setText(searchData)
+        binding.searchBar.setText(searchData)
     }
 
     override fun displaySearchLocation(
