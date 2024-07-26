@@ -35,60 +35,9 @@ class MainActivity : AppCompatActivity() {
         Log.d("MainActivity", "onCreate called")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        Log.d("MainActivity", "View binding initialized")
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
-        setupRecyclerViews()
-
-        viewModel.searchResults.observe(this, Observer { results ->
-            Log.d("MainActivity", "Search results updated: $results")
-            searchAdapter.updateResults(results)
-            binding.searchRecyclerView.visibility = if (results.isEmpty()) View.GONE else View.VISIBLE
-            binding.noResult.visibility = if (results.isEmpty())View.VISIBLE else View.GONE
-            binding.savedSearchRecyclerView.visibility = if (results.isEmpty()) View.GONE else View.VISIBLE
-        })
-
-        viewModel.savedSearches.observe(this, Observer { searches ->
-            Log.d("MainActivity", "Saved searches updated: $searches")
-            savedSearchAdapter.updateSearches(searches)
-        })
-
-        //X 버튼 클릭 시 입력창 초기화
-        binding.buttonX.setOnClickListener {
-            Log.d("MainActivity", "Clear search input")
-            binding.inputSearch.text.clear()
-            searchAdapter.updateResults(emptyList())
-            binding.searchRecyclerView.visibility = View.GONE
-            binding.noResult.visibility = View.VISIBLE
-            //binding.savedSearchRecyclerView.visibility = View.VISIBLE
-        }
-
-        binding.inputSearch.setOnFocusChangeListener { _, hasFocus ->
-            if(hasFocus && binding.inputSearch.text.isEmpty()) {
-                binding.savedSearchRecyclerView.visibility = View.VISIBLE
-            }
-        }
-
-        binding.inputSearch.addTextChangedListener ( object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val query = s.toString()
-                Log.d("MainActivity", "Search query: $query")
-                if(query.isNotEmpty()) {
-                    viewModel.searchPlaces(query)
-                } else {
-                    searchAdapter.updateResults(emptyList())
-                    binding.searchRecyclerView.visibility = View.GONE
-                    binding.noResult.visibility = View.VISIBLE
-                    binding.savedSearchRecyclerView.visibility = View.VISIBLE
-                }
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-    }
-
-    private fun setupRecyclerViews() {
         searchAdapter = SearchAdapter { result ->
             viewModel.addSearch(result.name, result.address, result.category, result.x, result.y)
             val intent = Intent(this, MapActivity::class.java).apply {
@@ -104,6 +53,65 @@ class MainActivity : AppCompatActivity() {
             onSearchClicked = {viewModel.searchSavedPlace(it.name)},
             onDeleteClicked = {place -> viewModel.removeSearch(place.name, place.address, place.category)}
         )
+
+        binding.searchAdapter = searchAdapter
+        binding.savedSearchAdapter = savedSearchAdapter
+
+        setContentView(binding.root)
+        Log.d("MainActivity", "View binding initialized")
+
+        setupRecyclerViews()
+
+        viewModel.searchResults.observe(this, Observer { results ->
+            Log.d("MainActivity", "Search results updated: $results")
+            searchAdapter.updateResults(results)
+            viewModel.setSearchRecyclerViewVisibility(results.isNotEmpty())
+            viewModel.setNoResultVisible(results.isEmpty())
+            viewModel.setSavedSearchRecyclerViewVisibility(results.isNotEmpty())
+        })
+
+        viewModel.savedSearches.observe(this, Observer { searches ->
+            Log.d("MainActivity", "Saved searches updated: $searches")
+            savedSearchAdapter.updateSearches(searches)
+        })
+
+        /*
+        //X 버튼 클릭 시 입력창 초기화
+        binding.buttonX.setOnClickListener {
+            Log.d("MainActivity", "Clear search input")
+            binding.inputSearch.text.clear()
+            searchAdapter.updateResults(emptyList())
+            binding.searchRecyclerView.visibility = View.GONE
+            binding.noResult.visibility = View.VISIBLE
+            //binding.savedSearchRecyclerView.visibility = View.VISIBLE
+        }*/
+
+        binding.inputSearch.setOnFocusChangeListener { _, hasFocus ->
+            if(hasFocus && binding.inputSearch.text.isEmpty()) {
+                viewModel.setSavedSearchRecyclerViewVisibility(true)
+            }
+        }
+
+        binding.inputSearch.addTextChangedListener ( object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                val query = s.toString()
+                Log.d("MainActivity", "Search query: $query")
+                if(query.isNotEmpty()) {
+                    viewModel.searchPlaces(query)
+                } else {
+                    searchAdapter.updateResults(emptyList())
+                    viewModel.setSearchRecyclerViewVisibility(false)
+                    viewModel.setNoResultVisible(true)
+                    viewModel.setSavedSearchRecyclerViewVisibility(true)
+                }
+            }
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+    }
+
+    private fun setupRecyclerViews() {
 
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchRecyclerView.adapter = searchAdapter
