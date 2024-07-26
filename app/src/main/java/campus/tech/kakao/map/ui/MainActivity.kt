@@ -2,21 +2,16 @@ package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.viewmodel.MapViewModel
-import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.MapItem
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,53 +20,30 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     KeywordAdapter.OnKeywordRemoveListener {
 
     private val mapViewModel: MapViewModel by viewModels()
-    private lateinit var etKeywords: EditText
-    private lateinit var rvSearchResult: RecyclerView
-    private lateinit var rvKeywords: RecyclerView
-    private lateinit var tvNoResults: TextView
-    private lateinit var ivClear: ImageView
-
+    private lateinit var binding: ActivityMainBinding
     private val searchResultAdapter = SearchResultAdapter(this)
     private val keywordAdapter = KeywordAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        binding.lifecycleOwner = this
+        binding.viewModel = mapViewModel
 
-        etKeywords = findViewById(R.id.etKeywords)
-        rvSearchResult = findViewById(R.id.rvSearchResult)
-        rvKeywords = findViewById(R.id.rvKeywords)
-        tvNoResults = findViewById(R.id.tvNoResults)
-        ivClear = findViewById(R.id.ivClear)
+        binding.rvSearchResult.layoutManager = LinearLayoutManager(this)
+        binding.rvSearchResult.adapter = searchResultAdapter
 
-        rvSearchResult.layoutManager = LinearLayoutManager(this)
-        rvSearchResult.adapter = searchResultAdapter
-
-        rvKeywords.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        rvKeywords.adapter = keywordAdapter
-
-        etKeywords.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val keyword = s.toString()
-                if (keyword.isNotEmpty()) {
-                    mapViewModel.searchPlaces(keyword)
-                } else {
-                    searchResultAdapter.submitList(emptyList())
-                    tvNoResults.visibility = TextView.VISIBLE
-                    rvSearchResult.visibility = RecyclerView.GONE
-                }
-            }
-            override fun afterTextChanged(s: Editable?) {}
-        })
+        binding.rvKeywords.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvKeywords.adapter = keywordAdapter
 
         mapViewModel.searchResults.observe(this, Observer { results ->
             if (results.isEmpty()) {
-                tvNoResults.visibility = TextView.VISIBLE
-                rvSearchResult.visibility = RecyclerView.GONE
+                binding.tvNoResults.visibility = TextView.VISIBLE
+                binding.rvSearchResult.visibility = RecyclerView.GONE
             } else {
-                tvNoResults.visibility = TextView.GONE
-                rvSearchResult.visibility = RecyclerView.VISIBLE
+                binding.tvNoResults.visibility = TextView.GONE
+                binding.rvSearchResult.visibility = RecyclerView.VISIBLE
                 searchResultAdapter.submitList(results)
             }
         })
@@ -82,8 +54,8 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
             }
         })
 
-        ivClear.setOnClickListener {
-            etKeywords.text.clear()
+        binding.ivClear.setOnClickListener {
+            binding.etKeywords.text.clear()
         }
 
         loadKeywords()
@@ -98,7 +70,7 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
 
         mapViewModel.getSavedMapItems()
 
-        etKeywords.setOnClickListener {
+        binding.etKeywords.setOnClickListener {
             mapViewModel.clearMapItems()
         }
     }
@@ -106,17 +78,12 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     override fun onItemClick(item: MapItem) {
         keywordAdapter.addKeyword(item.name)
         saveKeywords()
-        // 검색어 결과 항목 클릭시 검색창 자동완성 (요구된 기능 외 추가 기능, 필요시 주석 제거)
-        // etKeywords.setText(item.name)
-        // mapViewModel.searchPlaces(item.name)
 
         val intent = Intent(this, MapActivity::class.java).apply {
             putExtra("name", item.name)
             putExtra("address", item.address)
             putExtra("longitude", item.longitude)
             putExtra("latitude", item.latitude)
-            //Log.d("putLatitude: ", item.latitude.toString())
-            //Log.d("putLongitude: ", item.longitude.toString())
         }
         startActivity(intent)
     }
@@ -126,8 +93,8 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     }
 
     override fun onKeywordClick(keyword: String) {
-        etKeywords.setText(keyword)
-        mapViewModel.searchPlaces(keyword)
+        binding.etKeywords.setText(keyword)
+        mapViewModel.setKeyword(keyword)
     }
 
     private fun loadKeywords() {

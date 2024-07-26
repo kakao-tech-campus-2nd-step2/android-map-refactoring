@@ -24,11 +24,31 @@ class MapViewModel @Inject constructor(
     private var repository: MapItemRepository
 ) : AndroidViewModel(application) {
 
+    val keyword = MutableLiveData<String>()
+
     private val _searchResults = MutableLiveData<List<MapItem>>()
     val searchResults: LiveData<List<MapItem>> get() = _searchResults
 
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
+
+    init {
+        keyword.observeForever {
+            if (!it.isNullOrEmpty()) {
+                searchPlaces(it)
+            } else {
+                _searchResults.postValue(emptyList())
+            }
+        }
+    }
+
+    fun setKeyword(keyword: String) {
+        this.keyword.value = keyword
+    }
+
+    fun clearKeyword() {
+        keyword.value = ""
+    }
 
     fun searchPlaces(keyword: String) {
         val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
