@@ -12,7 +12,9 @@ import campus.tech.kakao.map.model.toEntity
 import campus.tech.kakao.map.network.RetrofitClient
 import campus.tech.kakao.map.repository.MapItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -51,39 +53,46 @@ class MapViewModel @Inject constructor(
     }
 
     fun searchPlaces(keyword: String) {
-        val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
-        RetrofitClient.apiService.searchPlaces(apiKey, keyword).enqueue(object :
-            Callback<KakaoMapProductResponse> {
-            override fun onResponse(call: Call<KakaoMapProductResponse>, response: Response<KakaoMapProductResponse>) {
+        viewModelScope.launch {
+            val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.searchPlaces(apiKey, keyword)
+                }
                 if (response.isSuccessful) {
                     val documents = response.body()?.documents ?: emptyList()
-                    val results = documents.map { MapItem(it.place_name, it.address_name, it.category_group_name, it.x.toDouble(), it.y.toDouble()) }
+                    val results = documents.map {
+                        MapItem(it.place_name, it.address_name, it.category_group_name, it.x.toDouble(), it.y.toDouble())
+                    }
                     _searchResults.postValue(results)
                     saveResultsToDatabase(results)
                 } else {
                     _searchResults.postValue(emptyList())
                     _errorMessage.postValue("Error: ${response.message()}")
                 }
-            }
-
-            override fun onFailure(call: Call<KakaoMapProductResponse>, t: Throwable) {
+            } catch (e: Exception) {
                 _searchResults.postValue(emptyList())
-                _errorMessage.postValue("네트워크 요청 실패: ${t.message}")
+                _errorMessage.postValue("네트워크 요청 실패: ${e.message}")
             }
-        })
+        }
     }
 
     private fun saveResultsToDatabase(results: List<MapItem>) {
         viewModelScope.launch {
-            repository.deleteAll()
-            val entities = results.map { it.toEntity() }
-            repository.insertAll(entities)
+            withContext(Dispatchers.IO) {
+                repository.deleteAll()
+                val entities = results.map { it.toEntity() }
+                repository.insertAll(entities)
+            }
         }
     }
 
     fun getSavedMapItems() {
         viewModelScope.launch {
-            _searchResults.postValue(repository.getAllMapItems().map {
+            val savedItems = withContext(Dispatchers.IO) {
+                repository.getAllMapItems()
+            }
+            _searchResults.postValue(savedItems.map {
                 MapItem(it.name, it.address, it.category, it.longitude, it.latitude)
             })
         }
@@ -91,7 +100,9 @@ class MapViewModel @Inject constructor(
 
     fun clearMapItems() {
         viewModelScope.launch {
-            repository.deleteAll()
+            withContext(Dispatchers.IO) {
+                repository.deleteAll()
+            }
         }
     }
 }
