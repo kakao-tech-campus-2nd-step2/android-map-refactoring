@@ -3,9 +3,9 @@ package campus.tech.kakao.map.di
 import campus.tech.kakao.map.data.repository.DefaultLocationRepository
 import campus.tech.kakao.map.data.repository.DefaultPlaceRepository
 import campus.tech.kakao.map.data.repository.DefaultSavedSearchWordRepository
-import campus.tech.kakao.map.data.repository.LocationRepository
-import campus.tech.kakao.map.data.repository.PlaceRepository
-import campus.tech.kakao.map.data.repository.SavedSearchWordRepository
+import campus.tech.kakao.map.domain.repository.LocationRepository
+import campus.tech.kakao.map.domain.repository.PlaceRepository
+import campus.tech.kakao.map.domain.repository.SavedSearchWordRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

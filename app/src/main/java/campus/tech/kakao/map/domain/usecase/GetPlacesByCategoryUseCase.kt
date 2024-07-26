@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.domain.usecase
 
 import campus.tech.kakao.map.domain.model.PlaceDomain
-import campus.tech.kakao.map.data.repository.PlaceRepository
+import campus.tech.kakao.map.domain.repository.PlaceRepository
 import javax.inject.Inject
 
 class GetPlacesByCategoryUseCase @Inject constructor(

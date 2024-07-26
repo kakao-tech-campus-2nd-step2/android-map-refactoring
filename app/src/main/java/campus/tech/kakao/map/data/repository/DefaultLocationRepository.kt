@@ -2,12 +2,11 @@ package campus.tech.kakao.map.data.repository
 
 import android.util.Log
 import androidx.datastore.core.DataStore
-import campus.tech.kakao.map.data.mapper.LocationMapper
 import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.di.LocationDataStore
+import campus.tech.kakao.map.domain.repository.LocationRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @ViewModelScoped

@@ -3,6 +3,7 @@ package campus.tech.kakao.map.data.repository
 import campus.tech.kakao.map.data.dao.SavedSearchWordDao
 import campus.tech.kakao.map.data.mapper.SavedSearchWordMapper
 import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
+import campus.tech.kakao.map.domain.repository.SavedSearchWordRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 

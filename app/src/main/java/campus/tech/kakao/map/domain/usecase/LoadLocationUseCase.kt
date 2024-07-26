@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.domain.usecase
 
 import campus.tech.kakao.map.domain.model.LocationDomain
-import campus.tech.kakao.map.data.repository.LocationRepository
+import campus.tech.kakao.map.domain.repository.LocationRepository
 import javax.inject.Inject
 
 class LoadLocationUseCase @Inject constructor(

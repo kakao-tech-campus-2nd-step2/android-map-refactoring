@@ -1,8 +1,8 @@
 package campus.tech.kakao.map.di
 
-import campus.tech.kakao.map.data.repository.LocationRepository
-import campus.tech.kakao.map.data.repository.PlaceRepository
-import campus.tech.kakao.map.data.repository.SavedSearchWordRepository
+import campus.tech.kakao.map.domain.repository.LocationRepository
+import campus.tech.kakao.map.domain.repository.PlaceRepository
+import campus.tech.kakao.map.domain.repository.SavedSearchWordRepository
 import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
 import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
 import campus.tech.kakao.map.domain.usecase.GetPlacesByCategoryUseCase

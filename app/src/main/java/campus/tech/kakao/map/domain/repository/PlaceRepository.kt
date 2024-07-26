@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.data.repository
+package campus.tech.kakao.map.domain.repository
 
 import campus.tech.kakao.map.domain.model.PlaceDomain
 

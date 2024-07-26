@@ -5,6 +5,7 @@ import campus.tech.kakao.map.data.mapper.PlaceMapper
 import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.data.network.PlaceResponse
 import campus.tech.kakao.map.data.network.service.KakaoLocalService
+import campus.tech.kakao.map.domain.repository.PlaceRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
