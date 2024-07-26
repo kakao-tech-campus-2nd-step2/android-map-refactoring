@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ActivityPlaceBinding
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

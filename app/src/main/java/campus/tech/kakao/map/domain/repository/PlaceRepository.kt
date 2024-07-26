@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.domain.repository
 
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 
 interface PlaceRepository {
     suspend fun searchPlaces(query: String) : List<PlaceVO>?

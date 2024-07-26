@@ -1,6 +1,6 @@
 package campus.tech.kakao.map.data.remote.network
 
-import campus.tech.kakao.map.data.remote.dto.SearchResponse
+import campus.tech.kakao.map.data.remote.entity.SearchResponse
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import retrofit2.Call
 import retrofit2.http.GET

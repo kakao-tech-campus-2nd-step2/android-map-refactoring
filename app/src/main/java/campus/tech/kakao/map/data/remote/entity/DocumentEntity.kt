@@ -1,6 +1,5 @@
-package campus.tech.kakao.map.data.remote.dto
+package campus.tech.kakao.map.data.remote.entity
 
-import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 

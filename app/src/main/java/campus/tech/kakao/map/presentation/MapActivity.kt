@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap

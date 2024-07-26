@@ -1,7 +1,6 @@
-package campus.tech.kakao.map.data.usecase
+package campus.tech.kakao.map.domain.usecaseImpl
 
 import campus.tech.kakao.map.domain.repository.PlaceRepository
-import campus.tech.kakao.map.domain.usecase.GetSearchPlacesUseCase
 import campus.tech.kakao.map.domain.usecase.RemoveSearchQueryUseCase
 import javax.inject.Inject
 

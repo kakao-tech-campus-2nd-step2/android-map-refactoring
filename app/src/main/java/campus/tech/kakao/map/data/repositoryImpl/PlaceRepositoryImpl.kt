@@ -1,12 +1,11 @@
-package campus.tech.kakao.map.data.repository
+package campus.tech.kakao.map.data.repositoryImpl
 
-import android.util.Log
 import campus.tech.kakao.map.data.local.db.SearchQueryDao
 import campus.tech.kakao.map.data.local.db.VisitedPlaceDao
 import campus.tech.kakao.map.data.local.entity.SearchQueryEntity
 import campus.tech.kakao.map.data.local.entity.VisitedPlaceEntity
 import campus.tech.kakao.map.data.remote.network.HttpService
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

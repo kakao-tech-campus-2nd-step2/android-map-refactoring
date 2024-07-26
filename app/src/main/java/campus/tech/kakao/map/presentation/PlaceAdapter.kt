@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.PlaceItemBinding
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 
 class PlaceAdapter(
     private val onItemClick: (PlaceVO) -> Unit,

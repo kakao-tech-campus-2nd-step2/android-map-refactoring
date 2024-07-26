@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.remote.network
 
 import android.util.Log
-import campus.tech.kakao.map.data.remote.dto.SearchResponse
+import campus.tech.kakao.map.data.remote.entity.SearchResponse
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
