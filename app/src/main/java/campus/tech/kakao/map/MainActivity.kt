@@ -3,7 +3,6 @@ package campus.tech.kakao.map
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -75,17 +74,6 @@ class MainActivity : AppCompatActivity() {
             savedSearchAdapter.updateSearches(searches)
         })
 
-        /*
-        //X 버튼 클릭 시 입력창 초기화
-        binding.buttonX.setOnClickListener {
-            Log.d("MainActivity", "Clear search input")
-            binding.inputSearch.text.clear()
-            searchAdapter.updateResults(emptyList())
-            binding.searchRecyclerView.visibility = View.GONE
-            binding.noResult.visibility = View.VISIBLE
-            //binding.savedSearchRecyclerView.visibility = View.VISIBLE
-        }*/
-
         binding.inputSearch.setOnFocusChangeListener { _, hasFocus ->
             if(hasFocus && binding.inputSearch.text.isEmpty()) {
                 viewModel.setSavedSearchRecyclerViewVisibility(true)
@@ -116,7 +104,7 @@ class MainActivity : AppCompatActivity() {
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchRecyclerView.adapter = searchAdapter
 
-        binding.savedSearchRecyclerView.layoutManager = LinearLayoutManager(this, androidx.recyclerview.widget.RecyclerView.HORIZONTAL, false)
+        binding.savedSearchRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
         binding.savedSearchRecyclerView.adapter = savedSearchAdapter
 
         Log.d("MainActivity", "RecyclerViews set up")

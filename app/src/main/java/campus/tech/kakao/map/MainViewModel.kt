@@ -12,14 +12,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(application: Application, private val placeRepository: PlaceRepository) : AndroidViewModel(application) {
 
-    /*
-    private val placeDao: PlaceDao = AppDatabase.getDatabase(application).placeDao()
-
-    private val apiService = KakaoAPIRetrofitClient.retrofitService
-    //var repository = PlaceRepository(apiService)
-    //var preferencesRepository = PreferencesRepository(application.applicationContext)
-     */
-
     private val _searchResults = MutableLiveData<List<Place>>()
     val searchResults: LiveData<List<Place>> get() = _searchResults
 
