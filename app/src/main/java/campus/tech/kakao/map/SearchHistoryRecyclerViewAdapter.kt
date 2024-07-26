@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.dto.Place
+import campus.tech.kakao.map.db.SearchHistory
 
 class SearchHistoryRecyclerViewAdapter(
-    private val searchHistory: MutableList<Place>,
-    private val onItemClick: (Int) -> Unit,
-    private val onItemDelete: (Int) -> Unit
+    private val searchHistory: MutableList<SearchHistory>,
+    private val onItemClick: (SearchHistory) -> Unit,
+    private val onItemDelete: (SearchHistory) -> Unit
 ) : RecyclerView.Adapter<SearchHistoryRecyclerViewAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -20,8 +20,8 @@ class SearchHistoryRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val place = searchHistory[position]
-        holder.bind(place, position)
+        val history = searchHistory[position]
+        holder.bind(history)
     }
 
     override fun getItemCount(): Int {
@@ -32,13 +32,17 @@ class SearchHistoryRecyclerViewAdapter(
         private val searchHistoryBtn: TextView = itemView.findViewById(R.id.search_history_item)
         private val searchHistoryDeleteBtn: ImageView = itemView.findViewById(R.id.search_history_delete_button)
 
-        fun bind(place: Place, position: Int) {
-            searchHistoryBtn.text = place.place_name
-            searchHistoryBtn.setOnClickListener { onItemClick(position) }
+        fun bind(history: SearchHistory) {
+            searchHistoryBtn.text = history.placeName
+            searchHistoryBtn.setOnClickListener { onItemClick(history) }
             searchHistoryDeleteBtn.setOnClickListener {
-                onItemDelete(position)
-                notifyItemRemoved(position)
-                notifyItemRangeChanged(position, searchHistory.size)
+                onItemDelete(history)
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    searchHistory.removeAt(position)
+                    notifyItemRemoved(position)
+                    notifyItemRangeChanged(position, itemCount)
+                }
             }
         }
     }
