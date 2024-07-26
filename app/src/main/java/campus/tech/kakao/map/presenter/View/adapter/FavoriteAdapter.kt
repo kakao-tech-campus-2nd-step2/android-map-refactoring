@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presenter.View.adapter
+package campus.tech.kakao.map.presenter.view.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,35 +7,28 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.domain.VO.Place
+import campus.tech.kakao.map.domain.vo.Place
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.FavoriteElementBinding
 
 class FavoriteAdapter(
     val onClickDelete: (id : Int) -> Unit
 ) : ListAdapter<Place, FavoriteAdapter.ViewHolder>(PlaceDiffUtil()) {
-    class ViewHolder(itemView: View, onClickDelete: (id : Int) -> Unit) :
-        RecyclerView.ViewHolder(itemView) {
-        private var placeName: TextView
-        private var deleteFavorite: ImageView
-        private var curId : Int?
+    class ViewHolder(private val binding: FavoriteElementBinding, onClickDelete: (id : Int) -> Unit) :
+        RecyclerView.ViewHolder(binding.root) {
+        private var curId : Int? = null
 
         init {
-            placeName = itemView.findViewById<TextView>(R.id.favoriteName)
-            deleteFavorite = itemView.findViewById<ImageView>(R.id.deleteFavorite)
             curId = null
-
-            deleteFavorite.setOnClickListener {
-                curId?.let {
-                    onClickDelete.invoke(it)
-                }
+            binding.deleteFavorite.setOnClickListener {
+                curId?.let { onClickDelete.invoke(it) }
             }
-
         }
 
-
         fun bind(place: Place){
-            placeName.text = place.name
+            binding.favoriteItem = place
             curId = place.id
+            binding.executePendingBindings()
         }
     }
 
@@ -44,7 +37,8 @@ class FavoriteAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.favorite_element, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = FavoriteElementBinding.inflate(inflater,parent, false)
         return ViewHolder(view, onClickDelete)
     }
 

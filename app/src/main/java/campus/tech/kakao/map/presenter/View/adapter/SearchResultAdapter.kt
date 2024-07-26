@@ -1,50 +1,36 @@
-package campus.tech.kakao.map.presenter.View.adapter
+package campus.tech.kakao.map.presenter.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.domain.VO.Place
-import campus.tech.kakao.map.R
-import campus.tech.kakao.map.domain.VO.PlaceCategory
+import campus.tech.kakao.map.domain.vo.Place
+import campus.tech.kakao.map.databinding.PlaceElementBinding
 
 class SearchResultAdapter(
     val onClickAdd: (id: Int) -> Unit
 ) : ListAdapter<Place, SearchResultAdapter.ViewHolder>(PlaceDiffUtil()) {
 
-    class ViewHolder(itemView: View, onClickAdd: (id : Int) -> Unit) :
-        RecyclerView.ViewHolder(itemView) {
-        private var placeName: TextView
-        private var placeAddress: TextView
-        private var placeCategory: TextView
-        private var id : Int?
+    class ViewHolder(private val binding: PlaceElementBinding, onClickAdd: (id : Int) -> Unit) :
+        RecyclerView.ViewHolder(binding.root) {
+        private var id : Int? = null
 
         init {
-            placeName = itemView.findViewById<TextView>(R.id.placeName)
-            placeAddress = itemView.findViewById<TextView>(R.id.placeAddress)
-            placeCategory = itemView.findViewById<TextView>(R.id.placeCategory)
-            id = null
-
             itemView.setOnClickListener {
-                id?.let{
-                    onClickAdd.invoke(it)
-                }
+                id?.let{ onClickAdd.invoke(it) }
             }
         }
 
         fun bind(place:Place){
-            placeName.text = place.name
+            binding.placeItem = place
             id = place.id
-            placeAddress.text = place.address ?: ""
-            placeCategory.text =
-                PlaceCategory.categoryToString(place.category ?: PlaceCategory.ELSE)
+            binding.executePendingBindings()
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.place_element, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val view = PlaceElementBinding.inflate(inflater,parent,false)
 
         return ViewHolder(view, onClickAdd)
     }
