@@ -1,33 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:layout_constraintBottom_toBottomOf="parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:behavior_hideable="false"
-    app:behavior_draggable="true"
-    app:behavior_peekHeight="32dp"
-    android:background="@drawable/bottom_sheet_bg"
-    android:paddingVertical="@dimen/normal_100"
-    android:elevation="20dp"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.presenter.viewModel.MapViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/placeName"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/btm_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginHorizontal="@dimen/normal_100"
-        android:layout_marginTop="@dimen/small_100"
-        android:textSize="32dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:behavior_hideable="false"
+        app:behavior_draggable="true"
+        app:behavior_peekHeight="32dp"
+        android:background="@drawable/bottom_sheet_bg"
+        android:paddingVertical="@dimen/normal_100"
+        android:elevation="20dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <TextView
-        android:id="@+id/placeAddress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/placeName"
-        android:layout_marginHorizontal="@dimen/normal_100"
-        android:textSize="16dp"/>
+        <TextView
+            android:id="@+id/placeName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginHorizontal="@dimen/normal_100"
+            android:layout_marginTop="@dimen/small_100"
+            android:text="@{viewModel.currentPlace.name}"
+            android:textSize="32dp"/>
+
+        <TextView
+            android:id="@+id/placeAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/placeName"
+            android:layout_marginHorizontal="@dimen/normal_100"
+            android:text="@{viewModel.currentPlace.address}"
+            android:textSize="16dp"/>
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
