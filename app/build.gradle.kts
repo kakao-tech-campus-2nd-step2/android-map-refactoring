@@ -12,6 +12,7 @@ android {
     compileSdk = 34
     buildFeatures {
         buildConfig = true
+        dataBinding = true
     }
     defaultConfig {
         applicationId = "campus.tech.kakao.map"

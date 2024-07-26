@@ -1,19 +1,17 @@
 package campus.tech.kakao.map.view.search
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.R
-import campus.tech.kakao.map.view.search.LocationAdapter.LocationHolder
+import campus.tech.kakao.map.databinding.ItemLocationBinding
+import campus.tech.kakao.map.view.search.LocationAdapter.LocationViewHolder
 import campus.tech.kakao.map.model.Location
 
 class LocationAdapter(
     private val itemSelectedListener: OnItemSelectedListener
-) : ListAdapter<Location, LocationHolder>(
+) : ListAdapter<Location, LocationViewHolder>(
     object : DiffUtil.ItemCallback<Location>() {
         override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
             return oldItem.title == newItem.title
@@ -22,14 +20,15 @@ class LocationAdapter(
             return oldItem == newItem
         }
     }) {
-    inner class LocationHolder(
-        itemView: View,
+    inner class LocationViewHolder( //
+        private val itemLocationBinding: ItemLocationBinding,
         itemSelectedListener: OnItemSelectedListener
-    ) : RecyclerView.ViewHolder(itemView) {
-        val titleTextView: TextView by lazy { itemView.findViewById(R.id.titleTextView) }
-        val addressTextView: TextView by lazy { itemView.findViewById(R.id.addressTextView) }
-        val categoryTextView: TextView by lazy { itemView.findViewById(R.id.categoryTextView) }
-
+    ) : RecyclerView.ViewHolder(
+        itemLocationBinding.root
+    ) {
+        fun bind(item: Location) { // ViewHolder와 itemLocationBinding 연동
+            itemLocationBinding.location = item
+        }
         init {
             itemView.setOnClickListener {
                 val location = getItem(bindingAdapterPosition)
@@ -38,15 +37,13 @@ class LocationAdapter(
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_location, parent, false)
-        return LocationHolder(view, itemSelectedListener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder { // ViewHolder 생성
+        val inflater = LayoutInflater.from(parent.context)
+        val listItemBinding = ItemLocationBinding.inflate(inflater, parent, false)
+        return LocationViewHolder(listItemBinding, itemSelectedListener)
     }
 
-    override fun onBindViewHolder(holder: LocationHolder, position: Int) {
-        val location = getItem(position)
-        holder.titleTextView.text = location.title
-        holder.addressTextView.text = location.address
-        holder.categoryTextView.text = location.category
+    override fun onBindViewHolder(holder: LocationViewHolder, position: Int) { // bind를 통해 데이터를 연결
+        holder.bind(getItem(position))
     }
 }
