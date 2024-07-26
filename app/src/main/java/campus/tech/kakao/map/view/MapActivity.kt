@@ -2,7 +2,6 @@ package campus.tech.kakao.map.view
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences.Editor
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,15 +17,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.databinding.BottomSheetBinding
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.repository.SharedPreferenceRepository
 import campus.tech.kakao.map.viewmodel.MapActivityViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -42,19 +40,15 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
 
+    private lateinit var binding : ActivityMapBinding
+    private lateinit var bottomSheetBinding : BottomSheetBinding
     lateinit var map: MapView
-    lateinit var inputField: EditText
-    lateinit var searchIcon: ImageView
-    lateinit var errorTextView: TextView
     lateinit var kakaoMap : KakaoMap
     lateinit var resultLauncher : ActivityResultLauncher<Intent>
-    lateinit var bottomSheetLayout : ConstraintLayout
-    lateinit var placeNameField : TextView
-    lateinit var placeLocationField : TextView
     lateinit var bottomSheetBehavior : BottomSheetBehavior<ConstraintLayout>
     private val viewModel : MapActivityViewModel by viewModels()
-    lateinit var editor : Editor
     var isMapDisplay = false
+    var isInitState = true
 
     companion object ChonnamUnivLocation {
         const val LATITUDE = "35.175487"
@@ -82,8 +76,6 @@ class MapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
-
 
         initVar()
         initMapView()
@@ -92,24 +84,20 @@ class MapActivity : AppCompatActivity() {
         initResultLauncher()
         initObserver()
 
-
-
     }
 
 
     private fun initVar() {
-        inputField = findViewById<EditText>(R.id.input_search_field)
-        searchIcon = findViewById<ImageView>(R.id.search_icon)
-        errorTextView = findViewById<TextView>(R.id.error_text)
-        placeNameField = findViewById<TextView>(R.id.place_name)
-        placeLocationField = findViewById<TextView>(R.id.place_location)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
         bringFrontSearchField()
     }
 
 
     private fun initBottomSheet(){
-        bottomSheetLayout = findViewById<ConstraintLayout>(R.id.bottom_sheet)
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        bottomSheetBinding = DataBindingUtil.inflate(layoutInflater, R.layout.bottom_sheet, null, false)
+        bottomSheetBehavior = BottomSheetBehavior.from(findViewById<ConstraintLayout>(R.id.bottom_sheet))
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
@@ -130,7 +118,7 @@ class MapActivity : AppCompatActivity() {
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
                 Log.d("testt", "MapReady")
-                errorTextView.isVisible = false
+                binding.errorText.isVisible = false
                 this@MapActivity.kakaoMap = kakaoMap
                 isMapDisplay = true
                 viewModel.getRecentPos()
@@ -139,12 +127,12 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun bringFrontSearchField() {
-        inputField.bringToFront()
-        searchIcon.bringToFront()
+        binding.inputSearchField.bringToFront()
+        binding.searchIcon.bringToFront()
     }
 
     private fun initClickListener() {
-        inputField.setOnClickListener {
+        binding.inputSearchField.setOnClickListener {
             moveSearchPage(it)
         }
     }
@@ -157,18 +145,22 @@ class MapActivity : AppCompatActivity() {
                     val latitude = place?.y?.toDouble() ?: LATITUDE.toDouble()
                     val longitude = place?.x?.toDouble()?: LONGITUDE.toDouble()
                     val pos = LatLng.from(latitude, longitude)
+                    isInitState = false
                     moveMapCamera(pos)
-                    createLabel(pos)
+                    bottomSheetBinding.place = place
                     viewModel.setRecentPos(latitude, longitude)
-                    bottomSheetBinding(place)
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
     }
 
     fun initObserver(){
         viewModel.recentPos.observe(this, Observer {
-            if(isMapDisplay) moveMapCamera(it)
+            if(isMapDisplay and !isInitState) {
+                moveMapCamera(it)
+                createLabel(it)
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+            else if (isMapDisplay) moveMapCamera(it)
         })
     }
 
@@ -181,10 +173,10 @@ class MapActivity : AppCompatActivity() {
     }
 
     fun showErrorMessageView(error: String) {
-        errorTextView.isVisible = true
+        binding.errorText.isVisible = true
         val errorCode = getErrorCode(error)
         val errorText = ErrorCode.getErrorMessage(errorCode).errorMessage + "\n\n" + error
-        errorTextView.text = errorText
+        binding.errorText.text = errorText
     }
 
     private fun getErrorCode(errorText: String): String {
@@ -204,11 +196,6 @@ class MapActivity : AppCompatActivity() {
 
     private fun moveMapCamera(pos : LatLng){
         kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(pos))
-    }
-
-    private fun bottomSheetBinding(place: Place?){
-        placeNameField.text = place?.name ?: ""
-        placeLocationField.text = place?.location ?: ""
     }
 
     private fun removeAllLabel(){
