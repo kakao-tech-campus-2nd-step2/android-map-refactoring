@@ -31,7 +31,8 @@ class searchActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerViews() {
-        binding.RecyclerVer.adapter = searchViewModel.searchResultAdapter
+        placeAdapter = PlaceAdapter()
+        binding.RecyclerVer.adapter = placeAdapter
         binding.RecyclerVer.layoutManager = LinearLayoutManager(this)
 
         binding.recyclerHor.adapter = searchViewModel.savedSearchAdapter
@@ -40,7 +41,7 @@ class searchActivity : AppCompatActivity() {
 
     private fun observeSearchResults() {
         searchViewModel.searchResults.observe(this, Observer { results ->
-            searchViewModel.searchResultAdapter.notifyDataSetChanged()
+            placeAdapter.submitList(results)
         })
     }
 
@@ -49,6 +50,7 @@ class searchActivity : AppCompatActivity() {
             searchViewModel.savedSearchAdapter.updateData(savedSearches.map { it.place_name }.toString())
         })
     }
+
 }
 
 
