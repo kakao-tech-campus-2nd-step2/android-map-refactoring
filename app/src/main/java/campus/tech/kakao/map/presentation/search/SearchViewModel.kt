@@ -23,16 +23,17 @@ constructor( private val repository: PlaceRepository) : ViewModel() {
 
     private val _searchedPlaces = searchText.asFlow()
         .debounce(500L)
-        .flatMapLatest { query ->
-            if (query.isNotBlank()) {
+        .flatMapLatest { keyword ->
+            if (keyword.isNotBlank()) {
                 flow {
-                    val places = getPlaces(query)
+                    val places = getPlaces(keyword)
                     emit(places)
                 }
             } else {
                 flowOf(emptyList())
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
     val searchedPlaces: StateFlow<List<Place>> get() = _searchedPlaces
 
     init {

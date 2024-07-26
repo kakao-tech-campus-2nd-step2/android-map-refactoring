@@ -165,8 +165,12 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showBottomSheet(place: Place?) {
-        mapBottomSheet = MapBottomSheet(place)
-        mapBottomSheet.show(supportFragmentManager, mapBottomSheet.tag)
+        val bottomSheet = MapBottomSheet()
+        place?.let {
+            val args = Bundle()
+            args.putSerializable("place", it)
+            bottomSheet.arguments = args }
+        bottomSheet.show(supportFragmentManager, bottomSheet.tag)
     }
 
     override fun onResume() {
