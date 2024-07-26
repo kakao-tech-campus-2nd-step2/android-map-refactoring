@@ -7,8 +7,8 @@ import javax.inject.Inject
 
 class GetSearchPlacesUseCaseImpl @Inject constructor(private val placeRepository: PlaceRepository) :
     GetSearchPlacesUseCase {
-    override fun invoke(query: String, callback: (List<PlaceVO>?) -> Unit) {
-        placeRepository.searchPlaces(query, callback)
+    override suspend fun invoke(query: String): List<PlaceVO>? {
+        return placeRepository.searchPlaces(query)
     }
 
 }

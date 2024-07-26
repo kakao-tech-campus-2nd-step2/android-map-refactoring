@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class GetSearchHistoryUseCaseImpl @Inject constructor(private val placeRepository: PlaceRepository) :
     GetSearchHistoryUseCase {
-    override fun invoke(): List<String> {
+    override suspend fun invoke(): List<String> {
         return placeRepository.getSearchHistory()
     }
 }

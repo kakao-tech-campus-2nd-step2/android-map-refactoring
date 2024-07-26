@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class RemoveSearchQueryUseCaseImpl @Inject constructor(private val placeRepository: PlaceRepository) :
     RemoveSearchQueryUseCase {
-    override fun invoke(query: String) {
+    override suspend fun invoke(query: String) {
         placeRepository.removeSearchQuery(query)
     }
 

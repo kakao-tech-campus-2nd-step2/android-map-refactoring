@@ -9,15 +9,16 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object RepositoryModule {
-    @Provides
+abstract class RepositoryModule {
+
+    @Binds
     @Singleton
-    fun provideRepository(searchQueryDao: SearchQueryDao, visitedPlaceDao: VisitedPlaceDao) : PlaceRepository {
-        return PlaceRepositoryImpl(searchQueryDao, visitedPlaceDao)
-    }
+    abstract fun bindRepository(impl: PlaceRepositoryImpl): PlaceRepository
 
 }

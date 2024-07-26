@@ -7,7 +7,7 @@ import campus.tech.kakao.map.domain.usecase.GetLastPlaceUseCase
 import javax.inject.Inject
 
 class GetLastPlaceUseCaseImpl @Inject constructor (private val placeRepository: PlaceRepository): GetLastPlaceUseCase {
-    override fun invoke(): PlaceVO? {
+    override suspend fun invoke(): PlaceVO? {
         return placeRepository.getLastPlace()
     }
 

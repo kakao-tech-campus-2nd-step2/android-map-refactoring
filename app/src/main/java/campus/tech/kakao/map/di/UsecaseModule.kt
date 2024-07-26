@@ -13,6 +13,7 @@ import campus.tech.kakao.map.domain.usecase.GetSearchPlacesUseCase
 import campus.tech.kakao.map.domain.usecase.RemoveSearchQueryUseCase
 import campus.tech.kakao.map.domain.usecase.SaveLastPlaceUseCase
 import campus.tech.kakao.map.domain.usecase.SaveSearchQueryUseCase
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,53 +22,36 @@ import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
 @Module
-object UsecaseModule {
+abstract class UsecaseModule {
 
-    @Provides
-    @Singleton
-    fun provideSaveLastPlaceUseCase(
-        placeRepository: PlaceRepository
-    ): SaveLastPlaceUseCase {
-        return SaveLastPlaceUseCaseImpl(placeRepository)
-    }
+    @Binds
+    abstract fun bindSaveLastPlaceUseCase(
+        impl: SaveLastPlaceUseCaseImpl
+    ): SaveLastPlaceUseCase
 
-    @Provides
-    @Singleton
-    fun provideGetLastPlaceUseCase(
-        placeRepository: PlaceRepository
-    ): GetLastPlaceUseCase {
-        return GetLastPlaceUseCaseImpl(placeRepository)
-    }
 
-    @Provides
-    @Singleton
-    fun provideGetSearchPlacesUseCase(
-        placeRepository: PlaceRepository
-    ): GetSearchPlacesUseCase {
-        return GetSearchPlacesUseCaseImpl(placeRepository)
-    }
+    @Binds
+    abstract fun bindGetLastPlaceUseCase(
+        impl: GetLastPlaceUseCaseImpl
+    ): GetLastPlaceUseCase
 
-    @Provides
-    @Singleton
-    fun provideSaveSearchQueryUseCase(
-        placeRepository: PlaceRepository
-    ): SaveSearchQueryUseCase {
-        return SaveSearchQueryUseCaseImpl(placeRepository)
-    }
+    @Binds
+    abstract fun bindGetSearchPlacesUseCase(
+        impl: GetSearchPlacesUseCaseImpl
+    ): GetSearchPlacesUseCase
 
-    @Provides
-    @Singleton
-    fun provideGetSearchHistoryUseCase(
-        placeRepository: PlaceRepository
-    ): GetSearchHistoryUseCase {
-        return GetSearchHistoryUseCaseImpl(placeRepository)
-    }
+    @Binds
+    abstract fun bindSaveSearchQueryUseCase(
+        impl: SaveSearchQueryUseCaseImpl
+    ): SaveSearchQueryUseCase
 
-    @Provides
-    @Singleton
-    fun provideRemoveSearchQueryUseCase(
-        placeRepository: PlaceRepository
-    ): RemoveSearchQueryUseCase {
-        return RemoveSearchQueryUseCaseImpl(placeRepository)
-    }
+    @Binds
+    abstract fun bindGetSearchHistoryUseCase(
+        impl: GetSearchHistoryUseCaseImpl
+    ): GetSearchHistoryUseCase
+
+    @Binds
+    abstract fun bindRemoveSearchQueryUseCase(
+        impl: RemoveSearchQueryUseCaseImpl
+    ): RemoveSearchQueryUseCase
 }

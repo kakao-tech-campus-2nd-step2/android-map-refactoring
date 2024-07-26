@@ -3,10 +3,10 @@ package campus.tech.kakao.map.domain.repository
 import campus.tech.kakao.map.domain.model.PlaceVO
 
 interface PlaceRepository {
-    fun searchPlaces(query: String, callback: (List<PlaceVO>?) -> Unit)
-    fun saveSearchQuery(place: PlaceVO)
-    fun getSearchHistory(): List<String>
-    fun removeSearchQuery(query: String)
-    fun saveLastPlace(place: PlaceVO)
-    fun getLastPlace(): PlaceVO?
+    suspend fun searchPlaces(query: String) : List<PlaceVO>?
+    suspend fun saveSearchQuery(place: PlaceVO)
+    suspend fun getSearchHistory(): List<String>
+    suspend fun removeSearchQuery(query: String)
+    suspend fun saveLastPlace(place: PlaceVO)
+    suspend fun getLastPlace(): PlaceVO?
 }

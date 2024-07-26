@@ -52,17 +52,18 @@ class PlaceActivity : AppCompatActivity() {
         placeAdapter.updateData(places)
     }
 
-    private fun updateUI(places: List<PlaceVO>) {
-        if (places.isEmpty()) {
+    private fun updateUI(places: List<PlaceVO>?) {
+        if (places.isNullOrEmpty()) {
             showEmptyMessage()
         } else {
-            showRecyclerView(places)
+            showRecyclerView(places!!)
         }
     }
 
     private fun observeViewModel() {
         placeViewModel.places.observe(this) { places ->
             updateUI(places)
+
         }
 
         placeViewModel.searchHistory.observe(this) { history ->

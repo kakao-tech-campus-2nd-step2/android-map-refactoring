@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class SaveSearchQueryUseCaseImpl @Inject constructor(private val placeRepository: PlaceRepository) :
     SaveSearchQueryUseCase {
-    override fun invoke(place: PlaceVO) {
+    override suspend fun invoke(place: PlaceVO) {
         placeRepository.saveSearchQuery(place)
     }
 
