@@ -22,6 +22,11 @@ class PlaceAdapter : ListAdapter<Place, PlaceAdapter.PlaceViewHolder>(PlaceDiffC
         holder.bind(place)
     }
 
+    fun submitList(results: Unit?) {
+
+    }
+
+
     class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val nameTextView: TextView = itemView.findViewById(R.id.name)
         private val addressTextView: TextView = itemView.findViewById(R.id.place)

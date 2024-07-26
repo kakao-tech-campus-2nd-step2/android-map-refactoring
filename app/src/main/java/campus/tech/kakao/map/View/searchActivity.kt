@@ -31,21 +31,22 @@ class searchActivity : AppCompatActivity() {
     }
 
     private fun initRecyclerViews() {
-        placeAdapter = PlaceAdapter()
-        binding.recyclerHor.adapter = placeAdapter
+        binding.RecyclerVer.adapter = searchViewModel.searchResultAdapter
         binding.RecyclerVer.layoutManager = LinearLayoutManager(this)
+
+        binding.recyclerHor.adapter = searchViewModel.savedSearchAdapter
         binding.recyclerHor.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun observeSearchResults() {
-        searchViewModel.observe(this, Observer { results ->
-            binding.recyclerHor.submitList(results)
+        searchViewModel.searchResults.observe(this, Observer { results ->
+            searchViewModel.searchResultAdapter.submitList(results)
         })
     }
 
     private fun observeSavedSearches() {
         searchViewModel.savedSearches.observe(this, Observer { savedSearches ->
-            binding.recyclerHor.submitList(savedSearches)
+            searchViewModel.savedSearchAdapter.updateData(savedSearches.map { it.place_name }.toString())
         })
     }
 }
