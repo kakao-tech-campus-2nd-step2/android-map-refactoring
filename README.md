@@ -1,7 +1,7 @@
 # android-map-refactoring
-## Step 1. 의존성 주입
+## Step 2. 아키텍처 패턴
 ### 구현 기능 목록
 
-1. 데이터베이스 -> Room 변경
-2. 가능한 모든 부분에 의존성 주입 적용
-   - Hilt 사용
+1. MVVM 아키텍처 패턴 적용
+   - DataBinding, LiveData 사용
+2. 비동기 처리 -> Coroutine 변경
