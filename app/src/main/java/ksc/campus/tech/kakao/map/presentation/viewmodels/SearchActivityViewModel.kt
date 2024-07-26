@@ -35,7 +35,11 @@ class SearchActivityViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
     )
 
-    val selectedLocation = mapViewRepository.selectedLocation
+    val selectedLocation = mapViewRepository.selectedLocation.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
+    )
 
     val searchText: LiveData<String>
         get() = _searchText
@@ -49,7 +53,9 @@ class SearchActivityViewModel @Inject constructor(
     }
 
     private fun search(query: String) {
-        searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY)
+        CoroutineScope(Dispatchers.IO).launch {
+            searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY)
+        }
         switchContent(ContentType.SEARCH_LIST)
     }
 

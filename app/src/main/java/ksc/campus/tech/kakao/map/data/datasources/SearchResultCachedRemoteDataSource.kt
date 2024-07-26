@@ -13,35 +13,23 @@ class SearchResultCachedRemoteDataSource @Inject constructor(
     private var _cachedQuery: String = ""
     private var _cache: List<Document> = listOf()
 
-    private var query: String = ""
-    private var apiKey: String = ""
-    private var batchCount: Int = 0
-    fun getSearchResult(
-    ): Flow<List<Document>> {
+    fun getSearchResult(query: String, apiKey: String, batchCount: Int): Flow<List<Document>> {
         return flow {
-            while (true) {
-                if (query != _cachedQuery) {
-                    emit(listOf())
-                    _cache = searchResultRemoteDataSource.getSearchResult(
-                        query,
-                        apiKey,
-                        batchCount
-                    )
-                    _cachedQuery = query
-                    emit(_cache)
-                    kotlinx.coroutines.delay(500L)
-                }
-                else {
-                    emit(_cache)
-                    kotlinx.coroutines.delay(100L)
-                }
-            }
-        }.flowOn(Dispatchers.IO)
-    }
+            if (query != _cachedQuery) {
+                // 검색 결과를 불러올 때까지 빈 리스트 반환
+                emit(listOf())
 
-    fun setSearchInfo(query: String, apiKey: String, batchCount: Int) {
-        this.query = query
-        this.apiKey = apiKey
-        this.batchCount = batchCount
+                // 서버로부터 데이터를 불러오고 해당 값을 캐시에 저장
+                _cache = searchResultRemoteDataSource.getSearchResult(
+                    query,
+                    apiKey,
+                    batchCount
+                )
+                _cachedQuery = query
+            }
+
+            // (갱신된) 캐시 값을 반환
+            emit(_cache)
+        }.flowOn(Dispatchers.IO)
     }
 }

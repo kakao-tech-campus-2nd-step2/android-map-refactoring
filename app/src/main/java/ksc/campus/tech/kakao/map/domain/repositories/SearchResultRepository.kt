@@ -4,16 +4,16 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharedFlow
 import ksc.campus.tech.kakao.map.data.repositoryimpls.SearchResultRepositoryImpl
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import javax.inject.Singleton
 
 
 interface SearchResultRepository {
-    val searchResult: Flow<List<SearchResult>>
+    val searchResult: SharedFlow<List<SearchResult>>
 
-    fun search(text: String, apiKey: String)
+    suspend fun search(text: String, apiKey: String)
 }
 
 @Module
