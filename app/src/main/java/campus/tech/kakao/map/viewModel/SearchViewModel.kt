@@ -2,7 +2,7 @@ package campus.tech.kakao.map.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import campus.tech.kakao.map.dataRepository.SearchDataRepository
+import campus.tech.kakao.map.repository.SearchDataRepository
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: SearchDataRepository = SearchDataRepository()

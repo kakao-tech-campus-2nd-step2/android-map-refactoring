@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.room.SearchHistoryData
-import campus.tech.kakao.map.dataRepository.SearchHistoryRepository
+import campus.tech.kakao.map.repository.SearchHistoryRepository
 import kotlinx.coroutines.launch
 
 class DBViewModel(private val searchHistoryRepo: SearchHistoryRepository) : ViewModel() {

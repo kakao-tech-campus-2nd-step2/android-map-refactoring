@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.dataRepository
+package campus.tech.kakao.map.repository
 
 import android.content.Context
 import android.util.Log

@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.dataContract
+package campus.tech.kakao.map.data
 
 object LocationDataContract {
     const val LOCATION_NAME = "name"

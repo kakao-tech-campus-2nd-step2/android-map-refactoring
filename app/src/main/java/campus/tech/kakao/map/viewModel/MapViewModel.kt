@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.viewModel
 
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.map.PreferenceRepository
+import campus.tech.kakao.map.repository.PreferenceRepository
 
 
 class MapViewModel(repository: PreferenceRepository) : ViewModel() {

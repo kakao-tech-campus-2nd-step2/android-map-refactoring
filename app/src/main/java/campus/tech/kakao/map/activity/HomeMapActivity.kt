@@ -10,10 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.ViewModelProvider
-import campus.tech.kakao.map.MapViewModelFactory
-import campus.tech.kakao.map.PreferenceRepository
+import campus.tech.kakao.map.viewModel.factory.MapViewModelFactory
+import campus.tech.kakao.map.repository.PreferenceRepository
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.dataContract.LocationDataContract
+import campus.tech.kakao.map.data.LocationDataContract
 import campus.tech.kakao.map.viewModel.MapErrorViewModel
 import campus.tech.kakao.map.viewModel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior

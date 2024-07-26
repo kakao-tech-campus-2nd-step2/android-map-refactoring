@@ -2,7 +2,7 @@ package campus.tech.kakao.map.viewModel.factory
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import campus.tech.kakao.map.dataRepository.SearchHistoryRepository
+import campus.tech.kakao.map.repository.SearchHistoryRepository
 import campus.tech.kakao.map.viewModel.DBViewModel
 import java.lang.IllegalArgumentException
 

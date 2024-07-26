@@ -20,8 +20,8 @@ import campus.tech.kakao.map.listener.RecentAdapterListener
 import campus.tech.kakao.map.listener.SearchAdapterListener
 import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
-import campus.tech.kakao.map.dataContract.LocationDataContract
-import campus.tech.kakao.map.dataRepository.SearchHistoryRepository
+import campus.tech.kakao.map.data.LocationDataContract
+import campus.tech.kakao.map.repository.SearchHistoryRepository
 import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
 import campus.tech.kakao.map.viewModel.factory.DBViewModelFactory
