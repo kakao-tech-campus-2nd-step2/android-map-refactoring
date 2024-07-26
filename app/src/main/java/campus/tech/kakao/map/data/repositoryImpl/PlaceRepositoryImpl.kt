@@ -26,13 +26,13 @@ class PlaceRepositoryImpl @Inject constructor(
 
         val response = httpService.searchKeyword(query = query)
         response?.documents?.map {
-                    PlaceVO(
-                        placeName = it.placeName,
-                        addressName = it.addressName,
-                        categoryName = it.categoryGroupName,
-                        latitude = it.y.toDouble(),
-                        longitude = it.x.toDouble()
-                    )
+            PlaceVO(
+                placeName = it.placeName,
+                addressName = it.addressName,
+                categoryName = it.categoryGroupName,
+                latitude = it.y.toDouble(),
+                longitude = it.x.toDouble()
+            )
         }
     }
 
