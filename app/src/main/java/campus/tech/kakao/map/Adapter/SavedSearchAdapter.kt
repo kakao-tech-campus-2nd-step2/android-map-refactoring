@@ -25,7 +25,7 @@ class SavedSearchAdapter(
     override fun getItemCount(): Int = data.size
 
     fun updateData(newData: String) {
-        data = newData
+        data = listOf(newData)
         notifyDataSetChanged()
     }
 
@@ -45,7 +45,7 @@ class SavedSearchAdapter(
                 if (position != RecyclerView.NO_POSITION) {
                     val updatedData = data.toMutableList()
                     updatedData.removeAt(position)
-                    updateData(updatedData)
+                    updateData(updatedData.toString())
                 }
             }
         }
