@@ -1,22 +1,19 @@
 package campus.tech.kakao.map.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.Profile
 import campus.tech.kakao.map.databinding.ActivityItemViewBinding
 
 class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter<Adapter.ProfileViewHolder>() {
-
 
     interface OnItemClickListener {
         fun onItemClick(name: String, address: String, latitude: String, longitude: String)
     }
 
     var listener: OnItemClickListener? = null
+
     fun setOnItemClickListener(listener: OnItemClickListener) {
         this.listener = listener
     }
@@ -44,9 +41,7 @@ class Adapter(private val profiles: MutableList<Profile>) : RecyclerView.Adapter
         holder.binding.executePendingBindings()
     }
 
-    override fun getItemCount(): Int {
-        return profiles.size
-    }
+    override fun getItemCount(): Int = profiles.size
 
     fun updateProfiles(newProfiles: List<Profile>) {
         profiles.clear()
