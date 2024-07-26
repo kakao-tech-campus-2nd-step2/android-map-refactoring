@@ -2,5 +2,6 @@
 
 ## 개요
 
-`android-map-refactoring STEP1`에서는 `android-map-search`에서 SQLite를 이용해 구현했던 로컬 데이터베이스를 Room 라이브러리로 대체합니다.
-또한, `Hilt`를 이용해 의존성 주입 패턴을 적용합니다.
+`android-map-refactoring STEP2`에서는 지금까지의 프로젝트에 MVVM 아키텍쳐를 적용합니다.
+- DataBinding, LiveData를 이용합니다.
+- 비동기 처리는 Coroutine으로 변경합니다.
