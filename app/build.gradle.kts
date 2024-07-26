@@ -78,6 +78,7 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
+    testImplementation("io.mockk:mockk:1.12.4")
     debugImplementation ("androidx.fragment:fragment-testing:$fragment_version")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
