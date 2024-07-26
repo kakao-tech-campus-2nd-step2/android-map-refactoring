@@ -7,9 +7,11 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.MapItem
@@ -21,13 +23,13 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
 
     private val mapViewModel: MapViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
+
     private val searchResultAdapter = SearchResultAdapter(this)
     private val keywordAdapter = KeywordAdapter(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.lifecycleOwner = this
         binding.viewModel = mapViewModel
 
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
         })
 
         binding.ivClear.setOnClickListener {
-            binding.etKeywords.text.clear()
+            mapViewModel.clearKeyword()
         }
 
         loadKeywords()

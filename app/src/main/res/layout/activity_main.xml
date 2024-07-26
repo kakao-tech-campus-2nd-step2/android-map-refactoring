@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="android.view.View"/>
         <variable
             name="viewModel"
             type="campus.tech.kakao.map.viewmodel.MapViewModel" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -32,8 +31,7 @@
                 android:hint="@string/enterKeywords"
                 android:paddingStart="0dp"
                 android:paddingEnd="50dp"
-                app:keyword="@={viewModel.keyword}"
-                android:onClick="@{() -> viewModel.clearMapItems()}" />
+                android:text="@={viewModel.keyword}" />
 
             <ImageView
                 android:id="@+id/ivClear"
@@ -55,7 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="@{viewModel.searchResults.size() == 0 ? View.VISIBLE : View.GONE}"/>
+            android:visibility="@{viewModel.searchResults.size() == 0 ? View.VISIBLE : View.GONE}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvKeywords"
