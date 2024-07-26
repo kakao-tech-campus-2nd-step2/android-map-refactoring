@@ -27,26 +27,15 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MapViewActivity : AppCompatActivity() {
-    companion object {
-        const val EXTRA_ERROR_MSG = "ERROR"
-        const val DEFAULT_LONGITUDE = "127.0016985"
-        const val DEFAULT_LATITUDE = "37.5642135"
-    }
-
     private lateinit var binding: ActivityMapViewBinding
     @Inject lateinit var mapRepository: MapRepositoryInterface
     private val mapViewModel: MapViewModel by viewModels()
-
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_map_view)
-
-        binding.viewModel = mapViewModel
-        binding.lifecycleOwner = this
-
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomView.bottomSheetLayout)
+        setupBinding()
+        setupBottomSheetBehavior()
 
         val lastLocation = mapViewModel.getLastLocation()
 
@@ -55,7 +44,8 @@ class MapViewActivity : AppCompatActivity() {
         val placeX = intent.getStringExtra(MainActivity.EXTRA_PLACE_X) ?: DEFAULT_LONGITUDE
         val placeY = intent.getStringExtra(MainActivity.EXTRA_PLACE_Y) ?: DEFAULT_LATITUDE
 
-        processBottomSheet(placeName, placeAddr)
+        observeBottomSheetStateChanges()
+        mapViewModel.setPlaceInfo(placeName, placeAddr)
 
         try {
             binding.map.start(object : MapLifeCycleCallback() {
@@ -64,7 +54,7 @@ class MapViewActivity : AppCompatActivity() {
                 }
 
                 override fun onMapError(exception: Exception?) {
-                    val errorMsg = extractErrorMsg(exception.toString())
+                    val errorMsg = mapViewModel.extractErrorMsg(exception.toString())
                     val intent = Intent(this@MapViewActivity, ErrorActivity::class.java)
                     intent.putExtra(EXTRA_ERROR_MSG, errorMsg)
                     startActivity(intent)
@@ -99,44 +89,36 @@ class MapViewActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.e("MapViewActivity", "Exception during mapView.start", e)
         }
-
-        binding.search.setOnClickListener { onSearchTextViewClick() }
     }
 
-    private fun onSearchTextViewClick() {
+    fun onSearchTextViewClick() {
         startActivity(Intent(this@MapViewActivity, MainActivity::class.java))
     }
-
-    private fun processBottomSheet(placeName: String?, placeAddr: String?) {
-        if (!placeName.isNullOrEmpty() && !placeAddr.isNullOrEmpty()) {
-            showBottomSheet(placeName, placeAddr)
-        } else {
-            hideBottomSheet()
+    private fun setupBinding(){
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map_view)
+        binding.view = this
+        binding.viewModel = mapViewModel
+        binding.lifecycleOwner = this
+    }
+    private fun setupBottomSheetBehavior(){
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomView.bottomSheetLayout)
+    }
+    private fun observeBottomSheetStateChanges(){
+        mapViewModel.bottomSheetState.observe(this) { state ->
+            bottomSheetBehavior.state = state
         }
     }
-
-    private fun showBottomSheet(placeName: String, placeAddr: String){
-        binding.bottomView.placeName.text = placeName
-        binding.bottomView.placeAddress.text = placeAddr
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-    }
-
-    private fun hideBottomSheet(){
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-    }
-
-    private fun extractErrorMsg(fullMsg: String): String {
-        val parts = fullMsg.split(": ", limit = 2)
-        return if (parts.size > 1) parts[1] else ""
-    }
-
     override fun onResume() {
         super.onResume()
         binding.map.resume()
     }
-
     override fun onPause() {
         super.onPause()
         binding.map.pause()
+    }
+    companion object {
+        const val EXTRA_ERROR_MSG = "ERROR"
+        const val DEFAULT_LONGITUDE = "127.0016985"
+        const val DEFAULT_LATITUDE = "37.5642135"
     }
 }

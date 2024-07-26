@@ -1,40 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/bottom_sheet_layout"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:background="@color/white"
-    android:padding="10dp"
-    app:behavior_hideable="true"
-    app:behavior_peekHeight="100dp"
-    android:clickable="true"
-    android:focusable="true"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="campus.tech.kakao.map.viewmodel.MapViewModel" />
+    </data>
 
-    <TextView
-        android:id="@+id/place_name"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1.3"
-        android:text="장소이름"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        android:gravity="center"/>
+    <LinearLayout
+        android:id="@+id/bottom_sheet_layout"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/white"
+        android:padding="10dp"
+        app:behavior_hideable="true"
+        app:behavior_peekHeight="100dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <TextView
-        android:id="@+id/place_address"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="주소"
-        android:textSize="15sp"
-        android:gravity="center"/>
+        <TextView
+            android:id="@+id/place_name"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.3"
+            android:text="@{viewModel.placeName}"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-    <Space
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_weight="3"/>
+        <TextView
+            android:id="@+id/place_address"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text="@{viewModel.placeAddr}"
+            android:textSize="15sp"
+            android:gravity="center"/>
 
-</LinearLayout>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="3"/>
+
+    </LinearLayout>
+</layout>
