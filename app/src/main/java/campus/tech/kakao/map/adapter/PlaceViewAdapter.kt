@@ -6,12 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.VisibleForTesting
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.view.OnClickPlaceListener
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.PlaceItemBinding
 import campus.tech.kakao.map.model.Place
 
 class PlaceViewAdapter(
@@ -20,15 +22,13 @@ class PlaceViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.place_item, parent, false)
-        Log.d("testt", "검색 결과 뷰 생성")
-        return PlaceViewHolder(view, listener)
+        val binding = DataBindingUtil.inflate<PlaceItemBinding>(inflater, R.layout.place_item, parent, false)
+        return PlaceViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-//        Log.d("testt", "${placeList?.get(position)?.name}, ${placeList?.get(position)?.location}, ${placeList?.get(position)?.category}")
         val currentPlace = getItem(position)
-        holder.bind(currentPlace)
+        holder.bind(currentPlace, listener)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -47,26 +47,11 @@ class PlaceDiffCallBack : DiffUtil.ItemCallback<Place>() {
     }
 }
 
-class PlaceViewHolder(itemView: View, val listener: OnClickPlaceListener) :
-    RecyclerView.ViewHolder(itemView) {
-    val name = itemView.findViewById<TextView>(R.id.place_name)
-    val location = itemView.findViewById<TextView>(R.id.place_location)
-    val category = itemView.findViewById<TextView>(R.id.place_category)
-    var currentPlace : Place? = null
+class PlaceViewHolder(private val binding : PlaceItemBinding) :
+    RecyclerView.ViewHolder(binding.root) {
 
-    init {
-        itemView.setOnClickListener {
-            val position = absoluteAdapterPosition
-            Log.d("testt", "콜백함수 호출")
-            currentPlace?.let { listener.savePlace(it) }
-        }
-    }
-
-    fun bind(place : Place){
-        currentPlace = place
-        name.text = place.name
-        location.text = place.location ?: ""
-        Log.d("testt", "입력값 : " + location.text.toString())
-        category.text = place.category ?: ""
+    fun bind(place : Place, listener : OnClickPlaceListener){
+        binding.place = place
+        binding.listener = listener
     }
 }

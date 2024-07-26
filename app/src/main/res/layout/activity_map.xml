@@ -68,7 +68,8 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <include layout="@layout/bottom_sheet" />
+        <include layout="@layout/bottom_sheet"
+            android:id="@+id/bottom_sheet_include"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

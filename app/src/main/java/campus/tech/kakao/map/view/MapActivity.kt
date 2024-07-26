@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -96,8 +97,8 @@ class MapActivity : AppCompatActivity() {
 
 
     private fun initBottomSheet(){
-        bottomSheetBinding = DataBindingUtil.inflate(layoutInflater, R.layout.bottom_sheet, null, false)
-        bottomSheetBehavior = BottomSheetBehavior.from(findViewById<ConstraintLayout>(R.id.bottom_sheet))
+        bottomSheetBinding = binding.bottomSheetInclude
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetBinding.bottomSheet)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
@@ -148,6 +149,7 @@ class MapActivity : AppCompatActivity() {
                     isInitState = false
                     moveMapCamera(pos)
                     bottomSheetBinding.place = place
+                    Log.d("placeTest", "Place : ${place}, Binding : ${bottomSheetBinding.place}")
                     viewModel.setRecentPos(latitude, longitude)
                 }
             }

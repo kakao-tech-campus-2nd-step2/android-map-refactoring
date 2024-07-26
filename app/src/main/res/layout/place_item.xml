@@ -3,15 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="place"
-            type="campus.tech.kakao.map.model.Place" />
+            type="campus.tech.kakao.map.model.Place"/>
+
+        <variable
+            name="listener"
+            type="campus.tech.kakao.map.view.OnClickPlaceListener"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
-        android:onClick="@{() -> }">
+        android:onClick="@{() -> listener.savePlace(place)}">
 
         <ImageView
             android:id="@+id/place_image"
@@ -29,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="장소1"
+            android:text="@{place.name}"
             android:textSize="22sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/place_image"
@@ -41,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:text="서울 농기구 고길동1"
+            android:text="@{place.location}"
             android:textColor="@color/text_location"
             android:textSize="14sp"
             android:textStyle="bold"
@@ -54,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginEnd="10dp"
-            android:text="장소"
+            android:text="@{place.category}"
             android:textColor="@color/text_location"
             android:textSize="20sp"
             android:textStyle="bold"
