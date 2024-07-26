@@ -12,17 +12,30 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(application: Application, private val placeRepository: PlaceRepository) : AndroidViewModel(application) {
 
+    /*
     private val placeDao: PlaceDao = AppDatabase.getDatabase(application).placeDao()
 
     private val apiService = KakaoAPIRetrofitClient.retrofitService
     //var repository = PlaceRepository(apiService)
     //var preferencesRepository = PreferencesRepository(application.applicationContext)
+     */
 
     private val _searchResults = MutableLiveData<List<Place>>()
     val searchResults: LiveData<List<Place>> get() = _searchResults
 
     private val _savedSearches = MutableLiveData<List<Place>>()
     val savedSearches: LiveData<List<Place>> get() = _savedSearches
+
+    private val _noResultsVisible = MutableLiveData<Boolean>()
+    val noResultsVisible: LiveData<Boolean> get() = _noResultsVisible
+
+    private val _searchRecyclerViewVisibility = MutableLiveData<Boolean>()
+    val searchRecyclerViewVisibility: LiveData<Boolean> get() = _searchRecyclerViewVisibility
+
+    private val _savedSearchRecyclerViewVisibility = MutableLiveData<Boolean>()
+    val savedSearchRecyclerViewVisibility: LiveData<Boolean> get() = _savedSearchRecyclerViewVisibility
+
+    val searchQuery = MutableLiveData<String>()
 
     init {
         loadSavedSearches()
@@ -67,5 +80,21 @@ class MainViewModel @Inject constructor(application: Application, private val pl
 
     fun searchSavedPlace(savedQuery: String) {
         searchPlaces(savedQuery)
+    }
+
+    fun clearSearchQuery() {
+        searchQuery.value = ""
+    }
+
+    fun setNoResultVisible(visible: Boolean) {
+        _noResultsVisible.value =visible
+    }
+
+    fun setSearchRecyclerViewVisibility(visible: Boolean) {
+        _searchRecyclerViewVisibility.value = visible
+    }
+
+    fun setSavedSearchRecyclerViewVisibility(visible: Boolean) {
+        _savedSearchRecyclerViewVisibility.value = visible
     }
 }
