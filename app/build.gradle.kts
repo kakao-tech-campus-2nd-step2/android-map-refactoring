@@ -102,5 +102,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-contrib:3.5.1")
     debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
+    testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
+    kaptTest("com.google.dagger:hilt-android-compiler:2.48.1")
+
 }
 fun getApiKey(key: String): String = gradleLocalProperties(rootDir, providers).getProperty(key)

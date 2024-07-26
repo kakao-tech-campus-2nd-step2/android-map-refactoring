@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
 import campus.tech.kakao.map.dto.SearchWordDao
 import campus.tech.kakao.map.url.RetrofitData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.concurrent.thread
 
@@ -30,7 +33,7 @@ class MainViewModel @Inject constructor(
 
 	fun addWord(document: Document){
 		val word = wordFromDocument(document)
-		thread {
+		viewModelScope.launch(Dispatchers.IO) {
 			deleteWord(word)
 			searchWordDao.insert(word)
 			loadWord()
@@ -41,15 +44,15 @@ class MainViewModel @Inject constructor(
 	private fun wordFromDocument(document: Document): SearchWord {
 		return SearchWord(document.placeName, document.addressName, document.categoryGroupName)
 	}
-	fun deleteWord(word: SearchWord){
-		thread {
+	suspend fun deleteWord(word: SearchWord){
+		viewModelScope.launch(Dispatchers.IO) {
 			searchWordDao.delete(word.name, word.address, word.type)
 			loadWord()
 		}.join()
 	}
 
-	fun loadWord(){
-		thread {
+	suspend fun loadWord(){
+		viewModelScope.launch(Dispatchers.IO) {
 			_wordList.postValue(searchWordDao.getAll())
 		}
 	}

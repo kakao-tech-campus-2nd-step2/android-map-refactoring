@@ -16,6 +16,9 @@ import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.SearchWord
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(), AdapterCallback {
@@ -28,7 +31,9 @@ class SearchFragment : Fragment(), AdapterCallback {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		observeData()
-		model.loadWord()
+		CoroutineScope(Dispatchers.IO).launch{
+			model.loadWord()
+		}
 	}
 
 	override fun onCreateView(
@@ -94,7 +99,9 @@ class SearchFragment : Fragment(), AdapterCallback {
 	}
 
 	override fun onWordDeleted(searchWord: SearchWord) {
-		model.deleteWord(searchWord)
+		CoroutineScope(Dispatchers.IO).launch{
+			model.deleteWord(searchWord)
+		}
 	}
 
 	override fun onWordSearched(searchWord: SearchWord) {
