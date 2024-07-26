@@ -24,9 +24,11 @@ class SearchViewModel @Inject constructor(
     private var _placeList = MutableLiveData<List<Place>>()
     private val _searchHistoryList = MutableLiveData<List<SearchHistory>>()
     private var _locationList = MutableLiveData<List<Document>>()
+    private val _emptyMainTextVisibility = MutableLiveData<Boolean>()
 
     init {
         _searchHistoryList.value = getSearchHistory()
+        _emptyMainTextVisibility.value = false
     }
 
     val searchHistoryList: LiveData<List<SearchHistory>>
@@ -37,6 +39,9 @@ class SearchViewModel @Inject constructor(
 
     val locationList: LiveData<List<Document>>
         get() = _locationList
+
+    val emptyMainTextVisibility: LiveData<Boolean>
+        get() = _emptyMainTextVisibility
 
     fun insertPlace(place: Place) {
         dbHelper.insert(db, place)
@@ -97,6 +102,7 @@ class SearchViewModel @Inject constructor(
                 repository.getPlace(query)
             }
             _locationList.postValue(places)
+            updateEmptyTextVisibility(places.isEmpty())
         }
     }
 
@@ -104,5 +110,9 @@ class SearchViewModel @Inject constructor(
         val categories = input.split(">")
         val lastCategory = categories.lastOrNull()?.trim()
         return lastCategory ?: ""
+    }
+
+    fun updateEmptyTextVisibility(isVisible: Boolean) {
+        _emptyMainTextVisibility.value = isVisible
     }
 }

@@ -43,7 +43,6 @@ class SearchActivity : AppCompatActivity() {
                         putExtra("address", item.addressName)
                         flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                     }
-                    Log.d("SearchActivity", "Starting MainActivity with data: longitude=${item.x}, latitude=${item.y}, name=${item.placeName}, address=${item.addressName}")
                     startActivity(intent)
                 }
             }
@@ -79,10 +78,6 @@ class SearchActivity : AppCompatActivity() {
         setupRecyclerViews(searchViewBinding)
         setupSearchEditText(searchViewBinding)
         observeViewModel(searchViewBinding)
-
-        searchViewBinding.xmark.setOnClickListener {
-            searchViewBinding.search.setText("")
-        }
     }
 
     private fun setupRecyclerViews(searchBinding: ActivitySearchBinding) {
@@ -123,7 +118,6 @@ class SearchActivity : AppCompatActivity() {
 
         viewModel.locationList.observe(this@SearchActivity, Observer {
             placeAdapter.setData(it)
-            searchBinding.emptyMainText.visibility = if (it.isNullOrEmpty()) View.VISIBLE else View.GONE
         })
     }
 
