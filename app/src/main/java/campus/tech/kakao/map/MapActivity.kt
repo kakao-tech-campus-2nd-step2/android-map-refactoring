@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.databinding.BottomSheetBinding
+import campus.tech.kakao.map.databinding.MapErrorBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -61,9 +62,9 @@ class MapActivity : AppCompatActivity() {
 			}
 
 			override fun onMapError(p0: Exception?) {
-				setContentView(R.layout.map_error)
-				val errorText = findViewById<TextView>(R.id.map_error_text)
-				errorText.text = p0?.message
+				val errorBinding = MapErrorBinding.inflate(layoutInflater)
+				setContentView(errorBinding.root)
+				errorBinding.mapErrorText.text = p0?.message
 			}
 
 		}, object: KakaoMapReadyCallback() {
