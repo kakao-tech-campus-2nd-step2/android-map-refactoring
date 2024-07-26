@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.databinding.MapLayoutBinding
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -79,12 +80,10 @@ class MapActivity : AppCompatActivity() {
         }
 
         viewModel.errorMessage.observe(this, Observer { message ->
-            setContentView(R.layout.error_layout)
-            val tvError = findViewById<TextView>(R.id.tvError)
-            val btnRefresh = findViewById<ImageButton>(R.id.btnRefresh)
-            tvError.text = message
-            btnRefresh.setOnClickListener {
-                initializeMap()
+            if (message != null) {
+                val errorBinding: ErrorLayoutBinding = DataBindingUtil.setContentView(this, R.layout.error_layout)
+                errorBinding.viewModel = viewModel
+                errorBinding.lifecycleOwner = this
             }
         })
     }
