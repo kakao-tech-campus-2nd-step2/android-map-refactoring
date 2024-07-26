@@ -36,9 +36,6 @@ class MapViewModel @Inject constructor(
     private val _hasIntentData = MutableLiveData<Boolean>()
     val hasIntentData: LiveData<Boolean> get() = _hasIntentData
 
-    val startZoomLevel = 15
-    val startPosition = LatLng.from(35.234, 129.0807)
-
     init {
         _latitude.value = preferencesLatitude
         _longitude.value = preferencesLongitude

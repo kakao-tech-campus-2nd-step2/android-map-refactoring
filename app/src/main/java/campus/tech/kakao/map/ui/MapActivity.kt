@@ -2,9 +2,6 @@ package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -49,13 +46,6 @@ class MapActivity : AppCompatActivity() {
             })
         }
 
-        override fun getPosition(): LatLng {
-            return viewModel.startPosition
-        }
-
-        override fun getZoomLevel(): Int {
-            return viewModel.startZoomLevel
-        }
 
     }
 
