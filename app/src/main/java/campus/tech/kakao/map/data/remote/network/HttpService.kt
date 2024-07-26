@@ -8,16 +8,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
+import javax.inject.Inject
 
-object HttpService {
-    private const val BASE_URL = "https://dapi.kakao.com/"
+class HttpService @Inject constructor(
+    private val apiKeyProvider: ApiKeyProvider,
+    private val baseUrl: String
+) {
 
     suspend fun searchKeyword(query: String): SearchResponse? = withContext(Dispatchers.IO) {
-            val url = "${BASE_URL}v2/local/search/keyword.json?query=$query"
+            val url = "${baseUrl}v2/local/search/keyword.json?query=$query"
             val connection = URL(url).openConnection() as HttpURLConnection
             try {
                 connection.requestMethod = "GET"
-                connection.setRequestProperty("Authorization", ApiKeyProvider.KAKAO_REST_API_KEY)
+                connection.setRequestProperty("Authorization", apiKeyProvider.KAKAO_REST_API_KEY)
                 val responseCode = connection.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     val response = connection.inputStream.bufferedReader().readText()

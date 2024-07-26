@@ -17,11 +17,12 @@ import javax.inject.Singleton
 class PlaceRepositoryImpl @Inject constructor(
     private val searchQueryDao: SearchQueryDao,
     private val visitedPlaceDao: VisitedPlaceDao,
+    private val httpService: HttpService,
     private val ioDispatcher: CoroutineDispatcher
 ) : PlaceRepository {
     override suspend fun searchPlaces(query: String): List<PlaceVO>? = withContext(Dispatchers.IO) {
 
-        val response = HttpService.searchKeyword(query = query)
+        val response = httpService.searchKeyword(query = query)
         response?.documents?.map {
                     PlaceVO(
                         placeName = it.placeName,
