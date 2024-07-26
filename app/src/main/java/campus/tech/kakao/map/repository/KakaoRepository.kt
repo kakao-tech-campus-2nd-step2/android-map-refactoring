@@ -37,8 +37,4 @@ class KakaoRepository(private val retrofit: Retrofit) {
                 }
             })
     }
-
-    companion object {
-        private const val TAG = "KakaoRepository"
-    }
 }
