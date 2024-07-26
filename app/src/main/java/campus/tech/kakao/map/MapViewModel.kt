@@ -22,11 +22,11 @@ class MapViewModel @Inject constructor(application: Application) : AndroidViewMo
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
-    private val _errorVisible = MutableLiveData<String>()
-    val errorVisible: LiveData<String> get() = _errorVisible
+    private val _errorVisible = MutableLiveData<Boolean>()
+    val errorVisible: LiveData<Boolean> get() = _errorVisible
 
-    private val _bottomSheetVisible = MutableLiveData<String>()
-    val bottomSheetVisible: LiveData<String> get() = _bottomSheetVisible
+    private val _bottomSheetVisible = MutableLiveData<Boolean>()
+    val bottomSheetVisible: LiveData<Boolean> get() = _bottomSheetVisible
 
     fun setPlaceName(name: String) {
         _placeName.value = name
@@ -40,11 +40,11 @@ class MapViewModel @Inject constructor(application: Application) : AndroidViewMo
         _errorMessage.value = name
     }
 
-    fun setErrorVisible(name: String) {
+    fun setErrorVisible(name: Boolean) {
         _errorVisible.value = name
     }
 
-    fun setBottomSheetVisible(name: String) {
+    fun setBottomSheetVisible(name: Boolean) {
         _bottomSheetVisible.value = name
     }
 }
