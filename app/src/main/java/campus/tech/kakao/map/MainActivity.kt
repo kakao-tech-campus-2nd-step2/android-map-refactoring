@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.searchRecyclerView.adapter = searchAdapter
 
-        binding.savedSearchRecyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        binding.savedSearchRecyclerView.layoutManager = LinearLayoutManager(this, androidx.recyclerview.widget.RecyclerView.HORIZONTAL, false)
         binding.savedSearchRecyclerView.adapter = savedSearchAdapter
 
         Log.d("MainActivity", "RecyclerViews set up")
