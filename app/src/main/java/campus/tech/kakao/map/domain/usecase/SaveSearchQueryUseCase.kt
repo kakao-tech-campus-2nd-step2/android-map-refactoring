@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.domain.usecase
 
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 
 interface SaveSearchQueryUseCase {
-    operator fun invoke(place: PlaceVO)
+    suspend operator fun invoke(place: PlaceVO)
 }

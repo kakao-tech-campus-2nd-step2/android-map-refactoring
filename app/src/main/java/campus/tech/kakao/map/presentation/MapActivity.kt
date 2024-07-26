@@ -5,15 +5,12 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.LinearLayout
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.data.repository.PlaceRepositoryImpl
-import campus.tech.kakao.map.data.usecase.GetLastPlaceUseCaseImpl
-import campus.tech.kakao.map.data.usecase.SaveLastPlaceUseCaseImpl
 import campus.tech.kakao.map.databinding.ActivityMapBinding
-import campus.tech.kakao.map.domain.model.PlaceVO
+import campus.tech.kakao.map.domain.dto.PlaceVO
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -28,14 +25,15 @@ import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapBinding
     private lateinit var mapView: MapView
     private lateinit var searchBox: CardView
     private lateinit var kakaoMap: KakaoMap
-    private lateinit var mapViewModel: MapViewModel
+    private val mapViewModel: MapViewModel by viewModels()
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,8 +43,6 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         bindingViews()
-        initializeViewModel()
-        binding.viewModel = mapViewModel
         binding.lifecycleOwner = this
 
         handleIntentData()
@@ -66,14 +62,6 @@ class MapActivity : AppCompatActivity() {
         }
     }
 
-    private fun initializeViewModel() {
-        val placeRepository = PlaceRepositoryImpl(context = this)
-        val factory = MapViewModelFactory(
-            SaveLastPlaceUseCaseImpl(placeRepository),
-            GetLastPlaceUseCaseImpl(placeRepository)
-        )
-        mapViewModel = ViewModelProvider(this, factory).get(MapViewModel::class.java)
-    }
 
     private fun setUpMap() {
         if (mapViewModel.lastPlace.value != null) {
@@ -97,6 +85,7 @@ class MapActivity : AppCompatActivity() {
             }
 
             override fun onMapError(error: Exception) {
+                Log.d("testt", error.message ?: "Unknown error")
                 handleError(error)
             }
         }, object : KakaoMapReadyCallback() {

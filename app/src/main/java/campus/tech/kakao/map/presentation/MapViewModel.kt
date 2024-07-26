@@ -1,21 +1,27 @@
 package campus.tech.kakao.map.presentation
 
-import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import campus.tech.kakao.map.domain.model.PlaceVO
+import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.domain.dto.PlaceVO
 import campus.tech.kakao.map.domain.usecase.GetLastPlaceUseCase
 import campus.tech.kakao.map.domain.usecase.SaveLastPlaceUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.Serializable
+import javax.inject.Inject
 
 
-class MapViewModel(
+@HiltViewModel
+class MapViewModel @Inject constructor(
     private val saveLastPlaceUseCase: SaveLastPlaceUseCase,
-    private val getLastPlaceUseCase: GetLastPlaceUseCase
+    private val getLastPlaceUseCase: GetLastPlaceUseCase,
 ) : ViewModel() {
 
     private val _lastPlace = MutableLiveData<PlaceVO?>()
-    val lastPlace: MutableLiveData<PlaceVO?> get() = _lastPlace
+    val lastPlace: LiveData<PlaceVO?> get() = _lastPlace
 
 
     init {
@@ -24,12 +30,16 @@ class MapViewModel(
 
 
     fun saveLastPlace(place: PlaceVO) {
-        saveLastPlaceUseCase(place)
-        _lastPlace.postValue(place)
+        viewModelScope.launch(Dispatchers.IO) {
+            saveLastPlaceUseCase(place)
+            _lastPlace.postValue(place)
+        }
     }
 
     private fun getLastPlace() {
-        _lastPlace.value = getLastPlaceUseCase()
+        viewModelScope.launch(Dispatchers.IO) {
+            _lastPlace.postValue(getLastPlaceUseCase())
+        }
     }
 
     fun setLastPlace(place: Serializable) {
