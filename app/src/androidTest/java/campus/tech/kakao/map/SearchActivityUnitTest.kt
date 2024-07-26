@@ -1,13 +1,10 @@
 package campus.tech.kakao.map
 
-import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import junit.framework.TestCase.assertEquals
+import campus.tech.kakao.map.ui.activity.SearchActivity
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)

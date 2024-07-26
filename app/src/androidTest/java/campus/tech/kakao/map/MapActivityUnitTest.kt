@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import campus.tech.kakao.map.ui.activity.MapActivity
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

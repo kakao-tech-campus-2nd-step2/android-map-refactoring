@@ -1,4 +1,4 @@
-# android-map-refactoring STEP1
+# android-map-refactoring STEP2
 
 ## 개요
 

@@ -1,8 +1,10 @@
-package campus.tech.kakao.map.db
+package campus.tech.kakao.map.di
 
 import android.content.Context
 import androidx.room.Room
-import campus.tech.kakao.map.network.KakaoLocalApi
+import campus.tech.kakao.map.data.db.DataBase
+import campus.tech.kakao.map.data.db.SearchHistoryDao
+import campus.tech.kakao.map.data.remote.api.KakaoLocalApi
 import campus.tech.kakao.map.repository.KakaoRepository
 import dagger.Module
 import dagger.Provides

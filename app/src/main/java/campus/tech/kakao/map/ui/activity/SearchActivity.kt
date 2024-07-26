@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,11 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.db.AppModule
-import campus.tech.kakao.map.db.DataBase
-import campus.tech.kakao.map.db.SearchHistory
-import campus.tech.kakao.map.db.SearchHistoryDao
-import campus.tech.kakao.map.dto.Place
+import campus.tech.kakao.map.KyleMaps
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.ui.adapter.ResultRecyclerViewAdapter
+import campus.tech.kakao.map.ui.adapter.SearchHistoryRecyclerViewAdapter
+import campus.tech.kakao.map.di.AppModule
+import campus.tech.kakao.map.data.db.DataBase
+import campus.tech.kakao.map.data.db.SearchHistory
+import campus.tech.kakao.map.data.db.SearchHistoryDao
+import campus.tech.kakao.map.data.remote.api.dto.Place
 import campus.tech.kakao.map.repository.KakaoRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

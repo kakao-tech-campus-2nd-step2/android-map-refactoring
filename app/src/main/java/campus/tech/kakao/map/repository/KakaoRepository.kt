@@ -2,9 +2,9 @@ package campus.tech.kakao.map.repository
 
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig.KAKAO_REST_API_KEY
-import campus.tech.kakao.map.dto.Place
-import campus.tech.kakao.map.dto.ResultSearchKeyword
-import campus.tech.kakao.map.network.KakaoLocalApi
+import campus.tech.kakao.map.data.remote.api.dto.Place
+import campus.tech.kakao.map.data.remote.api.dto.ResultSearchKeyword
+import campus.tech.kakao.map.data.remote.api.KakaoLocalApi
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

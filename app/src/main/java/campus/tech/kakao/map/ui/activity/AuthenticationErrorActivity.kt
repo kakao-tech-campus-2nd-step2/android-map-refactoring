@@ -1,9 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.activity
 
 import android.os.Bundle
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
+import campus.tech.kakao.map.R
 
 class AuthenticationErrorActivity : AppCompatActivity() {
 

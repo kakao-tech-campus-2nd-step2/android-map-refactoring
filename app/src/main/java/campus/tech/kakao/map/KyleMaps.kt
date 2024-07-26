@@ -1,8 +1,8 @@
 package campus.tech.kakao.map
 
 import android.app.Application
-import campus.tech.kakao.map.db.AppModule
-import campus.tech.kakao.map.db.DataBase
+import campus.tech.kakao.map.di.AppModule
+import campus.tech.kakao.map.data.db.DataBase
 import com.kakao.vectormap.KakaoMapSdk
 
 class KyleMaps : Application() {

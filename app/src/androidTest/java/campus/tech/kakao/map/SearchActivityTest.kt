@@ -1,14 +1,12 @@
 package campus.tech.kakao.map
 
-import android.annotation.SuppressLint
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.*
-import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.filters.MediumTest
+import campus.tech.kakao.map.ui.activity.SearchActivity
 import org.hamcrest.CoreMatchers.*
 import org.junit.Before
 import org.junit.Rule

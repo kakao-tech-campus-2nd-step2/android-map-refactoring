@@ -1,12 +1,12 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.dto.Place
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.remote.api.dto.Place
 
 class ResultRecyclerViewAdapter(
     private var places: List<Place>,

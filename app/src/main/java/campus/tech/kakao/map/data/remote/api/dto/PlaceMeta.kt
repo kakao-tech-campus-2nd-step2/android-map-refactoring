@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.dto
+package campus.tech.kakao.map.data.remote.api.dto
 
 data class PlaceMeta(
     val total_count: Int,

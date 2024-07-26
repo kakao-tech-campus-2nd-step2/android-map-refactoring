@@ -1,9 +1,9 @@
-package campus.tech.kakao.map.db
+package campus.tech.kakao.map.data.db
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import campus.tech.kakao.map.db.SearchHistory
+import campus.tech.kakao.map.data.db.SearchHistory
 
 @Dao
 interface SearchHistoryDao {

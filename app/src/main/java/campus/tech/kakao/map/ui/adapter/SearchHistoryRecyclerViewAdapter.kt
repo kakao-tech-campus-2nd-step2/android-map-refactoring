@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,7 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.db.SearchHistory
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.data.db.SearchHistory
 
 class SearchHistoryRecyclerViewAdapter(
     private val searchHistory: MutableList<SearchHistory>,
