@@ -51,5 +51,4 @@ class MapListAdapter(
         this.mapItemList = mapItemList
         notifyDataSetChanged()
     }
-
 }

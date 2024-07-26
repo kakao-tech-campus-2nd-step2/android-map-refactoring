@@ -10,6 +10,7 @@ import campus.tech.kakao.map.databinding.ActivityMapErrorBinding
 
 class MapErrorActivity : AppCompatActivity() {
     private lateinit var errorMessage : String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map_error)

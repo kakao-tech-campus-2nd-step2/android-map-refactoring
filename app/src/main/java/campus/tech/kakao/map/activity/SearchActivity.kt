@@ -26,6 +26,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private val mapItemViewModel: MapItemViewModel by viewModels()
@@ -34,7 +35,8 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val binding : ActivitySearchBinding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        val binding: ActivitySearchBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_search)
         binding.search = this
 
         //어댑터 설정
@@ -42,10 +44,12 @@ class SearchActivity : AppCompatActivity() {
         val selectListAdapter = SelectListAdapter(listOf(), LayoutInflater.from(this))
 
         binding.mapList.adapter = mapListAdapter
-        binding.mapList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.mapList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         binding.selectList.adapter = selectListAdapter
-        binding.selectList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        binding.selectList.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         //리스너 정의
         mapListAdapter.setItemClickListener(object : ItemClickListener {

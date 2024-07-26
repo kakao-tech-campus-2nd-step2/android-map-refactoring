@@ -29,6 +29,7 @@ class MapActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
@@ -49,6 +50,7 @@ class MapActivity : AppCompatActivity() {
         val y: Double? = intent.extras?.getDouble("y")
         val name: String? = intent.extras?.getString("name")
         val address: String? = intent.extras?.getString("address")
+
 
         binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
