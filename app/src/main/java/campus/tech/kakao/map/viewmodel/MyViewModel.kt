@@ -47,17 +47,21 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     //PlaceAdapter 초기화
     val vmPlaceAdapter: PlaceAdapter = PlaceAdapter(listOf()) { place ->  //리사이클러뷰의 아이템을 누르면
 
-        repository.insertSavedsearch(place.id, place.name)  //SavedSearch에 item 추가
-        updateSavedSearch() //SavedSearch Ui업데이트
-        repository.setSharedPreferences(place.toLocation()) //sharedPreference에 카메라 이동할 정보 저장
-        _itemClick.value = place //액티비티 이동하기 위한 전달
+        viewModelScope.launch {
+            repository.insertSavedSearch(SavedSearch(id = place.id, name = place.name))  // SavedSearch에 item 추가
+            updateSavedSearch() // SavedSearch UI 업데이트
+            repository.setSharedPreferences(place.toLocation()) // SharedPreferences에 카메라 이동할 정보 저장
+            _itemClick.value = place // 액티비티 이동하기 위한 전달
+        }
     }
 
     //SavedSearchAdapter 초기화
     val vmSavedSearchAdapter: SavedSearchAdapter = SavedSearchAdapter(listOf(),
         onCloseClick = { SavedSearch -> //SavedSearch의 x를 누르면
-            repository.deleteSavedSearch(SavedSearch.id)  //SavedSearch item 삭제
-            updateSavedSearch() //Savedsearch Ui업데이트
+            viewModelScope.launch {
+                repository.deleteSavedSearch(SavedSearch.id)  // SavedSearch item 삭제
+                updateSavedSearch() // SavedSearch UI 업데이트
+            }
         },
         onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
             _nameClick.value = SavedSearch   //화면에 보이는 text 설정
@@ -105,11 +109,16 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
 
     //Repository에서 List(SavedSearch) 가져와서  savedSearchAdapterUpdateData에 저장
     fun updateSavedSearch() {
-        _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
+        viewModelScope.launch {
+            _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
+        }
+        Log.d("seyoung", _savedSearchAdapterUpdateData.value.toString())
     }
 
     fun getSharedPreferences() {
-        _location.value = repository.getSharedPreferences()
+        viewModelScope.launch {
+            _location.value = repository.getSharedPreferences()
+        }
     }
 
 
