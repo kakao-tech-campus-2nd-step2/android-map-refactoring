@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
         )
     )
 
-//    val bottomSheetManager = BottomSheetManager(this, bottomSheet)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -68,21 +67,14 @@ class MainActivity : AppCompatActivity() {
         getSharedPreferences()  //sharedPreference에서 값을 불러와 mainLocation에 저장
 
         //bottomSheet 초기화
-
         val bottomSheetManager = BottomSheetManager(this, bottomSheet)
         bottomSheetManager.setBottomSheetText(mainLocation)
 
         // ActivityResultLauncher 초기화
         searchPlaceLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            ActivityResultContracts.StartActivityForResult()
+        ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-//                val data = result.data
-//                mainLocation = Location(
-//                    name = data?.getStringExtra("name") ?: "",
-//                    address = data?.getStringExtra("address") ?: "",
-//                    latitude = data?.getStringExtra("latitude")?.toDoubleOrNull() ?: KAKAO_LATITUDE,
-//                    longitude = data?.getStringExtra("longitude")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
-//                )
                 viewModel.getSharedPreferences()
             }
         }
@@ -98,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         //mainLocation 최신화
         viewModel.location.observe(this, Observer { location ->
             mainLocation = location
-//            mapView?.resume()
             bottomSheetManager.setBottomSheetText(location)
             updateCamera()
             addMarker(kakaoMap, location)

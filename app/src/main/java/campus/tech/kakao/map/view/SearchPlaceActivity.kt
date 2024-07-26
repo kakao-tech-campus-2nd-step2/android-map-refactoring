@@ -13,8 +13,6 @@ import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
-import campus.tech.kakao.map.model.data.toLocation
-import campus.tech.kakao.map.model.repository.MyRepository
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
