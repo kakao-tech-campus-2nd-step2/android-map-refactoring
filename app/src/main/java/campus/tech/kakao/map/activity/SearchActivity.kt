@@ -26,7 +26,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private val mapItemViewModel: MapItemViewModel by viewModels()
@@ -65,6 +64,7 @@ class SearchActivity : AppCompatActivity() {
                         mapItem.kakaoId
                     )
                 )
+
                 val intent = Intent(this@SearchActivity, MapActivity::class.java)
                 intent.putExtra("x", mapItem.x.toDouble())
                 intent.putExtra("y", mapItem.y.toDouble())

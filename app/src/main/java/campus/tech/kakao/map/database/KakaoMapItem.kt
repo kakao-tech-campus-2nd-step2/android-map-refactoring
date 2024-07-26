@@ -17,6 +17,7 @@ class KakaoMapItemDbHelper(context: Context) : SQLiteOpenHelper(context, "kakaoM
     private val wDb = writableDatabase
     private val rDb = readableDatabase
     //val selectItemDao = SelectItemDao(wDb, rDb)
+
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
             "CREATE TABLE ${SelectItemDB.TABLE_NAME} (" +
