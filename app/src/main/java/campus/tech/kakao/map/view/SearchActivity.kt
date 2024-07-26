@@ -27,19 +27,14 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPlaceListener {
     private lateinit var binding : ActivitySearchBinding
-    lateinit var savedPlaceRecyclerView: RecyclerView
-    lateinit var searchRecyclerView: RecyclerView
-    lateinit var searchDeleteButton: ImageView
     lateinit var savedPlaceRecyclerViewAdapter: SavedPlaceViewAdapter
     lateinit var searchRecyclerViewAdapter: PlaceViewAdapter
     private val viewModel: SearchActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
-        initVar()
+
+        initBinding()
         initListeners()
         initRecyclerViews()
         initObserver()
@@ -64,10 +59,10 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
         finish()
     }
 
-    fun initVar() {
-        searchRecyclerView = findViewById<RecyclerView>(R.id.search_result_recyclerView)
-        savedPlaceRecyclerView = findViewById<RecyclerView>(R.id.saved_search_recyclerView)
-        searchDeleteButton = findViewById<ImageView>(R.id.button_X)
+    fun initBinding() {
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
     }
 
     fun initListeners() {
@@ -76,7 +71,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     }
 
     fun initDeleteButtonListener() {
-        searchDeleteButton.setOnClickListener {
+        binding.buttonX.setOnClickListener {
             binding.inputSearchField.setText("")
             binding.inputSearchField.clearFocus()
             binding.inputSearchField.parent.clearChildFocus(binding.inputSearchField)
@@ -111,16 +106,16 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
 
     fun initSearchRecyclerView() {
         searchRecyclerViewAdapter = PlaceViewAdapter(this)
-        searchRecyclerView.layoutManager = LinearLayoutManager(this)
-        searchRecyclerView.adapter = searchRecyclerViewAdapter
+        binding.searchResultRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.searchResultRecyclerView.adapter = searchRecyclerViewAdapter
     }
 
     fun initSavedPlaceRecyclerView() {
         savedPlaceRecyclerViewAdapter =
             SavedPlaceViewAdapter(this)
-        savedPlaceRecyclerView.layoutManager =
+        binding.savedSearchRecyclerView.layoutManager =
             LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        savedPlaceRecyclerView.adapter = savedPlaceRecyclerViewAdapter
+        binding.savedSearchRecyclerView.adapter = savedPlaceRecyclerViewAdapter
     }
 
     fun initObserver(){
@@ -142,8 +137,8 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
             Log.d("readData", "저장된 장소들 변경 감지")
             val savedPlace = viewModel.savedPlace.value
             savedPlaceRecyclerViewAdapter.submitList(savedPlace)
-            if (savedPlace?.isEmpty() == true) savedPlaceRecyclerView.visibility = View.GONE
-            else savedPlaceRecyclerView.visibility = View.VISIBLE
+            if (savedPlace?.isEmpty() == true) binding.savedSearchRecyclerView.visibility = View.GONE
+            else binding.savedSearchRecyclerView.visibility = View.VISIBLE
         })
     }
 }
