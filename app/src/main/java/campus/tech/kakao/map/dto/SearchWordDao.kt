@@ -8,15 +8,15 @@ import androidx.room.Query
 @Dao
 interface SearchWordDao {
 	@Insert(onConflict = OnConflictStrategy.REPLACE)
-	fun insert(word: SearchWord)
+	suspend fun insert(word: SearchWord)
 
 	@Query("DELETE FROM SearchWord WHERE name = :name AND address = :address AND type = :type")
-	fun delete(name:String, address:String, type:String)
+	suspend fun delete(name:String, address:String, type:String)
 
 	@Query("SELECT * FROM SearchWord")
-	fun getAll(): List<SearchWord>
+	suspend fun getAll(): List<SearchWord>
 
 	@Query("SELECT * FROM SearchWord WHERE name = :name AND address = :address AND type = :type")
-	fun get(name:String, address:String, type:String): SearchWord
+	suspend fun get(name:String, address:String, type:String): SearchWord
 
 }
