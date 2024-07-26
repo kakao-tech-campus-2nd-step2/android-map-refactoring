@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.FrameLayout
@@ -61,11 +60,9 @@ class MainActivity : AppCompatActivity() {
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API가 정상적으로 종료될 때 호출됨
-                Log.d("MainActivity", "Map destroyed")
             }
 
             override fun onMapError(error: Exception) {
-                Log.e("MainActivity", "Map error: ${error.message}")
                 showErrorScreen(error)
             }
         }, object : KakaoMapReadyCallback() {
@@ -156,7 +153,7 @@ class MainActivity : AppCompatActivity() {
                 selectedItems.clear()
                 val selectedItemsSize = it.getIntExtra("selectedItemsSize", 0)
                 for (i in 0 until selectedItemsSize) {
-                    val id = it.getIntExtra("id_$i",0)
+                    val id = it.getIntExtra("id_$i", 0)
                     val place_name = it.getStringExtra("place_name_$i") ?: ""
                     val road_address_name = it.getStringExtra("road_address_name_$i") ?: ""
                     val category_group_name = it.getStringExtra("category_group_name_$i") ?: ""
@@ -165,7 +162,7 @@ class MainActivity : AppCompatActivity() {
                     selectedItems.add(MapItem(id, place_name, road_address_name, category_group_name, x, y))
                 }
 
-                //마커 위치 저장
+                // 마커 위치 저장
                 addLabel(placeName, roadAddressName, x, y)
                 if (placeName != null && roadAddressName != null) {
                     saveLastMarkerPosition(x, y, placeName, roadAddressName)
@@ -230,16 +227,11 @@ class MainActivity : AppCompatActivity() {
             val roadAddressName = sharedPreferences.getString(PREF_ROAD_ADDRESS_NAME, "") ?: ""
 
             if (placeName.isNotEmpty() && roadAddressName.isNotEmpty()) {
-                Log.d("MainActivity", "Loaded last marker position: lat=$latitude, lon=$longitude, placeName=$placeName, roadAddressName=$roadAddressName")
                 addLabel(placeName, roadAddressName, longitude, latitude)
                 val position = LatLng.from(latitude, longitude)
                 moveCamera(position)
                 updateBottomSheet(placeName, roadAddressName)
-            } else {
-                Log.d("MainActivity", "No place name or road address name found")
             }
-        } else {
-            Log.d("MainActivity", "No last marker position found in SharedPreferences")
         }
     }
 
