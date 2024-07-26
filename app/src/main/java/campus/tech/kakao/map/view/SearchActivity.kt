@@ -55,7 +55,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
         binding.inputSearchField.requestFocus()
     }
 
-    override fun deleteSavedPlace(savedPlace: SavedPlace, position: Int) {
+    override fun deleteSavedPlace(savedPlace: SavedPlace) {
         Log.d("testt", "삭제 콜백함수 처리")
         viewModel.deleteSavedPlace(savedPlace)
     }

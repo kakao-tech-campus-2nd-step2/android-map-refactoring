@@ -8,6 +8,6 @@ interface OnClickPlaceListener {
 }
 
 interface OnClickSavedPlaceListener {
-    fun deleteSavedPlace(savedPlace: SavedPlace, position: Int)
+    fun deleteSavedPlace(savedPlace: SavedPlace)
     fun loadPlace(savedPlace: SavedPlace)
 }
