@@ -42,5 +42,6 @@ class PlaceRecyclerViewAdapter(
     fun updateData(newPlace: List<Place>) {
         places.clear()
         places.addAll(newPlace)
+        notifyDataSetChanged()
     }
 }

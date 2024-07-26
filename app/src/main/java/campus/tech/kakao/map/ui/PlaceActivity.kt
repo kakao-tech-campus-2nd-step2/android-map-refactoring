@@ -64,12 +64,10 @@ class PlaceActivity : AppCompatActivity() {
         // ViewModel 관찰
         viewModel.searchList.observe(this, Observer { places ->
             searchAdapter.updateData(places)
-            searchAdapter.notifyDataSetChanged()
         })
 
         viewModel.placeList.observe(this, Observer { places ->
             placeAdapter.updateData(places)
-            placeAdapter.notifyDataSetChanged()
         })
 
         viewModel.isPlaceListVisible.observe(this, Observer { isVisible ->
