@@ -2,105 +2,83 @@ package campus.tech.kakao.map.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.HorizontalScrollView
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
-import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.Adapter
 import campus.tech.kakao.map.data.AppDatabase
-import campus.tech.kakao.map.data.AppDatabase.Companion.MIGRATION_1_2
-import campus.tech.kakao.map.data.Profile
-import campus.tech.kakao.map.network.Document
-import campus.tech.kakao.map.network.KakaoResponse
-import campus.tech.kakao.map.network.Network
-import campus.tech.kakao.map.network.SearchService
-import campus.tech.kakao.map.utility.CategoryGroupCode
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.utility.SaveHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.concurrent.thread
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var network: Network
-
-    @Inject
-    lateinit var searchService: SearchService
+    lateinit var db: AppDatabase
 
     @Inject
     lateinit var searchSave: SaveHelper
 
-    lateinit var adapter: Adapter
-    lateinit var tvNoResult: TextView
-    lateinit var llSave: LinearLayoutCompat
-    lateinit var hScrollView: HorizontalScrollView
-    lateinit var db: AppDatabase
+    private val viewModel: MainViewModel by viewModels()
+
+    private lateinit var mainBinding: ActivityMainBinding
+    private lateinit var adapter: Adapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        mainBinding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(mainBinding.root)
 
-        db = Room.databaseBuilder(
-            applicationContext,
-            AppDatabase::class.java, "profiles"
-        ).addMigrations(MIGRATION_1_2).build()
-
-        val etSearch = findViewById<EditText>(R.id.etSearch)
-        tvNoResult = findViewById(R.id.tvNoResult)
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val btnClose = findViewById<Button>(R.id.btnClose)
-        llSave = findViewById(R.id.llSave)
-        hScrollView = findViewById(R.id.hScrollView)
-
+        mainBinding.recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = Adapter(mutableListOf())
+        mainBinding.recyclerView.adapter = adapter
 
-        recyclerView.adapter = adapter
+        viewModel.profiles.observe(this, Observer { profiles ->
+            if (profiles.isEmpty()) {
+                showNoResults()
+            } else {
+                adapter.updateProfiles(profiles)
+                mainBinding.tvNoResult.visibility = View.GONE
 
-        tvNoResult.visibility = TextView.VISIBLE
-
-        etSearch.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                val search = s.toString()
-                if (search.isEmpty()) {
-                    showNoResults()
-                } else {
-                    searchService.searchKeyword(search) { result ->
-                        searchProfiles(result)
-                    }  // 키워드
-                    CategoryGroupCode.categoryMap[search]?.let { categoryCode ->
-                        searchService.searchCategory(categoryCode) { result ->
-                            searchProfiles(result)
-                        }
-                    }  // 카테고리
+                lifecycleScope.launch {
+                    withContext(Dispatchers.IO) {
+                        db.profileDao().insertAll(*profiles.toTypedArray())
+                    }
                 }
             }
         })
 
+        viewModel.noResult.observe(this, Observer { noResult ->
+            if (noResult) {
+                showNoResults()
+            }
+        })
+
+        mainBinding.etSearch.addTextChangedListener { text ->
+            val search = text.toString()
+            if (search.isNotEmpty()) {
+                viewModel.searchProfiles(search)
+            } else {
+                showNoResults()
+            }
+        }
+
         adapter.setOnItemClickListener(object : Adapter.OnItemClickListener {
             override fun onItemClick(name: String, address: String, latitude: String, longitude: String) {
-                if (searchSave.isProfileInSearchSave(name, llSave)) {
-                    searchSave.removeSavedItem(name, llSave)
+                if (searchSave.isProfileInSearchSave(name, mainBinding.llSave)) {
+                    searchSave.removeSavedItem(name, mainBinding.llSave)
                 }
-                searchSave.addSavedItem(name, llSave, hScrollView, LayoutInflater.from(this@MainActivity), etSearch)
+                searchSave.addSavedItem(name, mainBinding.llSave, mainBinding.hScrollView, LayoutInflater.from(this@MainActivity), mainBinding.etSearch)
                 val intent = Intent(this@MainActivity, MapActivity::class.java).apply {
                     putExtra("name", name)
                     putExtra("address", address)
@@ -111,40 +89,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        btnClose.setOnClickListener {
-            etSearch.text.clear()
+        mainBinding.btnClose.setOnClickListener {
+            mainBinding.etSearch.text?.clear()
         }
-        searchSave.loadSavedItems(llSave, hScrollView, LayoutInflater.from(this), etSearch)
+
+        searchSave.loadSavedItems(mainBinding.llSave, mainBinding.hScrollView, LayoutInflater.from(this), mainBinding.etSearch)
     }
 
-    fun searchProfiles(searchResult: KakaoResponse?) {
-        searchResult?.documents?.let { documents ->
-            if (documents.isEmpty()) {
-                showNoResults()
-            } else {
-                val profiles = documents.map { it.toProfile() }
-                adapter.updateProfiles(profiles)
-
-                thread {
-                    db.profileDao().insertAll(*profiles.toTypedArray())
-                }
-
-                tvNoResult.visibility = View.GONE
-            }
-        } ?: showNoResults()
-    }
-
-    fun Document.toProfile(): Profile {
-        return Profile(name = this.name, address = this.address, type = this.type, latitude = this.latitude, longitude = this.longitude)
-    }
-
-    fun showNoResults() {
-        tvNoResult.visibility = View.VISIBLE
+    private fun showNoResults() {
+        mainBinding.tvNoResult.visibility = View.VISIBLE
         adapter.updateProfiles(emptyList())
     }
 
     override fun onPause() {
         super.onPause()
-        searchSave.saveSavedItems(llSave)
+        searchSave.saveSavedItems(mainBinding.llSave)
     }
 }
