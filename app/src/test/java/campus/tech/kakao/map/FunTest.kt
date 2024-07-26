@@ -2,28 +2,51 @@ package campus.tech.kakao.map
 
 import android.app.Application
 import android.content.Context
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import androidx.test.core.app.ApplicationProvider
 import campus.tech.kakao.map.dto.Document
+import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
+import campus.tech.kakao.map.dto.SearchWordDao
+import campus.tech.kakao.map.url.RetrofitData
+import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.testing.HiltAndroidRule
+import dagger.hilt.android.testing.HiltAndroidTest
+import dagger.hilt.android.testing.HiltTestApplication
 import org.junit.Assert.assertFalse
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
+@HiltAndroidTest
 class FunTest {
+
+	@get:Rule
+	var hiltRule = HiltAndroidRule(this)
+
 	private lateinit var model: MainViewModel
 	private lateinit var viewModelStore: ViewModelStore
 	private lateinit var context: Context
+	@Inject
+	lateinit var retrofitData: RetrofitData
+	@Inject
+	lateinit var databaseDao: SearchWordDao
+	@Inject
+	lateinit var mapPosition: MapPositionPreferences
 	@Before
 	fun setUp() {
 		context = RuntimeEnvironment.getApplication()
 		viewModelStore = ViewModelStore()
-		model = MainViewModel(context as Application)
+		hiltRule.inject()
+		model = MainViewModel(context as Application, retrofitData, databaseDao, mapPosition)
 	}
 	@Test
 	fun 검색어를_입력하면_검색_결과_표시(){
