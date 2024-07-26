@@ -1,92 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MapActivity">
+    tools:context=".MapActivity"/>
 
-    <com.kakao.vectormap.MapView
-        android:id="@+id/map_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <data>
+        <variable
+            name="mapViewModel"
+            type="campus.tech.kakao.map.MapViewModel" />
+        <import type="android.view.View"/>
+    </data>
 
-    <TextView
-        android:id="@+id/inputSearchMap"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/input_query"
-        android:background="@drawable/map_input_search"
-        android:drawableRight="@drawable/drawable_resize"
-        android:gravity="center_vertical"
-        android:padding="15dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp" />
 
-    <LinearLayout
-        android:id="@+id/bottomSheet"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"> <!-- 수정된 부분: app:layout_behavior 추가 -->
+        android:layout_height="match_parent" >
+
+        <com.kakao.vectormap.MapView
+            android:id="@+id/map_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
         <TextView
-            android:id="@+id/place_name"
-            android:layout_width="wrap_content"
+            android:id="@+id/inputSearchMap"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:text="Place Name" />
+            android:hint="@string/input_query"
+            android:background="@drawable/map_input_search"
+            android:drawableRight="@drawable/drawable_resize"
+            android:gravity="center_vertical"
+            android:padding="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="20dp"
+            android:text="@{mapViewModel.searchQeury}"/>
 
-        <TextView
-            android:id="@+id/place_address"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/bottomSheet"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="@android:color/darker_gray"
-            android:text="Place Address" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        android:background="#FFFFFF">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/auth_error"
-            android:textSize="16sp"
-            android:gravity="center"
+            android:orientation="vertical"
+            android:background="@color/white"
             android:padding="16dp"
-            android:textColor="@android:color/darker_gray"/>
+            android:visibility="@{mapViewModel.bottomSheetVisible ? View.VISIBLE : View.GONE}"
+            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"> <!-- 수정된 부분: app:layout_behavior 추가 -->
 
-        <TextView
-            android:id="@+id/error_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MapAuthException(401): Unauthorized"
-            android:textSize="14sp"
+            <TextView
+                android:id="@+id/place_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"
+                android:text="@{mapViewModel.placeName}" />
+
+            <TextView
+                android:id="@+id/place_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:text="@{mapViewModel.placeAddress"} />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
             android:gravity="center"
-            android:padding="16dp"
-            android:textColor="@android:color/darker_gray" />
+            android:visibility="@{mapViewModel.errorVisible ? View.VISIBLE : View.GONE}"
+            android:background="#FFFFFF">
 
-        <ImageView
-            android:id="@+id/refreshImageView"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="10dp"
-            android:src="@drawable/refresh" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/auth_error"
+                android:textSize="16sp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textColor="@android:color/darker_gray"/>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/error_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{mapViewModel.errorMessage}"
+                android:textSize="14sp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:textColor="@android:color/darker_gray" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <ImageView
+                android:id="@+id/refreshImageView"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_marginTop="10dp"
+                android:src="@drawable/refresh" />
+
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
