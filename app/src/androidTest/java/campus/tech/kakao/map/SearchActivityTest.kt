@@ -2,16 +2,12 @@
 
 package campus.tech.kakao.map
 
-import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
-import androidx.test.espresso.intent.Intents.intended
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.runner.AndroidJUnit4
-import campus.tech.kakao.map.View.Map_Activity
 import campus.tech.kakao.map.View.Search_Activity
 import org.junit.Rule
 import org.junit.Test
