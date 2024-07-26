@@ -1,8 +1,6 @@
 package campus.tech.kakao.map.repository
 
 import android.util.Log
-import campus.tech.kakao.map.db.PlaceContract
-import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.model.SavedPlaceDao

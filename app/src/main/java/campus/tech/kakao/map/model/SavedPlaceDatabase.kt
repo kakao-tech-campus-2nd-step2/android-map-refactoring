@@ -8,7 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import campus.tech.kakao.map.db.PlaceContract
 import kotlin.concurrent.Volatile
 
-@Database(entities = [SavedPlace::class], version = 1, exportSchema = false)
+@Database(entities = [SavedPlace::class], version = PlaceContract.VERSION, exportSchema = false)
 abstract class SavedPlaceDatabase : RoomDatabase() {
 
     abstract fun savedPlaceDao(): SavedPlaceDao

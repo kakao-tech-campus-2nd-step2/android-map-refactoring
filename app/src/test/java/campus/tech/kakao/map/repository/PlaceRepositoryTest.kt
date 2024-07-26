@@ -2,13 +2,11 @@ package campus.tech.kakao.map.repository
 
 import android.util.Log
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import campus.tech.kakao.map.db.PlaceDBHelper
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import kotlinx.coroutines.test.runTest
-import org.bouncycastle.util.test.SimpleTest
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -17,7 +15,7 @@ import org.junit.Test
 
 class PlaceRepositoryTest {
 
-    private lateinit var dbHelper: PlaceDBHelper
+    private lateinit var DataSource: KakaoApiDataSource
     private lateinit var placeRepository : PlaceRepository
 
     @get:Rule
@@ -25,8 +23,8 @@ class PlaceRepositoryTest {
 
     @Before
     fun setup(){
-        dbHelper = mockk(relaxed = true)
-        placeRepository = PlaceRepository(dbHelper)
+        DataSource = mockk(relaxed = true)
+        placeRepository = PlaceRepository(DataSource)
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } returns 0
     }
@@ -35,7 +33,7 @@ class PlaceRepositoryTest {
     fun `카카오 데이터소스에서 데이터를 호출하는지`() = runTest{
         val text = "전남대학교 광주"
         val result = placeRepository.getKakaoLocalPlaceData(text)
-        coVerify { placeRepository.kakaoApiDataSource.getPlaceData(text) }
+        coVerify { placeRepository.getKakaoLocalPlaceData(text) }
         assert(result[0].name == "전남대학교 광주캠퍼스")
     }
 }

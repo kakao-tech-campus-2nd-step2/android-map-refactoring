@@ -2,7 +2,6 @@ package campus.tech.kakao.map.repository
 
 import android.database.Cursor
 import android.util.Log
-import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import io.mockk.every
@@ -15,8 +14,6 @@ import org.junit.Before
 import org.junit.Test
 
 class SavedPlaceRepositoryTest {
-
-    private lateinit var dbHelper: PlaceDBHelper
     private lateinit var savedPlaceRepository: SavedPlaceRepository
     private lateinit var cursor: Cursor
 

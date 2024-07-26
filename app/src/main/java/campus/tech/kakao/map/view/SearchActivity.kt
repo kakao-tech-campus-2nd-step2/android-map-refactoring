@@ -7,14 +7,11 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,17 +19,12 @@ import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.PlaceViewAdapter
 import campus.tech.kakao.map.adapter.SavedPlaceViewAdapter
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.db.PlaceDBHelper
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
-import campus.tech.kakao.map.repository.PlaceRepository
-import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
-import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPlaceListener {
