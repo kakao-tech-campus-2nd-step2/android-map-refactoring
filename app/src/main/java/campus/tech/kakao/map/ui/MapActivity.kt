@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kakao.vectormap.KakaoMap
@@ -31,10 +32,9 @@ class MapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapBinding
     private lateinit var mapView: MapView
     private var kakaoMap: KakaoMap? = null
-    var savedLatitude: Double = 37.3957122          // MapActivity Unit 테스트를 위해 public으로 변경
-    var savedLongitude: Double = 127.1105181        // // MapActivity Unit 테스트를 위해 public으로 변경
-    private lateinit var errorLayout: View
-    private lateinit var searchLayout: View
+    var savedLatitude: Double = 37.3957122
+    var savedLongitude: Double = 127.1105181
+    private lateinit var errorBinding: ErrorLayoutBinding
 
     private val mapViewModel: MapViewModel by viewModels()
 
@@ -45,8 +45,6 @@ class MapActivity : AppCompatActivity() {
         binding.viewModel = mapViewModel
 
         mapView = findViewById(R.id.mapView)
-        errorLayout = findViewById(R.id.errorLayout)
-        searchLayout = findViewById(R.id.searchLayout)
         loadSavedLocation()
 
         mapView.start(mapLifeCycleCallback, kakaoMapReadyCallback)
@@ -159,10 +157,14 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showErrorLayout(message: String?) {
-        val errorMessage = errorLayout.findViewById<TextView>(R.id.tvErrorMessage)
-        errorMessage.text="$message"
-        errorLayout.visibility = View.VISIBLE
-        searchLayout.visibility = View.GONE
-        mapView.visibility = View.GONE
+        if (!::errorBinding.isInitialized) {
+            errorBinding = DataBindingUtil.setContentView(this, R.layout.error_layout)
+            errorBinding.lifecycleOwner = this
+            errorBinding.viewModel = mapViewModel
+        }
+        errorBinding.message = message
+        errorBinding.root.visibility = View.VISIBLE
+        binding.searchLayout.visibility = View.GONE
+        binding.mapView.visibility = View.GONE
     }
 }
