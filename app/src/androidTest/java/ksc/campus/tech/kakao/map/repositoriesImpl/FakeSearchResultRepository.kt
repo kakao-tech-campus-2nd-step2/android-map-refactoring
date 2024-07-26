@@ -1,13 +1,15 @@
 package ksc.campus.tech.kakao.map.repositoriesImpl
 
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import ksc.campus.tech.kakao.map.domain.repositories.SearchResultRepository
 import javax.inject.Inject
 
 class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
+    private var _searchValue = listOf<SearchResult>()
+    private val _searchResult = MutableSharedFlow<List<SearchResult>>()
+    override val searchResult
+        get() = _searchResult
     private fun getDummyData(prefix:String):List<SearchResult>{
         val result = mutableListOf<SearchResult>()
         for(i in 0..15) {
@@ -26,16 +28,10 @@ class FakeSearchResultRepository @Inject constructor(): SearchResultRepository {
         return result
     }
 
-    private var _searchValue = listOf<SearchResult>()
-    override val searchResult: Flow<List<SearchResult>>
-        get() = flow {
-            while (true){
-                emit(_searchValue)
-                delay(500)
-            }
-        }
 
-    override fun search(text: String, apiKey: String){
+
+    override suspend fun search(text: String, apiKey: String){
         _searchValue = getDummyData(text)
+        _searchResult.emit(_searchValue)
     }
 }
