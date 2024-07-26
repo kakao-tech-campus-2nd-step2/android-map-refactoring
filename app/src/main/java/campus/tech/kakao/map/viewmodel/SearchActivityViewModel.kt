@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+enum class UiState {
+    EMPTY, SUCCESS
+}
+
+
 @HiltViewModel
 class SearchActivityViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
@@ -20,10 +26,14 @@ class SearchActivityViewModel @Inject constructor(
 ) : ViewModel() {
     private val _place = MutableLiveData<List<Place>>()
     private val _savedPlace = MutableLiveData<List<SavedPlace>>()
+    private val _uiState = MutableLiveData<UiState>()
+
     val place: LiveData<List<Place>> get() = _place
     val savedPlace: LiveData<List<SavedPlace>> get() = _savedPlace
+    val uiState : LiveData<UiState>get() = _uiState
 
     init {
+        _uiState.value = UiState.EMPTY
         getSavedPlace()
     }
 
@@ -52,5 +62,8 @@ class SearchActivityViewModel @Inject constructor(
             val placeList = placeRepository.getKakaoLocalPlaceData(text)
             _place.value = (placeList)
         } else _place.value = listOf<Place>()
+
+        _uiState.value = if(_place.value?.isEmpty() == false) UiState.SUCCESS else UiState.EMPTY
+        Log.d("testt", "value : ${uiState.value}")
     }
 }

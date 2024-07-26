@@ -5,6 +5,10 @@
 
     <data>
 
+        <import type="campus.tech.kakao.map.viewmodel.UiState"/>
+
+        <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="campus.tech.kakao.map.viewmodel.SearchActivityViewModel" />
@@ -83,6 +87,7 @@
             android:text="@string/no_search_result"
             android:textColor="#737373"
             android:textSize="18sp"
+            android:visibility="@{viewModel.uiState == UiState.SUCCESS ? View.INVISIBLE : View.VISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

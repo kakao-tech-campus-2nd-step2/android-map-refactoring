@@ -37,7 +37,8 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
-
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
         initVar()
         initListeners()
         initRecyclerViews()
@@ -133,8 +134,6 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
             val placeList = viewModel.place.value
             Log.d("testt", "${placeList}")
             searchRecyclerViewAdapter.submitList(placeList)
-            if (placeList?.isEmpty() == true) binding.noSearchResult.visibility = View.VISIBLE
-            else binding.noSearchResult.visibility = View.INVISIBLE
         })
     }
 
