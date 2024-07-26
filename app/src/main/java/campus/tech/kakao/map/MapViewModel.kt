@@ -32,19 +32,19 @@ class MapViewModel @Inject constructor(application: Application) : AndroidViewMo
         _placeName.value = name
     }
 
-    fun setPlaceAddress(name: String) {
-        _placeAddress.value = name
+    fun setPlaceAddress(address: String) {
+        _placeAddress.value = address
     }
 
-    fun setErrorMessage(name: String) {
-        _errorMessage.value = name
+    fun setErrorMessage(message: String) {
+        _errorMessage.value = message
     }
 
-    fun setErrorVisible(name: Boolean) {
-        _errorVisible.value = name
+    fun setErrorVisible(visible: Boolean) {
+        _errorVisible.value = visible
     }
 
-    fun setBottomSheetVisible(name: Boolean) {
-        _bottomSheetVisible.value = name
+    fun setBottomSheetVisible(visible: Boolean) {
+        _bottomSheetVisible.value = visible
     }
 }
