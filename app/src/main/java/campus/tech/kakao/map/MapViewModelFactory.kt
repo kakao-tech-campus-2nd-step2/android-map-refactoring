@@ -2,6 +2,7 @@ package campus.tech.kakao.map
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.repository.PreferenceRepository
 import campus.tech.kakao.map.viewModel.MapViewModel
 import java.lang.IllegalArgumentException
 

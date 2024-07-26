@@ -6,14 +6,14 @@
     <data>
         <variable
             name="searchActivity"
-            type="campus.tech.kakao.map.activity.DataSearchActivity" />
+            type="campus.tech.kakao.map.view.DataSearchActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".activity.DataSearchActivity">
+        tools:context=".view.DataSearchActivity">
 
         <EditText
             android:id="@+id/searchBar"

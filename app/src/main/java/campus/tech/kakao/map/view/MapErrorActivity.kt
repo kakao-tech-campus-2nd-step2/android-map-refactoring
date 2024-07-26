@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.activity
+package campus.tech.kakao.map.view
 
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback

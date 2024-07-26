@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.activity
+package campus.tech.kakao.map.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -54,7 +54,6 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         //Adapter 초기화
-        // Adapter 초기화
         searchResultDataAdapter = SearchDataAdapter(emptyList(), recentViewModel, this)
         binding.searchResulListView.adapter = searchResultDataAdapter
         binding.recentSearchListView.adapter =

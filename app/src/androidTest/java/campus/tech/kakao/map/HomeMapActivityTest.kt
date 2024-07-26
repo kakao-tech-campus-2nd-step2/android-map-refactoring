@@ -13,8 +13,8 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.activity.DataSearchActivity
-import campus.tech.kakao.map.activity.HomeMapActivity
+import campus.tech.kakao.map.view.DataSearchActivity
+import campus.tech.kakao.map.view.HomeMapActivity
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -57,7 +57,7 @@ class HomeMapActivityTest {
 
     @Test
     fun 검색바를_클릭하면_검색화면으로_이동() {
-        onView(withId(R.id.search_home))
+        onView(withId(R.id.searchbar_home))
             .perform(click())
         intended(hasComponent(DataSearchActivity::class.java.name))
     }
