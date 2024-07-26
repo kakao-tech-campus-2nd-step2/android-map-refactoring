@@ -10,20 +10,31 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.db.AppModule
+import campus.tech.kakao.map.db.DataBase
+import campus.tech.kakao.map.db.SearchHistory
+import campus.tech.kakao.map.db.SearchHistoryDao
 import campus.tech.kakao.map.dto.Place
 import campus.tech.kakao.map.repository.KakaoRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
 
 class SearchActivity : AppCompatActivity() {
-
+    private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private lateinit var searchEditText: EditText
     private lateinit var resultRecyclerView: RecyclerView
     private lateinit var searchHistoryRecyclerView: RecyclerView
     private lateinit var noResults: TextView
+    private lateinit var retrofit: Retrofit
+    private lateinit var kakaoRepository: KakaoRepository
+    private lateinit var database: DataBase
+    private lateinit var searchHistoryDao: SearchHistoryDao
     private lateinit var resultRecyclerViewAdapter: ResultRecyclerViewAdapter
     private lateinit var searchHistoryRecyclerViewAdapter: SearchHistoryRecyclerViewAdapter
     private lateinit var placeList: List<Place>
-    private lateinit var searchHistoryList: MutableList<Place>
-    private lateinit var kakaoRepository: KakaoRepository
+    private lateinit var searchHistoryList: MutableList<SearchHistory>
     private lateinit var backButton: ImageButton
     private lateinit var mapX: String
     private lateinit var mapY: String
@@ -41,42 +52,48 @@ class SearchActivity : AppCompatActivity() {
         noResults = findViewById(R.id.no_results)
         backButton = findViewById(R.id.back_button)
 
-        placeList = emptyList()
-        kakaoRepository = (application as KyleMaps).kakaoRepository
+        retrofit = AppModule.provideRetrofit()
+        database = (application as KyleMaps).database
+        searchHistoryDao = AppModule.provideSearchHistoryDao(database)
+        kakaoRepository = AppModule.provideKakaoRepository(retrofit)
 
-        val searchHistoryDB = SearchHistoryDBHelper(this)
-        searchHistoryList = searchHistoryDB.getAllSearchHistory()
+        coroutineScope.launch {
+            searchHistoryList = searchHistoryDao.getAllSearchHistory().toMutableList()
+            searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
+                searchHistory = searchHistoryList,
+                onItemClick = { history ->
+                    searchEditText.setText(history.placeName)
+                    searchEditText.clearFocus()
+                    searchEditText.isFocusable = false
+                },
+                onItemDelete = { history ->
+                    coroutineScope.launch {
+                        searchHistoryDao.deleteSearchHistoryById(history.id)
+                        searchHistoryList.remove(history)
+                        searchHistoryRecyclerViewAdapter.notifyDataSetChanged()
+                    }
+                }
+            )
+
+            searchHistoryRecyclerView.adapter = searchHistoryRecyclerViewAdapter
+            searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
+        }
 
         resultRecyclerViewAdapter = ResultRecyclerViewAdapter(
             places = emptyList(),
             onItemClick = { place ->
-                searchHistoryDB.insertSearchHistory(place)
-                updateSearchHistoryRecyclerView(place)
-                updateMapPosition(place)
-                goBackToMap()
-            }
-        )
-        resultRecyclerView.adapter = resultRecyclerViewAdapter
-        resultRecyclerView.layoutManager = LinearLayoutManager(this)
-
-        searchHistoryRecyclerViewAdapter = SearchHistoryRecyclerViewAdapter(
-            searchHistory = searchHistoryList,
-            onItemClick = { index ->
-                searchEditText.setText(searchHistoryList[index].place_name)
-                searchEditText.clearFocus()
-                searchEditText.isFocusable = false
-            },
-            onItemDelete = { index ->
-                if (index >= 0 && index < searchHistoryList.size) {
-                    val deletedItemName = searchHistoryList[index].place_name
-                    searchHistoryList.removeAt(index)
-                    searchHistoryDB.deleteSearchHistoryByName(deletedItemName)
-                    searchHistoryRecyclerViewAdapter.notifyItemRemoved(index)
+                coroutineScope.launch {
+                    val searchHistory = SearchHistory(placeName = place.place_name)
+                    searchHistoryDao.insertSearchHistory(searchHistory)
+                    updateSearchHistoryRecyclerView(searchHistory)
+                    updateMapPosition(place)
+                    goBackToMap()
                 }
             }
         )
-        searchHistoryRecyclerView.adapter = searchHistoryRecyclerViewAdapter
-        searchHistoryRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+
+        resultRecyclerView.adapter = resultRecyclerViewAdapter
+        resultRecyclerView.layoutManager = LinearLayoutManager(this)
 
         searchEditText.addTextChangedListener { text ->
             text?.let { searchPlaces(it.toString()) }
@@ -107,12 +124,12 @@ class SearchActivity : AppCompatActivity() {
             noResults.visibility = TextView.GONE
             resultRecyclerView.visibility = RecyclerView.VISIBLE
             Log.d("visibility", "noresult: ${noResults.visibility}, recycler: ${resultRecyclerView.visibility} ")
-
         }
     }
 
-    private fun updateSearchHistoryRecyclerView(place: Place) {
-        searchHistoryList.add(place)
+    private fun updateSearchHistoryRecyclerView(searchHistory: SearchHistory) {
+        Log.d("updateSearchHistoryRecyclerView", "I'm executed")
+        searchHistoryList.add(searchHistory)
         searchHistoryRecyclerViewAdapter.notifyDataSetChanged()
     }
 
@@ -123,11 +140,8 @@ class SearchActivity : AppCompatActivity() {
         searchToMapIntent.putExtra("name", name)
         searchToMapIntent.putExtra("address", address)
         Log.d("goBackToMap", "goBackToMap: $mapX, $mapY")
-
-//        if (!(application as KyleMaps).isTestMode) {
         finish()
         startActivity(searchToMapIntent)
-//        }
     }
 
     private fun updateMapPosition(place: Place) {
