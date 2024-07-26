@@ -1,32 +1,19 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.app.Activity
-import android.app.Application
-import android.content.Context
 import android.util.Log
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.model.data.KAKAO_LATITUDE
-import campus.tech.kakao.map.model.data.KAKAO_LONGITUDE
 import campus.tech.kakao.map.model.data.Location
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.model.data.SavedSearch
 import campus.tech.kakao.map.model.data.toLocation
-import campus.tech.kakao.map.model.database.DatabaseManager
 import campus.tech.kakao.map.model.network.KakaoSearchResponse
-import campus.tech.kakao.map.model.network.RetrofitInstance
 import campus.tech.kakao.map.model.repository.MyRepository
 import campus.tech.kakao.map.view.PlaceAdapter
 import campus.tech.kakao.map.view.SavedSearchAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -121,7 +108,7 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
         _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
     }
 
-    fun getSharedPreferences(){
+    fun getSharedPreferences() {
         _location.value = repository.getSharedPreferences()
     }
 
