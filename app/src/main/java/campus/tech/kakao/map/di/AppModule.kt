@@ -1,6 +1,7 @@
 package campus.tech.kakao.map.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import campus.tech.kakao.map.data.db.DataBase
 import campus.tech.kakao.map.data.db.SearchHistoryDao
@@ -55,5 +56,11 @@ object AppModule {
         retrofit: Retrofit,
     ): KakaoRepository {
         return KakaoRepository(retrofit)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        return context.getSharedPreferences("lastLatLng", Context.MODE_PRIVATE)
     }
 }
