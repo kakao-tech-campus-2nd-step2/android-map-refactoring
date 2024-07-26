@@ -12,7 +12,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@HiltViewModel
 class SearchViewModel @Inject constructor(
     context: Context,
     private val preferenceManager: PreferenceManager,

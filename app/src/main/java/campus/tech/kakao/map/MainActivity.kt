@@ -56,8 +56,6 @@ class MainActivity : AppCompatActivity() {
         val name = intent.getStringExtra("name")
         val address = intent.getStringExtra("address")
 
-        Log.d("MainActivity", "Received data: longitude=$longitude, latitude=$latitude, name=$name, address=$address")
-
         setUpMapView(mapView, longitude, latitude)
         mainViewModel.updatePlaceInfo(name, address)
     }
@@ -111,4 +109,15 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this@MainActivity, SearchActivity::class.java)
         startActivity(intent)
     }
+
+    private fun setBottomSheet(name: String?, address: String?) {
+        if (!name.isNullOrEmpty() && !address.isNullOrEmpty()) {
+            mainViewBinding.place.text = name
+            mainViewBinding.address.text = address
+            mainViewBinding.mapBottomSheet.visibility = View.VISIBLE
+        } else {
+            mainViewBinding.mapBottomSheet.visibility = View.GONE
+        }
+    }
+
 }
