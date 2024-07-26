@@ -2,14 +2,16 @@ package campus.tech.kakao.map
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.AdapterView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
@@ -20,7 +22,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     @Inject lateinit var preferenceManager: PreferenceManager
@@ -29,20 +30,20 @@ class SearchActivity : AppCompatActivity() {
     private val placeAdapter: PlaceAdapter by lazy {
         PlaceAdapter(
             emptyList(),
-            LayoutInflater.from(this@SearchActivity),
-            object :
-                PlaceAdapter.OnItemClickListener {
+            object : PlaceAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     val item = placeAdapter.getItem(position)
                     val searchHistory = SearchHistory(item.placeName, item)
                     viewModel.saveSearchHistory(searchHistory)
 
-                    val intent = Intent(this@SearchActivity, MainActivity::class.java)
-                    intent.putExtra("longitude", item.x)
-                    intent.putExtra("longitude", item.y)
-                    intent.putExtra("name", item.placeName)
-                    intent.putExtra("address", item.addressName)
-                    intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    val intent = Intent(this@SearchActivity, MainActivity::class.java).apply {
+                        putExtra("longitude", item.x)
+                        putExtra("latitude", item.y)
+                        putExtra("name", item.placeName)
+                        putExtra("address", item.addressName)
+                        flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                    }
+                    Log.d("SearchActivity", "Starting MainActivity with data: longitude=${item.x}, latitude=${item.y}, name=${item.placeName}, address=${item.addressName}")
                     startActivity(intent)
                 }
             }
@@ -52,7 +53,6 @@ class SearchActivity : AppCompatActivity() {
     private val historyAdapter: HistoryAdapter by lazy {
         HistoryAdapter(
             emptyList(),
-            LayoutInflater.from(this@SearchActivity),
             object : HistoryAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     val item = viewModel.searchHistoryList.value?.get(position)
@@ -71,8 +71,10 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        searchViewBinding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(searchViewBinding.root)
+        searchViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        searchViewBinding.activity = this
+        searchViewBinding.viewModel = viewModel
+        searchViewBinding.lifecycleOwner = this
 
         setupRecyclerViews(searchViewBinding)
         setupSearchEditText(searchViewBinding)
@@ -83,20 +85,20 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupRecyclerViews(mainBinding: ActivitySearchBinding) {
-        mainBinding.placeResult.apply {
+    private fun setupRecyclerViews(searchBinding: ActivitySearchBinding) {
+        searchBinding.placeResult.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity, LinearLayoutManager.VERTICAL, false)
             adapter = placeAdapter
         }
 
-        mainBinding.searchHistory.apply {
+        searchBinding.searchHistory.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = historyAdapter
         }
     }
 
-    private fun setupSearchEditText(mainBinding: ActivitySearchBinding) {
-        val searchEditText = mainBinding.search
+    private fun setupSearchEditText(searchBinding: ActivitySearchBinding) {
+        val searchEditText = searchBinding.search
         val timeMillis = 300L
         val debounce = debounce<String>(timeMillis, CoroutineScope(Dispatchers.Main)) { query ->
             viewModel.getPlace(query) }
@@ -113,7 +115,7 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
-    private fun observeViewModel(mainBinding: ActivitySearchBinding) {
+    private fun observeViewModel(searchBinding: ActivitySearchBinding) {
         viewModel.searchHistoryList.observe(this@SearchActivity, Observer {
             historyAdapter.setData(it)
         })
@@ -121,7 +123,7 @@ class SearchActivity : AppCompatActivity() {
 
         viewModel.locationList.observe(this@SearchActivity, Observer {
             placeAdapter.setData(it)
-            mainBinding.emptyMainText.visibility = if (it.isNullOrEmpty()) View.VISIBLE else View.GONE
+            searchBinding.emptyMainText.visibility = if (it.isNullOrEmpty()) View.VISIBLE else View.GONE
         })
     }
 

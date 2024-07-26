@@ -99,4 +99,10 @@ class SearchViewModel @Inject constructor(
             _locationList.postValue(places)
         }
     }
+
+    fun getLastCategory(input: String): String {
+        val categories = input.split(">")
+        val lastCategory = categories.lastOrNull()?.trim()
+        return lastCategory ?: ""
+    }
 }

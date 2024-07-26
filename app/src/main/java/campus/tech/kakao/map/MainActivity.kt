@@ -50,6 +50,24 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIntent(intent)
+    }
+
+    private fun handleIntent(intent: Intent) {
+        val latitude = intent.getStringExtra("latitude")?.toDoubleOrNull()
+        val longitude = intent.getStringExtra("longitude")?.toDoubleOrNull()
+        val name = intent.getStringExtra("name")
+        val address = intent.getStringExtra("address")
+
+        Log.d("MainActivity", "Received data: longitude=$longitude, latitude=$latitude, name=$name, address=$address")
+
+        setUpMapView(mapView, longitude, latitude)
+        setBottomSheet(name, address)
+    }
+
     override fun onPause() {
         super.onPause()
         mapView.pause()
