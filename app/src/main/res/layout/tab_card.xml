@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginEnd="10dp">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ImageView
-        android:id="@+id/tab_close_button"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:src="@drawable/close"   />
+    <data>
+        <variable
+            name="place"
+            type="campus.tech.kakao.map.data.db.entity.Place" />
+    </data>
 
-    <TextView
-        android:id="@+id/tab_place_textview"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:gravity="center"
-        android:text="장소"
-        android:textSize="20sp"/>
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/tab_close_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/close" />
+
+        <TextView
+            android:id="@+id/tab_place_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:gravity="center"
+            android:text="@{place.name}"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+</layout>

@@ -5,11 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.db.entity.Place
+import campus.tech.kakao.map.databinding.PlaceCardBinding
 
 class RecyclerViewAdapter(
     private val onItemClicked: (Place) -> Unit
@@ -23,17 +25,10 @@ class RecyclerViewAdapter(
         }
     }
 ) {
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val img: ImageView = itemView.findViewById(R.id.place_img)
-        private val name: TextView = itemView.findViewById(R.id.place_name)
-        private val location: TextView = itemView.findViewById(R.id.place_location)
-        private val category: TextView = itemView.findViewById(R.id.place_category)
-
+    inner class ViewHolder(private val binding: PlaceCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place: Place) {
-            img.setImageResource(place.img)
-            name.text = place.name
-            location.text = place.location
-            category.text = place.category
+            binding.place = place
+            binding.executePendingBindings()
 
             itemView.setOnClickListener { onItemClicked(place) }
         }
@@ -41,8 +36,8 @@ class RecyclerViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.place_card, parent, false)
-        return ViewHolder(view)
+        val binding = DataBindingUtil.inflate<PlaceCardBinding>(inflater, R.layout.place_card, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
