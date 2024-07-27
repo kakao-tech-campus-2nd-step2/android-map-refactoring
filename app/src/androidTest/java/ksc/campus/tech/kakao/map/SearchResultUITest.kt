@@ -54,19 +54,19 @@ class SearchResultUITest {
     @Test
     fun searchResultAppearOnListViewOnSearch(){
         // given
-        val query = "Hello"
+        val query = "hello"
 
         // when
         activityRule.scenario.onActivity {
             it.searchViewModel.submitQuery(query)
         }
 
-        Thread.sleep(500)
+        Thread.sleep(100)
 
         // then
         for(i in 0..5) {
-            checkTextExists("name Hello $i")
-            checkTextExists("address Hello $i")
+            checkTextExists("name $query $i")
+            checkTextExists("address $query $i")
         }
     }
 
@@ -81,7 +81,7 @@ class SearchResultUITest {
             it.searchViewModel.submitQuery(query)
         }
 
-        Thread.sleep(500)
+        Thread.sleep(100)
 
         // then
         for(expect in expectedSearchResults){

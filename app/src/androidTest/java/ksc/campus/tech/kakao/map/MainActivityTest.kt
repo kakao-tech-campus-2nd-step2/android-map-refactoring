@@ -5,6 +5,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.isDescendantOfA
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
@@ -48,6 +49,16 @@ class MainActivityTest {
     @Before
     fun setup(){
         hiltRule.inject()
+    }
+    private fun checkTextExists(text:String){
+        onView(withId(R.id.list_search_result))
+            .check(
+                matches(
+                    ViewMatchers.hasDescendant(
+                        withText(text)
+                    )
+                )
+            )
     }
 
     private fun checkContainerHasKakaoMapFragment(){
@@ -100,6 +111,23 @@ class MainActivityTest {
     }
 
     @Test
+    fun searchAsKeywordOnKeywordClick(){
+
+        // given
+        val keywordToClick = "world"
+        checkContainerHasKakaoMapFragment()
+
+        // when
+        onView(allOf(isDescendantOfA(withId(R.id.saved_search_bar)), withText(keywordToClick)))
+            .perform(click())
+
+        Thread.sleep(UI_DELAY_SHORT)
+
+        // then
+        checkTextExists("name $keywordToClick 0")
+    }
+
+    @Test
     fun navigateBackToMapViewOnBackButtonPressed(){
 
         // given
@@ -119,12 +147,15 @@ class MainActivityTest {
     fun navigateToMapViewOnListItemClicked(){
 
         // given
-        onView(allOf(isDescendantOfA(withId(R.id.saved_search_bar)), withText("1")))
+        val keywordToClick = "1"
+        onView(allOf(isDescendantOfA(withId(R.id.saved_search_bar)), withText(keywordToClick)))
             .perform(click())
         checkContainerHasSearchResultFragment()
 
+        Thread.sleep(UI_DELAY_SHORT)
+
         // when
-        onView(withText("name 1 0"))
+        onView(withText("name $keywordToClick 0"))
             .perform(click())
 
         // then
@@ -161,7 +192,7 @@ class MainActivityTest {
             }
         }
 
-        Thread.sleep(100)
+        Thread.sleep(UI_DELAY_SHORT)
 
         // then
         onView(withId(R.id.text_location_name))
@@ -174,5 +205,9 @@ class MainActivityTest {
         return list.find {
             it::class.java == F::class.java
         } != null
+    }
+
+    companion object {
+        const val UI_DELAY_SHORT = 100L
     }
 }
