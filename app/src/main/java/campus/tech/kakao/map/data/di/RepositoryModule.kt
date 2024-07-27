@@ -2,6 +2,7 @@ package campus.tech.kakao.map.data.di
 
 import android.app.Application
 import android.content.Context
+import android.content.SharedPreferences
 import campus.tech.kakao.map.base.MyApplication
 import campus.tech.kakao.map.data.db.PlaceDao
 import campus.tech.kakao.map.data.remote.api.KakaoApiService
@@ -30,8 +31,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlaceRepository(context: Context, kakaoApiService: KakaoApiService): PlaceRepositoryInterface {
-        return PlaceRepository(context.applicationContext as MyApplication, kakaoApiService)
+    fun providePlaceRepository(sharedPreferences: SharedPreferences, kakaoApiService: KakaoApiService): PlaceRepositoryInterface {
+        return PlaceRepository(sharedPreferences, kakaoApiService)
     }
 
     @Provides

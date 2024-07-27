@@ -1,10 +1,9 @@
 package campus.tech.kakao.map.repository
 
-import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.base.MyApplication
 import campus.tech.kakao.map.data.db.entity.Place
 import campus.tech.kakao.map.data.remote.api.KakaoApiService
 import campus.tech.kakao.map.data.remote.model.KakaoResponse
@@ -13,8 +12,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-class PlaceRepository @Inject constructor(private val application: MyApplication, private val kakaoApiService: KakaoApiService): PlaceRepositoryInterface {
-    private val sharedPreferences = application.getSharedPreferences("LastLocation", Context.MODE_PRIVATE)
+class PlaceRepository @Inject constructor(
+    private val sharedPreferences: SharedPreferences,
+    private val kakaoApiService: KakaoApiService
+): PlaceRepositoryInterface {
 
     override fun searchPlaces(query: String, callback: (List<Place>) -> Unit){
         val apiKey = "KakaoAK " + BuildConfig.KAKAO_REST_API_KEY
