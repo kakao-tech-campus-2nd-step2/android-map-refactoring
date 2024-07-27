@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
- <layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+
         <variable
-            name="mapErrorViewModel"
+            name="activity"
+            type="campus.tech.kakao.map.view.MapErrorActivity" />
+
+        <variable
+            name="viewModel"
             type="campus.tech.kakao.map.viewModel.MapErrorViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -31,11 +37,11 @@
             android:layout_marginStart="40dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:text="@{viewModel.errorMessage}"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@{mapErrorViewModel.errorMessage}"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/reload"

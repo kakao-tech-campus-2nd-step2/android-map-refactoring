@@ -14,8 +14,6 @@ import campus.tech.kakao.map.repository.PreferenceRepository
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.LocationDataContract
 import campus.tech.kakao.map.databinding.ActivityHomeMapBinding
-import campus.tech.kakao.map.databinding.MapDetailBottomSheetBinding
-import campus.tech.kakao.map.viewModel.MapErrorViewModel
 import campus.tech.kakao.map.viewModel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -28,6 +26,7 @@ import com.kakao.vectormap.label.LabelStyles
 
 class HomeMapActivity : AppCompatActivity() {
     private lateinit var bindingHomeMap: ActivityHomeMapBinding
+
     //private lateinit var bindingBottomSheet: MapDetailBottomSheetBinding
     private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
     private lateinit var mapViewModel: MapViewModel
@@ -62,17 +61,13 @@ class HomeMapActivity : AppCompatActivity() {
 
         bottomBehavior = BottomSheetBehavior.from(bottomSheet)
 
-        val mapErrorViewModel: MapErrorViewModel = ViewModelProvider(this)[MapErrorViewModel::class.java]
-        val intentError = Intent(this, MapErrorActivity::class.java)
-
         //KaKao Map UI에 띄우기
         bindingHomeMap.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
             }
 
             override fun onMapError(p0: Exception?) {
-                mapErrorViewModel.setErrorDetail(p0.toString())
-                startActivity(intentError)
+                setErrorIntent(p0)
             }
 
         }, object : KakaoMapReadyCallback() {
@@ -147,5 +142,11 @@ class HomeMapActivity : AppCompatActivity() {
             ?.let { mapViewModel.saveLocation(LocationDataContract.LOCATION_LATITUDE, it) }
         intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)
             ?.let { mapViewModel.saveLocation(LocationDataContract.LOCATION_LONGITUDE, it) }
+    }
+
+    private fun setErrorIntent(errorMsg: Exception?) {
+        val intentError = Intent(this@HomeMapActivity, MapErrorActivity::class.java)
+        intentError.putExtra("ERROR_MESSAGE", errorMsg.toString())
+        startActivity(intentError)
     }
 }

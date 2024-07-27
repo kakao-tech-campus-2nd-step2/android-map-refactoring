@@ -21,16 +21,16 @@ class MapErrorViewModelTest {
     private lateinit var errorMessageObserver: Observer<String>
 
     @Before
-    fun setUp(){
+    fun setUp() {
         MockitoAnnotations.initMocks(this)
         viewModel = MapErrorViewModel()
         viewModel.errorMessage.observeForever(errorMessageObserver)
     }
 
     @Test
-    fun 오류메시지가_정상적으로_설정됨() = runTest{
-        val error = "java.lang.Exception:401"
-        viewModel.setErrorDetail(error)
+    fun 오류메시지가_정상적으로_설정됨() = runTest {
+        val error = "java.lang.Exception: 401"
+        viewModel.setErrorMsg(error)
         Mockito.verify(errorMessageObserver).onChanged("401")
     }
 }
