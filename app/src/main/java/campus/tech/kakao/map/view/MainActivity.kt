@@ -73,10 +73,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun handleTextChanged(query: String){
-        // ViewModel에 콜백전달 -> 순서부여
-        placeViewModel.callResultList(query){
-            observePlaceListChanges()
-        }
+        placeViewModel.callResultList(query)
+        observePlaceListChanges()
     }
     private fun observePlaceListChanges(){
         updatePlaceList()
