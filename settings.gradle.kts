@@ -1,5 +1,9 @@
 pluginManagement {
     repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+        maven { url = uri("https://devrepo.kakao.com/nexus/content/groups/public/") }
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -17,6 +21,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://devrepo.kakao.com/nexus/repository/kakaomap-releases/")
+        maven("https://devrepo.kakao.com/nexus/content/groups/public/")
     }
 }
 
