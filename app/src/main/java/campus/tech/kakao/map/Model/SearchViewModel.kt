@@ -24,7 +24,7 @@ class SearchViewModel @Inject constructor(
     val isSavedSearchesVisible: LiveData<Boolean> get() = _isSavedSearchesVisible
     private val _searchResults = MutableLiveData<List<SearchResult>?>()
     val searchResults: LiveData<List<SearchResult>?> get() = _searchResults
-    private val _savedSearches = MutableLiveData<List<Place>>()
+    private var _savedSearches = MutableLiveData<List<Place>>()
     val savedSearches: LiveData<List<Place>> get() = _savedSearches
     val savedSearchAdapter = SavedSearchAdapter()
     val searchResultAdapter = PlaceAdapter()
@@ -57,8 +57,8 @@ class SearchViewModel @Inject constructor(
     private fun loadSavedSearches() {
         viewModelScope.launch {
             val savedSearches = String.let { searchRepository.getSearchResults(savedSearches.toString()) }
-            //_savedSearches =
-            //savedSearchAdapter.updateData(savedSearches.map { it.text }.toString())
+            _savedSearches = MutableLiveData<List<Place>>()
+            savedSearchAdapter.updateData(savedSearches.map { it.text }.toString())
         }
     }
 }
