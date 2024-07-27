@@ -38,6 +38,12 @@ class MapViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
+    private val _selectedPlaceName = MutableLiveData<String>()
+    val selectedPlaceName: LiveData<String> get() = _selectedPlaceName
+
+    private val _selectedPlaceAddress = MutableLiveData<String>()
+    val selectedPlaceAddress: LiveData<String> get() = _selectedPlaceAddress
+
     init {
         keyword.observeForever {
             if (!it.isNullOrEmpty()) {
@@ -127,5 +133,10 @@ class MapViewModel @Inject constructor(
             }
             _keywords.postValue(keywords)
         }
+    }
+
+    fun setSelectedPlace(name: String, address: String) {
+        _selectedPlaceName.value = name
+        _selectedPlaceAddress.value = address
     }
 }

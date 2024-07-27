@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -12,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.databinding.BottomSheetBinding
 import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -143,16 +145,17 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showBottomSheet(name: String, address: String) {
+        mapViewModel.setSelectedPlace(name, address)
         val bottomSheetDialog = BottomSheetDialog(this)
-        val bottomSheetView = layoutInflater.inflate(R.layout.bottom_sheet, null)
-        bottomSheetDialog.setContentView(bottomSheetView)
-
-        val tvPlaceName = bottomSheetView.findViewById<TextView>(R.id.tvPlaceName)
-        val tvPlaceAddress = bottomSheetView.findViewById<TextView>(R.id.tvPlaceAddress)
-
-        tvPlaceName.text = name
-        tvPlaceAddress.text = address
-
+        val bottomSheetBinding: BottomSheetBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(this),
+            R.layout.bottom_sheet,
+            null,
+            false
+        )
+        bottomSheetBinding.lifecycleOwner = this
+        bottomSheetBinding.viewModel = mapViewModel
+        bottomSheetDialog.setContentView(bottomSheetBinding.root)
         bottomSheetDialog.show()
     }
 
