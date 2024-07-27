@@ -76,9 +76,6 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
 
         mapViewModel.getSavedMapItems()
 
-        binding.etKeywords.setOnClickListener {
-            mapViewModel.clearMapItems()
-        }
     }
 
     override fun onItemClick(item: MapItem) {
