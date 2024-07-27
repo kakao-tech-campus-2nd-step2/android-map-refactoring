@@ -94,9 +94,10 @@ dependencies {
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kaptAndroidTest("com.google.dagger:hilt-android-compiler:2.48.1")
 
-    
-    // https://developer.android.com/codelabs/android-preferences-datastore?hl=ko#4
-    implementation ("androidx.datastore:datastore-preferences:1.0.0")   // prefs.getString() -> 동기 형태 : 개선필요
+
+    implementation ("com.kakao.sdk:v2-all:2.20.3")
+    // https://developer.android.com/topic/libraries/architecture/datastore?hl=ko
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation("androidx.test.espresso:espresso-contrib:3.6.1")
 }

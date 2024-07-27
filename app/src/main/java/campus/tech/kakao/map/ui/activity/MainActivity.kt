@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -17,13 +17,22 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.IntentCompat
 import androidx.core.view.isInvisible
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
+import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.application.MyApplication
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.viewModel.MapRepository
-import campus.tech.kakao.map.viewModel.MapViewModel
+import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.databinding.BottomSheetBinding
+import campus.tech.kakao.map.databinding.MapErrorBinding
+import campus.tech.kakao.map.ui.viewModel.MapViewModel
+import campus.tech.kakao.map.utill.BitmapUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.kakao.sdk.common.util.Utility
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
+import com.kakao.vectormap.KakaoMapSdk
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.camera.CameraAnimation
@@ -32,38 +41,38 @@ import com.kakao.vectormap.label.Label
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var kakaoMap: KakaoMap
-    private lateinit var marker: Bitmap
     private var label: Label? = null
     private lateinit var styles: LabelStyles
 
+    private lateinit var bottomSheetBinding: BottomSheetBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var bottomSheetLayout: ConstraintLayout
-    private lateinit var bottomSheetName: TextView
-    private lateinit var bottomSheetAddress: TextView
-    private lateinit var bottomSheetCategory: TextView
 
-    private val viewModel: MapViewModel by viewModels {
-        (application as MyApplication).viewModelFactory
-    }
+    private val viewModel: MapViewModel by viewModels ()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //KakaoMapSdk.init(this, "I'm nativeKey")     // 오류확인
+//        KakaoMapSdk.init(this, "I'm nativeKey")     // 오류확인
 
         Log.d("onCreate", "")
-        val lastPos = viewModel.getLastPos()
-        drawMap(lastPos)
+        lifecycleScope.launch {
+            val lastPos = viewModel.getLastPos()
+            drawMap(lastPos)
+        }
         setBottomSheet()
+//        Log.d("api", Utility.getKeyHash(this))
 
         binding.searchInput.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
@@ -84,8 +93,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onMapError(e: Exception?) {
                 Log.e("KakaoMap", "카카오맵 인증실패", e)
-                setContentView(R.layout.map_error)
-                val errorMessage = findViewById<TextView>(R.id.errorMessage)
+                val errorBinding: MapErrorBinding = MapErrorBinding.inflate(layoutInflater)
+                setContentView(errorBinding.root)
+                val errorMessage = errorBinding.errorMessage
                 errorMessage.text = e?.message
             }
         }, object : KakaoMapReadyCallback() {
@@ -93,7 +103,6 @@ class MainActivity : AppCompatActivity() {
                 Log.d("KakaoMap", "카카오맵 실행")
                 kakaoMap = p0
                 makeLabelStyle()
-//          addLabel(Place("dd", "xxx", "", "127.115587", "37.406960"))
             }
 
             override fun getPosition(): LatLng {
@@ -112,14 +121,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun moveCamera(latLng: LatLng) {
-        val cameraUpdate = CameraUpdateFactory.newCenterPosition(latLng)
+        val cameraUpdate = CameraUpdateFactory.newCenterPosition(latLng, 15)
         Log.d("MainAct State", "Intent is: $intent")
         Log.d("kakaomap", "moveCamera: $kakaoMap")
         kakaoMap?.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
     }
 
     private fun makeLabelStyle() {
-        vectorToBitmap(R.drawable.pin_drop_24px)
+        val marker = BitmapUtils.vectorToBitmap(this, R.drawable.pin_drop_24px)
 
         styles = LabelStyles.from(
             "myLabel",
@@ -130,39 +139,21 @@ class MainActivity : AppCompatActivity() {
         styles = kakaoMap.labelManager?.addLabelStyles(styles)!!
     }
 
-    private fun vectorToBitmap(drawableId: Int) {
-        val drawable = ContextCompat.getDrawable(this, drawableId)
-        val bitmap = Bitmap.createBitmap(
-            drawable!!.intrinsicWidth,
-            drawable!!.intrinsicHeight,
-            Bitmap.Config.ARGB_8888
-        )
-        val canvas = Canvas(bitmap)
-        drawable.setBounds(0, 0, canvas.width, canvas.height)
-        drawable.draw(canvas)
-        marker = bitmap
-    }
-
     private fun showBottomSheet(place: Place) {
-        bottomSheetName.text = place.name
-        bottomSheetAddress.text = place.address
-        bottomSheetCategory.text = place.category
+        bottomSheetBinding.data = place
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
     }
 
     private fun setBottomSheet() {
-        bottomSheetLayout = findViewById<ConstraintLayout>(R.id.bottom_sheet_layout)
-        bottomSheetName = findViewById<TextView>(R.id.name)
-        bottomSheetAddress = findViewById<TextView>(R.id.address)
-        bottomSheetCategory = findViewById<TextView>(R.id.category)
+        bottomSheetBinding = DataBindingUtil.bind(binding.includedBottomSheet.root)!!
 
-        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetBinding.bottomSheetLayout)
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 binding.searchWindow.isInvisible = (newState < BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetName.isInvisible = (newState == BottomSheetBehavior.STATE_COLLAPSED)
-                bottomSheetCategory.isInvisible = (newState == BottomSheetBehavior.STATE_COLLAPSED)
+                bottomSheetBinding.name.isInvisible = (newState == BottomSheetBehavior.STATE_COLLAPSED)
+                bottomSheetBinding.category.isInvisible = (newState == BottomSheetBehavior.STATE_COLLAPSED)
                 if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN)
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             }
@@ -204,11 +195,15 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         binding.mapView.resume()
-        Log.d("MainAct State", "Intent is: $intent")
+        Log.d("intent2", "Intent is: $intent")
     }
 
     override fun onPause() {
         super.onPause()
         binding.mapView.pause()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 }

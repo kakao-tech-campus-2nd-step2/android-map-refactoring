@@ -1,14 +1,16 @@
-package campus.tech.kakao.map.viewModel
+package campus.tech.kakao.map.data.database
 
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.data.model.Place
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.sql.SQLException
+import javax.inject.Inject
 
-class PlacesDBHelper(context: Context) :
+class PlacesDBHelper @Inject constructor(@ApplicationContext context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {

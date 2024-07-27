@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.ui.activity
 
 import android.app.Activity
 import android.content.Intent
@@ -10,24 +10,26 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import campus.tech.kakao.map.application.MyApplication
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.viewModel.MapRepository
-import campus.tech.kakao.map.viewModel.MapViewModel
-import campus.tech.kakao.map.viewModel.MapViewModelFactory
+import campus.tech.kakao.map.data.model.Place
+import campus.tech.kakao.map.ui.adapter.PlacesAdapter
+import campus.tech.kakao.map.ui.adapter.SearchHistoryAdapter
+import campus.tech.kakao.map.ui.viewModel.MapViewModel
+import campus.tech.kakao.map.ui.viewModel.MapViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var placesAdapter: PlacesAdapter
     private lateinit var searchHistoryAdapter: SearchHistoryAdapter
 
-    private val viewModel: MapViewModel by viewModels {
-        (application as MyApplication).viewModelFactory
-    }
+    private val viewModel: MapViewModel by viewModels ()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,8 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchInput.addTextChangedListener { text ->
             viewModel.searchPlaces(text.toString())
+//            viewModel.searchDBPlaces(text.toString())     // DBHelper 테스트 용 (검색)
+//            viewModel.searchRoomPlaces(text.toString())   // Room 테스트 용 (검색)
         }
 
         binding.deleteInput.setOnClickListener {
@@ -92,7 +96,7 @@ class SearchActivity : AppCompatActivity() {
         val intent = Intent(this, MainActivity::class.java).apply {
             putExtra("place", place)
         }
-        Log.d("searchAct State", "Intent is: $intent")
+        Log.d("intent", "Intent is: $intent")
         setResult(Activity.RESULT_OK, intent)
         finish()
     }
