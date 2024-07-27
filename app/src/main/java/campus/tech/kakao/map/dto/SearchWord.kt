@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(tableName = SearchWordContract.TABLE_NAME)
 data class SearchWord(
 	@PrimaryKey(autoGenerate = true) val id: Int,
-	@ColumnInfo(name = SearchWordContract.COLUMN_NAME_NAME)val name: String,
-	@ColumnInfo(name = SearchWordContract.COLUMN_NAME_ADDRESS)val address: String,
-	@ColumnInfo(name = SearchWordContract.COLUMN_NAME_TYPE)val type: String){
+	@ColumnInfo(name = "name")val name: String,
+	@ColumnInfo(name = "address")val address: String,
+	@ColumnInfo(name = "type")val type: String){
 	constructor(name: String, address: String, type: String) : this(0, name, address, type)
 }
