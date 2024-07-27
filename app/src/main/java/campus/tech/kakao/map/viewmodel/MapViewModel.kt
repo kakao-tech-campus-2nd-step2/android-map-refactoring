@@ -7,7 +7,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.model.KakaoMapProductResponse
 import campus.tech.kakao.map.model.MapItem
 import campus.tech.kakao.map.model.toEntity
 import campus.tech.kakao.map.network.RetrofitClient
@@ -16,9 +15,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel

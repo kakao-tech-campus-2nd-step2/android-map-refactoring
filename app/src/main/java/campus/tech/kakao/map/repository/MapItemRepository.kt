@@ -10,10 +10,6 @@ import javax.inject.Singleton
 @Singleton
 class MapItemRepository @Inject constructor(private val mapItemDao: MapItemDao) {
 
-    suspend fun insert(mapItem: MapItemEntity) {
-        mapItemDao.insert(mapItem)
-    }
-
     suspend fun insertAll(mapItems: List<MapItemEntity>) {
         mapItemDao.insertAll(mapItems)
     }
