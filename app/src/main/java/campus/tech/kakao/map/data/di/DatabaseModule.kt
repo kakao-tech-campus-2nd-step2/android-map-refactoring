@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.data.di
 
 import android.content.Context
 import campus.tech.kakao.map.data.db.AppDatabase

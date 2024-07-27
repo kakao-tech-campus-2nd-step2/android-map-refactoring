@@ -1,9 +1,16 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.data.di
 
 import android.app.Application
 import android.content.Context
 import campus.tech.kakao.map.base.MyApplication
 import campus.tech.kakao.map.data.db.PlaceDao
+import campus.tech.kakao.map.data.remote.api.KakaoApiService
+import campus.tech.kakao.map.repository.LogRepository
+import campus.tech.kakao.map.repository.LogRepositoryInterface
+import campus.tech.kakao.map.repository.MapRepository
+import campus.tech.kakao.map.repository.MapRepositoryInterface
+import campus.tech.kakao.map.repository.PlaceRepository
+import campus.tech.kakao.map.repository.PlaceRepositoryInterface
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,8 +30,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun providePlaceRepository(context: Context): PlaceRepositoryInterface {
-        return PlaceRepository(context.applicationContext as MyApplication)
+    fun providePlaceRepository(context: Context, kakaoApiService: KakaoApiService): PlaceRepositoryInterface {
+        return PlaceRepository(context.applicationContext as MyApplication, kakaoApiService)
     }
 
     @Provides
