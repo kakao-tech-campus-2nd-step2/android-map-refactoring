@@ -1,6 +1,7 @@
 package campus.tech.kakao.map.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,6 +26,9 @@ class MapViewModel @Inject constructor(
     application: Application,
     private val repository: MapItemRepository
 ) : AndroidViewModel(application) {
+
+    private val _keywords = MutableLiveData<List<String>>()
+    val keywords: LiveData<List<String>> get() = _keywords
 
     val keyword = MutableLiveData<String>()
 
@@ -52,7 +56,7 @@ class MapViewModel @Inject constructor(
         keyword.value = ""
     }
 
-    fun searchPlaces(keyword: String) {
+    private fun searchPlaces(keyword: String) {
         viewModelScope.launch {
             val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
             try {
@@ -103,6 +107,25 @@ class MapViewModel @Inject constructor(
             withContext(Dispatchers.IO) {
                 repository.deleteAll()
             }
+        }
+    }
+
+    fun loadKeywords() {
+        viewModelScope.launch {
+            val sharedPreferences = getApplication<Application>().getSharedPreferences("keywords", Context.MODE_PRIVATE)
+            val keywordsSet = sharedPreferences.getStringSet("keywords", setOf()) ?: setOf()
+            _keywords.postValue(keywordsSet.toList())
+        }
+    }
+
+    fun saveKeywords(keywords: List<String>) {
+        viewModelScope.launch {
+            val sharedPreferences = getApplication<Application>().getSharedPreferences("keywords", Context.MODE_PRIVATE)
+            sharedPreferences.edit().apply {
+                putStringSet("keywords", keywords.toSet())
+                apply()
+            }
+            _keywords.postValue(keywords)
         }
     }
 }

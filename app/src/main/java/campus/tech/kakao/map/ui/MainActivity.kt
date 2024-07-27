@@ -56,11 +56,15 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
             }
         })
 
+        mapViewModel.keywords.observe(this, Observer { keywords ->
+            keywordAdapter.submitList(keywords)
+        })
+
         binding.ivClear.setOnClickListener {
             mapViewModel.clearKeyword()
         }
 
-        loadKeywords()
+        mapViewModel.loadKeywords()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -78,8 +82,12 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     }
 
     override fun onItemClick(item: MapItem) {
-        keywordAdapter.addKeyword(item.name)
-        saveKeywords()
+        val newKeywords = keywordAdapter.currentKeywords.toMutableList()
+
+        if (!newKeywords.contains(item.name)) {
+            newKeywords.add(item.name)
+            mapViewModel.saveKeywords(newKeywords)
+        }
 
         val intent = Intent(this, MapActivity::class.java).apply {
             putExtra("name", item.name)
@@ -91,24 +99,12 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
     }
 
     override fun onKeywordRemove(keyword: String) {
-        saveKeywords()
+        val newKeywords = keywordAdapter.currentKeywords.toMutableList().apply { remove(keyword) }
+        mapViewModel.saveKeywords(newKeywords)
     }
 
     override fun onKeywordClick(keyword: String) {
         binding.etKeywords.setText(keyword)
         mapViewModel.setKeyword(keyword)
-    }
-
-    private fun loadKeywords() {
-        val sharedPreferences = getSharedPreferences("keywords", MODE_PRIVATE)
-        val keywords = sharedPreferences.getStringSet("keywords", setOf())?.toMutableList() ?: mutableListOf()
-        keywordAdapter.submitList(keywords)
-    }
-
-    private fun saveKeywords() {
-        val sharedPreferences = getSharedPreferences("keywords", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putStringSet("keywords", keywordAdapter.currentKeywords.toSet())
-        editor.apply()
     }
 }
