@@ -9,9 +9,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LogRepository(private val application: MyApplication): LogRepositoryInterface {
-    private val placeDao: PlaceDao = AppDatabase.getDatabase(application).placeDao()
+class LogRepository @Inject constructor (private val application: MyApplication, private val placeDao: PlaceDao): LogRepositoryInterface {
     private var logList = mutableListOf<Place>()
 
     override fun getAllLogs(): List<Place> {

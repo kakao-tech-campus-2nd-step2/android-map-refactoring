@@ -3,6 +3,7 @@ package campus.tech.kakao.map.repository
 import android.app.Application
 import android.content.Context
 import campus.tech.kakao.map.base.MyApplication
+import campus.tech.kakao.map.data.db.PlaceDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -28,8 +29,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideLogRepository(context: Context): LogRepositoryInterface {
-        return LogRepository(context.applicationContext as MyApplication)
+    fun provideLogRepository(context: Context, placeDao: PlaceDao): LogRepositoryInterface {
+        return LogRepository(context.applicationContext as MyApplication, placeDao)
     }
 
     @Provides
