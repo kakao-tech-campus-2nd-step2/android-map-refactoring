@@ -1,40 +1,48 @@
 package campus.tech.kakao.map.Adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.Model.LocationData
-import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ItemViewBinding
 
 class LocationAdapter(
-    private val locationList: List<LocationData>,
-    private val onItemViewClick: (LocationData) -> Unit
-) : RecyclerView.Adapter<LocationAdapter.ViewHolder>() {
-
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTextView: TextView = itemView.findViewById(R.id.name)
-        val locationTextView: TextView = itemView.findViewById(R.id.location)
-        val categoryTextView: TextView = itemView.findViewById(R.id.category)
-    }
+    private val onItemClick: (LocationData) -> Unit
+) : ListAdapter<LocationData, LocationAdapter.ViewHolder>(LocationDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.item_view, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(
+            ItemViewBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun getItemCount(): Int = locationList.size
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val location = locationList[position]
-        holder.nameTextView.text = location.name
-        holder.locationTextView.text = location.location
-        holder.categoryTextView.text = location.category
+        val location = getItem(position)
+        holder.bind(location)
+        holder.itemView.setOnClickListener { onItemClick(location) }
+    }
 
-        holder.itemView.setOnClickListener {
-            onItemViewClick(location)
+    class ViewHolder(private val binding: ItemViewBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(location: LocationData) {
+            binding.name.text = location.name
+            binding.location.text = location.location
+            binding.category.text = location.category
+        }
+    }
+
+    private class LocationDiffCallback : DiffUtil.ItemCallback<LocationData>() {
+        override fun areItemsTheSame(oldItem: LocationData, newItem: LocationData): Boolean {
+            return oldItem.name == newItem.name
+        }
+
+        override fun areContentsTheSame(oldItem: LocationData, newItem: LocationData): Boolean {
+            return oldItem == newItem
         }
     }
 }
