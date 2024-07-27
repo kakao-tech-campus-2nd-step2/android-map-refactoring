@@ -9,7 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapErrorBinding
 import campus.tech.kakao.map.viewModel.MapErrorViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapErrorActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapErrorBinding
     private lateinit var viewModel: MapErrorViewModel
