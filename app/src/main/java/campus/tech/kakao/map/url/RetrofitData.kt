@@ -7,17 +7,10 @@ import campus.tech.kakao.map.url.UrlContract.AUTHORIZATION
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 
-class RetrofitData @Inject constructor() {
+class RetrofitData @Inject constructor(private val retrofitService: RetrofitService) {
 	private val _documents = MutableLiveData<List<Document>>()
-	private val retrofitService: RetrofitService = Retrofit.Builder()
-		.baseUrl(UrlContract.BASE_URL)
-		.addConverterFactory(GsonConverterFactory.create())
-		.build()
-		.create(RetrofitService::class.java)
 
 	fun searchPlace(query : String){
 		retrofitService.requestPlaces(AUTHORIZATION,query).enqueue(object : Callback<PlaceResponse> {

@@ -7,11 +7,15 @@ import campus.tech.kakao.map.dto.SearchWordContract
 import campus.tech.kakao.map.dto.SearchWordDao
 import campus.tech.kakao.map.dto.SearchWordDatabase
 import campus.tech.kakao.map.url.RetrofitData
+import campus.tech.kakao.map.url.RetrofitService
+import campus.tech.kakao.map.url.UrlContract
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
@@ -20,8 +24,18 @@ object Module {
 
 	@Provides
 	@Singleton
-	fun provideRetrofitData():RetrofitData{
-		return RetrofitData()
+	fun provideRetrofitService(): RetrofitService {
+		return Retrofit.Builder()
+			.baseUrl(UrlContract.BASE_URL)
+			.addConverterFactory(GsonConverterFactory.create())
+			.build()
+			.create(RetrofitService::class.java)
+	}
+
+	@Provides
+	@Singleton
+	fun provideRetrofitData(retrofitService: RetrofitService):RetrofitData{
+		return RetrofitData(retrofitService)
 	}
 
 	@Provides
