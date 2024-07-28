@@ -4,8 +4,7 @@ import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import campus.tech.kakao.map.data.PlaceRemoteDataRepository
-import campus.tech.kakao.map.domain.repository.PlaceRepository
+import android.view.View
 import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.HiltAndroidApp
 
@@ -15,6 +14,11 @@ class PlaceApplication: Application() {
     override fun onCreate() {
         super.onCreate()
         appInstance = this
+      
+        initKakaoMapSdk()
+    }
+
+    private fun initKakaoMapSdk(){
 
         val key = getString(R.string.kakao_api_key)
         KakaoMapSdk.init(this, key)
