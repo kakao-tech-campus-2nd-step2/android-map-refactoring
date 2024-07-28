@@ -120,12 +120,14 @@ class MapActivity : AppCompatActivity() {
 
     private fun showMapPage(){
         binding.tvErrorMessage.visibility = View.GONE
+        binding.searchView.visibility = View.VISIBLE
         binding.mapView.visibility = View.VISIBLE
     }
 
     private fun showErrorPage(error: Exception) {
         binding.tvErrorMessage.visibility = View.VISIBLE
         binding.mapView.visibility = View.GONE
+        binding.searchView.visibility = View.GONE
         binding.tvErrorMessage.text = "지도 인증에 실패했습니다.\n다시 시도해주세요.\n" + error.message
     }
 
