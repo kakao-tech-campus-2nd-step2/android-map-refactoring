@@ -44,30 +44,52 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     val location get() = _location
 
 
-    //PlaceAdapter 초기화
-    val vmPlaceAdapter: PlaceAdapter = PlaceAdapter(listOf()) { place ->  //리사이클러뷰의 아이템을 누르면
 
+    fun insertSavedSearch(place: Place){
         viewModelScope.launch {
-            repository.insertSavedSearch(SavedSearch(id = place.id, name = place.name))  // SavedSearch에 item 추가
-            updateSavedSearch() // SavedSearch UI 업데이트
-            repository.setSharedPreferences(place.toLocation()) // SharedPreferences에 카메라 이동할 정보 저장
-            _itemClick.value = place // 액티비티 이동하기 위한 전달
+            repository.insertSavedSearch(SavedSearch(id = place.id, name = place.name))
         }
     }
 
+    fun setSharedPreferences(place: Place){
+        repository.setSharedPreferences(place.toLocation())
+    }
+
+    fun itemClick(place: Place){
+        _itemClick.value = place
+    }
+
+    fun nameClick(savedSearch: SavedSearch){
+        _nameClick.value = savedSearch
+    }
+
+
     //SavedSearchAdapter 초기화
-    val vmSavedSearchAdapter: SavedSearchAdapter = SavedSearchAdapter(listOf(),
-        onCloseClick = { SavedSearch -> //SavedSearch의 x를 누르면
-            viewModelScope.launch {
-                repository.deleteSavedSearch(SavedSearch.id)  // SavedSearch item 삭제
-                updateSavedSearch() // SavedSearch UI 업데이트
-            }
-        },
-        onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
-            _nameClick.value = SavedSearch   //화면에 보이는 text 설정
-            _searchText.value = SavedSearch.name //검색 쿼리
+//    val vmSavedSearchAdapter: SavedSearchAdapter = SavedSearchAdapter(listOf(),
+//        onCloseClick = { SavedSearch -> //SavedSearch의 x를 누르면
+//            viewModelScope.launch {
+//                repository.deleteSavedSearch(SavedSearch.id)  // SavedSearch item 삭제
+//                updateSavedSearch() // SavedSearch UI 업데이트
+//            }
+//        },
+//        onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
+//            _nameClick.value = SavedSearch   //화면에 보이는 text 설정
+//            _searchText.value = SavedSearch.name //검색 쿼리
+//        }
+//    )
+
+    fun deleteSavedSearch(id : Int){
+        viewModelScope.launch {
+            repository.deleteSavedSearch(id)
         }
-    )
+    }
+
+    fun setSearchText(savedSearch: SavedSearch){
+        _searchText.value = savedSearch.name
+    }
+
+
+
 
 
     // true일 때 SearchPlaceActivity에 위치하고있음

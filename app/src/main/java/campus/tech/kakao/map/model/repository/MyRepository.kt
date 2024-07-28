@@ -11,25 +11,23 @@ import campus.tech.kakao.map.model.data.Location
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.model.data.SavedSearch
 import campus.tech.kakao.map.model.database.AppDatabase
+import campus.tech.kakao.map.model.database.SavedSearchDao
 import campus.tech.kakao.map.model.network.KakaoLocalService
 import campus.tech.kakao.map.model.network.KakaoSearchResponse
 import campus.tech.kakao.map.model.network.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MyRepository(context: Context) {
-
-    private val database = AppDatabase.getDatabase(context)
-    private val savedSearchDao = database.savedSearchDao()
-    private val placeDao = database.placeDao()
-
-    private val apiService: KakaoLocalService = RetrofitInstance.api
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
-        "PlacePreferences", AppCompatActivity.MODE_PRIVATE
-    )
-    private val editor = sharedPreferences.edit()
-    val SavedSearchesData = MutableLiveData<List<SavedSearch>>()
+@Singleton
+class MyRepository @Inject constructor(
+    private val savedSearchDao: SavedSearchDao,
+    private val apiService: KakaoLocalService,
+    private val sharedPreferences: SharedPreferences,
+    private val editor: SharedPreferences.Editor
+) {
 
     // SharedPreferences 저장하기
     fun setSharedPreferences(location: Location) {
@@ -55,7 +53,12 @@ class MyRepository(context: Context) {
     // Place item 클릭하면 호출
     suspend fun insertSavedSearch(savedSearch: SavedSearch) {
         withContext(Dispatchers.IO) {
-            savedSearchDao.insert(savedSearch)
+            val existingSearch = savedSearchDao.getById(savedSearch.id)
+            if (existingSearch == null) {
+                savedSearchDao.insert(savedSearch)
+            } else {
+                // 이미 존재하는 경우
+            }
         }
     }
 
@@ -64,8 +67,7 @@ class MyRepository(context: Context) {
         val result = withContext(Dispatchers.IO) {
             savedSearchDao.getAll()
         }
-
-        return result.value ?: listOf<SavedSearch>()
+        return result
     }
 
 

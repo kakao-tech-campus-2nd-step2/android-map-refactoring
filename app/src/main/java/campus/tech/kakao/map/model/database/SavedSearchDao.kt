@@ -16,5 +16,9 @@ interface SavedSearchDao {
     suspend fun delete(savedSearch: SavedSearch)
 
     @Query("SELECT * FROM saved_searches")
-    fun getAll(): LiveData<List<SavedSearch>>
+    fun getAll(): List<SavedSearch>
+
+    @Query("SELECT * FROM saved_searches WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Int): SavedSearch?
+
 }
