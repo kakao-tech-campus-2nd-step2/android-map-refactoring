@@ -1,41 +1,34 @@
 package campus.tech.kakao.map.ui
 
-
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-
-import android.widget.EditText
-import androidx.appcompat.app.AppCompatActivity
-import com.kakao.vectormap.MapView
-import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.KakaoMapReadyCallback
-import com.kakao.vectormap.KakaoMap
-
 import android.view.View
+import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.app.Activity
-import android.widget.FrameLayout
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.kakao.vectormap.*
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.MapItem
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.kakao.vectormap.LatLng
+import campus.tech.kakao.map.viewmodel.MapViewModel
+import com.kakao.vectormap.camera.CameraAnimation
+import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
-import com.kakao.vectormap.camera.CameraAnimation
-import com.kakao.vectormap.camera.CameraUpdateFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
-    lateinit var viewModelFactory: MapViewModelFactory
     private lateinit var mapView: MapView
     private lateinit var errorLayout: RelativeLayout
     private lateinit var errorMessage: TextView
@@ -48,8 +41,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
     private var selectedItems = mutableListOf<MapItem>()
-
-    companion object {
+    private val viewModel: MapViewModel by viewModels()
+    
+  companion object {
         const val SEARCH_REQUEST_CODE = 1
         const val PREFS_NAME = "LastMarkerPrefs"
         const val PREF_LATITUDE = "lastLatitude"
@@ -57,7 +51,6 @@ class MainActivity : AppCompatActivity() {
         const val PREF_PLACE_NAME = "lastPlaceName"
         const val PREF_ROAD_ADDRESS_NAME = "lastRoadAddressName"
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,10 +61,11 @@ class MainActivity : AppCompatActivity() {
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API가 정상적으로 종료될 때 호출됨
+                Log.d("MainActivity", "Map destroyed")
             }
 
             override fun onMapError(error: Exception) {
-
+                Log.e("MainActivity", "Map error: ${error.message}")
                 showErrorScreen(error)
             }
         }, object : KakaoMapReadyCallback() {
@@ -80,7 +74,6 @@ class MainActivity : AppCompatActivity() {
                 labelLayer = kakaoMap.labelManager?.layer!!
                 // 마지막 마커 위치 불러오기
                 loadLastMarkerPosition()
-
             }
         })
 
@@ -88,7 +81,6 @@ class MainActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         searchEditText.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
-
             intent.putExtra("selectedItemsSize", selectedItems.size)
             selectedItems.forEachIndexed { index, mapItem ->
                 intent.putExtra("id_$index", mapItem.id)
@@ -115,18 +107,6 @@ class MainActivity : AppCompatActivity() {
         bottomSheetLayout.visibility = View.GONE
     }
 
-    // 지도 -> 검색페이지 돌아갈 때 저장된 검색어 목록 그대로 저장
-    private fun processIntentData() {
-        val placeName = intent.getStringExtra("place_name")
-        val roadAddressName = intent.getStringExtra("road_address_name")
-        val x = intent.getDoubleExtra("x", 0.0)
-        val y = intent.getDoubleExtra("y", 0.0)
-        if (placeName != null && roadAddressName != null) {
-            addLabel(placeName, roadAddressName, x, y)
-
-        }
-    }
-
     override fun onResume() {
         super.onResume()
         mapView.resume()  // MapView의 resume 호출
@@ -135,7 +115,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mapView.pause()  // MapView의 pause 호출
-
     }
 
     fun showErrorScreen(error: Exception) {
@@ -177,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                 selectedItems.clear()
                 val selectedItemsSize = it.getIntExtra("selectedItemsSize", 0)
                 for (i in 0 until selectedItemsSize) {
-                    val id = it.getStringExtra("id_$i") ?: ""
+                    val id = it.getIntExtra("id_$i",0)
                     val place_name = it.getStringExtra("place_name_$i") ?: ""
                     val road_address_name = it.getStringExtra("road_address_name_$i") ?: ""
                     val category_group_name = it.getStringExtra("category_group_name_$i") ?: ""

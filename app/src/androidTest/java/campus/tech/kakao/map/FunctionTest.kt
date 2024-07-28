@@ -13,7 +13,6 @@ import androidx.test.platform.app.InstrumentationRegistry
 import campus.tech.kakao.map.model.MapItem
 import campus.tech.kakao.map.repository.MapRepository
 import campus.tech.kakao.map.viewmodel.MapViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.ui.MainActivity
 import campus.tech.kakao.map.ui.SearchActivity

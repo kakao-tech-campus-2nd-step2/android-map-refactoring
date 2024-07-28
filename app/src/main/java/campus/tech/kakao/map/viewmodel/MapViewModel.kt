@@ -7,9 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.model.MapItem
 import campus.tech.kakao.map.repository.MapRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MapViewModel(application: Application, private val repository: MapRepository) : AndroidViewModel(application) {
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    application: Application,
+    private val repository: MapRepository
+) : AndroidViewModel(application) {
 
     val searchQuery = MutableLiveData<String>()
 

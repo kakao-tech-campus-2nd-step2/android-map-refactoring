@@ -6,25 +6,22 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.app.Activity
 import android.content.Intent
 import campus.tech.kakao.map.viewmodel.MapViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.util.SQLiteHelper
 import campus.tech.kakao.map.model.MapItem
-import campus.tech.kakao.map.repository.MapRepositoryImpl
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var sqLiteHelper: SQLiteHelper
-    lateinit var viewModel: MapViewModel
+    private val viewModel: MapViewModel by viewModels()
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var selectedAdapter: SelectedAdapter
 
@@ -32,13 +29,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        sqLiteHelper = SQLiteHelper(this)
-        sqLiteHelper.writableDatabase
-
-        val repository = MapRepositoryImpl(application)
-        val viewModelFactory = MapViewModelFactory(application, repository)
-        viewModel = ViewModelProvider(this, viewModelFactory).get(MapViewModel::class.java)
 
         setupRecyclerViews()
         setupSearchEditText()
@@ -48,7 +38,7 @@ class SearchActivity : AppCompatActivity() {
         val selectedItemsSize = intent.getIntExtra("selectedItemsSize", 0)
         val selectedItems = mutableListOf<MapItem>()
         for (i in 0 until selectedItemsSize) {
-            val id = intent.getStringExtra("id_$i") ?: ""
+            val id = intent.getIntExtra("id_$i", 0)
             val place_name = intent.getStringExtra("place_name_$i") ?: ""
             val road_address_name = intent.getStringExtra("road_address_name_$i") ?: ""
             val category_group_name = intent.getStringExtra("category_group_name_$i") ?: ""
@@ -109,16 +99,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.searchResults.observe(this, Observer { results ->
+        viewModel.searchResults.observe(this) { results ->
             searchAdapter.submitList(results)
 
             binding.noResultsTextView.visibility = if (results.isEmpty() && !viewModel.searchQuery.value.isNullOrEmpty()) View.VISIBLE else View.GONE
             binding.searchResultsRecyclerView.visibility = if (results.isEmpty()) View.GONE else View.VISIBLE
-        })
+        }
 
-        viewModel.selectedItems.observe(this, Observer { selectedItems ->
+        viewModel.selectedItems.observe(this) { selectedItems ->
             selectedAdapter.submitList(selectedItems)
-        })
+        }
     }
 
     fun performSearch(query: String) {
