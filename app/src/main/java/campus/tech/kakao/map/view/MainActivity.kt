@@ -6,9 +6,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
+import campus.tech.kakao.map.viewmodel.PlaceViewModel
 import com.kakao.sdk.common.util.Utility
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -23,32 +25,22 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
 import dagger.hilt.android.AndroidEntryPoint
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val EXTRA_PLACE_LONGITUDE = "extra_place_longitude"
-        const val EXTRA_PLACE_LATITUDE = "extra_place_latitude"
-        const val EXTRA_PLACE_NAME = "extra_place_name"
-        const val EXTRA_PLACE_ADDRESSNAME = "extra_place_addressname"
-    }
-
+    private val viewModel: PlaceViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         initKakaoMap()
         initSearchEditText()
         initMapView()
-
     }
 
     private fun initKakaoMap() {
@@ -71,7 +63,7 @@ class MainActivity : AppCompatActivity() {
         mapView.start(object : MapLifeCycleCallback() {
 
             override fun onMapDestroy() {
-                Log.d("testt", "onMapDestory")
+                Log.d("testt", "onMapDestroy")
             }
 
             override fun onMapError(error: Exception) {
@@ -91,29 +83,24 @@ class MainActivity : AppCompatActivity() {
                 setCameraPosition()
                 setMarker()
                 setBottomSheet()
-
             }
         })
     }
 
     private fun setCameraPosition() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+        val placeDetails = viewModel.getPlaceDetails()
+        val longitude = placeDetails[PlaceViewModel.EXTRA_PLACE_LONGITUDE]?.toDouble() ?: 0.0
+        val latitude = placeDetails[PlaceViewModel.EXTRA_PLACE_LATITUDE]?.toDouble() ?: 0.0
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        Log.d("testt", longitude.toString())
         kakaoMap.moveCamera(cameraUpdate)
     }
 
     private fun setMarker() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unkwon")
+        val placeDetails = viewModel.getPlaceDetails()
+        val longitude = placeDetails[PlaceViewModel.EXTRA_PLACE_LONGITUDE]?.toDouble() ?: 0.0
+        val latitude = placeDetails[PlaceViewModel.EXTRA_PLACE_LATITUDE]?.toDouble() ?: 0.0
+        val placeName = placeDetails[PlaceViewModel.EXTRA_PLACE_NAME]
+
         var styles = LabelStyles.from(
             LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
                 .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
@@ -128,10 +115,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setBottomSheet() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unknown Place").toString()
-        val addressName =
-            sharedPreferences.getString(EXTRA_PLACE_ADDRESSNAME, "Unknown Address").toString()
+        val placeDetails = viewModel.getPlaceDetails()
+        val placeName = placeDetails[PlaceViewModel.EXTRA_PLACE_NAME].toString()
+        val addressName = placeDetails[PlaceViewModel.EXTRA_PLACE_ADDRESSNAME].toString()
 
         binding.bottomSheetTitle.text = placeName
         binding.bottomSheetDescription.text = addressName
@@ -139,14 +125,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("testt", "onResume")
         mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        Log.d("testt", "onPause")
         mapView.pause()
     }
 }
-
