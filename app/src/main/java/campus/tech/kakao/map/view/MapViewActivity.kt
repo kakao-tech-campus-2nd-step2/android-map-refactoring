@@ -30,12 +30,15 @@ class MapViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMapViewBinding
     @Inject lateinit var mapRepository: MapRepositoryInterface
     private val mapViewModel: MapViewModel by viewModels()
+
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupBinding()
         setupBottomSheetBehavior()
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomView.bottomSheetLayout)
 
         val lastLocation = mapViewModel.getLastLocation()
 
@@ -110,17 +113,21 @@ class MapViewActivity : AppCompatActivity() {
             Log.e("MapViewActivity", "Exception during mapView.start", e)
         }
     }
+
     override fun onResume() {
         super.onResume()
         binding.map.resume()
     }
+
     override fun onPause() {
         super.onPause()
         binding.map.pause()
     }
+
     companion object {
         const val EXTRA_ERROR_MSG = "ERROR"
         const val DEFAULT_LONGITUDE = "127.0016985"
         const val DEFAULT_LATITUDE = "37.5642135"
     }
+
 }
