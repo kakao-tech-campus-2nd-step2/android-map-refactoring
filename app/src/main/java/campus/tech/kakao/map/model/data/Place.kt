@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.model.data
 
+
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -23,3 +24,4 @@ fun Place.toLocation(): Location {
 
     )
 }
+
