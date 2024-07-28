@@ -29,7 +29,7 @@ class MyRepository @Inject constructor(
     private val editor: SharedPreferences.Editor
 ) {
 
-    companion object{
+    companion object {
         const val NAME = "name"
         const val ADDRESS = "address"
         const val LATITUDE = "latitude"
@@ -61,30 +61,29 @@ class MyRepository @Inject constructor(
 
     // Place item 클릭하면 호출, 아이템 삽입
     suspend fun insertSavedSearch(savedSearch: SavedSearch) {
-        withContext(Dispatchers.IO) {
-            val existingSearch = savedSearchDao.getById(savedSearch.id)
-            if (existingSearch == null) {
-                savedSearchDao.insert(savedSearch)
-            } else {
-                // 이미 존재하는 경우
-            }
+
+        val existingSearch = savedSearchDao.getById(savedSearch.id)
+        if (existingSearch == null) {
+            savedSearchDao.insert(savedSearch)
+        } else {
+            // 이미 존재하는 경우
         }
+
     }
 
     // SavedSearch 목록 가져오기
     suspend fun getSavedSearches(): List<SavedSearch> {
         val result = withContext(Dispatchers.IO) {
-            savedSearchDao.getAll()
+            savedSearchDao.getAll() ?: listOf<SavedSearch>()
         }
         return result
     }
 
     // close 누르면 호출, item 삭제
     suspend fun deleteSavedSearch(id: Int) {
-        withContext(Dispatchers.IO) {
-            val savedSearch = SavedSearch(id = id, name = "")
-            savedSearchDao.delete(savedSearch)
-        }
+        val savedSearch = SavedSearch(id = id, name = "")
+        savedSearchDao.delete(savedSearch)
+
     }
 
     //----------------------------------------------------------------------------------------------
