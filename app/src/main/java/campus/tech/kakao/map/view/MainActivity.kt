@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.*
 import com.kakao.vectormap.camera.CameraAnimation
@@ -24,6 +25,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.repository.location.LocationSearcher
 import campus.tech.kakao.map.view.SearchActivity
@@ -58,10 +60,14 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this // 생명주기 소유자 성정
+        binding.viewModel = mainViewModel // Viewmodel 바인딩
+        binding.keywordViewModel = keywordViewModel // Keyword viewmodel 바인딩
 
         // View 초기화
-        initializeViews()
+        // 바인딩을 활용하여 초기화하도록 변경
+        initializeViews(binding)
 
         // ActivityResultLauncher 초기화
         searchResultLauncher = registerForActivityResult(
@@ -108,17 +114,17 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
         })
     }
 
-    private fun initializeViews() {
-        errorLayout = findViewById(R.id.error_layout)
-        errorMessage = findViewById(R.id.error_message)
-        errorDetails = findViewById(R.id.error_details)
-        retryButton = findViewById(R.id.retry_button)
+    private fun initializeViews(binding: ActivityMainBinding) { // 바인딩을 통해 초기화
+        errorLayout = binding.errorLayout
+        errorMessage = binding.errorMessage
+        errorDetails = binding.errorDetails
+        retryButton = binding.retryButton
         retryButton.setOnClickListener { onRetryButtonClick() }
 
-        bottomSheetLayout = findViewById(R.id.bottomSheetLayout)
+        bottomSheetLayout = binding.bottomSheetLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        bottomSheetTitle = findViewById(R.id.bottomSheetTitle)
-        bottomSheetAddress = findViewById(R.id.bottomSheetAddress)
+        bottomSheetTitle = binding.bottomSheetTitle
+        bottomSheetAddress = binding.bottomSheetAddress
     }
 
     private fun handleSearchResult(data: Intent?) {

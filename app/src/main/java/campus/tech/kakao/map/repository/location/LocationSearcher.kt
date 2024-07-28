@@ -14,5 +14,6 @@ class LocationSearcher(context: Context) {
 
     suspend fun search(keyword: String): List<Item> {
         return itemDao.search("%$keyword%")
+
     }
 }

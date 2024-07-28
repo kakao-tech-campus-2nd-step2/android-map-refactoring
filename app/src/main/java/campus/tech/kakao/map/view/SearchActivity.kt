@@ -104,3 +104,4 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         keywordViewModel.deleteKeyword(keyword)
     }
 }
+
