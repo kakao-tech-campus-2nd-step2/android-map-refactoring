@@ -8,18 +8,18 @@ import android.view.View
 import com.kakao.vectormap.KakaoMapSdk
 import dagger.hilt.android.HiltAndroidApp
 
-
 @HiltAndroidApp
 class PlaceApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
         appInstance = this
-
+      
         initKakaoMapSdk()
     }
 
     private fun initKakaoMapSdk(){
+
         val key = getString(R.string.kakao_api_key)
         KakaoMapSdk.init(this, key)
     }
@@ -35,6 +35,7 @@ class PlaceApplication: Application() {
 
             return actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
                     actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+
         }
     }
 }

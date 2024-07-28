@@ -10,7 +10,6 @@
     </data>
 
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-
     android:id="@+id/swipeRefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -44,7 +43,6 @@
                 android:src="@drawable/icon_search2" />
         </com.kakao.vectormap.MapView>
 
-
         <TextView
             android:id="@+id/tvErrorMessage"
             android:layout_width="match_parent"
@@ -64,3 +62,4 @@
 
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>
+

@@ -80,9 +80,6 @@
             </androidx.recyclerview.widget.RecyclerView>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
-
-
-
         <TextView
             android:id="@+id/tvHelpMessage"
             android:layout_width="wrap_content"

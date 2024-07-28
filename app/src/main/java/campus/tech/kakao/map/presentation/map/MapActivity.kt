@@ -66,6 +66,7 @@ class MapActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
         binding.lifecycleOwner = this
         binding.viewModel = mapViewModel
+
     }
 
     private fun collectViewModel() {

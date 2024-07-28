@@ -16,6 +16,7 @@ data class PlaceEntity(
     fun toPlace() = Place(id, place, address, type, xPos, yPos)
 }
 
+
 @Entity(tableName = "logs")
 data class PlaceLogEntity(
     @PrimaryKey val id: String,
@@ -23,3 +24,4 @@ data class PlaceLogEntity(
 ) {
     fun toPlace() = Place(id, place, "", "", "", "")
 }
+
