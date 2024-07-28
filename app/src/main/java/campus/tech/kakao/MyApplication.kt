@@ -2,6 +2,7 @@ package campus.tech.kakao
 
 import android.app.Application
 import com.kakao.vectormap.KakaoMapSdk
+import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
 import dagger.hilt.android.HiltAndroidApp
 
