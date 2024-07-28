@@ -4,13 +4,13 @@ import android.app.Application
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import campus.tech.kakao.map.data.PlaceRepositoryImpl
+import campus.tech.kakao.map.data.PlaceRemoteDataRepository
 import campus.tech.kakao.map.domain.repository.PlaceRepository
 import com.kakao.vectormap.KakaoMapSdk
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class PlaceApplication: Application() {
-
-    val placeRepository: PlaceRepository by lazy { PlaceRepositoryImpl.getInstance(this)}
 
     override fun onCreate() {
         super.onCreate()
@@ -29,11 +29,9 @@ class PlaceApplication: Application() {
             val actNetwork: NetworkCapabilities =
                 connectivityManager.getNetworkCapabilities(network) ?: return false
 
-            return when {
-                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                else -> false
-            }
+            return actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+                    actNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+
         }
     }
 }
