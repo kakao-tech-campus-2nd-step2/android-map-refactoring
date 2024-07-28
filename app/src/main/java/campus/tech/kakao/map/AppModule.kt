@@ -21,18 +21,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-//    @Singleton
-//    @Provides
-//    fun provideRepository(@ApplicationContext context: Context) : MyRepository{
-//        return MyRepository(context)
-//    }
-
-//    @Singleton
-//    @Provides
-//    fun provideRepository() : MyRepository{
-//        return MyRepository(savedSearchDao, apiService, sharedPreferences, editor)
-//    }
-
     @Singleton
     @Provides
     fun provideDataBaseManager(@ApplicationContext context: Context) : DatabaseManager{

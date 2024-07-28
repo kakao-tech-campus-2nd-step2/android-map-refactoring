@@ -44,17 +44,7 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
     val location get() = _location
 
 
-
-    fun insertSavedSearch(place: Place){
-        viewModelScope.launch {
-            repository.insertSavedSearch(SavedSearch(id = place.id, name = place.name))
-        }
-    }
-
-    fun setSharedPreferences(place: Place){
-        repository.setSharedPreferences(place.toLocation())
-    }
-
+    //LiveData 세팅---------------------------------------------------------------------------------
     fun itemClick(place: Place){
         _itemClick.value = place
     }
@@ -63,20 +53,38 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
         _nameClick.value = savedSearch
     }
 
+    fun setSearchText(savedSearch: SavedSearch){
+        _searchText.value = savedSearch.name
+    }
 
-    //SavedSearchAdapter 초기화
-//    val vmSavedSearchAdapter: SavedSearchAdapter = SavedSearchAdapter(listOf(),
-//        onCloseClick = { SavedSearch -> //SavedSearch의 x를 누르면
-//            viewModelScope.launch {
-//                repository.deleteSavedSearch(SavedSearch.id)  // SavedSearch item 삭제
-//                updateSavedSearch() // SavedSearch UI 업데이트
-//            }
-//        },
-//        onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
-//            _nameClick.value = SavedSearch   //화면에 보이는 text 설정
-//            _searchText.value = SavedSearch.name //검색 쿼리
-//        }
-//    )
+    fun intentSearchPlace() {   // true일 때 SearchPlaceActivity에 위치하고있음
+        _isIntent.value = true
+    }
+
+    fun clickCloseIcon() {
+        //햅틱 진동 기능 추가하고 싶다..
+        _searchText.value = " " //editText빈칸으로 만들기
+    }
+
+    //SharedPreferences-----------------------------------------------------------------------------
+    fun setSharedPreferences(place: Place){
+        repository.setSharedPreferences(place.toLocation())
+    }
+    fun getSharedPreferencesToLocation() {    //MainActivity에서 지도 업데이트할 때 사용
+        viewModelScope.launch {
+            _location.value = repository.getSharedPreferences()
+        }
+    }
+
+
+
+
+    //SavedSearch-----------------------------------------------------------------------------------
+    fun insertSavedSearch(place: Place){
+        viewModelScope.launch {
+            repository.insertSavedSearch(SavedSearch(id = place.id, name = place.name))
+        }
+    }
 
     fun deleteSavedSearch(id : Int){
         viewModelScope.launch {
@@ -84,25 +92,15 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
         }
     }
 
-    fun setSearchText(savedSearch: SavedSearch){
-        _searchText.value = savedSearch.name
+    //Repository에서 List(SavedSearch) 가져와서  savedSearchAdapterUpdateData에 저장
+    fun updateSavedSearch() {   //SearchPlaceActivity에서 저장된 검색어 업데이트할 때 사용
+        viewModelScope.launch {
+            _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
+        }
     }
 
 
-
-
-
-    // true일 때 SearchPlaceActivity에 위치하고있음
-    fun intentSearchPlace() {
-        _isIntent.value = true
-    }
-
-    //editText를 지우는 closeIcon 클릭이벤트
-    fun clickCloseIcon() {
-        //햅틱 진동 기능 추가하고 싶다..
-        _searchText.value = " " //editText빈칸으로 만들기
-    }
-
+    //editText에서 검색하기--------------------------------------------------------------------------
     //(비동기) 카카오 키워드 검색, 검색 결과는 placeAdapterUpdateData에 List<Place>로 저장
     fun searchPlace(query: String) {
         viewModelScope.launch {
@@ -127,21 +125,5 @@ class MyViewModel @Inject constructor(private val repository: MyRepository) : Vi
             }
         }
     }
-
-
-    //Repository에서 List(SavedSearch) 가져와서  savedSearchAdapterUpdateData에 저장
-    fun updateSavedSearch() {
-        viewModelScope.launch {
-            _savedSearchAdapterUpdateData.value = repository.getSavedSearches()
-        }
-        Log.d("seyoung", _savedSearchAdapterUpdateData.value.toString())
-    }
-
-    fun getSharedPreferences() {
-        viewModelScope.launch {
-            _location.value = repository.getSharedPreferences()
-        }
-    }
-
 
 }

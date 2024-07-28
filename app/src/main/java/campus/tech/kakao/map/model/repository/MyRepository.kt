@@ -29,13 +29,21 @@ class MyRepository @Inject constructor(
     private val editor: SharedPreferences.Editor
 ) {
 
+    companion object{
+        const val NAME = "name"
+        const val ADDRESS = "address"
+        const val LATITUDE = "latitude"
+        const val LONGITUDE = "longitude"
+    }
+
+
     // SharedPreferences 저장하기
     fun setSharedPreferences(location: Location) {
         with(editor) {
-            putString("name", location.name)
-            putString("address", location.address)
-            putString("latitude", location.latitude.toString())
-            putString("longitude", location.longitude.toString())
+            putString(NAME, location.name)
+            putString(ADDRESS, location.address)
+            putString(LATITUDE, location.latitude.toString())
+            putString(LONGITUDE, location.longitude.toString())
             apply()
         }
     }
@@ -43,14 +51,15 @@ class MyRepository @Inject constructor(
     // SharedPreferences 값 불러오기
     suspend fun getSharedPreferences(): Location = withContext(Dispatchers.IO) {
         Location(
-            sharedPreferences.getString("name", "") ?: "",
-            sharedPreferences.getString("address", "") ?: "",
-            sharedPreferences.getString("latitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE,
-            sharedPreferences.getString("longitude", "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
+            sharedPreferences.getString(NAME, "") ?: "",
+            sharedPreferences.getString(ADDRESS, "") ?: "",
+            sharedPreferences.getString(LATITUDE, "0.0")?.toDoubleOrNull() ?: KAKAO_LATITUDE,
+            sharedPreferences.getString(LONGITUDE, "0.0")?.toDoubleOrNull() ?: KAKAO_LONGITUDE
         )
     }
+    //----------------------------------------------------------------------------------------------
 
-    // Place item 클릭하면 호출
+    // Place item 클릭하면 호출, 아이템 삽입
     suspend fun insertSavedSearch(savedSearch: SavedSearch) {
         withContext(Dispatchers.IO) {
             val existingSearch = savedSearchDao.getById(savedSearch.id)
@@ -70,8 +79,6 @@ class MyRepository @Inject constructor(
         return result
     }
 
-
-
     // close 누르면 호출, item 삭제
     suspend fun deleteSavedSearch(id: Int) {
         withContext(Dispatchers.IO) {
@@ -80,6 +87,7 @@ class MyRepository @Inject constructor(
         }
     }
 
+    //----------------------------------------------------------------------------------------------
     // 검색어로 검색하기
     suspend fun searchKeyword(query: String): Response<KakaoSearchResponse> {
         return withContext(Dispatchers.IO) {
