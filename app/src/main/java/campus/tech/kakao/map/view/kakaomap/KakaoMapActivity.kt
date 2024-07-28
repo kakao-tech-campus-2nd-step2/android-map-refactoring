@@ -8,6 +8,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityKakaoMapBinding
@@ -40,8 +41,7 @@ class KakaoMapActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityKakaoMapBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_kakao_map)
 
         setUpKakaoMap()
         getSearchResult()
@@ -77,7 +77,7 @@ class KakaoMapActivity : AppCompatActivity() {
             }
 
             override fun onMapError(error: Exception?) {
-                binding.kakaomapErrDescription.text = error?.message.toString()
+                binding.errMsg = error?.message.toString()
                 showView(binding.kakaomapErr, true)
             }
         }, object : KakaoMapReadyCallback() {
@@ -146,8 +146,7 @@ class KakaoMapActivity : AppCompatActivity() {
 
     fun displayPlaceInfoBottomSheet(place: Place) {
         val bottomSheet = binding.placeInfoBottomSheet
-        bottomSheet.placeName.text = place.place_name
-        bottomSheet.addressName.text = place.address_name
+        bottomSheet.place = place
 
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet.root)
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED

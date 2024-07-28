@@ -5,12 +5,16 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.BindingAdapter
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.search.SearchKeyword
 import campus.tech.kakao.map.databinding.ActivitySearchWindowBinding
 import campus.tech.kakao.map.model.search.Place
@@ -26,8 +30,7 @@ class SearchWindowActivity : AppCompatActivity() {
     private val viewModel: SearchViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySearchWindowBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search_window)
 
         delSearchKeywordListener()
         detectSearchWindowChangedListener()
@@ -37,7 +40,7 @@ class SearchWindowActivity : AppCompatActivity() {
 
     private fun delSearchKeywordListener() {
         binding.delSearchKeyword.setOnClickListener {
-            binding.searchWindow.text = null
+            binding.searchKeyword = SearchKeyword("")
         }
     }
 
@@ -101,7 +104,7 @@ class SearchWindowActivity : AppCompatActivity() {
                     adapter.setItemClickListener(object :
                         SavedSearchKeywordsAdapter.OnItemClickListener {
                         override fun onClickSavedSearchKeyword(item: SearchKeyword) {
-                            binding.searchWindow.setText(item.searchKeyword)
+                            binding.searchKeyword = item
                         }
 
                         override fun onClickDelSavedSearchKeyword(item: SearchKeyword) {
