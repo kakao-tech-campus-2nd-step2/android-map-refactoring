@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.repository.location
 
-import campus.tech.kakao.map.entity.LocationEntity
 import campus.tech.kakao.map.model.Item
 import javax.inject.Inject
 import javax.inject.Singleton
