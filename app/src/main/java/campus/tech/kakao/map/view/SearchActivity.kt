@@ -24,10 +24,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
     private lateinit var binding: ActivitySearchBinding
-
-    @Inject
-    lateinit var api: KakaoLocalApi
-
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var keywordViewModel: KeywordViewModel
     private lateinit var searchAdapter: SearchAdapter
