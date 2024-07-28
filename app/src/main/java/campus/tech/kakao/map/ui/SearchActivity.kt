@@ -14,7 +14,7 @@ import android.app.Activity
 import android.content.Intent
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
         observeViewModel()
 
         val selectedItemsSize = intent.getIntExtra("selectedItemsSize", 0)
-        val selectedItems = mutableListOf<MapItem>()
+        val selectedItems = mutableListOf<MapItemEntity>()
         for (i in 0 until selectedItemsSize) {
             val id = intent.getIntExtra("id_$i", 0)
             val place_name = intent.getStringExtra("place_name_$i") ?: ""
@@ -44,7 +44,7 @@ class SearchActivity : AppCompatActivity() {
             val category_group_name = intent.getStringExtra("category_group_name_$i") ?: ""
             val x = intent.getDoubleExtra("x_$i", 0.0)
             val y = intent.getDoubleExtra("y_$i", 0.0)
-            selectedItems.add(MapItem(id, place_name, road_address_name, category_group_name, x, y))
+            selectedItems.add(MapItemEntity(id, place_name, road_address_name, category_group_name, x, y))
         }
         viewModel.setSelectedItems(selectedItems)
     }
@@ -116,7 +116,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel.searchQuery.value = query
     }
 
-    fun setResultAndFinish(selectedItem: MapItem) {
+    fun setResultAndFinish(selectedItem: MapItemEntity) {
         val intent = Intent().apply {
             putExtra("place_name", selectedItem.place_name)
             putExtra("road_address_name", selectedItem.road_address_name)

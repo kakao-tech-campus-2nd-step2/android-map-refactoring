@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.*
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.kakao.vectormap.camera.CameraAnimation
 import com.kakao.vectormap.camera.CameraUpdateFactory
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomSheetTitle: TextView
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
-    private var selectedItems = mutableListOf<MapItem>()
+    private var selectedItems = mutableListOf<MapItemEntity>()
     private val viewModel: MapViewModel by viewModels()
 
     companion object {
@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity() {
                     val category_group_name = it.getStringExtra("category_group_name_$i") ?: ""
                     val x = it.getDoubleExtra("x_$i", 0.0)
                     val y = it.getDoubleExtra("y_$i", 0.0)
-                    selectedItems.add(MapItem(id, place_name, road_address_name, category_group_name, x, y))
+                    selectedItems.add(MapItemEntity(id, place_name, road_address_name, category_group_name, x, y))
                 }
 
                 // 마커 위치 저장
