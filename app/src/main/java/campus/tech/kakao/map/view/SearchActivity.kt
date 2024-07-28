@@ -9,8 +9,6 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.MyApplication
-import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.adapter.keyword.KeywordAdapter
 import campus.tech.kakao.map.adapter.search.SearchAdapter
 import campus.tech.kakao.map.api.KakaoLocalApi
@@ -19,14 +17,15 @@ import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
 import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
-import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModelFactory
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
-import campus.tech.kakao.map.viewmodel.search.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
     private lateinit var binding: ActivitySearchBinding
     private lateinit var searchViewModel: SearchViewModel
-    lateinit var keywordViewModel: KeywordViewModel
+    private lateinit var keywordViewModel: KeywordViewModel
     private lateinit var searchAdapter: SearchAdapter
     private lateinit var keywordAdapter: KeywordAdapter
 
@@ -35,12 +34,9 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Retrofit 초기화
-        val api = MyApplication.retrofit.create(KakaoLocalApi::class.java)
-
         // ViewModel 초기화
-        searchViewModel = ViewModelProvider(this, SearchViewModelFactory(api))[SearchViewModel::class.java]
-        keywordViewModel = ViewModelProvider(this, KeywordViewModelFactory(applicationContext))[KeywordViewModel::class.java]
+        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
+        keywordViewModel = ViewModelProvider(this).get(KeywordViewModel::class.java)
 
         // 검색 결과 RecyclerView 설정
         searchAdapter = SearchAdapter(this)
@@ -104,3 +100,4 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         keywordViewModel.deleteKeyword(keyword)
     }
 }
+

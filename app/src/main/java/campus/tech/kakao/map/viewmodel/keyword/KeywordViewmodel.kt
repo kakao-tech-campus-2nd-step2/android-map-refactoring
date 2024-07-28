@@ -3,9 +3,16 @@ package campus.tech.kakao.map.viewmodel.keyword
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.repository.keyword.KeywordRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-class KeywordViewModel(private val repository: KeywordRepository) : ViewModel() {
+@HiltViewModel
+class KeywordViewModel @Inject constructor(
+    private val repository: KeywordRepository
+) : ViewModel() {
 
     private val _keywords = MutableLiveData<List<String>>()
     val keywords: LiveData<List<String>> get() = _keywords
@@ -15,16 +22,23 @@ class KeywordViewModel(private val repository: KeywordRepository) : ViewModel() 
     }
 
     private fun loadKeywords() {
-        _keywords.value = repository.read()
+        viewModelScope.launch {
+            _keywords.value = repository.read()
+        }
     }
 
     fun saveKeyword(keyword: String) {
-        repository.update(keyword) // 여기서 keyword 변수 사용
-        loadKeywords() // 업데이트 후 다시 로드하여 UI 업데이트
+        viewModelScope.launch {
+            repository.update(keyword)
+            loadKeywords()
+        }
     }
 
     fun deleteKeyword(keyword: String) {
-        repository.delete(keyword)
-        loadKeywords() // 삭제 후 다시 로드하여 UI 업데이트
+        viewModelScope.launch {
+            repository.delete(keyword)
+            loadKeywords()
+        }
     }
 }
+

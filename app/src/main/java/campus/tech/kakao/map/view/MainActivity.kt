@@ -12,9 +12,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.*
 import com.kakao.vectormap.camera.CameraAnimation
@@ -24,21 +25,26 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.repository.location.LocationSearcher
 import campus.tech.kakao.map.view.SearchActivity
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
-import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModelFactory
 import campus.tech.kakao.map.viewmodel.main.MainViewModel
-import campus.tech.kakao.map.viewmodel.main.MainViewModelFactory
 import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
 
     private var mapView: MapView? = null
     private var kakaoMap: KakaoMap? = null
     private var labelLayer: LabelLayer? = null
+
+    @Inject
+    lateinit var locationSearcher: LocationSearcher
 
     private lateinit var errorLayout: RelativeLayout
     private lateinit var errorMessage: TextView
@@ -49,19 +55,19 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
     private lateinit var searchResultLauncher: ActivityResultLauncher<Intent>
-    private lateinit var locationSearcher: LocationSearcher
-    private lateinit var keywordViewModel: KeywordViewModel
-    private lateinit var mainViewModel: MainViewModel
+    private val keywordViewModel: KeywordViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this // 생명주기 소유자 성정
+        binding.viewModel = mainViewModel // Viewmodel 바인딩
+        binding.keywordViewModel = keywordViewModel // Keyword viewmodel 바인딩
 
-        locationSearcher = LocationSearcher(this)
-
-        // ViewModel 초기화
-        keywordViewModel = ViewModelProvider(this, KeywordViewModelFactory(applicationContext)).get(KeywordViewModel::class.java)
-        mainViewModel = ViewModelProvider(this, MainViewModelFactory(application)).get(MainViewModel::class.java)
+        // View 초기화
+        // 바인딩을 활용하여 초기화하도록 변경
+        initializeViews(binding)
 
         // ActivityResultLauncher 초기화
         searchResultLauncher = registerForActivityResult(
@@ -96,12 +102,6 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
             searchResultLauncher.launch(intent)
         }
 
-        // 에러 화면 초기화
-        initializeErrorScreen()
-
-        // BottomSheet 초기화
-        initializeBottomSheet()
-
         // Observe the last marker position
         mainViewModel.lastMarkerPosition.observe(this, Observer { item ->
             item?.let {
@@ -114,22 +114,17 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
         })
     }
 
-    private fun initializeErrorScreen() {
-        errorLayout = findViewById(R.id.error_layout)
-        errorMessage = findViewById(R.id.error_message)
-        errorDetails = findViewById(R.id.error_details)
-        retryButton = findViewById(R.id.retry_button)
+    private fun initializeViews(binding: ActivityMainBinding) { // 바인딩을 통해 초기화
+        errorLayout = binding.errorLayout
+        errorMessage = binding.errorMessage
+        errorDetails = binding.errorDetails
+        retryButton = binding.retryButton
         retryButton.setOnClickListener { onRetryButtonClick() }
-    }
 
-    private fun initializeBottomSheet() {
-        bottomSheetLayout = findViewById(R.id.bottomSheetLayout)
+        bottomSheetLayout = binding.bottomSheetLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        bottomSheetTitle = findViewById(R.id.bottomSheetTitle)
-        bottomSheetAddress = findViewById(R.id.bottomSheetAddress)
-
-        // 처음에는 BottomSheet 숨기기
-        bottomSheetLayout.visibility = View.GONE
+        bottomSheetTitle = binding.bottomSheetTitle
+        bottomSheetAddress = binding.bottomSheetAddress
     }
 
     private fun handleSearchResult(data: Intent?) {
@@ -150,7 +145,8 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
 
         Log.d(TAG, "Search result: $placeName, $roadAddressName, $latitude, $longitude")
 
-        val item = Item(placeName, roadAddressName, "", latitude, longitude)
+        // latitude와 longitude 값을 Double로 명시적으로 변환하여 Item 객체를 생성
+        val item = Item(place = placeName, address = roadAddressName, category = "", latitude = latitude, longitude = longitude)
         addLabel(item)
         mainViewModel.saveLastMarkerPosition(item)
     }
