@@ -3,30 +3,23 @@ package campus.tech.kakao.map
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelStore
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
 import campus.tech.kakao.map.dto.SearchWordDao
 import campus.tech.kakao.map.url.RetrofitData
-import campus.tech.kakao.map.url.RetrofitService
-import io.mockk.MockK
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import org.junit.Assert.assertFalse
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
