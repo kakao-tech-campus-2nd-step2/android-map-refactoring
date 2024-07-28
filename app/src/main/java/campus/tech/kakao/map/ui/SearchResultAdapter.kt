@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.viewmodel.MapItem
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.model.MapItem
 
 class SearchResultAdapter(private val listener: OnItemClickListener) : ListAdapter<MapItem, SearchResultAdapter.ViewHolder>(
     DiffCallback()

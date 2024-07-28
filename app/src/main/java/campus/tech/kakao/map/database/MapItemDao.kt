@@ -12,7 +12,13 @@ interface MapItemDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(mapItem: MapItemEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(mapItems: List<MapItemEntity>)
+
     @Query("SELECT * FROM mapItems")
     suspend fun getAllMapItems(): List<MapItemEntity>
+
+    @Query("DELETE FROM mapItems")
+    suspend fun deleteAll()
 
 }

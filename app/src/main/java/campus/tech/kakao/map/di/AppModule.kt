@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import campus.tech.kakao.map.database.AppDatabase
 import campus.tech.kakao.map.database.MapItemDao
+import campus.tech.kakao.map.repository.MapItemRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +27,13 @@ object AppModule {
     }
 
     @Provides
-    @Singleton
     fun provideMapItemDao(db: AppDatabase): MapItemDao {
         return db.mapItemDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideMapItemRepository(mapItemDao: MapItemDao): MapItemRepository {
+        return MapItemRepository(mapItemDao)
     }
 }

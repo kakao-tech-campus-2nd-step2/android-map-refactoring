@@ -1,28 +1,32 @@
 package campus.tech.kakao.map.viewmodel
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.database.AppDatabase
-import campus.tech.kakao.map.model.KakaoMapProductResponse
-import campus.tech.kakao.map.model.MapItemEntity
+import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.toEntity
 import campus.tech.kakao.map.network.RetrofitClient
 import campus.tech.kakao.map.repository.MapItemRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class MapViewModel @Inject constructor(
     application: Application,
-    private var repository: MapItemRepository
+    private val repository: MapItemRepository
 ) : AndroidViewModel(application) {
+
+    private val _keywords = MutableLiveData<List<String>>()
+    val keywords: LiveData<List<String>> get() = _keywords
+
+    val keyword = MutableLiveData<String>()
 
     private val _searchResults = MutableLiveData<List<MapItem>>()
     val searchResults: LiveData<List<MapItem>> get() = _searchResults
@@ -30,62 +34,105 @@ class MapViewModel @Inject constructor(
     private val _errorMessage = MutableLiveData<String>()
     val errorMessage: LiveData<String> get() = _errorMessage
 
+    private val _selectedPlaceName = MutableLiveData<String>()
+    val selectedPlaceName: LiveData<String> get() = _selectedPlaceName
+
+    private val _selectedPlaceAddress = MutableLiveData<String>()
+    val selectedPlaceAddress: LiveData<String> get() = _selectedPlaceAddress
+
     init {
-        val mapItemDao = AppDatabase.getDatabase(application).mapItemDao()
-        repository = MapItemRepository(mapItemDao)
+        keyword.observeForever {
+            if (!it.isNullOrEmpty()) {
+                searchPlaces(it)
+            } else {
+                _searchResults.postValue(emptyList())
+            }
+        }
     }
 
-    fun searchPlaces(keyword: String) {
-        val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
-        RetrofitClient.apiService.searchPlaces(apiKey, keyword).enqueue(object :
-            Callback<KakaoMapProductResponse> {
-            override fun onResponse(call: Call<KakaoMapProductResponse>, response: Response<KakaoMapProductResponse>) {
+    fun setKeyword(keyword: String) {
+        this.keyword.value = keyword
+    }
+
+    fun clearKeyword() {
+        keyword.value = ""
+    }
+
+    private fun searchPlaces(keyword: String) {
+        viewModelScope.launch {
+            val apiKey = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    RetrofitClient.apiService.searchPlaces(apiKey, keyword)
+                }
                 if (response.isSuccessful) {
                     val documents = response.body()?.documents ?: emptyList()
-                    val results = documents.map { MapItem(it.place_name, it.address_name, it.category_group_name, it.x.toDouble(), it.y.toDouble()) }
+                    val results = documents.map {
+                        MapItem(it.place_name, it.address_name, it.category_group_name, it.x.toDouble(), it.y.toDouble())
+                    }
                     _searchResults.postValue(results)
                     saveResultsToDatabase(results)
                 } else {
                     _searchResults.postValue(emptyList())
                     _errorMessage.postValue("Error: ${response.message()}")
                 }
-            }
-
-            override fun onFailure(call: Call<KakaoMapProductResponse>, t: Throwable) {
+            } catch (e: Exception) {
                 _searchResults.postValue(emptyList())
-                _errorMessage.postValue("네트워크 요청 실패: ${t.message}")
+                _errorMessage.postValue("네트워크 요청 실패: ${e.message}")
             }
-        })
+        }
     }
 
     private fun saveResultsToDatabase(results: List<MapItem>) {
         viewModelScope.launch {
-            results.forEach { mapItem ->
-                val entity = MapItemEntity(
-                    name = mapItem.name,
-                    address = mapItem.address,
-                    category = mapItem.category,
-                    longitude = mapItem.longitude,
-                    latitude = mapItem.latitude
-                )
-                repository.insert(entity)
+            withContext(Dispatchers.IO) {
+                repository.deleteAll()
+                val entities = results.map { it.toEntity() }
+                repository.insertAll(entities)
             }
         }
     }
 
     fun getSavedMapItems() {
         viewModelScope.launch {
-            _searchResults.postValue(repository.getAllMapItems().map {
+            val savedItems = withContext(Dispatchers.IO) {
+                repository.getAllMapItems()
+            }
+            _searchResults.postValue(savedItems.map {
                 MapItem(it.name, it.address, it.category, it.longitude, it.latitude)
             })
         }
     }
-}
 
-data class MapItem(
-    val name: String,
-    val address: String,
-    val category: String,
-    val longitude: Double,
-    val latitude: Double
-)
+    fun clearMapItems() {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                repository.deleteAll()
+            }
+        }
+    }
+
+    fun loadKeywords() {
+        viewModelScope.launch {
+            val sharedPreferences = getApplication<Application>().getSharedPreferences("keywords", Context.MODE_PRIVATE)
+            val keywordsSet = sharedPreferences.getStringSet("keywords", setOf()) ?: setOf()
+            _keywords.postValue(keywordsSet.toList())
+        }
+    }
+
+    fun saveKeywords(keywords: List<String>) {
+        viewModelScope.launch {
+            val sharedPreferences = getApplication<Application>().getSharedPreferences("keywords", Context.MODE_PRIVATE)
+            sharedPreferences.edit().apply {
+                putStringSet("keywords", keywords.toSet())
+                apply()
+            }
+            _keywords.postValue(keywords)
+        }
+    }
+
+    fun setSelectedPlace(name: String, address: String) {
+        _selectedPlaceName.value = name
+        _selectedPlaceAddress.value = address
+    }
+}

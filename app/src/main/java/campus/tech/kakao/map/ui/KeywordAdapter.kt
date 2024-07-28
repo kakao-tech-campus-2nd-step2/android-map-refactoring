@@ -42,13 +42,6 @@ class KeywordAdapter(private val listener: OnKeywordRemoveListener) : RecyclerVi
         notifyItemRangeInserted(0, newKeywords.size)
     }
 
-    fun addKeyword(keyword: String) {
-        if (!keywords.contains(keyword)) {
-            keywords.add(keyword)
-            notifyItemInserted(keywords.size - 1)
-        }
-    }
-
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val tvKeyword: TextView = itemView.findViewById(R.id.tvKeyword)
         private val ivRemove: ImageView = itemView.findViewById(R.id.imageView)
