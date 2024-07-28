@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.view
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -11,15 +12,13 @@ import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
-import campus.tech.kakao.map.model.repository.MyRepository
-import campus.tech.kakao.map.viewmodel.MyViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchPlaceActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySearchPlaceBinding
-    private val viewModel: MyViewModel by viewModels {
-        MyViewModelFactory(this, MyRepository(applicationContext))
-    }
+    private val viewModel: MyViewModel by viewModels()
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var savedSearchAdapter: SavedSearchAdapter
 
@@ -44,22 +43,27 @@ class SearchPlaceActivity : AppCompatActivity() {
 
         viewModel.updateSavedSearch()
 
+
+
+
         //-----viewModel observe-----------------------------------------
         val activity = this
         with(viewModel) {
 
             //PlaceAdapter
             itemClick.observe(activity, Observer { place ->  //Place 클릭 했을 때
-//                setSharedPreferences(place)
+                val resultIntent = Intent()
+                resultIntent.putExtra("name", place.name)
+                resultIntent.putExtra("address", place.address)
+                resultIntent.putExtra("latitude", place.latitude)
+                resultIntent.putExtra("longitude", place.longitude)
+                setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             })
 
             //SavedSearchAdapter
-            closeClick.observe(activity, Observer { //close 클릭 이벤트
-                //필요없음
-            })
             nameClick.observe(activity, Observer { //name 클릭 이벤트
-                binding.search.setText(it.name)
+                binding.search.setText(it.name) //editText UI설정
             })
 
             //Place 리사이클러뷰 업데이트 관찰
@@ -81,16 +85,9 @@ class SearchPlaceActivity : AppCompatActivity() {
                     this.searchPlace(it) //텍스트가 있다면 검색
                 }
             })
+
         } //with(viewModel)
+
     } //onCreate
 
-//    private fun setSharedPreferences(place: Place) {
-//        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
-//        val editor = sharedPreferences.edit()
-//        editor.putString("name", place.name)
-//        editor.putString("address", place.address)
-//        editor.putString("latitude", place.latitude)
-//        editor.putString("longitude", place.longitude)
-//        editor.apply()
-//    }
 }

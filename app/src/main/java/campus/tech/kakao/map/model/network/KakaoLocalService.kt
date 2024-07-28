@@ -55,24 +55,24 @@ data class SameName(
     val selected_region: String    //인식된 지역 리스트 중 현재 검색에 사용된 지역 정보
 )
 
-object RetrofitInstance {
+object RetrofitInstance { //네트워크 통신 retrofit 객체 정의
     private const val BASE_URL = "https://dapi.kakao.com/"
 
     private val client = OkHttpClient.Builder()
-        .addInterceptor { chain ->
-            val apiKey = BuildConfig.KAKAO_REST_API_KEY
+        .addInterceptor { chain ->  //HTTP 요청을 가로채서 수정할 수 있도록 한다
+            val apiKey = BuildConfig.KAKAO_REST_API_KEY //API 키를 가져와 Authorization 헤더에 추가
             val newRequest = chain.request().newBuilder()
-                .addHeader("Authorization", "KakaoAK $apiKey")
+                .addHeader("Authorization", "KakaoAK $apiKey")  //원래 요청에 Authorization 헤더를 추가한 새 요청을 빌드합니다.
                 .build()
-            chain.proceed(newRequest)
+            chain.proceed(newRequest)   //수정된 요청을 실행
         }
         .build()
 
-    val api: KakaoLocalService by lazy {
+    val api: KakaoLocalService by lazy {    //지연 초기화, api객체가 처음 사용될 때 초기화
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl(BASE_URL)  //기본 URL을 설정
+            .client(client) //위에서 정의한 OkHttpClient 사용
+            .addConverterFactory(GsonConverterFactory.create()) //JSON 데이터를 파싱하기 위해 Gson 변환기를 사용
             .build()
             .create(KakaoLocalService::class.java)
     }

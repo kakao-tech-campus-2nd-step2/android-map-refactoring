@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.model.data.Location
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class BottomSheetManager(
@@ -63,10 +64,11 @@ class BottomSheetManager(
         sheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 
-    fun setBottomSheetText(name: String, address: String) {
+    //BottomSheet text설정
+    fun setBottomSheetText(location: Location) {
         val nameTextView: TextView = bottomSheet.findViewById(R.id.bottom_sheet_name)
         val addressTextView: TextView = bottomSheet.findViewById(R.id.bottom_sheet_address)
-        nameTextView.text = name
-        addressTextView.text = address
+        nameTextView.text = location.name
+        addressTextView.text = location.address
     }
 }
