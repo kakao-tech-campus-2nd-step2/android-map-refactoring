@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API가 정상적으로 종료될 때 호출됨
+                Log.d("MainActivity", "Map destroyed")
             }
 
             override fun onMapError(error: Exception) {
