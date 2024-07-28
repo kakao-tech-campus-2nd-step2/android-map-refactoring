@@ -22,12 +22,6 @@
             android:name=".view.search.SearchWindowActivity"
             android:exported="false" />
         <activity
-            android:name=".view.kakaomap.KakaoMapActivity"
-            android:exported="false" />
-        <activity
-            android:name=".view.search.SearchWindowActivity"
-            android:exported="false" />
-        <activity
             android:name=".view.MainActivity"
             android:exported="true">
             <intent-filter>

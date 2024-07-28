@@ -29,7 +29,7 @@ class SearchViewModel @Inject constructor(
 
     fun getSearchResults(searchKeyword: SearchKeyword) {
         viewModelScope.launch {
-            _searchResults.value = searchRepository.Search(searchKeyword)
+            _searchResults.value = searchRepository.search(searchKeyword)
         }
     }
 

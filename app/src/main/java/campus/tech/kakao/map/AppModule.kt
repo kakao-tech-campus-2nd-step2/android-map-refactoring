@@ -1,7 +1,10 @@
 package campus.tech.kakao.map
 
 import android.content.Context
+import android.content.SharedPreferences
+import campus.tech.kakao.map.model.search.SearchKeywordDao
 import campus.tech.kakao.map.repository.kakaomap.LastPositionRepository
+import campus.tech.kakao.map.repository.search.KakaoSearchKeywordAPI
 import campus.tech.kakao.map.repository.search.SavedSearchKeywordRepository
 import campus.tech.kakao.map.repository.search.SearchRepository
 import dagger.Module
@@ -9,7 +12,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
@@ -18,25 +20,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideContext(@ApplicationContext context: Context): Context {
-        return context
-    }
+    fun provideSavedSearchKeywordRepository(searchKeywordDao: SearchKeywordDao) =
+        SavedSearchKeywordRepository(searchKeywordDao)
 
     @Provides
     @Singleton
-    fun provideSavedSearchKeywordRepository(@ApplicationContext context: Context): SavedSearchKeywordRepository {
-        return SavedSearchKeywordRepository(context)
-    }
+    fun provideSearchRepository(retrofitKakaoSearchKeyword: KakaoSearchKeywordAPI): SearchRepository =
+        SearchRepository(retrofitKakaoSearchKeyword)
 
     @Provides
     @Singleton
-    fun provideSearchRepository(): SearchRepository {
-        return SearchRepository()
-    }
-
-    @Provides
-    @Singleton
-    fun provideLastPositionRepository(@ApplicationContext context: Context): LastPositionRepository {
-        return LastPositionRepository(context)
-    }
+    fun provideLastPositionRepository(sharedPreferences: SharedPreferences) =
+        LastPositionRepository(sharedPreferences)
 }

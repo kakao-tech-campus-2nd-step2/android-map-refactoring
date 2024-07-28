@@ -5,17 +5,14 @@ import campus.tech.kakao.map.model.search.SearchKeyword
 import campus.tech.kakao.map.repository.search.SavedSearchKeywordRepository
 import campus.tech.kakao.map.repository.search.SearchRepository
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
-import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.junit4.MockKRule
-import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
-import kotlinx.coroutines.withContext
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -57,14 +54,14 @@ class SearchViewModelTest {
             TEST_PLACE_Y
         )
         val searchResults = listOf(place)
-        coEvery { searchRepository.Search(searchKeyword) } returns searchResults
+        coEvery { searchRepository.search(searchKeyword) } returns searchResults
 
         // when
         searchViewModel.getSearchResults(searchKeyword)
 
         // then
         assert(searchViewModel.searchResults.value == searchResults)
-        coVerify { searchRepository.Search(searchKeyword) }
+        coVerify { searchRepository.search(searchKeyword) }
 
     }
 

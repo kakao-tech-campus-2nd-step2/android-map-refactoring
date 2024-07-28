@@ -1,30 +1,19 @@
 package campus.tech.kakao.map.repository.search
 
-import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.search.Place
 import campus.tech.kakao.map.model.search.SearchKeyword
-import kotlinx.coroutines.coroutineScope
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import campus.tech.kakao.map.repository.search.KakaoAPISetting.API_KEY
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SearchRepository @Inject constructor() {
-    companion object {
-        const val BASE_URL = "https://dapi.kakao.com"
-        const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}"
-    }
+class SearchRepository @Inject constructor(private val retrofitKakaoSearchKeyword: KakaoSearchKeywordAPI) {
 
-    private val retrofitKakaoSearchKeyword = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(KakaoSearchKeywordAPI::class.java)
-
-    suspend fun Search(searchKeyword: SearchKeyword): List<Place> {
+    suspend fun search(searchKeyword: SearchKeyword): List<Place> {
         if (searchKeyword.searchKeyword == "")
             return emptyList()
 
-        return coroutineScope {
+        return withContext(Dispatchers.IO) {
             retrofitKakaoSearchKeyword
                 .getSearchKeyWord(API_KEY, searchKeyword.searchKeyword)
                 .places
