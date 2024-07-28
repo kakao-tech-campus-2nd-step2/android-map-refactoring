@@ -52,7 +52,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = true
+        dataBinding = true
         buildConfig = true
     }
     testOptions {
