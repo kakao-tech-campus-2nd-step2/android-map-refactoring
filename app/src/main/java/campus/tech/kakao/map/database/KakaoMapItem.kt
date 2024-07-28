@@ -1,26 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.database
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 import android.util.Log
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-
-data class KakaoMapItem(
-    val id: String,
-    val name: String,
-    val address: String,
-    val category: String,
-    val x : String,
-    val y : String
-)
-
-data class SelectMapItem(
-    val id: String,
-    val name: String
-)
 
 object SelectItemDB : BaseColumns {
     const val TABLE_NAME = "selectItem"
@@ -32,7 +16,8 @@ object SelectItemDB : BaseColumns {
 class KakaoMapItemDbHelper(context: Context) : SQLiteOpenHelper(context, "kakaoMap.db", null, 1) {
     private val wDb = writableDatabase
     private val rDb = readableDatabase
-    val selectItemDao = SelectItemDao(wDb, rDb)
+    //val selectItemDao = SelectItemDao(wDb, rDb)
+
     override fun onCreate(db: SQLiteDatabase?) {
         db?.execSQL(
             "CREATE TABLE ${SelectItemDB.TABLE_NAME} (" +

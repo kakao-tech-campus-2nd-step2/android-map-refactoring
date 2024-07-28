@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.activity
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -8,7 +7,9 @@ import android.util.Log
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -19,24 +20,27 @@ import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    private lateinit var mapView : MapView
+    private lateinit var mapView: MapView
+
+    @Inject
+    lateinit var sharedPreferences: SharedPreferences
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
-        val sharedPreferences : SharedPreferences = applicationContext.getSharedPreferences("lastPos", Context.MODE_PRIVATE)
+        val binding : ActivityMapBinding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.map = this
 
-        val inputSpace = findViewById<TextView>(R.id.toSearchActivity)
-        val bottomSheet = findViewById<LinearLayoutCompat>(R.id.bottomSheet)
-        val sheetBehavior = BottomSheetBehavior.from(bottomSheet)
-        val nameText = findViewById<TextView>(R.id.name)
-        val addressText = findViewById<TextView>(R.id.address)
-        mapView = findViewById<MapView>(R.id.mapView)
+        val sheetBehavior = BottomSheetBehavior.from(binding.bottomSheetMap.bottomSheet)
+        mapView = binding.mapView
 
-        inputSpace.setOnClickListener {
+        binding.toSearchActivity.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
@@ -47,7 +51,8 @@ class MapActivity : AppCompatActivity() {
         val name: String? = intent.extras?.getString("name")
         val address: String? = intent.extras?.getString("address")
 
-        mapView.start(object : MapLifeCycleCallback() {
+
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API 가 정상적으로 종료될 때 호출됨
             }
@@ -64,21 +69,21 @@ class MapActivity : AppCompatActivity() {
 
             override fun getPosition(): LatLng {
                 // 지도 시작 시 위치 좌표를 설정
-                if(x == null && y == null) {
+                if (x == null && y == null) {
                     val lastX = sharedPreferences.getString("x", "127.115587")?.toDouble()
                     val lastY = sharedPreferences.getString("y", "37.406960")?.toDouble()
                     //Log.d("uin", "" + lastX + " " + lastY)
-                    return LatLng.from(lastY ?: 37.395447 , lastX ?: 127.110457)
-                }else {
-                    return LatLng.from(y ?: 37.395447 , x ?: 127.110457)
+                    return LatLng.from(lastY ?: 37.395447, lastX ?: 127.110457)
+                } else {
+                    return LatLng.from(y ?: 37.395447, x ?: 127.110457)
                 }
             }
 
             override fun onMapReady(kakaoMap: KakaoMap) {
                 // 인증 후 API 가 정상적으로 실행될 때 호출됨
-                if(x != null && y != null && name != null && address != null) {
-                    nameText.text = name
-                    addressText.text = address
+                if (x != null && y != null && name != null && address != null) {
+                    binding.bottomSheetMap.nameText.text = name
+                    binding.bottomSheetMap.addressText.text = address
                     sheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
 
                     sharedPreferences.edit().putString("x", x.toString()).apply()
@@ -104,13 +109,15 @@ class MapActivity : AppCompatActivity() {
         mapView.pause()
     }
 
-    fun showLabel(kakaoMap: KakaoMap, x : Double, y : Double, name : String) {
+    fun showLabel(kakaoMap: KakaoMap, x: Double, y: Double, name: String) {
         // LabelStyles 생성하기
         val styles: LabelStyles? = kakaoMap.labelManager?.addLabelStyles(
             LabelStyles.from(
                 LabelStyle.from(R.mipmap.ic_place)
                     .setTextStyles(27, R.color.black, 1, R.color.black)
-                    .setApplyDpScale(false)))
+                    .setApplyDpScale(false)
+            )
+        )
 
         // LabelLayer 가져오기 (또는 커스텀 Layer 생성)
         val layer: LabelLayer? = kakaoMap.labelManager?.layer

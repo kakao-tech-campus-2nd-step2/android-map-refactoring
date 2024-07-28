@@ -5,12 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.ItemClickListener
-import campus.tech.kakao.map.KakaoMapItem
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.Room.MapItem
 
 class MapListAdapter(
-    var mapItemList: List<KakaoMapItem>, val layoutInflater: LayoutInflater
+    var mapItemList: List<MapItem>, val layoutInflater: LayoutInflater
 ) : RecyclerView.Adapter<MapListAdapter.ViewHolder>() {
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val name: TextView
@@ -48,9 +47,8 @@ class MapListAdapter(
         return mapItemList.size
     }
 
-    fun updateMapItemList(mapItemList: List<KakaoMapItem>) {
+    fun updateMapItemList(mapItemList: List<MapItem>) {
         this.mapItemList = mapItemList
         notifyDataSetChanged()
     }
-
 }

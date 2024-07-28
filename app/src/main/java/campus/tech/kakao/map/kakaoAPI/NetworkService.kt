@@ -1,15 +1,16 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.kakaoAPI
 
-import android.util.Log
+import campus.tech.kakao.map.Room.MapItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class NetworkService {
+class NetworkService @Inject constructor(private val retrofitService: RetrofitService) {
     var page: Int = 1
     var isEnd: Boolean? = false
 
-    suspend fun searchKakaoMapItem(category: String): MutableList<KakaoMapItem> {
-        val mapItemList = mutableListOf<KakaoMapItem>()
+    suspend fun searchKakaoMapItem(category: String): List<MapItem> {
+        val mapItemList = mutableListOf<MapItem>()
         page = 1
         isEnd = false
 
@@ -17,7 +18,15 @@ class NetworkService {
             val documents = searchKakaoMapItemByPage(category)
             documents?.forEach {
                 mapItemList.add(
-                    KakaoMapItem(it.id, it.place_name, it.address_name, it.category_group_name, it.x, it.y)
+                    MapItem(
+                        0,
+                        it.place_name,
+                        it.address_name,
+                        it.category_group_name,
+                        it.x,
+                        it.y,
+                        it.id
+                    )
                 )
             }
         } while (documents != null)
