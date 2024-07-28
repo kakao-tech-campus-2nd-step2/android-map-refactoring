@@ -1,18 +1,23 @@
 package campus.tech.kakao.map.repository.location
 
-import android.content.Context
-import androidx.room.Room
-import campus.tech.kakao.map.database.AppDatabase
+import campus.tech.kakao.map.entity.LocationEntity
 import campus.tech.kakao.map.model.Item
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class LocationSearcher(context: Context) {
-    private val db = Room.databaseBuilder(
-        context.applicationContext,
-        AppDatabase::class.java, "app-database"
-    ).build()
-    private val itemDao = db.itemDao()
+@Singleton
+class LocationSearcher @Inject constructor(private val itemDao: ItemDao) {
 
     suspend fun search(keyword: String): List<Item> {
-        return itemDao.search("%$keyword%")
+        val locationEntities = itemDao.searchByCategory(keyword)
+        return locationEntities.map {
+            Item(
+                place = it.placeName,
+                address = it.addressName,
+                category = it.categoryGroupName,
+                latitude = it.latitude,
+                longitude = it.longitude
+            )
+        }
     }
 }
