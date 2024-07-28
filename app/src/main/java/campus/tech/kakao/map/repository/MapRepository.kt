@@ -3,6 +3,7 @@ package campus.tech.kakao.map.repository
 import campus.tech.kakao.map.database.MapItemDao
 import campus.tech.kakao.map.network.KakaoApiService
 import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.util.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
