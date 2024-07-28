@@ -10,16 +10,21 @@ import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.model.PlaceResponse
 import campus.tech.kakao.map.model.RetrofitInstance
+import campus.tech.kakao.map.model.RetrofitService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
-class PlaceViewModel(private val context: Context) : ViewModel() {
 
+@HiltViewModel
+class PlaceViewModel @Inject constructor(
+    private val retrofitService: RetrofitService,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
-    private val retrofit = RetrofitInstance.api
-    private val sharedPreferences: SharedPreferences = context.getSharedPreferences("SavedQueries", Context.MODE_PRIVATE)
     private val _places = MutableLiveData<List<Document>>()
     private val _savedQueries = MutableLiveData<MutableList<String>>()
     val places: LiveData<List<Document>> get() = _places
@@ -64,12 +69,10 @@ class PlaceViewModel(private val context: Context) : ViewModel() {
     }
 
     private fun searchPlaces(query: String, categoryGroupName: String, callback: (List<Document>) -> Unit) {
-        retrofit.getPlaces(API_KEY, categoryGroupName, query).enqueue(object :
-            Callback<PlaceResponse> {
+        retrofitService.getPlaces(API_KEY, categoryGroupName, query).enqueue(object : Callback<PlaceResponse> {
             override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
                 if (response.isSuccessful) {
-                    val places = response.body()?.documents ?: emptyList()
-                    callback(places)
+                    callback(response.body()?.documents ?: emptyList())
                 } else {
                     Log.e("PlaceViewModel", "Failed to fetch places: ${response.errorBody()?.string()}")
                     callback(emptyList())

@@ -11,7 +11,6 @@ import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.view.MainActivity
 
 class PlaceAdapter(
-    private val context: Context,
     private var items: List<Document>,
     private val onItemClick: (Document) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
@@ -23,7 +22,7 @@ class PlaceAdapter(
             binding.root.setOnClickListener {
                 onItemClick(document)
 
-                
+                val context = binding.root.context
                 val sharedPreferences = context.getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
                 editor.putString(MainActivity.EXTRA_PLACE_LONGITUDE, document.x)
@@ -31,7 +30,6 @@ class PlaceAdapter(
                 editor.putString(MainActivity.EXTRA_PLACE_NAME, document.placeName)
                 editor.putString(MainActivity.EXTRA_PLACE_ADDRESSNAME, document.addressName)
                 editor.apply()
-
 
                 val intent = Intent(context, MainActivity::class.java)
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

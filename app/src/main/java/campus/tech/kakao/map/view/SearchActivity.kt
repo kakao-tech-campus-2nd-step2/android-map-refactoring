@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.viewmodel.PlaceAdapter
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
-import campus.tech.kakao.map.viewmodel.PlaceViewModelFactory
 import campus.tech.kakao.map.viewmodel.SavedPlaceAdapter
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity() {
 
-    private val viewModel: PlaceViewModel by viewModels { PlaceViewModelFactory(applicationContext) }
+    private val viewModel: PlaceViewModel by viewModels()
     private lateinit var binding: ActivitySearchBinding
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var savedPlaceAdapter: SavedPlaceAdapter
@@ -34,7 +35,7 @@ class SearchActivity : AppCompatActivity() {
         binding.recyclerViewSearchResults.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewSavedSearches.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        placeAdapter = PlaceAdapter(this, emptyList()) { place ->
+        placeAdapter = PlaceAdapter(emptyList()) { place ->
             viewModel.addSavedQuery(place.placeName)
         }
         binding.recyclerViewSearchResults.adapter = placeAdapter
