@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,11 +18,13 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.viewmodel.MapItem
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import campus.tech.kakao.map.R
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListener,
     KeywordAdapter.OnKeywordRemoveListener {
 
-    lateinit var mapViewModel: MapViewModel             // 유닛 테스트를 위해 public으로 변경
+    private val mapViewModel: MapViewModel by viewModels()
     private lateinit var etKeywords: EditText
     private lateinit var rvSearchResult: RecyclerView
     private lateinit var rvKeywords: RecyclerView
@@ -46,8 +49,6 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
 
         rvKeywords.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         rvKeywords.adapter = keywordAdapter
-
-        mapViewModel = ViewModelProvider(this).get(MapViewModel::class.java)
 
         etKeywords.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -94,6 +95,8 @@ class MainActivity : AppCompatActivity(), SearchResultAdapter.OnItemClickListene
                 finish()
             }
         })
+
+        mapViewModel.getSavedMapItems()
     }
 
     override fun onItemClick(item: MapItem) {
