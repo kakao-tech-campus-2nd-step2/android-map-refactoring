@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -47,13 +46,13 @@ class SearchActivityViewModel @Inject constructor(
         get() = _activeContent
 
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             mapViewRepository.loadFromSharedPreference()
         }
     }
 
     private fun search(query: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             searchResultRepository.search(query, BuildConfig.KAKAO_REST_API_KEY)
         }
         switchContent(ContentType.SEARCH_LIST)
@@ -61,17 +60,17 @@ class SearchActivityViewModel @Inject constructor(
 
 
     private fun deleteKeyword(keyword: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             keywordRepository.deleteKeyword(keyword)
         }
     }
     private fun addKeyword(keyword: String) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             keywordRepository.addKeyword(keyword)
         }
     }
     private fun updateLocation(item: LocationInfo) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             mapViewRepository.updateSelectedLocation(
                 item
             )
