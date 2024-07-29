@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 import campus.tech.kakao.map.repository.MapRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,11 +19,11 @@ class MapViewModel @Inject constructor(
 
     val searchQuery = MutableLiveData<String>()
 
-    private val _searchResults = MutableLiveData<List<MapItem>>(emptyList())
-    val searchResults: LiveData<List<MapItem>> = _searchResults
+    private val _searchResults = MutableLiveData<List<MapItemEntity>>(emptyList())
+    val searchResults: LiveData<List<MapItemEntity>> = _searchResults
 
-    private val _selectedItems = MutableLiveData<List<MapItem>>(emptyList())
-    val selectedItems: LiveData<List<MapItem>> get() = _selectedItems
+    private val _selectedItems = MutableLiveData<List<MapItemEntity>>(emptyList())
+    val selectedItems: LiveData<List<MapItemEntity>> get() = _selectedItems
 
     init {
         searchQuery.observeForever { query ->
@@ -42,19 +42,23 @@ class MapViewModel @Inject constructor(
         }
     }
 
-    fun selectItem(item: MapItem) {
+    fun selectItem(item: MapItemEntity) {
         _selectedItems.value = _selectedItems.value?.plus(item)
     }
 
-    fun removeSelectedItem(item: MapItem) {
+    fun removeSelectedItem(item: MapItemEntity) {
         _selectedItems.value = _selectedItems.value?.minus(item)
     }
 
-    fun setSelectedItems(items: List<MapItem>) {
+    fun setSelectedItems(items: List<MapItemEntity>) {
         _selectedItems.value = items
     }
 
-    fun setSearchResults(results: List<MapItem>) {
+    fun setSearchResults(results: List<MapItemEntity>) {
         _searchResults.value = results
+    }
+
+    fun clearSearchQuery() {
+        searchQuery.value = ""
     }
 }

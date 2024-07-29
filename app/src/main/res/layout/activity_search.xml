@@ -37,7 +37,7 @@
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:visibility="@{viewModel.searchQuery.isEmpty() ? View.GONE : View.VISIBLE}"
                 android:src="@drawable/ic_delete"
-                android:onClick="@{() -> viewModel.searchQuery.setValue('')}" />
+                android:onClick="@{() -> viewModel.clearSearchQuery()}" />
 
         </RelativeLayout>
 

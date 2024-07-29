@@ -143,6 +143,18 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    fun onSearchClick() {
+        val intent = Intent(this, SearchActivity::class.java)
+        intent.putExtra("selectedItemsSize", selectedItems.size)
+        selectedItems.forEachIndexed { index, mapItem ->
+            intent.putExtra("id_$index", mapItem.id)
+            intent.putExtra("place_name_$index", mapItem.place_name)
+            intent.putExtra("road_address_name_$index", mapItem.road_address_name)
+            intent.putExtra("category_group_name_$index", mapItem.category_group_name)
+        }
+        startActivityForResult(intent, SEARCH_REQUEST_CODE)
+    }
+
     // 결과 반환
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

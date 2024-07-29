@@ -4,14 +4,14 @@ import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.util.Log
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 import campus.tech.kakao.map.network.RetrofitInstance
 import campus.tech.kakao.map.util.Constants
 
 class MapAccess(context: Context) {
 
     // 검색어 기반 항목 검색 suspend 함수
-    suspend fun searchItems(query: String, page: Int = 1, size: Int = 15): List<MapItem> {
+    suspend fun searchItems(query: String, page: Int = 1, size: Int = 15): List<MapItemEntity> {
 
         return withContext(Dispatchers.IO) {
 

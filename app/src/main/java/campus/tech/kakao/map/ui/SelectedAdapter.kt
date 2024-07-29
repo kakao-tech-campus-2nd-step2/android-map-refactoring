@@ -4,19 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSelectedBinding
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 
 class SelectedAdapter(
 
-    private val onItemRemoved: (MapItem) -> Unit,
-    private val onItemClicked: (MapItem) -> Unit
+    private val onItemRemoved: (MapItemEntity) -> Unit,
+    private val onItemClicked: (MapItemEntity) -> Unit
 
 ) : RecyclerView.Adapter<SelectedAdapter.SelectedViewHolder>() {
 
-    private var items: List<MapItem> = emptyList()
+    private var items: List<MapItemEntity> = emptyList()
 
 
-    fun submitList(newItems: List<MapItem>) {
+    fun submitList(newItems: List<MapItemEntity>) {
         items = newItems
         notifyDataSetChanged()
     }
@@ -44,7 +44,7 @@ class SelectedAdapter(
     inner class SelectedViewHolder(private val binding: ItemSelectedBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: MapItem) {
+        fun bind(item: MapItemEntity) {
             binding.apply {
                 selectedItemName.text = item.place_name //상단에 이름만 표시
                 deleteButton.setOnClickListener { onItemRemoved(item) }

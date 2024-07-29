@@ -4,16 +4,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSearchResultBinding
-import campus.tech.kakao.map.model.MapItem
+import campus.tech.kakao.map.model.MapItemEntity
 
 class SearchAdapter(
-    private val onItemClicked: (MapItem) -> Unit  // 아이템 클릭 시 호출되는 함수
+    private val onItemClicked: (MapItemEntity) -> Unit  // 아이템 클릭 시 호출되는 함수
 ) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>() {
 
-    private var items: List<MapItem> = emptyList()  // 현재 목록을 저장하는 리스트
+    private var items: List<MapItemEntity> = emptyList()  // 현재 목록을 저장하는 리스트
 
     // 데이터를 갱신
-    fun submitList(newItems: List<MapItem>) {
+    fun submitList(newItems: List<MapItemEntity>) {
         items = newItems
         notifyDataSetChanged()  // 전체 데이터 갱신
     }
@@ -41,7 +41,7 @@ class SearchAdapter(
     inner class SearchViewHolder(private val binding: ItemSearchResultBinding) :
         RecyclerView.ViewHolder(binding.root) {  // 루트 view 초기화
         // 데이터 view에 바인딩
-        fun bind(item: MapItem) {
+        fun bind(item: MapItemEntity) {
             binding.apply {
                 itemName.text = item.place_name
                 itemAddress.text = item.road_address_name

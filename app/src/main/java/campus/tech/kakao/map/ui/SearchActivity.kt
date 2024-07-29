@@ -3,7 +3,6 @@ package campus.tech.kakao.map.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.app.Activity
 import android.content.Intent
+import android.view.View
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.model.MapItemEntity
@@ -96,7 +96,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setupClearTextButton() {
         binding.clearTextButton.setOnClickListener {
-            binding.searchEditText.text.clear()
+            viewModel.clearSearchQuery()
         }
     }
 

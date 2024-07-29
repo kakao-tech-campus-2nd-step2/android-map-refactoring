@@ -3,7 +3,7 @@ package campus.tech.kakao.map.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "MapItem")
+@Entity(tableName = "MapItemEntity")
 data class MapItemEntity(
     @PrimaryKey val id: Int,
     val place_name: String,
