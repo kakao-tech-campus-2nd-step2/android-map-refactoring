@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.adapter.keyword.KeywordAdapter
 import campus.tech.kakao.map.adapter.search.SearchAdapter
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Item
+import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,21 +61,21 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         }
 
         // 검색 결과 관찰하여 UI 업데이트
-        searchViewModel.items.observe(this) {
+        searchViewModel.locations.observe(this) {
             searchAdapter.submitList(it)
             binding.searchResultView.visibility = if (it.isEmpty()) View.GONE else View.VISIBLE
             binding.emptyView.visibility = if (it.isEmpty()) View.VISIBLE else View.GONE
         }
     }
 
-    override fun onSearchItemClick(item: Item) {
+    override fun onSearchItemClick(location: Location) {
         // 검색 항목 클릭 시 선택된 데이터를 반환하고 검색어 저장
-        keywordViewModel.saveKeyword(item.place)
+        keywordViewModel.saveKeyword(location.place)
         val resultIntent = Intent().apply {
-            putExtra("place_name", item.place)
-            putExtra("road_address_name", item.address)
-            putExtra("latitude", item.latitude)
-            putExtra("longitude", item.longitude)
+            putExtra("place_name", location.place)
+            putExtra("road_address_name", location.address)
+            putExtra("latitude", location.latitude)
+            putExtra("longitude", location.longitude)
         }
         setResult(Activity.RESULT_OK, resultIntent)
         finish()
