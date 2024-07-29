@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.PlaceItemBinding
 import campus.tech.kakao.map.domain.Place
 
 class PlaceRecyclerViewAdapter(
@@ -13,11 +14,7 @@ class PlaceRecyclerViewAdapter(
     private val onItemClick: (Place) -> Unit
 ) : RecyclerView.Adapter<PlaceRecyclerViewAdapter.PlaceViewHolder>() {
 
-    inner class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val placeName: TextView = itemView.findViewById(R.id.tvPlaceName)
-        val placeAddress: TextView = itemView.findViewById(R.id.tvPlaceAddress)
-        val placeCategory: TextView = itemView.findViewById(R.id.tvPlaceCategory)
-
+    inner class PlaceViewHolder(val binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
         init {
             itemView.setOnClickListener {
                 val position: Int = bindingAdapterPosition
@@ -28,9 +25,8 @@ class PlaceRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.place_item, parent, false)
-        return PlaceViewHolder(view)
+        val binding = PlaceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PlaceViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
@@ -39,13 +35,13 @@ class PlaceRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         val place = places[position]
-        holder.placeName.text = place.name
-        holder.placeAddress.text = place.address
-        holder.placeCategory.text = place.category
+        holder.binding.place = place
+        holder.binding.executePendingBindings()
     }
 
     fun updateData(newPlace: List<Place>) {
         places.clear()
         places.addAll(newPlace)
+        notifyDataSetChanged()
     }
 }

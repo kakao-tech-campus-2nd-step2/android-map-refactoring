@@ -2,16 +2,16 @@ package campus.tech.kakao.map.data
 
 import javax.inject.Inject
 
-class PlaceRepository @Inject constructor(private val placeDatabase: PlaceDatabase) {
+class PlaceRepository @Inject constructor(private val placeDao: PlaceDao) {
     suspend fun insertPlace(place: PlaceEntity) {
-        return placeDatabase.placeDao().insertPlace(place)
+        return placeDao.insertPlace(place)
     }
 
     suspend fun deletePlace(place: PlaceEntity) {
-        return placeDatabase.placeDao().deletePlace(place)
+        return placeDao.deletePlace(place)
     }
 
     suspend fun getAllPlaces(): MutableList<PlaceEntity> {
-        return placeDatabase.placeDao().getAllPlaces()
+        return placeDao.getAllPlaces()
     }
 }

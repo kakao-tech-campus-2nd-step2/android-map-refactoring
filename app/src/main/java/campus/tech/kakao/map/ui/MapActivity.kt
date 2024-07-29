@@ -1,16 +1,20 @@
 package campus.tech.kakao.map.ui
 
+import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
-import android.content.SharedPreferences.Editor
 import android.os.Bundle
-import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.databinding.MapLayoutBinding
+import campus.tech.kakao.map.domain.Place
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -22,122 +26,32 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
-import javax.inject.Named
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    @Inject
-    lateinit var sharedPreferences: SharedPreferences
-    @Inject
-    @Named("latitude")
-    lateinit var preferencesLatitude: String
-    @Inject
-    @Named("longitude")
-    lateinit var preferencesLongitude: String
 
     private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
-
-    private val startZoomLevel = 15
-    var latitude: String? = "35.234"
-    var longitude: String? = "129.0807"
-    private val startPosition = LatLng.from(latitude!!.toDouble(), longitude!!.toDouble())
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private val viewModel: MapViewModel by viewModels()
+    private var kakaoMap: KakaoMap ?= null
 
     private val readyCallback: KakaoMapReadyCallback = object : KakaoMapReadyCallback() {
         override fun onMapReady(kakaoMap: KakaoMap) {
+            this@MapActivity.kakaoMap = kakaoMap
             labelManager = kakaoMap.labelManager!!
-
-            val (intentLatitude, intentLongitude) = getLocationByIntent()
-            latitude = intentLatitude ?: preferencesLatitude
-            longitude = intentLongitude ?: preferencesLongitude
-
-            displayMapLocation(kakaoMap)
-
-            if (detectNotInitialScreen(intentLatitude, intentLongitude)) {
-                displayMarker()
-                displayBottomSheet()
-            }
-
-            saveLocation()
+            displayMapLocation()
         }
-
-        override fun getPosition(): LatLng {
-            return startPosition
-        }
-
-        override fun getZoomLevel(): Int {
-            return startZoomLevel
-        }
-
-    }
-
-    private fun detectNotInitialScreen(intentLatitude: String?, intentLongitude: String?) =
-        intentLatitude != null && intentLongitude != null
-
-    private fun displayMapLocation(kakaoMap: KakaoMap) {
-        val cameraUpdate = CameraUpdateFactory.newCenterPosition(
-            LatLng.from(
-                longitude!!.toDouble(),
-                latitude!!.toDouble()
-            )
-        )
-        kakaoMap.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
-    }
-
-    private fun getLocationByIntent(): Pair<String?, String?> {
-        val intentLatitude = intent.getStringExtra("latitude")
-        val intentLongitude = intent.getStringExtra("longitude")
-        return Pair(intentLatitude, intentLongitude)
-    }
-
-    fun saveLocation() {
-        val editor: Editor = sharedPreferences.edit()
-        editor.putString("latitude", latitude)
-        editor.putString("longitude", longitude)
-        editor.apply()
-    }
-
-    fun displayBottomSheet() {
-        val name = intent.getStringExtra("name").toString()
-        val address = intent.getStringExtra("address").toString()
-        val dataBundle = Bundle().apply {
-            putString("name", name)
-            putString("address", address)
-        }
-        val modal = ModalBottomSheet()
-        modal.arguments = dataBundle
-        modal.show(supportFragmentManager, "modalBottomSheet")
-    }
-
-    fun displayMarker() {
-        val pos = LatLng.from(longitude!!.toDouble(), latitude!!.toDouble())
-        val yellowMarker = labelManager.addLabelStyles(
-            LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker))
-        )
-        labelManager.layer!!.addLabel(
-            LabelOptions.from("label", pos)
-                .setStyles(yellowMarker)
-        )
     }
 
     private val lifeCycleCallback: MapLifeCycleCallback = object : MapLifeCycleCallback() {
 
         override fun onMapDestroy() {
-            Toast.makeText(
-                applicationContext, "onMapDestroy",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(applicationContext, "onMapDestroy", Toast.LENGTH_SHORT).show()
         }
 
         override fun onMapError(error: Exception) {
-            setContentView(R.layout.error_layout)
-            val tvError = findViewById<TextView>(R.id.tvError)
-            val btnRefresh = findViewById<ImageButton>(R.id.btnRefresh)
-            tvError.text = "지도 인증을 실패했습니다.\n 다시 시도해주세요.\n ${error.message}"
-            btnRefresh.setOnClickListener {
-                initializeMap()
-            }
+            viewModel.onMapError(error)
         }
     }
 
@@ -145,10 +59,44 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mapBinding = DataBindingUtil.setContentView(this, R.layout.map_layout)
         mapBinding.mapView.start(lifeCycleCallback, readyCallback)
-        mapBinding.etSearch.setOnClickListener {
-            val searchIntent = Intent(this, PlaceActivity::class.java)
-            startActivity(searchIntent)
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                labelManager.removeAllLabelLayer()
+                val place = getIntentData(result)
+                viewModel.updateLocationFromIntent(place)
+                viewModel.saveLocation()
+                displayUpdatedLocation()
+            }
         }
+
+        mapBinding.etSearch.setOnClickListener {
+            val intent = Intent(this, PlaceActivity::class.java)
+            activityResultLauncher.launch(intent)
+        }
+
+        viewModel.errorMessage.observe(this, Observer { message ->
+            if (message != null) {
+                val errorBinding: ErrorLayoutBinding = DataBindingUtil.setContentView(this, R.layout.error_layout)
+                errorBinding.viewModel = viewModel
+                errorBinding.lifecycleOwner = this
+            }
+        })
+    }
+
+    private fun displayUpdatedLocation() {
+        displayMapLocation()
+        displayBottomSheet()
+        displayMarker()
+    }
+
+    private fun getIntentData(result: ActivityResult): Place {
+        val name = result.data!!.getStringExtra("name")
+        val address = result.data!!.getStringExtra("address")
+        val category = result.data?.getStringExtra("category")
+        val latitude = result.data?.getStringExtra("latitude")
+        val longitude = result.data?.getStringExtra("longitude")
+        val place = Place(name!!, address!!, category, latitude, longitude)
+        return place
     }
 
     override fun onResume() {
@@ -161,7 +109,29 @@ class MapActivity : AppCompatActivity() {
         mapBinding.mapView.pause()
     }
 
-    private fun initializeMap() {
-        mapBinding.mapView.start(lifeCycleCallback, readyCallback)
+    private fun displayMapLocation() {
+        val cameraUpdate = CameraUpdateFactory.newCenterPosition(
+            LatLng.from(viewModel.longitude.value!!.toDouble(), viewModel.latitude.value!!.toDouble())
+        )
+        kakaoMap?.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
     }
+
+    private fun displayMarker() {
+        val pos = LatLng.from(viewModel.longitude.value!!.toDouble(), viewModel.latitude.value!!.toDouble())
+        val yellowMarker = labelManager.addLabelStyles(LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker)))
+        labelManager.layer!!.addLabel(
+            LabelOptions.from(pos).setStyles(yellowMarker)
+        )
+    }
+
+    private fun displayBottomSheet() {
+        val dataBundle = Bundle().apply {
+            putString("name", viewModel.name.value)
+            putString("address", viewModel.address.value)
+        }
+        val modal = ModalBottomSheet()
+        modal.arguments = dataBundle
+        modal.show(supportFragmentManager, "modalBottomSheet")
+    }
+
 }
