@@ -1,6 +1,6 @@
-package campus.tech.kakao.map.model
+package campus.tech.kakao.map.domain.model
 
-data class SavedSearchWord(
+data class SavedSearchWordDomain(
     val id: Long = 0,
     val name: String,
     val placeId: String,

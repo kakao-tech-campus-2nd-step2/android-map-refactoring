@@ -1,83 +1,83 @@
 package campus.tech.kakao.map.data.repository
 
-import android.content.SharedPreferences
-import campus.tech.kakao.map.model.Location
-import io.mockk.every
+import androidx.datastore.core.DataStore
+import campus.tech.kakao.map.domain.model.LocationDomain
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class DefaultLocationRepositoryTest {
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
+    private lateinit var dataStore: DataStore<LocationDomain>
     private lateinit var locationRepository: DefaultLocationRepository
+    private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setup() {
-        sharedPreferences = mockk()
-        editor = mockk()
-        locationRepository = DefaultLocationRepository(sharedPreferences)
+        Dispatchers.setMain(testDispatcher)
+        dataStore = mockk()
+        locationRepository = DefaultLocationRepository(dataStore)
+    }
 
-        every { sharedPreferences.edit() } returns editor
-        every { editor.putString(any(), any()) } returns editor
-        every { editor.apply() } returns Unit
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test
-    fun testSaveLocation() {
+    fun testSaveLocation() = runTest(testDispatcher) {
         // given
-        val markerData = Location("Test Place", 123.456, 78.90, "Test Address")
+        val location = LocationDomain("Test Place", 123.456, 78.90, "Test Address")
+        coEvery { dataStore.updateData(any()) } coAnswers {
+            val updateFunction = arg<suspend (LocationDomain) -> LocationDomain>(0)
+            updateFunction(location)
+            location
+        }
 
         // when
-        locationRepository.saveLocation(markerData)
+        locationRepository.saveLocation(location)
 
         // then
-        verify { editor.putString(MARKER_PLACE_NAME, markerData.name) }
-        verify { editor.putString(MARKER_LATITUDE, markerData.latitude.toString()) }
-        verify { editor.putString(MARKER_LONGITUDE, markerData.longitude.toString()) }
-        verify { editor.putString(MARKER_ADDRESS, markerData.address) }
-        verify { editor.apply() }
+        coVerify { dataStore.updateData(any()) }
     }
 
     @Test
-    fun testLoadLocation() {
-        // given
-        every { sharedPreferences.getString(MARKER_PLACE_NAME, any()) } returns "Test Place"
-        every { sharedPreferences.getString(MARKER_LATITUDE, any()) } returns "123.456"
-        every { sharedPreferences.getString(MARKER_LONGITUDE, any()) } returns "78.90"
-        every { sharedPreferences.getString(MARKER_ADDRESS, any()) } returns "Test Address"
+    fun testLoadLocation() = runTest {
+        val location = LocationDomain("Test Place", 123.456, 78.90, "Test Address")
+        val locationFlow = MutableStateFlow(location)
+        coEvery { dataStore.data } returns locationFlow
 
         // when
-        val markerData = locationRepository.loadLocation()
+        val result = locationRepository.loadLocation()
 
         // then
-        assertEquals("Test Place", markerData.name)
-        assertEquals(123.456, markerData.latitude, 0.0)
-        assertEquals(78.90, markerData.longitude, 0.0)
-        assertEquals("Test Address", markerData.address)
+        assertEquals(location, result)
     }
 
     @Test
-    fun `loadLocation 함수는 저장된 데이터가 없을 때 기본값을 반환한다`() {
+    fun `loadLocation 함수는 저장된 데이터가 없을 때 기본값을 반환한다`() = runTest(testDispatcher) {
         // given
-        every { sharedPreferences.getString(any(), any()) } returns null
+        coEvery { dataStore.data } returns flowOf()
 
-        // when
-        val markerData = locationRepository.loadLocation()
+        // When
+        val result = locationRepository.loadLocation()
 
-        // then
-        assertEquals("부산대 컴공관", markerData.name)
-        assertEquals(35.230934, markerData.latitude, 0.0)
-        assertEquals(129.082476, markerData.longitude, 0.0)
-        assertEquals("부산광역시 금정구 부산대학로 63번길 2", markerData.address)
-    }
-
-    companion object {
-        private const val MARKER_PLACE_NAME = "placeName"
-        private const val MARKER_LATITUDE = "latitude"
-        private const val MARKER_LONGITUDE = "longitude"
-        private const val MARKER_ADDRESS = "address"
+        // Then
+        assertEquals("부산대 컴공관", result.name)
+        assertEquals(35.230934, result.latitude, 0.0)
+        assertEquals(129.082476, result.longitude, 0.0)
+        assertEquals("부산광역시 금정구 부산대학로 63번길 2", result.address)
     }
 }

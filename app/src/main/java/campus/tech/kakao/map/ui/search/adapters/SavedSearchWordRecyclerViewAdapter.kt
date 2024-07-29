@@ -6,14 +6,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSavedSearchWordBinding
-import campus.tech.kakao.map.model.SavedSearchWord
-import campus.tech.kakao.map.ui.search.SearchActivity
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
 
 class SavedSearchWordRecyclerViewAdapter(
-    private val savedSearchWordClearImageViewClickListener: SearchActivity.OnSavedSearchWordClearImageViewClickListener,
-    private val savedSearchWordTextViewClickListener: SearchActivity.OnSavedSearchWordTextViewClickListener,
+    private val savedSearchWordClearImageViewClickListener: OnSavedSearchWordClearImageViewClickListener,
+    private val savedSearchWordTextViewClickListener: OnSavedSearchWordTextViewClickListener,
 ) :
-    ListAdapter<SavedSearchWord, SavedSearchWordRecyclerViewAdapter.SavedSearchWordViewHolder>(
+    ListAdapter<SavedSearchWordDomain, SavedSearchWordRecyclerViewAdapter.SavedSearchWordViewHolder>(
         SavedSearchWordDiffCallback(),
     ) {
     override fun onCreateViewHolder(
@@ -39,47 +40,44 @@ class SavedSearchWordRecyclerViewAdapter(
 
     class SavedSearchWordViewHolder(
         private val binding: ItemSavedSearchWordBinding,
-        private val savedSearchWordImageViewClickListener: SearchActivity.OnSavedSearchWordClearImageViewClickListener,
-        private val savedSearchWordTextViewClickListener: SearchActivity.OnSavedSearchWordTextViewClickListener,
+        private val savedSearchWordImageViewClickListener: OnSavedSearchWordClearImageViewClickListener,
+        private val savedSearchWordTextViewClickListener: OnSavedSearchWordTextViewClickListener,
     ) : RecyclerView.ViewHolder(binding.root) {
-
-        private lateinit var currentSavedSearchWord: SavedSearchWord
+        private lateinit var currentSavedSearchWord: SavedSearchWordDomain
 
         init {
             binding.savedSearchWordClearImageView.setOnClickListener {
                 savedSearchWordImageViewClickListener.onSavedSearchWordClearImageViewClicked(
-                    currentSavedSearchWord
+                    currentSavedSearchWord,
                 )
             }
 
             binding.savedSearchWordTextView.setOnClickListener {
                 savedSearchWordTextViewClickListener.onSavedSearchWordTextViewClicked(
-                    currentSavedSearchWord
+                    currentSavedSearchWord,
                 )
             }
         }
 
-        fun bind(savedSearchWord: SavedSearchWord) {
+        fun bind(savedSearchWord: SavedSearchWordDomain) {
             currentSavedSearchWord = savedSearchWord
             binding.savedSearchWordTextView.text = savedSearchWord.name
         }
     }
-
 }
 
-private class SavedSearchWordDiffCallback : DiffUtil.ItemCallback<SavedSearchWord>() {
+private class SavedSearchWordDiffCallback : DiffUtil.ItemCallback<SavedSearchWordDomain>() {
     override fun areItemsTheSame(
-        oldItem: SavedSearchWord,
-        newItem: SavedSearchWord,
+        oldItem: SavedSearchWordDomain,
+        newItem: SavedSearchWordDomain,
     ): Boolean {
         return oldItem.id == newItem.id
     }
 
     override fun areContentsTheSame(
-        oldItem: SavedSearchWord,
-        newItem: SavedSearchWord,
+        oldItem: SavedSearchWordDomain,
+        newItem: SavedSearchWordDomain,
     ): Boolean {
         return oldItem == newItem
     }
 }
-

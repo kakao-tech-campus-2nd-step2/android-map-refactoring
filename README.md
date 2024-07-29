@@ -1,12 +1,12 @@
-# android-map-location
+# android-map-refactoring
 
-- 카카오 테크 캠퍼스 과제(위치 검색 - 네트워크 통신) 수행을 위한 저장소입니다.
+- 카카오 테크 캠퍼스 과제(리팩토링 - 주요 라이브러리) 수행을 위한 저장소입니다.
 
 ## content
 
 - 실행 영상
   
-![week4_1](https://github.com/user-attachments/assets/d05c8ac7-06cf-48c3-ac21-809567de23c3)
+![week5_2](https://github.com/user-attachments/assets/8f1d5e09-d3f0-4578-ab3b-9b6a8d8c81c0)
 
 - 인증 에러시 화면
   
@@ -15,6 +15,11 @@
 ## flow chart
 
 ![map_location](https://github.com/user-attachments/assets/05e64aed-bcc6-4a3f-9a08-9bb5d2377702)
+
+
+## 프로젝트 구조도
+
+![카카오맵_구조도](https://github.com/user-attachments/assets/b0330d76-cd25-419c-8823-ceae2a779571)
 
 ## feature
 

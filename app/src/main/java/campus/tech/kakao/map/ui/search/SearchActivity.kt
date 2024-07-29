@@ -11,14 +11,16 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedSearchWord
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
+import campus.tech.kakao.map.domain.model.LocationDomain
+import campus.tech.kakao.map.domain.model.PlaceDomain
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
+import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.search.adapters.ResultRecyclerViewAdapter
 import campus.tech.kakao.map.ui.search.adapters.SavedSearchWordRecyclerViewAdapter
+import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
+import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -48,7 +50,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     /**
-     * view들에 필요한 작업을 처리하는 함수.
+     * view들을 설정하는 함수.
      */
     private fun setupViews() {
         setClearImageViewClickListener()
@@ -62,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setSearchEditText() {
         binding.searchEditText.addTextChangedListener { editable ->
             val categoryInput = editable.toString().trim()
-            placeViewModel.searchPlacesByCategory(categoryInput, totalPageCount = 3)
+            placeViewModel.updateCategoryInput(categoryInput, totalPageCount = 2)
         }
     }
 
@@ -77,10 +79,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    interface OnPlaceItemClickListener {
-        fun onPlaceItemClicked(place: Place)
-    }
-
     /**
      * 검색 결과를 표시하는 RecyclerView를 설정하는 함수.
      *
@@ -89,13 +87,9 @@ class SearchActivity : AppCompatActivity() {
     private fun setSearchResultRecyclerView() {
         val placeItemClickListener =
             object : OnPlaceItemClickListener {
-                override fun onPlaceItemClicked(place: Place) {
-                    insertSearchWord(place)
-                    navigateToMapActivity(
-                        place.name,
-                        place.address,
-                        place.longitude,
-                        place.latitude,
+                override fun onPlaceItemClicked(place: PlaceDomain) {
+                    savedSearchWordViewModel.handleUiEvent(
+                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWordDomain()),
                     )
                 }
             }
@@ -104,54 +98,15 @@ class SearchActivity : AppCompatActivity() {
     }
 
     /**
-     * 검색된 장소 정보를 저장하고 업데이트 함수.
-     *
-     * @param place 저장할 장소 정보를 담고 있는 Place 객체
-     */
-    private fun insertSearchWord(place: Place) {
-        savedSearchWordViewModel.insertSearchWord(
-            SavedSearchWord(
-                name = place.name,
-                placeId = place.id,
-                address = place.address,
-                latitude = place.latitude,
-                longitude = place.longitude,
-            ),
-        )
-        savedSearchWordViewModel.updateSavedSearchWords()
-    }
-
-    /**
      * MapActivity로 이동하는 함수.
      *
-     * Intent에 Place의 정보를 담아 전달.
-     *
-     * @param placeName 지도에 표시할 장소의 이름.
-     * @param placeAddress 지도에 표시할 장소의 주소.
-     * @param placeLongitude 지도에 표시할 장소의 경도.
-     * @param placeLatitude 지도에 표시할 장소의 위도.
+     * @param savedSearchWord 이동할 장소의 정보를 담고 있는 SavedSearchWord 객체.
      */
-    private fun navigateToMapActivity(
-        placeName: String,
-        placeAddress: String,
-        placeLongitude: Double,
-        placeLatitude: Double,
-    ) {
+    private fun navigateToMapActivity(savedSearchWord: SavedSearchWordDomain) {
         val intent = Intent()
-        intent.putExtra(EXTRA_PLACE_NAME, placeName)
-        intent.putExtra(EXTRA_PLACE_ADDRESS, placeAddress)
-        intent.putExtra(EXTRA_PLACE_LONGITUDE, placeLongitude)
-        intent.putExtra(EXTRA_PLACE_LATITUDE, placeLatitude)
+        intent.putExtra(EXTRA_LOCATION, savedSearchWord.toLocationDomain())
         setResult(RESULT_OK, intent)
         finish()
-    }
-
-    interface OnSavedSearchWordClearImageViewClickListener {
-        fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord)
-    }
-
-    interface OnSavedSearchWordTextViewClickListener {
-        fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWord)
     }
 
     /**
@@ -163,25 +118,22 @@ class SearchActivity : AppCompatActivity() {
     private fun setSavedSearchWordRecyclerView() {
         val savedSearchWordClearImageViewClickListener =
             object : OnSavedSearchWordClearImageViewClickListener {
-                override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWord) {
-                    savedSearchWordViewModel.deleteSearchWordById(savedSearchWord)
+                override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWordDomain) {
+                    savedSearchWordViewModel.handleUiEvent(
+                        SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(savedSearchWord),
+                    )
                 }
             }
         val savedSearchWordTextViewClickListener =
             object : OnSavedSearchWordTextViewClickListener {
-                override fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWord) {
-                    navigateToMapActivity(
-                        savedSearchWord.name,
-                        savedSearchWord.address,
-                        savedSearchWord.longitude,
-                        savedSearchWord.latitude,
-                    )
+                override fun onSavedSearchWordTextViewClicked(savedSearchWord: SavedSearchWordDomain) {
+                    navigateToMapActivity(savedSearchWord)
                 }
             }
         binding.savedSearchWordRecyclerView.adapter =
             SavedSearchWordRecyclerViewAdapter(
                 savedSearchWordClearImageViewClickListener,
-                savedSearchWordTextViewClickListener
+                savedSearchWordTextViewClickListener,
             )
         binding.savedSearchWordRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -193,6 +145,8 @@ class SearchActivity : AppCompatActivity() {
     private fun setupObservers() {
         collectSearchResults()
         collectSavedSearchWords()
+        collectSideEffects()
+        collectErrorMessages()
     }
 
     /**
@@ -227,5 +181,78 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    /**
+     * viewModel의 사이드 이펙트를 관찰하고 처리하는 함수.
+     */
+    private fun collectSideEffects() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                savedSearchWordViewModel.sideEffects.collect { sideEffect ->
+                    when (sideEffect) {
+                        is SavedSearchWordViewModel.SideEffect.NavigateToMapActivity -> {
+                            navigateToMapActivity(sideEffect.savedSearchWord)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * viewModel의 에러를 관찰하고 처리하는 함수.
+     */
+    private fun collectErrorMessages() {
+        collectPlaceErrorMessages()
+        collectSavedSearchWrodErrorMessages()
+    }
+
+    private fun collectPlaceErrorMessages() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                savedSearchWordViewModel.errorMessage.collectLatest { errorMessage ->
+                    errorMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectSavedSearchWrodErrorMessages() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placeViewModel.errorMessage.collectLatest { errorMessage ->
+                    errorMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Place 객체를 SavedSearchWord 객체로 변환하는 확장 함수.
+     *
+     * @return 변환된 SavedSearchWord 객체.
+     */
+    private fun PlaceDomain.toSavedSearchWordDomain(): SavedSearchWordDomain {
+        return SavedSearchWordDomain(
+            name = this.name,
+            placeId = this.id,
+            address = this.address,
+            latitude = this.latitude,
+            longitude = this.longitude,
+        )
+    }
+
+    private fun SavedSearchWordDomain.toLocationDomain(): LocationDomain {
+        return LocationDomain(
+            name = this.name,
+            latitude = this.latitude,
+            longitude = this.longitude,
+            address = this.address,
+        )
     }
 }

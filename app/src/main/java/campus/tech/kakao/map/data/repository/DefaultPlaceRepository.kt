@@ -1,9 +1,11 @@
 package campus.tech.kakao.map.data.repository
 
 import android.util.Log
+import campus.tech.kakao.map.data.mapper.map
 import campus.tech.kakao.map.data.network.PlaceResponse
 import campus.tech.kakao.map.data.network.service.KakaoLocalService
-import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.domain.model.PlaceDomain
+import campus.tech.kakao.map.domain.repository.PlaceRepository
 import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -32,17 +34,21 @@ constructor(
     override suspend fun getPlacesByCategory(
         categoryInput: String,
         totalPageCount: Int,
-    ): List<Place> {
-        val categoryGroupCode = categoryCodeMap[categoryInput] ?: return emptyList()
-        return fetchPlacesByCategory(categoryGroupCode, totalPageCount)
+    ): List<PlaceDomain> {
+        val categoryGroupCodes = categoryCodeMap.filterKeys { it.contains(categoryInput) }.values
+        if (categoryGroupCodes.isEmpty()) {
+            return emptyList()
+        }
+        return fetchPlacesByCategories(categoryGroupCodes, totalPageCount)
     }
 
-    private suspend fun fetchPlacesByCategory(
-        categoryGroupCode: String,
+    private suspend fun fetchPlacesByCategories(
+        categoryCodes: Collection<String>,
         totalPageCount: Int,
-    ): List<Place> {
-        val deferredResults =
-            createDeferredResults(categoryGroupCode, totalPageCount)
+    ): List<PlaceDomain> {
+        val deferredResults = categoryCodes.flatMap { categoryCode ->
+            createDeferredResults(categoryCode, totalPageCount)
+        }
 
         return processDeferredResults(deferredResults)
     }
@@ -67,8 +73,8 @@ constructor(
             }
         }
 
-    private suspend fun processDeferredResults(deferredResults: List<Deferred<PlaceResponse?>>): List<Place> {
-        val placeList = mutableListOf<Place>()
+    private suspend fun processDeferredResults(deferredResults: List<Deferred<PlaceResponse?>>): List<PlaceDomain> {
+        val placeList = mutableListOf<PlaceDomain>()
 
         val responses = deferredResults.awaitAll()
 
@@ -85,17 +91,10 @@ constructor(
 
     private fun handleSuccessfulResponse(
         response: PlaceResponse,
-        allPlaces: MutableList<Place>,
+        allPlaces: MutableList<PlaceDomain>,
     ) {
         response.documents.mapTo(allPlaces) { dto ->
-            Place(
-                id = dto.placeId,
-                name = dto.placeName,
-                address = dto.address,
-                category = dto.category,
-                longitude = dto.longitude,
-                latitude = dto.latitude,
-            )
+            dto.map()
         }
     }
 }

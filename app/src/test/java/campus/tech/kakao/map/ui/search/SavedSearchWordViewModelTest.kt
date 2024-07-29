@@ -1,15 +1,21 @@
 package campus.tech.kakao.map.ui.search
 
-import campus.tech.kakao.map.data.SavedSearchWordDBHelper
-import campus.tech.kakao.map.data.repository.DefaultSavedSearchWordRepository
-import campus.tech.kakao.map.data.repository.SavedSearchWordRepository
-import campus.tech.kakao.map.model.SavedSearchWord
+import android.util.Log
+import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
+import campus.tech.kakao.map.domain.usecase.DeleteSearchWordByIdUseCase
+import campus.tech.kakao.map.domain.usecase.GetAllSearchWordsUseCase
+import campus.tech.kakao.map.domain.usecase.InsertOrUpdateSearchWordUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.runs
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -20,23 +26,30 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class SavedSearchWordViewModelTest {
-    private val testDispatcher = UnconfinedTestDispatcher()
+    private val testDispatcher = StandardTestDispatcher()
 
     private lateinit var viewModel: SavedSearchWordViewModel
-    private lateinit var repository: SavedSearchWordRepository
-    private lateinit var dbHelper: SavedSearchWordDBHelper
-    private lateinit var searchWord1: SavedSearchWord
-    private lateinit var searchWord2: SavedSearchWord
+    private lateinit var insertOrUpdateSearchWordUseCase: InsertOrUpdateSearchWordUseCase
+    private lateinit var deleteSearchWordByIdUseCase: DeleteSearchWordByIdUseCase
+    private lateinit var getAllSearchWordsUseCase: GetAllSearchWordsUseCase
+    private lateinit var searchWord1: SavedSearchWordDomain
+    private lateinit var searchWord2: SavedSearchWordDomain
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        dbHelper = mockk(relaxed = true)
-        repository = DefaultSavedSearchWordRepository(dbHelper)
-        viewModel = SavedSearchWordViewModel(repository)
+        insertOrUpdateSearchWordUseCase = mockk()
+        deleteSearchWordByIdUseCase = mockk()
+        getAllSearchWordsUseCase = mockk()
+        viewModel = SavedSearchWordViewModel(
+            insertOrUpdateSearchWordUseCase,
+            deleteSearchWordByIdUseCase,
+            getAllSearchWordsUseCase,
+            testDispatcher,
+        )
 
         searchWord1 =
-            SavedSearchWord(
+            SavedSearchWordDomain(
                 id = 1L,
                 name = "부산대병원",
                 placeId = "1234",
@@ -45,7 +58,7 @@ class SavedSearchWordViewModelTest {
                 longitude = 12.34,
             )
         searchWord2 =
-            SavedSearchWord(
+            SavedSearchWordDomain(
                 id = 2L,
                 name = "부산대학교",
                 placeId = "1235",
@@ -53,6 +66,8 @@ class SavedSearchWordViewModelTest {
                 latitude = 124.567,
                 longitude = 23.45,
             )
+
+        mockLogClass()
     }
 
     @After
@@ -64,47 +79,88 @@ class SavedSearchWordViewModelTest {
     fun testInsertOrUpdateSearchWord() =
         runTest(testDispatcher) {
             // Given
-            coEvery { repository.insertOrUpdateSearchWord(any()) } returns Unit
-            coEvery { dbHelper.insertOrUpdateSearchWord(any()) } returns Unit
-            coEvery { repository.getAllSearchWords() } returns listOf(searchWord1, searchWord2)
-            coEvery { dbHelper.getAllSearchWords() } returns listOf(searchWord1, searchWord2)
+            coEvery { insertOrUpdateSearchWordUseCase(any()) } returns Unit
+            coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(searchWord1, searchWord2)
 
             // When
-            viewModel.insertSearchWord(searchWord1)
-            viewModel.updateSavedSearchWords()
-
-            viewModel.insertSearchWord(searchWord2)
-            viewModel.updateSavedSearchWords()
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+            viewModel.savedSearchWords.first { it.isNotEmpty() }
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord2))
+            viewModel.savedSearchWords.first { it.size == 2 }
 
             // Then
+            coVerify(exactly = 3) { getAllSearchWordsUseCase() }
+            coVerify { insertOrUpdateSearchWordUseCase(searchWord1) }
+            coVerify { insertOrUpdateSearchWordUseCase(searchWord2) }
             assertEquals(listOf(searchWord1, searchWord2), viewModel.savedSearchWords.value)
-            coVerify { repository.insertOrUpdateSearchWord(searchWord1) }
-            coVerify { repository.insertOrUpdateSearchWord(searchWord2) }
-
-            // init 포함 3번 호출 돼야 함
-            coVerify(exactly = 3) { repository.getAllSearchWords() }
         }
 
     @Test
     fun testDeleteSearchWordById() =
         runTest(testDispatcher) {
             // Given
-            coEvery { repository.deleteSearchWordById(searchWord2.id) } returns Unit
-            coEvery { dbHelper.deleteSearchWordById(searchWord2.id) } returns Unit
-            coEvery { repository.getAllSearchWords() } returns mutableListOf(searchWord1, searchWord2)
+            coEvery { insertOrUpdateSearchWordUseCase(any()) } just runs
+            coEvery { deleteSearchWordByIdUseCase(searchWord1.id) } just runs
+            coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(
+                searchWord1,
+                searchWord2,
+            ) andThen listOf(searchWord2)
 
-            println(viewModel.savedSearchWords.value)
             // When
-            viewModel.insertSearchWord(searchWord1)
-            viewModel.updateSavedSearchWords()
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+            viewModel.savedSearchWords.first { it.isNotEmpty() }
 
-            viewModel.insertSearchWord(searchWord2)
-            viewModel.updateSavedSearchWords()
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord2))
+            viewModel.savedSearchWords.first { it.size == 2 }
 
-            viewModel.deleteSearchWordById(searchWord2)
+            viewModel.handleUiEvent(
+                SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1),
+            )
+            viewModel.savedSearchWords.first { it.size == 1 }
 
             // Then
-            coVerify { repository.deleteSearchWordById(searchWord2.id) }
-            assertEquals(1, viewModel.savedSearchWords.value.size)
+            coVerify(exactly = 4) { getAllSearchWordsUseCase() }
+            coVerify { deleteSearchWordByIdUseCase(searchWord1.id) }
+            assertEquals(listOf(searchWord2), viewModel.savedSearchWords.value)
         }
+
+    @Test
+    fun testErrorMessageOnPlaceItemClicked() = runTest(testDispatcher) {
+        // Given
+        val exceptionMessage = "Test Exception"
+        coEvery { insertOrUpdateSearchWordUseCase(any()) } throws RuntimeException(exceptionMessage)
+
+        // When
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+
+        // Then
+        viewModel.errorMessage.first { it.equals("검색어 저장 중 에러가 발생하였습니다.") }
+        assertEquals("검색어 저장 중 에러가 발생하였습니다.", viewModel.errorMessage.value)
+    }
+
+    @Test
+    fun testErrorMessageOnSavedSearchWordClearImageViewClicked() = runTest(testDispatcher) {
+        // Given
+        val exceptionMessage = "Test Exception"
+        coEvery { insertOrUpdateSearchWordUseCase(any()) } just runs
+        coEvery { deleteSearchWordByIdUseCase(any()) } throws RuntimeException(exceptionMessage)
+        coEvery { getAllSearchWordsUseCase() } returns emptyList()
+
+        // When
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1))
+
+        // Then
+        viewModel.errorMessage.first { it.equals("검색어 삭제 중 에러가 발생하였습니다.") }
+        assertEquals("검색어 삭제 중 에러가 발생하였습니다.", viewModel.errorMessage.value)
+    }
+
+    private fun mockLogClass() {
+        mockkStatic(Log::class)
+        every { Log.v(any(), any()) } returns 0
+        every { Log.d(any(), any()) } returns 0
+        every { Log.i(any(), any()) } returns 0
+        every { Log.e(any(), any()) } returns 0
+        every { Log.e(any(), any(), any()) } returns 0
+    }
 }

@@ -1,13 +1,14 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("org.jlleitschuh.gradle.ktlint")
-    id("org.jetbrains.kotlin.plugin.serialization")
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
-    id("com.google.protobuf")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.gradle.ktlint)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.protobuf)
+    alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.kotlin.serialization)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -52,40 +53,49 @@ android {
 }
 
 dependencies {
-
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3")
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("androidx.activity:activity:1.8.0")
-    implementation("androidx.activity:activity-ktx:1.9.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1")
-    implementation("com.kakao.maps.open:android:2.9.5")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:0.8.0")
-    implementation("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    implementation("androidx.test:core-ktx:1.6.1")
-    implementation("androidx.test.ext:junit-ktx:1.2.1")
-    implementation("androidx.datastore:datastore-android:1.1.1")
-    implementation("com.google.protobuf:protobuf-javalite:3.22.3")
-    androidTestImplementation("androidx.test:runner:1.6.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("io.mockk:mockk:1.13.12")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-contrib:3.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-intents:3.3.0")
+    implementation(libs.core.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.constraintlayout)
+    implementation(libs.recyclerview)
+    implementation(libs.datastore.preferences)
+    implementation(libs.lifecycle.viewmodel.ktx)
+    implementation(libs.retrofit)
+    implementation(libs.activity)
+    implementation(libs.activity.ktx)
+    implementation(libs.serialization.json)
+    implementation(libs.kakao.maps)
+    implementation(libs.kotlin.stdlib)
+    implementation(libs.serialization.converter)
+    implementation(libs.okhttp)
+    implementation(libs.hilt.android)
+    implementation(libs.core.ktx.test)
+    implementation(libs.junit.ktx)
+    implementation(libs.datastore.android)
+    implementation(libs.protobuf.javalite)
+    androidTestImplementation(libs.runner)
+    ksp(libs.hilt.android.compiler)
+    implementation(libs.room.runtime)
+    ksp(libs.room.compiler)
+    implementation(libs.room.ktx)
+    testImplementation(libs.room.testing)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockk)
+    testImplementation(libs.mockk.agent)
+    testImplementation(libs.core.testing)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.hilt.android.testing)
+    testImplementation(libs.coroutines.test)
+    androidTestImplementation(libs.junit.ktx)
+    androidTestImplementation(libs.espresso.core)
+    androidTestImplementation(libs.espresso.contrib)
+    androidTestImplementation(libs.espresso.intents)
+    androidTestImplementation(libs.hilt.android.testing)
+    kspAndroidTest(libs.hilt.android.compiler)
 }
 
-kapt {
-    correctErrorTypes = true
+ktlint {
+    version = "0.49.1"
 }
 
 protobuf {

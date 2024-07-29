@@ -2,6 +2,7 @@ package campus.tech.kakao.map.ui.map
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -14,12 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
-import campus.tech.kakao.map.model.Location
+import campus.tech.kakao.map.domain.model.LocationDomain
+import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_MAP_ERROR_MESSAGE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
 import campus.tech.kakao.map.ui.search.SearchActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -31,6 +29,7 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -46,7 +45,6 @@ class MapActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         collectLocationUpdates()
-        setBottomSheet()
         startMapView()
         setSearchBoxClickListener()
         setSearchActivityResultLauncher()
@@ -89,26 +87,33 @@ class MapActivity : AppCompatActivity() {
     private fun handleSearchActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
-            val name = data?.getStringExtra(EXTRA_PLACE_NAME) ?: ""
-            val address = data?.getStringExtra(EXTRA_PLACE_ADDRESS) ?: ""
-            val longitude = data?.getDoubleExtra(EXTRA_PLACE_LONGITUDE, 0.0) ?: 0.0
-            val latitude = data?.getDoubleExtra(EXTRA_PLACE_LATITUDE, 0.0) ?: 0.0
 
-            val newLocation = Location(name, latitude, longitude, address)
-            locationViewModel.saveLocation(newLocation)
-            setBottomSheet()
+            val newLocation: LocationDomain? =
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    data?.getParcelableExtra(EXTRA_LOCATION, LocationDomain::class.java)
+                } else {
+                    data?.getParcelableExtra(EXTRA_LOCATION)
+                }
+
+            if (newLocation != null) {
+                saveLocationAndWaitForUpdate(newLocation)
+            }
             startMapView()
         }
     }
 
     /**
-     * bottom sheet의 name과 address의 text를 설정하는 함수.
+     * 위치를 저장하고 업데이트를 기다리는 함수.
      *
+     * @param newLocation 저장할 새로운 위치 객체.
      */
-    private fun setBottomSheet() {
-        locationViewModel.location.value.let { location ->
-            binding.bottomSheetPlaceNameTextView.text = location.name
-            binding.bottomSheetPlaceAddressTextView.text = location.address
+    private fun saveLocationAndWaitForUpdate(newLocation: LocationDomain) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                locationViewModel.saveLocation(newLocation)
+                locationViewModel.location
+                    .first { it == newLocation }
+            }
         }
     }
 
@@ -160,7 +165,7 @@ class MapActivity : AppCompatActivity() {
             override fun getPosition(): LatLng {
                 return LatLng.from(
                     locationViewModel.location.value.latitude,
-                    locationViewModel.location.value.longitude
+                    locationViewModel.location.value.longitude,
                 )
             }
         }
@@ -203,8 +208,8 @@ class MapActivity : AppCompatActivity() {
         return LabelOptions.from(
             LatLng.from(
                 locationViewModel.location.value.latitude,
-                locationViewModel.location.value.longitude
-            )
+                locationViewModel.location.value.longitude,
+            ),
         )
             .setStyles(labelManager.addLabelStyles(styles))
             .setTexts(locationViewModel.location.value.name)
