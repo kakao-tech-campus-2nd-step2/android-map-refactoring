@@ -53,7 +53,7 @@ class MainViewModel @Inject constructor(
 		}.join()
 	}
 
-	suspend fun loadWord(){
+	fun loadWord(){
 		viewModelScope.launch(Dispatchers.IO) {
 			_wordList.postValue(searchWordDao.getAll())
 		}
