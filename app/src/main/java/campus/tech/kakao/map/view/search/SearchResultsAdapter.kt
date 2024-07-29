@@ -2,7 +2,9 @@ package campus.tech.kakao.map.view.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.SearchResultItemBinding
 import campus.tech.kakao.map.model.search.Place
 
@@ -16,18 +18,21 @@ class SearchResultsAdapter(
     inner class ViewHolder(private val binding: SearchResultItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Place) {
-            binding.placeName.text = item.place_name
-            binding.addressName.text = item.address_name
-            binding.categoryName.text = item.category_name
-
+            binding.place = item
             binding.root.setOnClickListener {
-                itemClickListener?.onClick(item)
+                itemClickListener.onClick(item)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = SearchResultItemBinding.inflate(layoutInflater, parent, false)
+        val view: SearchResultItemBinding =
+            DataBindingUtil.inflate(
+                layoutInflater,
+                R.layout.search_result_item,
+                parent,
+                false
+            )
         return ViewHolder(view)
     }
 

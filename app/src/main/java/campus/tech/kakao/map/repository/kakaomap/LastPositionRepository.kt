@@ -1,16 +1,14 @@
 package campus.tech.kakao.map.repository.kakaomap
 
 import android.content.Context
+import android.content.SharedPreferences
 import campus.tech.kakao.map.view.ActivityKeys
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import com.kakao.vectormap.LatLng
+import javax.inject.Inject
 
-class LastPositionRepository(context: Context) {
-    private val sharedPreferences = context.getSharedPreferences(
-        ActivityKeys.PREFS,
-        Context.MODE_PRIVATE
-    )
+class LastPositionRepository @Inject constructor(private val sharedPreferences: SharedPreferences) {
 
     fun saveLastPosition(position: LatLng) {
         val editor = sharedPreferences.edit()
