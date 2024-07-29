@@ -26,10 +26,9 @@ import ksc.campus.tech.kakao.map.databinding.FragmentKakaoMapBinding
 import ksc.campus.tech.kakao.map.domain.models.LocationInfo
 import ksc.campus.tech.kakao.map.presentation.viewmodels.KakaoMapViewModel
 import ksc.campus.tech.kakao.map.presentation.viewmodels.SearchActivityViewModel
-import javax.inject.Inject
 
 @AndroidEntryPoint
-class KakaoMapFragment @Inject constructor() :
+class KakaoMapFragment:
     Fragment() {
 
     private val viewModel: SearchActivityViewModel by activityViewModels()

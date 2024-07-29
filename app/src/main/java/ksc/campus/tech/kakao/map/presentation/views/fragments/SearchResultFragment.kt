@@ -20,7 +20,6 @@ import ksc.campus.tech.kakao.map.domain.models.SearchResult
 import ksc.campus.tech.kakao.map.presentation.viewmodels.SearchActivityViewModel
 import ksc.campus.tech.kakao.map.presentation.viewmodels.SearchResultViewModel
 import ksc.campus.tech.kakao.map.presentation.views.adapters.SearchResultAdapter
-import javax.inject.Inject
 
 @BindingAdapter("app:items")
 fun attachList(recyclerView: RecyclerView, items: StateFlow<List<SearchResult>>?){
@@ -31,7 +30,7 @@ fun attachList(recyclerView: RecyclerView, items: StateFlow<List<SearchResult>>?
 
 
 @AndroidEntryPoint
-class SearchResultFragment @Inject constructor() :
+class SearchResultFragment:
     Fragment() {
     private val viewModel: SearchActivityViewModel by activityViewModels()
     private val searchViewModel: SearchResultViewModel by lazy{ ViewModelProvider(requireActivity())[SearchResultViewModel::class.java] }
