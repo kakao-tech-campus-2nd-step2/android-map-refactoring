@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -48,14 +49,15 @@ class PlaceActivity : AppCompatActivity() {
             places = placeList,
             onItemClick = { place ->
                 viewModel.addPlaceRecord(place)
-                val mapIntent = Intent(this, MapActivity::class.java).apply {
+                val intent = Intent(this, MapActivity::class.java).apply {
                     putExtra("name", place.name)
                     putExtra("address", place.address)
                     putExtra("category", place.category)
                     putExtra("latitude", place.x)
                     putExtra("longitude", place.y)
                 }
-                startActivity(mapIntent)
+                setResult(Activity.RESULT_OK, intent)
+                finish()
             }
         )
         placeBinding.rvPlaceList.adapter = placeAdapter

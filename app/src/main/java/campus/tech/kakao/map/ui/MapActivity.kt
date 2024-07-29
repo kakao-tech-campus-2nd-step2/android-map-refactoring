@@ -1,8 +1,12 @@
 package campus.tech.kakao.map.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -10,6 +14,7 @@ import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ErrorLayoutBinding
 import campus.tech.kakao.map.databinding.MapLayoutBinding
+import campus.tech.kakao.map.domain.Place
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
@@ -27,26 +32,16 @@ class MapActivity : AppCompatActivity() {
 
     private lateinit var mapBinding: MapLayoutBinding
     private lateinit var labelManager: LabelManager
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private val viewModel: MapViewModel by viewModels()
+    private var kakaoMap: KakaoMap ?= null
 
     private val readyCallback: KakaoMapReadyCallback = object : KakaoMapReadyCallback() {
         override fun onMapReady(kakaoMap: KakaoMap) {
+            this@MapActivity.kakaoMap = kakaoMap
             labelManager = kakaoMap.labelManager!!
-            viewModel.updateLocationFromIntent(intent)
-            displayMapLocation(kakaoMap)
-            viewModel.saveLocation()
-            viewModel.logSavedLocation()
-
-            viewModel.hasIntentData.observe(this@MapActivity, Observer { hasIntentData ->
-                if (hasIntentData) {
-                    displayMapLocation(kakaoMap)
-                    displayMarker()
-                    displayBottomSheet()
-                }
-            })
+            displayMapLocation()
         }
-
-
     }
 
     private val lifeCycleCallback: MapLifeCycleCallback = object : MapLifeCycleCallback() {
@@ -64,9 +59,19 @@ class MapActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         mapBinding = DataBindingUtil.setContentView(this, R.layout.map_layout)
         mapBinding.mapView.start(lifeCycleCallback, readyCallback)
+        activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                labelManager.removeAllLabelLayer()
+                val place = getIntentData(result)
+                viewModel.updateLocationFromIntent(place)
+                viewModel.saveLocation()
+                displayUpdatedLocation()
+            }
+        }
+
         mapBinding.etSearch.setOnClickListener {
             val intent = Intent(this, PlaceActivity::class.java)
-            startActivity(intent)
+            activityResultLauncher.launch(intent)
         }
 
         viewModel.errorMessage.observe(this, Observer { message ->
@@ -76,6 +81,22 @@ class MapActivity : AppCompatActivity() {
                 errorBinding.lifecycleOwner = this
             }
         })
+    }
+
+    private fun displayUpdatedLocation() {
+        displayMapLocation()
+        displayBottomSheet()
+        displayMarker()
+    }
+
+    private fun getIntentData(result: ActivityResult): Place {
+        val name = result.data!!.getStringExtra("name")
+        val address = result.data!!.getStringExtra("address")
+        val category = result.data?.getStringExtra("category")
+        val latitude = result.data?.getStringExtra("latitude")
+        val longitude = result.data?.getStringExtra("longitude")
+        val place = Place(name!!, address!!, category, latitude, longitude)
+        return place
     }
 
     override fun onResume() {
@@ -88,25 +109,18 @@ class MapActivity : AppCompatActivity() {
         mapBinding.mapView.pause()
     }
 
-    private fun initializeMap() {
-        mapBinding.mapView.start(lifeCycleCallback, readyCallback)
-    }
-
-    private fun displayMapLocation(kakaoMap: KakaoMap) {
+    private fun displayMapLocation() {
         val cameraUpdate = CameraUpdateFactory.newCenterPosition(
             LatLng.from(viewModel.longitude.value!!.toDouble(), viewModel.latitude.value!!.toDouble())
         )
-        kakaoMap.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
+        kakaoMap?.moveCamera(cameraUpdate, CameraAnimation.from(500, true, true))
     }
 
     private fun displayMarker() {
         val pos = LatLng.from(viewModel.longitude.value!!.toDouble(), viewModel.latitude.value!!.toDouble())
-        val yellowMarker = labelManager.addLabelStyles(
-            LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker))
-        )
+        val yellowMarker = labelManager.addLabelStyles(LabelStyles.from("yellowMarker", LabelStyle.from(R.drawable.yellow_marker)))
         labelManager.layer!!.addLabel(
-            LabelOptions.from("label", pos)
-                .setStyles(yellowMarker)
+            LabelOptions.from(pos).setStyles(yellowMarker)
         )
     }
 
