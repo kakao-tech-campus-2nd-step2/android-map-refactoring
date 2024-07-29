@@ -1,6 +1,7 @@
 package campus.tech.kakao.map
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -24,6 +25,8 @@ class MainViewModel @Inject constructor(
 	private val _wordList = MutableLiveData<List<SearchWord>>()
 	val wordList: LiveData<List<SearchWord>> get() =  _wordList
 
+//	private val _documentList = MutableLiveData<List<Document>>()
+//	val documentList: LiveData<List<Document>> get() = _documentList
 	val documentList: LiveData<List<Document>> get() = retrofitData.getDocuments()
 
 	private val _documentClicked = MutableLiveData<Boolean>()
@@ -57,6 +60,14 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun searchLocalAPI(query: String){
+//		viewModelScope.launch(Dispatchers.Main) {
+//			retrofitData.searchPlace(query)
+//				.collect { documents ->
+//					_documentList.value = documents
+//					Log.d("testt", documents.toString())
+//				}
+//
+//		}
 		retrofitData.searchPlace(query)
 	}
 
