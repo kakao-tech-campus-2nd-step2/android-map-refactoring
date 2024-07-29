@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -8,10 +8,10 @@ import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
-import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.domain.dto.PlaceVO
+import campus.tech.kakao.map.presentation.viewmodel.MapViewModel
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -47,6 +47,7 @@ class MapActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         handleIntentData()
+
         setUpMap()
         setUpSearchBox()
     }

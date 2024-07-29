@@ -6,8 +6,8 @@
             name="place"
             type="campus.tech.kakao.map.domain.dto.PlaceVO" />
         <variable
-            name="clickListener"
-            type="android.view.View.OnClickListener" />
+            name="viewModel"
+            type="campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel" />
     </data>
 
     <LinearLayout
@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:onClick="@{clickListener}"
+        android:onClick="@{() -> viewModel.onPlaceItemClick(place)}"
         android:padding="8dp">
 
         <ImageView

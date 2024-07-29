@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

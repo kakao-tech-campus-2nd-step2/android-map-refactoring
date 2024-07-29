@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.LiveData

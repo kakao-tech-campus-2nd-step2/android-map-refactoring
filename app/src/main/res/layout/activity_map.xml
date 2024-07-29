@@ -6,14 +6,14 @@
     <data>
         <variable
             name="viewModel"
-            type="campus.tech.kakao.map.presentation.MapViewModel" />
+            type="campus.tech.kakao.map.presentation.viewmodel.MapViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".presentation.MapActivity">
+        tools:context=".presentation.view.MapActivity">
 
         <com.kakao.vectormap.MapView
             android:id="@+id/mapView"

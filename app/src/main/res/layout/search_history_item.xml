@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <data>
-        <variable
-            name="history"
-            type="String" />
-        <variable
-            name="clickListener"
-            type="android.view.View.OnClickListener" />
-        <variable
-            name="deleteListener"
-            type="android.view.View.OnClickListener" />
-    </data>
+        <data>
+            <variable
+                name="history"
+                type="String" />
+            <variable
+                name="viewModel"
+                type="campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel" />
+        </data>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -28,7 +25,7 @@
             android:text="@{history}"
             android:textSize="16sp"
             android:paddingEnd="8dp"
-            android:onClick="@{clickListener}" />
+            android:onClick="@{() -> viewModel.onHistoryItemClick(history)}" />
 
         <ImageButton
             android:id="@+id/deleteHistoryButton"
@@ -37,6 +34,6 @@
             android:src="@drawable/cancel"
             android:contentDescription="삭제"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:onClick="@{deleteListener}" />
+            android:onClick="@{() -> viewModel.onHistoryItemDelete(history)}" />
     </LinearLayout>
 </layout>

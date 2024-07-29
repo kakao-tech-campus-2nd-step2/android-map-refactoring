@@ -15,8 +15,8 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import campus.tech.kakao.map.domain.dto.PlaceVO
-import campus.tech.kakao.map.presentation.MapActivity
-import campus.tech.kakao.map.presentation.PlaceActivity
+import campus.tech.kakao.map.presentation.view.MapActivity
+import campus.tech.kakao.map.presentation.view.PlaceActivity
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
 import org.junit.Test
