@@ -154,7 +154,7 @@ class MapActivity : AppCompatActivity() {
 
     private fun getLocationByIntent(): Location? {
         if (intent.hasExtra("location")) {
-            val location = intent.getSerializableExtra("location") as Location
+            val location = intent.getParcelableExtra("location", Location::class.java) // API 레벨 오류, 실행에는 문제없다.
             Log.d("jieun","getLocationByIntent location "+location.toString())
             return location
         }
