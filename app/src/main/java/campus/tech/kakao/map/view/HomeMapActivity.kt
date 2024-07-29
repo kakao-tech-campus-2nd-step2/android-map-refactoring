@@ -3,7 +3,7 @@ package campus.tech.kakao.map.view
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.TextView
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -21,13 +21,13 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
+import campus.tech.kakao.map.databinding.MapDetailBottomSheetBinding
 
 @AndroidEntryPoint
 class HomeMapActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeMapBinding
-
-    private lateinit var placeNameTextView: TextView
-    private lateinit var placeAddressTextView: TextView
+    private lateinit var bottomSheetBinding: MapDetailBottomSheetBinding
 
     private val mapViewModel: MapViewModel by viewModels()
 
@@ -39,14 +39,12 @@ class HomeMapActivity : AppCompatActivity() {
         enableEdgeToEdge()
 
         setBinding()
+        setViewModel()
 
-        val name = intent.getStringExtra(LocationDataContract.LOCATION_NAME).toString()
-        val address = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS).toString()
-        val latitude = intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
-        val longitude = intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
-
-        placeNameTextView = findViewById(R.id.placeName)
-        placeAddressTextView = findViewById(R.id.placeAddress)
+        val placeName = intent.getStringExtra(LocationDataContract.LOCATION_NAME).toString()
+        val placeAddress = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS).toString()
+        val placeLatitude = intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
+        val placeLongitude = intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
 
         bottomBehavior = BottomSheetBehavior.from(bottomSheet)
 
@@ -63,7 +61,7 @@ class HomeMapActivity : AppCompatActivity() {
             override fun onMapReady(p0: KakaoMap) {
 
                 // 라벨 생성
-                if (latitude != null && longitude != null) {
+                if (placeLatitude != null && placeLongitude != null) {
                     p0.labelManager
                     val style =
                         p0.labelManager?.addLabelStyles(
@@ -75,8 +73,8 @@ class HomeMapActivity : AppCompatActivity() {
                             )
                         )
                     val options =
-                        LabelOptions.from(LatLng.from(latitude, longitude)).setStyles(style)
-                            .setTexts(name)
+                        LabelOptions.from(LatLng.from(placeLatitude, placeLongitude)).setStyles(style)
+                            .setTexts(placeName)
                     val layer = p0.labelManager?.layer
                     layer?.addLabel(options)
                 }
@@ -91,8 +89,8 @@ class HomeMapActivity : AppCompatActivity() {
                     mapViewModel.getLocation(LocationDataContract.LOCATION_LONGITUDE, null)
                         .toDoubleOrNull()
 
-                return if (latitude != null && longitude != null) {
-                    LatLng.from(latitude, longitude)
+                return if (placeLatitude != null && placeLongitude != null) {
+                    LatLng.from(placeLatitude, placeLongitude)
                 } else if (savedLatitude != null && savedLongitude != null) {
                     LatLng.from(savedLatitude, savedLongitude)
                 } else {
@@ -101,10 +99,10 @@ class HomeMapActivity : AppCompatActivity() {
             }
         })
 
-        if (latitude != null && longitude != null) {
-            placeNameTextView.text = name
-            placeAddressTextView.text = address
+        if (placeLatitude != null && placeLongitude != null) {
             bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            mapViewModel.updateInfo(placeName,placeAddress)
+            Log.d("yeong", mapViewModel.placeInfoList.value.toString())
         } else {
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -143,5 +141,17 @@ class HomeMapActivity : AppCompatActivity() {
         binding = ActivityHomeMapBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        bottomSheetBinding = DataBindingUtil.inflate(
+            layoutInflater,
+            R.layout.map_detail_bottom_sheet,
+            findViewById(R.id.bottomSheet),
+            true
+        )
+        bottomSheetBinding.lifecycleOwner = this
+    }
+
+    private fun setViewModel(){
+        bottomSheetBinding.viewModel = mapViewModel
     }
 }
