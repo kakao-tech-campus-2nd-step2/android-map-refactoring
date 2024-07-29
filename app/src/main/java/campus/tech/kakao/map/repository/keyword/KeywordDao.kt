@@ -1,19 +1,20 @@
 package campus.tech.kakao.map.repository.keyword
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
 import androidx.room.Delete
-import campus.tech.kakao.map.model.Keyword
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import campus.tech.kakao.map.entity.KeywordEntity
 
 @Dao
 interface KeywordDao {
-    @Insert
-    suspend fun insert(keyword: Keyword)
+    @Query("SELECT * FROM keywords")
+    suspend fun getAllKeywords(): List<KeywordEntity>
 
-    @Query("SELECT * FROM keyword")
-    suspend fun getAllKeywords(): List<Keyword>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertKeyword(keyword: KeywordEntity)
 
     @Delete
-    suspend fun delete(keyword: Keyword)
+    suspend fun deleteKeyword(keyword: KeywordEntity)
 }

@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
+import campus.tech.kakao.map.view.OnKeywordItemClickListener
 
 class KeywordAdapter(private val onKeywordItemClickListener: OnKeywordItemClickListener) :
     ListAdapter<String, KeywordAdapter.KeywordViewHolder>(

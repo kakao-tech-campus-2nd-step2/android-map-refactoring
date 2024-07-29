@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import campus.tech.kakao.map.model.Item
+import campus.tech.kakao.map.model.Location
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,22 +16,22 @@ class MainViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     private val sharedPreferences: SharedPreferences = application.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-    private val _lastMarkerPosition = MutableLiveData<Item?>()
-    val lastMarkerPosition: LiveData<Item?> get() = _lastMarkerPosition
+    private val _lastMarkerPosition = MutableLiveData<Location?>()
+    val lastMarkerPosition: LiveData<Location?> get() = _lastMarkerPosition
 
     init {
         loadLastMarkerPosition()
     }
 
-    fun saveLastMarkerPosition(item: Item) {
+    fun saveLastMarkerPosition(location: Location) {
         with(sharedPreferences.edit()) {
-            putFloat(PREF_LATITUDE, item.latitude.toFloat())
-            putFloat(PREF_LONGITUDE, item.longitude.toFloat())
-            putString(PREF_PLACE_NAME, item.place)
-            putString(PREF_ROAD_ADDRESS_NAME, item.address)
+            putFloat(PREF_LATITUDE, location.latitude.toFloat())
+            putFloat(PREF_LONGITUDE, location.longitude.toFloat())
+            putString(PREF_PLACE_NAME, location.place)
+            putString(PREF_ROAD_ADDRESS_NAME, location.address)
             apply()
         }
-        _lastMarkerPosition.value = item
+        _lastMarkerPosition.value = location
     }
 
     private fun loadLastMarkerPosition() {
@@ -42,7 +42,7 @@ class MainViewModel @Inject constructor(
             val roadAddressName = sharedPreferences.getString(PREF_ROAD_ADDRESS_NAME, "") ?: ""
 
             _lastMarkerPosition.value = if (placeName.isNotEmpty() && roadAddressName.isNotEmpty()) {
-                Item(place = placeName, address = roadAddressName, category = "", latitude = latitude, longitude = longitude)
+                Location(place = placeName, address = roadAddressName, category = "", latitude = latitude, longitude = longitude)
             } else {
                 null
             }

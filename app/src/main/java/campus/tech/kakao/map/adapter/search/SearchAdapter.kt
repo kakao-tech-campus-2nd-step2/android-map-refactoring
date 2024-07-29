@@ -9,17 +9,17 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.Item
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
+import campus.tech.kakao.map.model.Location
+import campus.tech.kakao.map.view.OnSearchItemClickListener
 
 class SearchAdapter(
     private val onSearchItemClickListener: OnSearchItemClickListener
-) : ListAdapter<Item, SearchAdapter.SearchViewHolder>(
-    object : DiffUtil.ItemCallback<Item>() {
-        override fun areItemsTheSame(oldItem: Item, newItem: Item) =
+) : ListAdapter<Location, SearchAdapter.SearchViewHolder>(
+    object : DiffUtil.ItemCallback<Location>() {
+        override fun areItemsTheSame(oldItem: Location, newItem: Location) =
             oldItem.place == newItem.place
 
-        override fun areContentsTheSame(oldItem: Item, newItem: Item) =
+        override fun areContentsTheSame(oldItem: Location, newItem: Location) =
             oldItem == newItem
     }
 ) {
@@ -39,13 +39,13 @@ class SearchAdapter(
         private val address: TextView = view.findViewById(R.id.address)
         private val category: TextView = view.findViewById(R.id.category)
 
-        fun bindViewHolder(item: Item, onSearchItemClickListener: OnSearchItemClickListener) {
-            place.text = item.place
-            address.text = item.address
-            category.text = item.category
+        fun bindViewHolder(location: Location, onSearchItemClickListener: OnSearchItemClickListener) {
+            place.text = location.place
+            address.text = location.address
+            category.text = location.category
 
             itemList.setOnClickListener {
-                onSearchItemClickListener.onSearchItemClick(item)
+                onSearchItemClickListener.onSearchItemClick(location)
             }
         }
     }
