@@ -6,7 +6,7 @@ import ksc.campus.tech.kakao.map.data.apis.SearchKeywordDB
 import ksc.campus.tech.kakao.map.data.entities.SearchKeywordEntity
 import javax.inject.Inject
 
-class SearchKeywordRemoteDataSource @Inject constructor(
+class SearchKeywordLocalDataSource @Inject constructor(
     private val roomDB: SearchKeywordDB
 ) {
     fun insertOrReplaceKeyword(keyword: String) {

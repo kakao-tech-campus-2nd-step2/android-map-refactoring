@@ -8,19 +8,19 @@ import io.mockk.verify
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import ksc.campus.tech.kakao.map.data.datasources.SearchKeywordRemoteDataSource
+import ksc.campus.tech.kakao.map.data.datasources.SearchKeywordLocalDataSource
 import ksc.campus.tech.kakao.map.data.repositoryimpls.SearchKeywordRepositoryImpl
 import org.junit.Before
 import org.junit.Test
 
 class TestSearchKeywordRepository {
-    lateinit var mockDataSource:SearchKeywordRemoteDataSource
+    lateinit var mockDataSource:SearchKeywordLocalDataSource
     lateinit var repository: SearchKeywordRepositoryImpl
 
     val dummyDataInsideDataSource = listOf("Test Keyword")
     @Before
     fun setupMockedDataSource(){
-        mockDataSource = mockk<SearchKeywordRemoteDataSource>()
+        mockDataSource = mockk<SearchKeywordLocalDataSource>()
 
         every {
             mockDataSource.insertOrReplaceKeyword(any())
