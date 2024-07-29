@@ -7,10 +7,6 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
-import campus.tech.kakao.map.viewModel.factory.MapViewModelFactory
-import campus.tech.kakao.map.repository.PreferenceRepository
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.LocationDataContract
 import campus.tech.kakao.map.databinding.ActivityHomeMapBinding
@@ -23,36 +19,29 @@ import com.kakao.vectormap.MapLifeCycleCallback
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.activity.viewModels
 
+@AndroidEntryPoint
 class HomeMapActivity : AppCompatActivity() {
-    private lateinit var bindingHomeMap: ActivityHomeMapBinding
-
-    //private lateinit var bindingBottomSheet: MapDetailBottomSheetBinding
-    private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
-    private lateinit var mapViewModel: MapViewModel
-    private lateinit var prefersRepo: PreferenceRepository
+    private lateinit var binding: ActivityHomeMapBinding
 
     private lateinit var placeNameTextView: TextView
     private lateinit var placeAddressTextView: TextView
 
-    lateinit var locationName: String
-    lateinit var locationAddress: String
+    private val mapViewModel: MapViewModel by viewModels()
 
     private val bottomSheet: ConstraintLayout by lazy { findViewById(R.id.bottomSheet) }
+    private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        bindingHomeMap = DataBindingUtil.setContentView(this, R.layout.activity_home_map)
-        //bindingBottomSheet = DataBindingUtil.setContentView(this, R.layout.map_detail_bottom_sheet)
+        setBinding()
 
-        prefersRepo = PreferenceRepository(applicationContext)
-        mapViewModel =
-            ViewModelProvider(this, MapViewModelFactory(prefersRepo))[MapViewModel::class.java]
-
-        locationName = intent.getStringExtra(LocationDataContract.LOCATION_NAME).toString()
-        locationAddress = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS).toString()
+        val name = intent.getStringExtra(LocationDataContract.LOCATION_NAME).toString()
+        val address = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS).toString()
         val latitude = intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
         val longitude = intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
 
@@ -62,7 +51,7 @@ class HomeMapActivity : AppCompatActivity() {
         bottomBehavior = BottomSheetBehavior.from(bottomSheet)
 
         //KaKao Map UI에 띄우기
-        bindingHomeMap.mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
             }
 
@@ -87,7 +76,7 @@ class HomeMapActivity : AppCompatActivity() {
                         )
                     val options =
                         LabelOptions.from(LatLng.from(latitude, longitude)).setStyles(style)
-                            .setTexts(locationName)
+                            .setTexts(name)
                     val layer = p0.labelManager?.layer
                     layer?.addLabel(options)
                 }
@@ -113,14 +102,14 @@ class HomeMapActivity : AppCompatActivity() {
         })
 
         if (latitude != null && longitude != null) {
-            placeNameTextView.text = locationName
-            placeAddressTextView.text = locationAddress
+            placeNameTextView.text = name
+            placeAddressTextView.text = address
             bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        bindingHomeMap.searchbarHome.setOnClickListener {
+        binding.searchbarHome.setOnClickListener {
             val intent = Intent(this, DataSearchActivity::class.java)
             startActivity(intent)
         }
@@ -128,12 +117,12 @@ class HomeMapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        bindingHomeMap.mapView.resume()
+        binding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        bindingHomeMap.mapView.pause()
+        binding.mapView.pause()
     }
 
     override fun onDestroy() {
@@ -148,5 +137,11 @@ class HomeMapActivity : AppCompatActivity() {
         val intentError = Intent(this@HomeMapActivity, MapErrorActivity::class.java)
         intentError.putExtra("ERROR_MESSAGE", errorMsg.toString())
         startActivity(intentError)
+    }
+
+    private fun setBinding(){
+        binding = ActivityHomeMapBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
     }
 }

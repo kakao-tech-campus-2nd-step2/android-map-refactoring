@@ -2,10 +2,13 @@ package campus.tech.kakao.map.viewModel
 
 import androidx.lifecycle.ViewModel
 import campus.tech.kakao.map.repository.PreferenceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-
-class MapViewModel(repository: PreferenceRepository) : ViewModel() {
-    private val prefersRepo = repository
+@HiltViewModel
+class MapViewModel @Inject constructor(
+    private val prefersRepo: PreferenceRepository
+) : ViewModel() {
 
     fun saveLocation(locationKey: String, data: String) {
         prefersRepo.setString(locationKey, data)
