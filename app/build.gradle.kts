@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
     kotlin("plugin.serialization") version "1.9.0"
 }
 
@@ -24,6 +25,7 @@ android {
 
         resValue("string", "KAKAO_API_KEY", getApiKey("KAKAO_API_KEY"))
         buildConfigField("String", "KAKAO_REST_API_KEY", getApiKey("KAKAO_REST_API_KEY"))
+        buildConfigField("String", "KAKAO_API_URL", getApiKey("KAKAO_API_URL"))
 
     }
 
@@ -51,13 +53,14 @@ android {
     }
 
     buildFeatures {
+        dataBinding = true
         viewBinding = true
         buildConfig = true
     }
 }
 
 dependencies {
-
+    val fragment_version = "1.6.0"
     implementation("com.google.dagger:hilt-android:2.48.1")
     implementation ("androidx.activity:activity-ktx:1.2.2")
     implementation ("androidx.fragment:fragment-ktx:1.3.3")
@@ -72,13 +75,14 @@ dependencies {
     implementation("com.kakao.maps.open:android:2.9.5")
     implementation("androidx.activity:activity:1.8.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
-    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
     testImplementation("junit:junit:4.13.2")
     testImplementation("com.google.dagger:hilt-android-testing:2.48.1")
-    debugImplementation ("androidx.fragment:fragment-testing:1.6.0")
+    testImplementation("io.mockk:mockk:1.12.4")
+    debugImplementation ("androidx.fragment:fragment-testing:$fragment_version")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation ("androidx.fragment:fragment-testing:1.6.0")
+    androidTestImplementation ("androidx.fragment:fragment-testing:$fragment_version")
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.48.1")
     kapt("com.google.dagger:hilt-compiler:2.48.1")
     kapt("androidx.room:room-compiler:2.6.1")

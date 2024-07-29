@@ -1,18 +1,20 @@
 package ksc.campus.tech.kakao.map
 
-import ksc.campus.tech.kakao.map.models.repositories.MapViewRepository
-import ksc.campus.tech.kakao.map.models.repositories.SearchKeywordRepository
-import ksc.campus.tech.kakao.map.models.repositories.SearchResultRepository
-import ksc.campus.tech.kakao.map.models.repositoriesImpl.MapViewRepositoryImpl
-import ksc.campus.tech.kakao.map.models.repositoriesImpl.SearchKeywordRepositoryImpl
-import ksc.campus.tech.kakao.map.models.repositoriesImpl.SearchResultRepositoryImpl
+import android.app.Application
+import android.util.Log
+import com.kakao.vectormap.KakaoMapSdk
+import dagger.hilt.android.HiltAndroidApp
 
-class MainApplication: MyApplication() {
+@HiltAndroidApp
+class MainApplication: Application() {
     override fun onCreate() {
-        appContainer.addSingleton<SearchKeywordRepository>(SearchKeywordRepositoryImpl(this))
-        appContainer.addSingleton<SearchResultRepository>(SearchResultRepositoryImpl())
-        appContainer.addSingleton<MapViewRepository>(MapViewRepositoryImpl())
-
         super.onCreate()
+
+        try {
+            KakaoMapSdk.init(this, resources.getString(R.string.KAKAO_API_KEY))
+        } catch (e: Exception) {
+            Log.e("KSC", e.message ?: "")
+            Log.e("KSC", e.stackTraceToString())
+        }
     }
 }

@@ -1,20 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="ksc.campus.tech.kakao.map.views.fragments.SearchResultFragment">
-
-    <TextView
-        android:id="@+id/text_no_result"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="searchResult"
+            type="ksc.campus.tech.kakao.map.domain.models.SearchResult"
+            />
+        <variable
+            name="viewModel"
+            type="ksc.campus.tech.kakao.map.presentation.viewmodels.SearchResultViewModel" />
+    </data>
+    <FrameLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_search_result"
-        android:visibility="gone" />
+        tools:context="ksc.campus.tech.kakao.map.presentation.views.fragments.SearchResultFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/list_search_result"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/no_search_result"
+            android:visibility="@{viewModel.searchResult.empty ? View.VISIBLE : View.GONE}" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            app:items="@{viewModel.searchResult}"
+            android:id="@+id/list_search_result"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+</layout>
