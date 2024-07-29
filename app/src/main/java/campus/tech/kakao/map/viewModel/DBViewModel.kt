@@ -7,9 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.room.SearchHistoryData
 import campus.tech.kakao.map.dataRepository.SearchHistoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DBViewModel(private val searchHistoryRepo: SearchHistoryRepository) : ViewModel() {
+@HiltViewModel
+class DBViewModel @Inject constructor(
+    private val searchHistoryRepo: SearchHistoryRepository
+) : ViewModel() {
 
     private val _searchHistoryDataList = MutableLiveData<List<SearchHistoryData>>()
     private val searchHistoryDataList: LiveData<List<SearchHistoryData>> = _searchHistoryDataList

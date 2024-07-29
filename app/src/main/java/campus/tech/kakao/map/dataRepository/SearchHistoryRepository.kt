@@ -5,10 +5,20 @@ import android.util.Log
 import campus.tech.kakao.map.data.room.SearchHistoryDao
 import campus.tech.kakao.map.data.room.SearchHistoryData
 import campus.tech.kakao.map.data.room.SearchHistoryDatabase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SearchHistoryRepository(context: Context) {
+@Singleton
+class SearchHistoryRepository @Inject constructor(
+    @ApplicationContext context: Context
+) {
 
     private val searchHistoryDao: SearchHistoryDao =
         SearchHistoryDatabase.getDatabase(context).searchHistoryDao()
