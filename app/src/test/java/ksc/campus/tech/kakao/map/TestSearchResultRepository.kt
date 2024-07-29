@@ -1,10 +1,10 @@
 package ksc.campus.tech.kakao.map
 
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.slot
 import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import ksc.campus.tech.kakao.map.data.datasources.SearchResultCachedRemoteDataSource
@@ -23,13 +23,7 @@ class TestSearchResultRepository {
 
     @Before
     fun setupMockedDataSource() {
-        val searchResultSlot = slot<String>()
         mockCachedRemoteDataSource = mockk<SearchResultCachedRemoteDataSource>()
-        every {
-            mockCachedRemoteDataSource.getSearchResult(capture(searchResultSlot), any(), any())
-        } returns flow {
-            emit(makeDummyResponseDocument(searchResultSlot.captured))
-        }
     }
 
     @Test
@@ -39,6 +33,11 @@ class TestSearchResultRepository {
         val expectedResponse = makeDummyResponseDocument(query).map {
             KakaoSearchDtoMapper.mapSearchResponseToSearchResult(it)
         }
+
+        coEvery {
+            mockCachedRemoteDataSource.getSearchResult(any(), any(), any())
+        } returns makeDummyResponseDocument(query)
+
         val repository = SearchResultRepositoryImpl(mockCachedRemoteDataSource)
         var collectedData:List<SearchResult>? = null
 
@@ -46,11 +45,12 @@ class TestSearchResultRepository {
         //when
         runBlocking {
             val job = launch{
-                repository.searchResult.collect{
+                repository.searchResult.collectLatest{
                     collectedData = it
                 }
             }
             repository.search(query, "")
+            delay(100)
             job.cancel()
         }
 

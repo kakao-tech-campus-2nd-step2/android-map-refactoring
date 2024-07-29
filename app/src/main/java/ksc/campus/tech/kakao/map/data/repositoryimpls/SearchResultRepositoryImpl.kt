@@ -2,7 +2,6 @@ package ksc.campus.tech.kakao.map.data.repositoryimpls
 
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collectLatest
 import ksc.campus.tech.kakao.map.data.datasources.SearchResultCachedRemoteDataSource
 import ksc.campus.tech.kakao.map.data.mapper.KakaoSearchDtoMapper
 import ksc.campus.tech.kakao.map.domain.models.SearchResult
@@ -18,12 +17,12 @@ class SearchResultRepositoryImpl @Inject constructor(
         get() = _searchResult
 
     override suspend fun search(text: String, apiKey: String){
-        searchResultRemoteDataSource.getSearchResult(text, apiKey, BATCH_COUNT).collectLatest {documents->
-            val searchResults = documents.map {
-                KakaoSearchDtoMapper.mapSearchResponseToSearchResult(it)
-            }
-            _searchResult.emit(searchResults)
+        _searchResult.emit(listOf())
+
+        val result = searchResultRemoteDataSource.getSearchResult(text, apiKey, BATCH_COUNT).map {
+            KakaoSearchDtoMapper.mapSearchResponseToSearchResult(it)
         }
+        _searchResult.emit(result)
     }
 
     companion object{

@@ -17,7 +17,7 @@ class SearchResultRemoteDataSource @Inject constructor(
     private fun responseToArray(response: Response<KakaoSearchDTO>): List<Document> =
         response.body()?.documents ?: listOf()
 
-    fun getSearchResult(
+    suspend fun getSearchResult(
         query: String,
         apiKey: String,
         batchCount: Int
@@ -40,7 +40,7 @@ class SearchResultRemoteDataSource @Inject constructor(
         }
     }
 
-    private fun batchSearchByKeyword(
+    private suspend fun batchSearchByKeyword(
         query: String,
         apiKey: String,
         page: Int,
@@ -54,7 +54,7 @@ class SearchResultRemoteDataSource @Inject constructor(
 
         val result = mutableListOf<Document>()
         val response =
-            retrofitService.requestSearchResultByKeyword("KakaoAK $apiKey", query, page).execute()
+            retrofitService.requestSearchResultByKeyword("KakaoAK $apiKey", query, page)
 
         if (!response.isSuccessful) {
             Log.e("KSC", "Message: ${response.message()}")
