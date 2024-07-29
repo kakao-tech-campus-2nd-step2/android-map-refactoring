@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -35,7 +36,6 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickL
         savedLocationAdapter = SavedLocationAdapter(this)
 
         setupSearchEditText()
-        setupClearButton()
         setupViewModels()
         setupRecyclerViews()
     }
@@ -46,17 +46,14 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickL
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 val query = s.toString()
+                if(query.isEmpty()) return
                 locationViewModel.searchLocationsFromKakaoAPI(query) { searchLocationsSize ->
                     handleNoResultMessage(searchLocationsSize)
                 }
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
         activityMainBinding.searchEditTextMain.requestFocus()
-    }
-
-    private fun setupClearButton() {
         activityMainBinding.searchClickListener = this
     }
 
