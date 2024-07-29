@@ -14,7 +14,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _searchDataList = MutableLiveData<List<Document>>()
-    val searchResults: LiveData<List<Document>> get() = _searchDataList
+    private val searchResults: LiveData<List<Document>> get() = _searchDataList
 
     fun loadResultData(searchQuery: String) {
         repository.loadResultMapData(searchQuery) { documents ->
