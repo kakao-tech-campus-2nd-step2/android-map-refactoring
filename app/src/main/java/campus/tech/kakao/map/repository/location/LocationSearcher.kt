@@ -5,10 +5,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocationSearcher @Inject constructor(private val itemDao: ItemDao) {
+class LocationSearcher @Inject constructor(private val locationDao: LocationDao) {
 
     suspend fun search(keyword: String): List<Item> {
-        val locationEntities = itemDao.searchByCategory(keyword)
+        val locationEntities = locationDao.searchByCategory(keyword)
         return locationEntities.map {
             Item(
                 place = it.placeName,

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import campus.tech.kakao.map.database.AppDatabase
 import campus.tech.kakao.map.repository.keyword.KeywordDao
-import campus.tech.kakao.map.repository.location.ItemDao
+import campus.tech.kakao.map.repository.location.LocationDao
 import campus.tech.kakao.map.repository.keyword.KeywordRepository
 import campus.tech.kakao.map.repository.location.LocationSearcher
 import dagger.Module
@@ -38,8 +38,8 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideItemDao(database: AppDatabase): ItemDao {
-        return database.itemDao()
+    fun provideItemDao(database: AppDatabase): LocationDao {
+        return database.locationDao()
     }
 
     @Provides
@@ -50,7 +50,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideLocationSearcher(itemDao: ItemDao): LocationSearcher {
-        return LocationSearcher(itemDao)
+    fun provideLocationSearcher(locationDao: LocationDao): LocationSearcher {
+        return LocationSearcher(locationDao)
     }
 }
