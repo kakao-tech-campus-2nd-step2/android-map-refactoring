@@ -27,7 +27,6 @@ class MapPreferenceLocalDataSource @Inject constructor() {
         .registerTypeAdapter(CameraPositionDeserializer::class.java, CameraPositionDeserializer())
         .create()
     private val gson: Gson = Gson()
-    private val sharedPreferenceChangeListener = OnMapSharedPreferenceChanged()
     private var sharedPreference:SharedPreferences? = null
 
     private fun getSharedPreference(context: Context):SharedPreferences{
@@ -37,18 +36,17 @@ class MapPreferenceLocalDataSource @Inject constructor() {
         return sharedPreference!!
     }
 
-    class OnMapSharedPreferenceChanged: OnSharedPreferenceChangeListener{
-        var onPreferenceChanged: OnMapPreferenceChanged? = null
+    class OnMapSharedPreferenceChanged(private val onPreferenceChanged: OnMapPreferenceChanged): OnSharedPreferenceChangeListener{
         override fun onSharedPreferenceChanged(
             sharedPreferences: SharedPreferences?,
             key: String?
         ) {
             Log.d("KSC", "Shared Preference Changed")
             if (key.equals(CAMERA_POSITION_KEY)) {
-                onPreferenceChanged?.onCameraPositionChanged()
+                onPreferenceChanged.onCameraPositionChanged()
             }
             if (key.equals(SELECTED_LOCATION_KEY)) {
-                onPreferenceChanged?.onSelectedLocationChanged()
+                onPreferenceChanged.onSelectedLocationChanged()
             }
         }
     }
@@ -98,8 +96,7 @@ class MapPreferenceLocalDataSource @Inject constructor() {
     }
 
     fun setOnPreferenceChanged(context: Context, onChanged: OnMapPreferenceChanged){
-        sharedPreferenceChangeListener.onPreferenceChanged = onChanged
-        getSharedPreference(context).registerOnSharedPreferenceChangeListener(sharedPreferenceChangeListener)
+        getSharedPreference(context).registerOnSharedPreferenceChangeListener(OnMapSharedPreferenceChanged(onChanged))
         Log.d("KSC", "registering setOnPreferenceChanged")
     }
 
