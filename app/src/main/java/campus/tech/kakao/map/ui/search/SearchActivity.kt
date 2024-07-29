@@ -12,16 +12,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
+import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.search.adapters.ResultRecyclerViewAdapter
 import campus.tech.kakao.map.ui.search.adapters.SavedSearchWordRecyclerViewAdapter
 import campus.tech.kakao.map.ui.search.interfaces.OnPlaceItemClickListener
 import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordClearImageViewClickListener
 import campus.tech.kakao.map.ui.search.interfaces.OnSavedSearchWordTextViewClickListener
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -105,10 +104,7 @@ class SearchActivity : AppCompatActivity() {
      */
     private fun navigateToMapActivity(savedSearchWord: SavedSearchWordDomain) {
         val intent = Intent()
-        intent.putExtra(EXTRA_PLACE_NAME, savedSearchWord.name)
-        intent.putExtra(EXTRA_PLACE_ADDRESS, savedSearchWord.address)
-        intent.putExtra(EXTRA_PLACE_LONGITUDE, savedSearchWord.longitude)
-        intent.putExtra(EXTRA_PLACE_LATITUDE, savedSearchWord.latitude)
+        intent.putExtra(EXTRA_LOCATION, savedSearchWord.toLocationDomain())
         setResult(RESULT_OK, intent)
         finish()
     }
@@ -150,6 +146,7 @@ class SearchActivity : AppCompatActivity() {
         collectSearchResults()
         collectSavedSearchWords()
         collectSideEffects()
+        collectErrorMessages()
     }
 
     /**
@@ -204,6 +201,39 @@ class SearchActivity : AppCompatActivity() {
     }
 
     /**
+     * viewModel의 에러를 관찰하고 처리하는 함수.
+     */
+    private fun collectErrorMessages() {
+        collectPlaceErrorMessages()
+        collectSavedSearchWrodErrorMessages()
+    }
+
+    private fun collectPlaceErrorMessages() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                savedSearchWordViewModel.errorMessage.collectLatest { errorMessage ->
+                    errorMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun collectSavedSearchWrodErrorMessages() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                placeViewModel.errorMessage.collectLatest { errorMessage ->
+                    errorMessage?.let {
+                        Snackbar.make(binding.root, it, Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
      * Place 객체를 SavedSearchWord 객체로 변환하는 확장 함수.
      *
      * @return 변환된 SavedSearchWord 객체.
@@ -215,6 +245,15 @@ class SearchActivity : AppCompatActivity() {
             address = this.address,
             latitude = this.latitude,
             longitude = this.longitude,
+        )
+    }
+
+    private fun SavedSearchWordDomain.toLocationDomain(): LocationDomain {
+        return LocationDomain(
+            name = this.name,
+            latitude = this.latitude,
+            longitude = this.longitude,
+            address = this.address
         )
     }
 }

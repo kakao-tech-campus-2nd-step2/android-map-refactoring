@@ -28,6 +28,9 @@ constructor(
     private val _searchResults = MutableStateFlow<List<PlaceDomain>>(emptyList())
     val searchResults: StateFlow<List<PlaceDomain>> get() = _searchResults
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> get() = _errorMessage
+
     private val _categoryInput = MutableStateFlow<String>("")
     private val _totalPageCount = MutableStateFlow<Int>(0)
 
@@ -53,6 +56,7 @@ constructor(
                 _searchResults.emit(places)
             } catch (e: Exception) {
                 Log.e("placeViewmodel", "Error searching places by category", e)
+                _errorMessage.emit("검색 중 에러가 발생하였습니다.")
             }
         }
     }

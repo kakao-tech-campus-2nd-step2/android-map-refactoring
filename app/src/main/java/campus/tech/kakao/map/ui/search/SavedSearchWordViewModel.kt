@@ -32,30 +32,11 @@ constructor(
     private val _sideEffects = MutableSharedFlow<SideEffect>()
     val sideEffects: SharedFlow<SideEffect> get() = _sideEffects
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> get() = _errorMessage
+
     init {
         updateSavedSearchWords()
-    }
-
-    fun insertSearchWord(savedSearchWord: SavedSearchWordDomain) {
-        viewModelScope.launch(ioDispatcher) {
-            try {
-                insertOrUpdateSearchWordUseCase(savedSearchWord)
-                updateSavedSearchWords()
-            } catch (e: Exception) {
-                Log.e("SavedSearchWordViewModel", "Error inserting search word", e)
-            }
-        }
-    }
-
-    fun deleteSearchWordById(savedSearchWord: SavedSearchWordDomain) {
-        viewModelScope.launch(ioDispatcher) {
-            try {
-                deleteSearchWordByIdUseCase(savedSearchWord.id)
-                updateSavedSearchWords()
-            } catch (e: Exception) {
-                Log.e("SavedSearchWordViewModel", "Error deleting search word", e)
-            }
-        }
     }
 
     private fun updateSavedSearchWords() {
@@ -65,6 +46,7 @@ constructor(
                 _savedSearchWords.emit(searchWords)
             } catch (e: Exception) {
                 Log.e("SavedSearchWordViewModel", "Error updating search words", e)
+                _errorMessage.emit("검색어 목록 업데이트 중 에러가 발생하였습니다.")
             }
         }
     }
@@ -73,10 +55,12 @@ constructor(
         viewModelScope.launch(ioDispatcher) {
             try {
                 insertOrUpdateSearchWordUseCase(savedSearchWord)
+                updateSavedSearchWords()
 
                 _sideEffects.emit(SideEffect.NavigateToMapActivity(savedSearchWord))
             } catch (e: Exception) {
                 Log.e("SavedSearchWordViewModel", "Error handling place item click", e)
+                _errorMessage.emit("검색어 저장 중 에러가 발생하였습니다.")
             }
         }
     }
@@ -88,6 +72,7 @@ constructor(
                 updateSavedSearchWords()
             } catch (e: Exception) {
                 Log.e("SavedSearchWordViewModel", "Error handling saved search word clear", e)
+                _errorMessage.emit("검색어 삭제 중 에러가 발생하였습니다.")
             }
         }
     }

@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.repository
 
 import campus.tech.kakao.map.data.dao.SavedSearchWordDao
-import campus.tech.kakao.map.data.model.SavedSearchWord
+import campus.tech.kakao.map.data.model.SavedSearchWordData
 import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import io.mockk.Runs
 import io.mockk.clearAllMocks
@@ -93,7 +93,7 @@ class DefaultSavedSearchWordRepositoryTest {
         coVerify { savedSearchWordDao.deleteSearchWordById(idToDelete) }
     }
 
-    private fun SavedSearchWordDomain.toSavedSearchWord() = SavedSearchWord(
+    private fun SavedSearchWordDomain.toSavedSearchWord() = SavedSearchWordData(
         id = this.id,
         name = this.name,
         placeId = this.placeId,

@@ -83,9 +83,9 @@ class SavedSearchWordViewModelTest {
             coEvery { getAllSearchWordsUseCase() } returns listOf(searchWord1) andThen listOf(searchWord1, searchWord2)
 
             // When
-            viewModel.insertSearchWord(searchWord1)
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
             viewModel.savedSearchWords.first { it.isNotEmpty() }
-            viewModel.insertSearchWord(searchWord2)
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord2))
             viewModel.savedSearchWords.first { it.size == 2 }
 
             // Then
@@ -107,13 +107,13 @@ class SavedSearchWordViewModelTest {
             ) andThen listOf(searchWord2)
 
             // When
-            viewModel.insertSearchWord(searchWord1)
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
             viewModel.savedSearchWords.first { it.isNotEmpty() }
 
-            viewModel.insertSearchWord(searchWord2)
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord2))
             viewModel.savedSearchWords.first { it.size == 2 }
 
-            viewModel.deleteSearchWordById(searchWord1)
+            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1))
             viewModel.savedSearchWords.first { it.size == 1 }
 
             // Then
@@ -121,6 +121,37 @@ class SavedSearchWordViewModelTest {
             coVerify { deleteSearchWordByIdUseCase(searchWord1.id) }
             assertEquals(listOf(searchWord2), viewModel.savedSearchWords.value)
         }
+
+    @Test
+    fun testErrorMessageOnPlaceItemClicked() = runTest(testDispatcher) {
+        // Given
+        val exceptionMessage = "Test Exception"
+        coEvery { insertOrUpdateSearchWordUseCase(any()) } throws RuntimeException(exceptionMessage)
+
+        // When
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+
+        // Then
+        viewModel.errorMessage.first { it.equals("검색어 저장 중 에러가 발생하였습니다.") }
+        assertEquals("검색어 저장 중 에러가 발생하였습니다.", viewModel.errorMessage.value)
+    }
+
+    @Test
+    fun testErrorMessageOnSavedSearchWordClearImageViewClicked() = runTest(testDispatcher) {
+        // Given
+        val exceptionMessage = "Test Exception"
+        coEvery { insertOrUpdateSearchWordUseCase(any()) } just runs
+        coEvery { deleteSearchWordByIdUseCase(any()) } throws RuntimeException(exceptionMessage)
+        coEvery { getAllSearchWordsUseCase() } returns emptyList()
+
+        // When
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord1))
+        viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1))
+
+        // Then
+        viewModel.errorMessage.first { it.equals("검색어 삭제 중 에러가 발생하였습니다.") }
+        assertEquals("검색어 삭제 중 에러가 발생하였습니다.", viewModel.errorMessage.value)
+    }
 
     private fun mockLogClass() {
         mockkStatic(Log::class)

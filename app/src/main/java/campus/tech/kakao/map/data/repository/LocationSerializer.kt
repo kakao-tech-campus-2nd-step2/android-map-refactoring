@@ -2,7 +2,7 @@ package campus.tech.kakao.map.data.repository
 
 import androidx.datastore.core.Serializer
 import campus.tech.kakao.map.LocationDataProto.LocationData
-import campus.tech.kakao.map.data.mapper.LocationMapper
+import campus.tech.kakao.map.data.mapper.map
 import campus.tech.kakao.map.domain.model.LocationDomain
 import java.io.InputStream
 import java.io.OutputStream
@@ -19,7 +19,7 @@ object LocationSerializer : Serializer<LocationDomain> {
     override suspend fun readFrom(input: InputStream): LocationDomain {
         return try {
             val locationData = LocationData.parseFrom(input)
-            LocationMapper.mapToDomain(locationData)
+            locationData.map()
         } catch (exception: Exception) {
             defaultValue
         }
@@ -29,7 +29,7 @@ object LocationSerializer : Serializer<LocationDomain> {
         t: LocationDomain,
         output: OutputStream,
     ) {
-        val locationData = LocationMapper.mapToData(t)
+        val locationData = t.map()
         locationData.writeTo(output)
     }
 }

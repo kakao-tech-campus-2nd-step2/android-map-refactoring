@@ -2,6 +2,7 @@ package campus.tech.kakao.map.ui.map
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.result.ActivityResult
@@ -15,11 +16,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_MAP_ERROR_MESSAGE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_ADDRESS
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LATITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_LONGITUDE
-import campus.tech.kakao.map.ui.IntentKeys.EXTRA_PLACE_NAME
 import campus.tech.kakao.map.ui.search.SearchActivity
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -30,8 +28,10 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -89,14 +89,18 @@ class MapActivity : AppCompatActivity() {
     private fun handleSearchActivityResult(result: ActivityResult) {
         if (result.resultCode == RESULT_OK) {
             val data: Intent? = result.data
-            val name = data?.getStringExtra(EXTRA_PLACE_NAME) ?: ""
-            val address = data?.getStringExtra(EXTRA_PLACE_ADDRESS) ?: ""
-            val longitude = data?.getDoubleExtra(EXTRA_PLACE_LONGITUDE, 0.0) ?: 0.0
-            val latitude = data?.getDoubleExtra(EXTRA_PLACE_LATITUDE, 0.0) ?: 0.0
 
-            val newLocation = LocationDomain(name, latitude, longitude, address)
+            val newLocation: LocationDomain? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                data?.getParcelableExtra(EXTRA_LOCATION, LocationDomain::class.java)
+            } else {
+                data?.getParcelableExtra(EXTRA_LOCATION)
+            }
 
-            saveLocationAndWaitForUpdate(newLocation)
+            if (newLocation != null) {
+                saveLocationAndWaitForUpdate(newLocation)
+            }
+            startMapView()
         }
     }
 
@@ -109,12 +113,8 @@ class MapActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 locationViewModel.saveLocation(newLocation)
-                locationViewModel.location.collectLatest { location ->
-                    if (location == newLocation) {
-                        startMapView()
-                        cancel()
-                    }
-                }
+                locationViewModel.location
+                    .first { it == newLocation }
             }
         }
     }
