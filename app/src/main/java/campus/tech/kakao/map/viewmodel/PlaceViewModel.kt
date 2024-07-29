@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -9,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.model.PlaceResponse
-import campus.tech.kakao.map.model.RetrofitInstance
 import campus.tech.kakao.map.model.RetrofitService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
@@ -17,12 +15,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-
 @HiltViewModel
 class PlaceViewModel @Inject constructor(
     private val retrofitService: RetrofitService,
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
+
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
     private val _places = MutableLiveData<List<Document>>()
@@ -39,19 +37,16 @@ class PlaceViewModel @Inject constructor(
     }
 
     fun addSavedQuery(query: String) {
-        val updatedList = _savedQueries.value.orEmpty().toMutableList()
-        updatedList.add(query)
+        val updatedList = _savedQueries.value.orEmpty().toMutableList().apply { add(query) }
         _savedQueries.value = updatedList
         saveQueries(updatedList)
     }
 
     fun removeSavedQuery(query: String) {
-        val updatedList = _savedQueries.value.orEmpty().toMutableList()
-        updatedList.remove(query)
+        val updatedList = _savedQueries.value.orEmpty().toMutableList().apply { remove(query) }
         _savedQueries.value = updatedList
         saveQueries(updatedList)
     }
-
 
     private fun loadSavedQueries(): MutableList<String> {
         val savedQueriesString = sharedPreferences.getString("queries", null)
@@ -63,16 +58,19 @@ class PlaceViewModel @Inject constructor(
     }
 
     private fun saveQueries(queries: MutableList<String>) {
-        val editor = sharedPreferences.edit()
-        editor.putString("queries", queries.joinToString(","))
-        editor.apply()
+        sharedPreferences.edit().apply {
+            putString("queries", queries.joinToString(","))
+            apply()
+        }
     }
 
     private fun searchPlaces(query: String, categoryGroupName: String, callback: (List<Document>) -> Unit) {
-        retrofitService.getPlaces(API_KEY, categoryGroupName, query).enqueue(object : Callback<PlaceResponse> {
+        retrofitService.getPlaces(API_KEY, categoryGroupName, query).enqueue(object :
+            Callback<PlaceResponse> {
             override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
                 if (response.isSuccessful) {
-                    callback(response.body()?.documents ?: emptyList())
+                    val places = response.body()?.documents ?: emptyList()
+                    callback(places)
                 } else {
                     Log.e("PlaceViewModel", "Failed to fetch places: ${response.errorBody()?.string()}")
                     callback(emptyList())

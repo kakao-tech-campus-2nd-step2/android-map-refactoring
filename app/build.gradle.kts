@@ -8,6 +8,7 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint")
     id("kotlin-parcelize")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
     id("com.google.dagger.hilt.android")
 }
 
@@ -90,4 +91,9 @@ dependencies {
 
 
     implementation("com.kakao.sdk:v2-all:2.20.3")
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-analytics-ktx")
+
+    implementation("com.google.firebase:firebase-config-ktx:22.0.0")
+    implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
 }

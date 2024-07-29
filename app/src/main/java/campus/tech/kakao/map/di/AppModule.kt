@@ -3,6 +3,7 @@ package campus.tech.kakao.map.di
 import android.content.Context
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
+import android.util.Log
 import campus.tech.kakao.map.model.RetrofitInstance
 import campus.tech.kakao.map.model.RetrofitService
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
@@ -21,22 +22,24 @@ object AppModule {
     @Provides
     fun provideRetrofitService(): RetrofitService {
         // RetrofitInstance.api 호출 -> RetrofitService 생성
+        Log.d("testt", "Providing RetrofitService")
         return RetrofitInstance.api
     }
 
     @Singleton
     @Provides
-    // 기본 공유 환경 설정 생성
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
+        // 기본 공유 환경 설정 생성
+        Log.d("testt", "Providing SharedPreferences")
         return PreferenceManager.getDefaultSharedPreferences(context)
     }
 
     @Provides
-    // retrofitService, sharedPreferences 인자 -> PlaceViewModel 생성
     fun providePlaceViewModel(
         retrofitService: RetrofitService,
         sharedPreferences: SharedPreferences
     ): PlaceViewModel {
+        Log.d("testt", "Providing PlaceViewModel with RetrofitService and SharedPreferences")
         return PlaceViewModel(retrofitService, sharedPreferences)
     }
 }
