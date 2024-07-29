@@ -10,7 +10,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.PlaceLayoutBinding
 import campus.tech.kakao.map.domain.Place
@@ -42,7 +41,6 @@ class PlaceActivity : AppCompatActivity() {
             }
         )
         placeBinding.rvSearchList.adapter = searchAdapter
-        placeBinding.rvSearchList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Place 어댑터
         placeAdapter = PlaceRecyclerViewAdapter(
@@ -61,7 +59,6 @@ class PlaceActivity : AppCompatActivity() {
             }
         )
         placeBinding.rvPlaceList.adapter = placeAdapter
-        placeBinding.rvPlaceList.layoutManager = LinearLayoutManager(this)
 
         // ViewModel 관찰
         viewModel.searchList.observe(this, Observer { places ->
