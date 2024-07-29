@@ -6,36 +6,36 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.listener.RecentAdapterListener
 import campus.tech.kakao.map.adapter.listener.SearchAdapterListener
 import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
 import campus.tech.kakao.map.data.LocationDataContract
 import campus.tech.kakao.map.databinding.ActivityDataSearchBinding
-import campus.tech.kakao.map.repository.SearchHistoryRepository
 import campus.tech.kakao.map.repository.SearchResultRepository
 import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
-import campus.tech.kakao.map.viewModel.factory.DBViewModelFactory
 import campus.tech.kakao.map.viewModel.factory.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.activity.viewModels
 
+@AndroidEntryPoint
 class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAdapterListener {
-    private lateinit var searchResultRepo: SearchResultRepository   //검색 결과 관리
-    private lateinit var dbRepo: SearchHistoryRepository    //최근 검색어 데이터 관리
-    private lateinit var searchViewModel: SearchViewModel   //검색 결과 관리
-    private lateinit var recentViewModel: DBViewModel   //최근 검색어 관리
-    private lateinit var searchResultDataAdapter: SearchDataAdapter   //검색 결과 표시 위함
     private lateinit var binding: ActivityDataSearchBinding
+
+    private lateinit var searchViewModel: SearchViewModel   //검색 결과 관리  //추후 계획: step2에서 수정이 있었던 부분이기 때문에, step2에서 Hilt 적용
+    private val recentViewModel: DBViewModel by viewModels()  //최근 검색어 관리
+
+    private lateinit var searchResultRepo: SearchResultRepository   //검색 결과 관리
+    private lateinit var searchResultDataAdapter: SearchDataAdapter   //검색 결과 표시 위함
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_data_search)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_data_search)
+
+        setBind()
 
         //ViewModel 생성
         searchResultRepo = SearchResultRepository()
@@ -43,10 +43,6 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
             this,
             SearchViewModelFactory(searchResultRepo)
         )[SearchViewModel::class.java]
-
-        dbRepo = SearchHistoryRepository(this)
-        recentViewModel =
-            ViewModelProvider(this, DBViewModelFactory(dbRepo))[DBViewModel::class.java]
 
         //RecyclerView Layout 매니저 설정 (스크롤 방향 설정)
         binding.searchResulListView.layoutManager = LinearLayoutManager(this)
@@ -78,6 +74,12 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
             binding.recentSearchListView.adapter =
                 RecentSearchAdapter(recentData, recentViewModel, this)
         })
+    }
+
+    private fun setBind(){
+        binding = ActivityDataSearchBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
     }
 
     private fun setTextWatcher() {

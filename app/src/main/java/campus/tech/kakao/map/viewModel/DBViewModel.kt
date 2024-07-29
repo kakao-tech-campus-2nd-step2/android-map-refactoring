@@ -7,9 +7,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.data.room.SearchHistoryData
 import campus.tech.kakao.map.repository.SearchHistoryRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class DBViewModel(private val searchHistoryRepo: SearchHistoryRepository) : ViewModel() {
+@HiltViewModel
+class DBViewModel @Inject constructor(
+    private val searchHistoryRepo: SearchHistoryRepository
+) : ViewModel() {
 
     private val _searchHistoryDataList = MutableLiveData<List<SearchHistoryData>>()
     private val searchHistoryDataList: LiveData<List<SearchHistoryData>> = _searchHistoryDataList
@@ -37,7 +42,7 @@ class DBViewModel(private val searchHistoryRepo: SearchHistoryRepository) : View
     }
 
     suspend fun deleteRecentData(data: String, address: String, time: Long) {
-        Log.d("yeong","DBViewModel: 여기까지 옴")
+        Log.d("yeong", "DBViewModel: 여기까지 옴")
         searchHistoryRepo.deleteSearchData(data, address, time)
         _searchHistoryDataList.value = searchHistoryRepo.getSearchHistory()
     }
