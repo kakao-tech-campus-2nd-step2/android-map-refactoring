@@ -29,6 +29,7 @@ class PlaceActivity : AppCompatActivity() {
         val searchList: MutableList<Place> = mutableListOf()
         val placeList: MutableList<Place> = mutableListOf()
 
+
         // Search 어댑터
         searchAdapter = SearchRecyclerViewAdapter(
             places = searchList,
@@ -60,27 +61,32 @@ class PlaceActivity : AppCompatActivity() {
         )
         placeBinding.rvPlaceList.adapter = placeAdapter
 
-        // ViewModel 관찰
-        viewModel.searchList.observe(this, Observer { places ->
-            searchAdapter.updateData(places)
-        })
-
-        viewModel.placeList.observe(this, Observer { places ->
-            placeAdapter.updateData(places)
-        })
-
-        viewModel.isPlaceListVisible.observe(this, Observer { isVisible ->
-            placeBinding.rvPlaceList.visibility = if (isVisible) View.VISIBLE else View.INVISIBLE
-            placeBinding.tvNoData.visibility = if (isVisible) View.GONE else View.VISIBLE
-        })
-
-        viewModel.isSearchListVisible.observe(this, Observer { isVisible ->
-            placeBinding.rvSearchList.visibility = if (isVisible) View.VISIBLE else View.GONE
+        viewModel.uiModel.observe(this, Observer { uiModel ->
+            uiModel.searchList.let { searchList ->
+                searchAdapter.updateData(searchList)
+            }
+            uiModel.placeList.let { placeList ->
+                placeAdapter.updateData(placeList)
+            }
+            if (uiModel.isPlaceListVisible) {
+                placeBinding.rvPlaceList.visibility = View.VISIBLE
+                placeBinding.tvNoData.visibility = View.GONE
+            }
+            else {
+                placeBinding.rvPlaceList.visibility = View.INVISIBLE
+                placeBinding.tvNoData.visibility = View.VISIBLE
+            }
+            if (uiModel.isSearchListVisible) {
+                placeBinding.rvSearchList.visibility = View.VISIBLE
+            }
+            else {
+                placeBinding.rvSearchList.visibility = View.GONE
+            }
         })
 
         placeBinding.btnErase.setOnClickListener {
             placeBinding.etSearch.setText("")
-            viewModel.searchPlace("")
+            viewModel.searchPlace(" ")
         }
 
         placeBinding.etSearch.addTextChangedListener(object : TextWatcher {
