@@ -2,10 +2,6 @@ package campus.tech.kakao.map.retrofit
 
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
