@@ -31,8 +31,8 @@ import campus.tech.kakao.map.repository.location.LocationSearcher
 import campus.tech.kakao.map.view.SearchActivity
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
 import campus.tech.kakao.map.viewmodel.main.MainViewModel
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
-import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
+import campus.tech.kakao.map.view.OnSearchItemClickListener
+import campus.tech.kakao.map.view.OnKeywordItemClickListener
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 

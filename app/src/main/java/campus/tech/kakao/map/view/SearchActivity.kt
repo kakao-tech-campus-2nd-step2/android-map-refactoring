@@ -14,8 +14,6 @@ import campus.tech.kakao.map.adapter.search.SearchAdapter
 import campus.tech.kakao.map.api.KakaoLocalApi
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.model.Item
-import campus.tech.kakao.map.viewmodel.OnKeywordItemClickListener
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,8 +23,6 @@ import javax.inject.Inject
 class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
     private lateinit var binding: ActivitySearchBinding
 
-    @Inject
-    lateinit var api: KakaoLocalApi
 
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var keywordViewModel: KeywordViewModel
@@ -104,4 +100,3 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         keywordViewModel.deleteKeyword(keyword)
     }
 }
-

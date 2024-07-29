@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Item
-import campus.tech.kakao.map.viewmodel.OnSearchItemClickListener
+import campus.tech.kakao.map.view.OnSearchItemClickListener
 
 class SearchAdapter(
     private val onSearchItemClickListener: OnSearchItemClickListener

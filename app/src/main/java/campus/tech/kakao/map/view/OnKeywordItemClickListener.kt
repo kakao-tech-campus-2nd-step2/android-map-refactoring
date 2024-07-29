@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.viewmodel
+package campus.tech.kakao.map.view
 
 interface OnKeywordItemClickListener {
     fun onKeywordItemDeleteClick(keyword: String)

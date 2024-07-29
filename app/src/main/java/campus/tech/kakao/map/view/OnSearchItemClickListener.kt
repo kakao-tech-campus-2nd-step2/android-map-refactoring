@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.viewmodel
+package campus.tech.kakao.map.view
 
 import campus.tech.kakao.map.model.Item
 
