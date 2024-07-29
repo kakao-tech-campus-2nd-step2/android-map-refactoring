@@ -2,8 +2,14 @@ package campus.tech.kakao.map
 
 import android.content.Context
 import android.content.SharedPreferences
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PreferenceRepository(context: Context) {
+@Singleton
+class PreferenceRepository @Inject constructor(
+    @ApplicationContext context: Context
+) {
 
     private var sharedPrefs: SharedPreferences =
         context.getSharedPreferences("location_data", Context.MODE_PRIVATE)

@@ -1,55 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/homeMap"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.HomeMapActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.kakao.vectormap.MapView
-        android:id="@+id/mapView"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/homeMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="-20dp"
-        tools:layout_editor_absoluteY="16dp" />
+        tools:context=".activity.HomeMapActivity">
 
-    <EditText
-        android:id="@+id/search_home"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="35dp"
-        android:background="@color/white"
-        android:elevation="20dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:hint="@string/searchBar_text"
-        android:paddingStart="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.9" />
+        <com.kakao.vectormap.MapView
+            android:id="@+id/mapView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="-20dp"
+            tools:layout_editor_absoluteY="16dp" />
 
-    <ImageButton
-        android:id="@+id/clickForSearch_home"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="15dp"
-        android:background="@color/transparent"
-        android:elevation="21dp"
-        android:src="@drawable/search_icon"
-        app:layout_constraintBottom_toBottomOf="@id/search_home"
-        app:layout_constraintEnd_toEndOf="@id/search_home"
-        app:layout_constraintTop_toTopOf="@id/search_home" />
+        <EditText
+            android:id="@+id/search_home"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="35dp"
+            android:background="@color/white"
+            android:elevation="20dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:hint="@string/searchBar_text"
+            android:paddingStart="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.9" />
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        <ImageButton
+            android:id="@+id/clickForSearch_home"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="15dp"
+            android:background="@color/transparent"
+            android:elevation="21dp"
+            android:src="@drawable/search_icon"
+            app:layout_constraintBottom_toBottomOf="@id/search_home"
+            app:layout_constraintEnd_toEndOf="@id/search_home"
+            app:layout_constraintTop_toTopOf="@id/search_home" />
 
-        <include layout="@layout/map_detail_bottom_sheet" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <include layout="@layout/map_detail_bottom_sheet" />
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
