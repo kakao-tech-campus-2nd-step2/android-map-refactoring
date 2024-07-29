@@ -1,10 +1,7 @@
 package campus.tech.kakao.map.repository
 
-import android.content.Context
 import campus.tech.kakao.map.data.room.SearchHistoryDao
 import campus.tech.kakao.map.data.room.SearchHistoryData
-import campus.tech.kakao.map.data.room.SearchHistoryDatabase
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -12,12 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchHistoryRepository @Inject constructor(
-    @ApplicationContext context: Context
+    private val searchHistoryDao: SearchHistoryDao
 ) {
-
-    private val searchHistoryDao: SearchHistoryDao =
-        SearchHistoryDatabase.getDatabase(context).searchHistoryDao()
-
     suspend fun getSearchHistory(): List<SearchHistoryData> {
         return withContext(Dispatchers.IO) {
             searchHistoryDao.getSearchHistory()

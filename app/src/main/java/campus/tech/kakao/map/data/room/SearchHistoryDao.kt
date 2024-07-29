@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import javax.inject.Singleton
 
+@Singleton
 @Dao
 interface SearchHistoryDao {
     @Query("SELECT * FROM searchHistory ORDER BY searchTime DESC")
