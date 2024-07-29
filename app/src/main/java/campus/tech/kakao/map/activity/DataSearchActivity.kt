@@ -2,79 +2,68 @@ package campus.tech.kakao.map.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.health.connect.datatypes.ExerciseRoute.Location
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.R
 import campus.tech.kakao.map.listener.RecentAdapterListener
 import campus.tech.kakao.map.listener.SearchAdapterListener
 import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
 import campus.tech.kakao.map.dataContract.LocationDataContract
-import campus.tech.kakao.map.viewModel.RecentViewModel
+import campus.tech.kakao.map.databinding.ActivityDataSearchBinding
+import campus.tech.kakao.map.viewModel.DBViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAdapterListener {
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var recentViewModel: RecentViewModel
-    private lateinit var editText: EditText
+    private lateinit var binding: ActivityDataSearchBinding
+
+    private lateinit var searchViewModel: SearchViewModel   //추후 계획: step2에서 수정이 있었던 부분이기 때문에, step2에서 Hilt 적용
+    private val recentViewModel: DBViewModel by viewModels()
+
     private lateinit var resultDataAdapter: SearchDataAdapter
-    private lateinit var searchDataListView: RecyclerView
-    private lateinit var recentSearchListView: RecyclerView
-    private lateinit var noResultNotice: TextView
-    private lateinit var deleteBtn: ImageButton
 
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_data_search)
 
-        //View 초기화
-        searchDataListView = findViewById(R.id.searchResulListView)
-        editText = findViewById(R.id.searchBar)
-        noResultNotice = findViewById(R.id.noResult)
-        deleteBtn = findViewById(R.id.deleteInput)
-        recentSearchListView = findViewById(R.id.recentSearchListView)
+        setBind()
 
-        //ViewModel 생성
+        //ViewModel 생성 //추후 계획: step2에서 수정이 있었던 부분이기 때문에, step2에서 Hilt 적용후 삭제
         searchViewModel = ViewModelProvider(this)[SearchViewModel::class.java]
-        recentViewModel = ViewModelProvider(this)[RecentViewModel::class.java]
 
         //검색 결과 목록 세로 스크롤 설정
-        searchDataListView.layoutManager = LinearLayoutManager(this)
+        binding.searchResulListView.layoutManager = LinearLayoutManager(this)
         //최근 검색어 목록 가로 스크롤 설정
-        recentSearchListView.layoutManager =
+        binding.recentSearchListView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         //어뎁터 초기화
         resultDataAdapter = SearchDataAdapter(emptyList(), recentViewModel, this)
-        searchDataListView.adapter = resultDataAdapter
+        binding.searchResulListView.adapter = resultDataAdapter
 
         resetButtonListener()
         setTextWatcher()
 
         recentViewModel.getRecentDataLiveData().observe(this, Observer { recentData ->
-            recentSearchListView.adapter = RecentSearchAdapter(recentData, recentViewModel, this)
+            binding.recentSearchListView.adapter = RecentSearchAdapter(recentData, recentViewModel, this)
         })
 
         searchViewModel.searchResults.observe(this, Observer { documentsList ->
             if (documentsList.isNotEmpty()) {
-                noResultNotice.visibility = View.GONE
+                binding.noResult.visibility = View.GONE
                 resultDataAdapter.updateData(documentsList)
             } else {
-                noResultNotice.visibility = View.VISIBLE
+                binding.noResult.visibility = View.VISIBLE
                 resultDataAdapter.updateData(emptyList())
             }
         })
@@ -89,17 +78,23 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
         this.onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
+    private fun setBind(){
+        binding = ActivityDataSearchBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+    }
+
     private fun setTextWatcher() {
-        editText.addTextChangedListener(object : TextWatcher {
+        binding.searchBar.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val searchInput = editText.text.trim().toString()
+                val searchInput = binding.searchBar.text.trim().toString()
 
                 if (searchInput.isNotEmpty()) {
                     searchViewModel.loadResultData(searchInput)
                 } else {
-                    noResultNotice.visibility = View.VISIBLE
+                    binding.noResult.visibility = View.VISIBLE
                     resultDataAdapter.updateData(emptyList())
                 }
             }
@@ -110,14 +105,14 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
     }
 
     private fun resetButtonListener() {
-        deleteBtn.setOnClickListener {
-            editText.text.clear()
+        binding.deleteInput.setOnClickListener {
+            binding.searchBar.text.clear()
         }
     }
 
     //클릭한 검색어가 자동으로 입력되는 기능 구현
     override fun autoSearch(searchData: String) {
-        editText.setText(searchData)
+        binding.searchBar.setText(searchData)
     }
 
     override fun displaySearchLocation(

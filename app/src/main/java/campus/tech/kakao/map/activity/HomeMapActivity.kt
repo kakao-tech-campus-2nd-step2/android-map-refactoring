@@ -4,53 +4,49 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
-import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.lifecycle.ViewModelProvider
-import campus.tech.kakao.map.MapViewModelFactory
-import campus.tech.kakao.map.PreferenceRepository
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.dataContract.LocationDataContract
+import campus.tech.kakao.map.databinding.ActivityHomeMapBinding
 import campus.tech.kakao.map.viewModel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeMapActivity : AppCompatActivity() {
-    private lateinit var mapView: MapView
-    private lateinit var searchBar: EditText
-    private val bottomSheet: ConstraintLayout by lazy { findViewById(R.id.bottomSheet) }
-    private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
+    private lateinit var binding: ActivityHomeMapBinding
+
     private lateinit var placeNameTextView: TextView
     private lateinit var placeAddressTextView: TextView
-    private lateinit var mapViewModel: MapViewModel
-    private lateinit var prefersRepo: PreferenceRepository
+
+    private val mapViewModel: MapViewModel by viewModels()
+
+    private val bottomSheet: ConstraintLayout by lazy { findViewById(R.id.bottomSheet) }
+    private lateinit var bottomBehavior: BottomSheetBehavior<ConstraintLayout>
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_home_map)
 
-        prefersRepo = PreferenceRepository(applicationContext)
-        mapViewModel =
-            ViewModelProvider(this, MapViewModelFactory(prefersRepo))[MapViewModel::class.java]
+        setBinding()
 
         val name = intent.getStringExtra(LocationDataContract.LOCATION_NAME)
         val address = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS)
         val latitude = intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
         val longitude = intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
 
-        mapView = findViewById(R.id.mapView)
         placeNameTextView = findViewById(R.id.placeName)
         placeAddressTextView = findViewById(R.id.placeAddress)
 
@@ -58,7 +54,7 @@ class HomeMapActivity : AppCompatActivity() {
         val intentError = Intent(this, MapErrorActivity::class.java)
 
         //KaKao Map UI에 띄우기
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
             }
 
@@ -117,8 +113,7 @@ class HomeMapActivity : AppCompatActivity() {
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
-        searchBar = findViewById(R.id.search_home)
-        searchBar.setOnClickListener {
+        binding.searchHome.setOnClickListener {
             val intent = Intent(this, DataSearchActivity::class.java)
             startActivity(intent)
         }
@@ -126,12 +121,12 @@ class HomeMapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        binding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        binding.mapView.pause()
     }
 
     override fun onDestroy() {
@@ -140,5 +135,11 @@ class HomeMapActivity : AppCompatActivity() {
             ?.let { mapViewModel.saveLocation(LocationDataContract.LOCATION_LATITUDE, it) }
         intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)
             ?.let { mapViewModel.saveLocation(LocationDataContract.LOCATION_LONGITUDE, it) }
+    }
+
+    private fun setBinding(){
+        binding = ActivityHomeMapBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
     }
 }
