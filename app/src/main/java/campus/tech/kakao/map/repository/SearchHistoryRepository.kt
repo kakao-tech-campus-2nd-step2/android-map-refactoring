@@ -32,7 +32,7 @@ class SearchHistoryRepository @Inject constructor(
         }
     }
 
-    suspend fun deleteSearchData(name: String, address: String, time: Long) {
+    suspend fun deleteSearchData(name: String, address: String) {
         withContext(Dispatchers.IO) {
             Log.d("yeong","Repository: 여기 까지 옴")
             val item = searchHistoryDao.findSearchItem(name, address)

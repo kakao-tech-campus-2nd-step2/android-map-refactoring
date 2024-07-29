@@ -39,7 +39,7 @@ class RecentSearchAdapter(
 
         viewHolder.deleteBtn.setOnClickListener {
             dbViewModel.viewModelScope.launch {
-                dbViewModel.deleteRecentData(item.name, item.address, item.searchTime)
+                dbViewModel.deleteRecentData(item.name, item.address)
             }
         }
 

@@ -41,9 +41,9 @@ class DBViewModel @Inject constructor(
         return searchHistoryDataList
     }
 
-    suspend fun deleteRecentData(data: String, address: String, time: Long) {
+    suspend fun deleteRecentData(data: String, address: String) {
         Log.d("yeong", "DBViewModel: 여기까지 옴")
-        searchHistoryRepo.deleteSearchData(data, address, time)
+        searchHistoryRepo.deleteSearchData(data, address)
         _searchHistoryDataList.value = searchHistoryRepo.getSearchHistory()
     }
 }
