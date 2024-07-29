@@ -1,14 +1,11 @@
 package campus.tech.kakao.map.repository
 
-import android.content.Context
-import androidx.room.Room
-import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.model.AppDatabase
+import campus.tech.kakao.map.ApiKey
 import campus.tech.kakao.map.model.KakaoLocalService
 import campus.tech.kakao.map.model.PlaceInfo
 import campus.tech.kakao.map.model.SavePlace
+import campus.tech.kakao.map.model.SavePlaceDao
 import campus.tech.kakao.map.model.SearchPlace
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Call
@@ -19,14 +16,10 @@ import javax.inject.Singleton
 
 @Singleton
 class SearchRepositoryImpl @Inject constructor(
-    @ApplicationContext context: Context,
-    private val retrofit: KakaoLocalService
+    private val retrofit: KakaoLocalService,
+    private val savePlaceDao: SavePlaceDao,
+    @ApiKey private val apiKey: String
 ) : SearchRepository {
-    private val db = Room.databaseBuilder(
-        context.applicationContext,
-        AppDatabase::class.java, "placedb"
-    ).build()
-    private val savePlaceDao = db.savePlaceDao()
 
     override suspend fun savePlaces(placeName: String): List<SavePlace> {
         withContext(Dispatchers.IO) {
@@ -56,7 +49,7 @@ class SearchRepositoryImpl @Inject constructor(
     }
 
     override fun getPlaceList(categoryGroupName: String, callback: (List<PlaceInfo>?) -> Unit) {
-        retrofit.getPlaceList("KakaoAK ${BuildConfig.KAKAO_API_KEY}", categoryGroupName)
+        retrofit.getPlaceList(apiKey, categoryGroupName)
             .enqueue(object : Callback<SearchPlace> {
                 override fun onResponse(
                     call: Call<SearchPlace>,
