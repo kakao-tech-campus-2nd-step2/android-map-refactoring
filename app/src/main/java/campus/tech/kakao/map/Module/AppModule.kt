@@ -1,14 +1,14 @@
 package campus.tech.kakao.map.Module
 
-import android.content.Context
-import androidx.test.espresso.core.internal.deps.dagger.Module
-import androidx.test.espresso.core.internal.deps.dagger.Provides
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+import javax.inject.Singleton;
+import android.content.Context;
 import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.net.PlacesClient
-import dagger.hilt.InstallIn
+import com.google.android.libraries.places.api.net.PlacesClient;
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

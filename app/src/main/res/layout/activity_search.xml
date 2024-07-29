@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="campus.tech.kakao.map.Adapter.Converter" />
         <variable
             name="viewModel"
             type="campus.tech.kakao.map.Model.SearchViewModel" />
@@ -19,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:hint="@string/search_hint"
-            app:queryText="@={viewModel.searchQuery}"
+            app:queryText="@={Converter.searchQueryToString(viewModel.searchQuery)}"
             app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
             app:onQueryTextChange="@{viewModel::onSearchQueryChanged}" />
 
@@ -42,4 +43,3 @@
 
     </FrameLayout>
 </layout>
-

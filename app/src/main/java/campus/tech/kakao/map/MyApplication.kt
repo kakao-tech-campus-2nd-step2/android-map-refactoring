@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.View
+package campus.tech.kakao.map
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

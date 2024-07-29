@@ -57,7 +57,8 @@ android {
 }
 
 dependencies {
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.x")
+    kapt ("com.google.dagger:hilt-compiler:2.48.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.test.espresso:espresso-core:3.6.1")
     testImplementation ("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly ("org.junit.jupiter:junit-jupiter-engine:5.8.2")
