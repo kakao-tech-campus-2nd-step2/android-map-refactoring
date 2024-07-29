@@ -5,11 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.db.entity.Place
+import campus.tech.kakao.map.databinding.TabCardBinding
 
 class TapViewAdapter(
     private val onItemRemoved: (Place) -> Unit
@@ -26,12 +28,12 @@ class TapViewAdapter(
     }
 ) {
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val cancelButton: ImageView = itemView.findViewById(R.id.tab_close_button)
-        private val placeName: TextView = itemView.findViewById(R.id.tab_place_textview)
+    inner class ViewHolder(private val binding: TabCardBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(place: Place) {
-            placeName.text = place.name
-            cancelButton.setOnClickListener {
+            binding.place = place
+            binding.executePendingBindings()
+
+            binding.tabCloseButton.setOnClickListener {
                 onItemRemoved(place)
             }
         }
@@ -39,8 +41,8 @@ class TapViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.tab_card, parent, false)
-        return ViewHolder(view)
+        val binding = DataBindingUtil.inflate<TabCardBinding>(inflater, R.layout.tab_card, parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {

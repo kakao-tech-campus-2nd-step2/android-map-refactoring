@@ -5,6 +5,10 @@
     tools:context=".view.MapViewActivity">
     <data>
         <variable
+            name="view"
+            type="campus.tech.kakao.map.view.MapViewActivity" />
+
+        <variable
             name="viewModel"
             type="campus.tech.kakao.map.viewmodel.MapViewModel" />
     </data>
@@ -39,6 +43,7 @@
                     android:text="검색어를 입력해 주세요."
                     android:textColor="#5A5A5A"
                     android:gravity="center_vertical"
+                    android:onClick="@{()->view.onSearchTextViewClick()}"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent" />
@@ -56,6 +61,7 @@
         </FrameLayout>
         <include
             android:id="@+id/bottom_view"
+            app:viewModel="@{viewModel}"
             layout="@layout/bottom_sheet" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
