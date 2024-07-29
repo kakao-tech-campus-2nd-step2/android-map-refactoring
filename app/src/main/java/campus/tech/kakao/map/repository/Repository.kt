@@ -4,9 +4,9 @@ import campus.tech.kakao.map.data.Keyword
 
 interface Repository {
     suspend fun search(query: String): List<Keyword>
-    fun getAllSavedKeywordsFromPrefs(): List<Keyword>
-    fun saveKeywordToPrefs(keyword: Keyword)
-    fun deleteKeywordFromPrefs(keyword: Keyword)
-    fun saveLastMarkerPosition(latitude: Double, longitude: Double, placeName: String, roadAddressName: String)
-    fun loadLastMarkerPosition(): Keyword?
+    suspend fun getAllSavedKeywordsFromPrefs(): List<Keyword>
+    suspend fun saveKeywordToPrefs(keyword: Keyword)
+    suspend fun deleteKeywordFromPrefs(keyword: Keyword)
+    suspend fun saveLastMarkerPosition(latitude: Double, longitude: Double, placeName: String, roadAddressName: String)
+    suspend fun loadLastMarkerPosition(): Keyword?
 }
