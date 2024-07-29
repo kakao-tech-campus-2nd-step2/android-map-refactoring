@@ -1,5 +1,9 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.repository
 
+import campus.tech.kakao.map.model.Document
+import campus.tech.kakao.map.network.KakaoAPIRetrofitService
+import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.model.PlaceDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

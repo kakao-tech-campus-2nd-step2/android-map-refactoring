@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +11,9 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import android.util.Log
 import android.content.Intent
+import campus.tech.kakao.map.adapter.SavedSearchAdapter
+import campus.tech.kakao.map.adapter.SearchAdapter
+import campus.tech.kakao.map.viewmodel.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

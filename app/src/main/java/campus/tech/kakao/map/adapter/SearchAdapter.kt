@@ -1,10 +1,11 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.adapter
 
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import campus.tech.kakao.map.databinding.ItemResultBinding
 import android.util.Log
+import campus.tech.kakao.map.model.Place
 
 class SearchAdapter(private val onItemClicked: (Place) -> Unit) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 

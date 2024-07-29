@@ -1,8 +1,7 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.network
 
-import retrofit2.Call
+import campus.tech.kakao.map.model.SearchResponse
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface KakaoAPIRetrofitService {

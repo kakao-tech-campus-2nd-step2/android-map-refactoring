@@ -1,7 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.di
 
 import android.app.Application
 import androidx.room.Room
+import campus.tech.kakao.map.network.AuthInterceptor
+import campus.tech.kakao.map.BuildConfig
+import campus.tech.kakao.map.network.KakaoAPIRetrofitService
+import campus.tech.kakao.map.model.AppDatabase
+import campus.tech.kakao.map.model.PlaceDao
+import campus.tech.kakao.map.repository.PlaceRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

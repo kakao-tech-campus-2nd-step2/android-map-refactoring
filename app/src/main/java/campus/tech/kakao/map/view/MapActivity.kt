@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Context
 import android.content.Intent
@@ -10,7 +10,9 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback

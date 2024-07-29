@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.model
 
 import android.content.Context
 import androidx.room.Database

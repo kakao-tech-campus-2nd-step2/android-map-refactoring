@@ -1,9 +1,10 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSavedSearchBinding
+import campus.tech.kakao.map.model.Place
 
 class SavedSearchAdapter(private val onSearchClicked: (Place) -> Unit, private val onDeleteClicked: (Place) -> Unit) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
     private val searches = mutableListOf<Place>()

@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MapActivity">
+    tools:context=".view.MapActivity">
 
     <data>
         <variable
             name="mapViewModel"
-            type="campus.tech.kakao.map.MapViewModel" />
+            type="campus.tech.kakao.map.viewmodel.MapViewModel" />
         <import type="android.view.View"/>
     </data>
 

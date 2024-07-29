@@ -1,10 +1,12 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.repository.PlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
