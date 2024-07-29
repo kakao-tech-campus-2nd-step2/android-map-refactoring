@@ -15,9 +15,11 @@ class MapViewModel @Inject constructor(
     val placeAddr = MutableLiveData<String>()
     val bottomSheetState = MutableLiveData<Int>()
 
+
     fun getLastLocation(): Pair<Double, Double>? {
         return mapRepository.getLastLocation()
     }
+
     fun setPlaceInfo(placeName: String?, placeAddr: String?){
         if (!placeName.isNullOrEmpty() && !placeAddr.isNullOrEmpty()) {
             this.placeName.value = placeName
@@ -31,4 +33,5 @@ class MapViewModel @Inject constructor(
         val parts = fullMsg.split(": ", limit = 2)
         return if (parts.size > 1) parts[1] else ""
     }
+
 }

@@ -12,6 +12,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class LogRepository @Inject constructor (private val application: MyApplication, private val placeDao: PlaceDao): LogRepositoryInterface {
+
     private var logList = mutableListOf<Place>()
 
     override fun getAllLogs(): List<Place> {
