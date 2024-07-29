@@ -1,8 +1,11 @@
 package campus.tech.kakao.map.view
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -35,7 +38,7 @@ class SearchActivity : AppCompatActivity() {
         binding.recyclerViewSearchResults.layoutManager = LinearLayoutManager(this)
         binding.recyclerViewSavedSearches.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
-        placeAdapter = PlaceAdapter(emptyList()) { place ->
+        placeAdapter = PlaceAdapter(this, emptyList()) { place ->
             viewModel.addSavedQuery(place.placeName)
         }
         binding.recyclerViewSearchResults.adapter = placeAdapter
