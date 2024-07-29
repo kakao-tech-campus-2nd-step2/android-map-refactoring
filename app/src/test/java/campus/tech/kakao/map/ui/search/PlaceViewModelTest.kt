@@ -76,7 +76,7 @@ class PlaceViewModelTest {
 
             // when
             viewModel.searchPlacesByCategory(categoryInput, totalPageCount)
-            viewModel.searchResults.first {it.size == placeList.size}
+            viewModel.searchResults.first { it.size == placeList.size }
 
             // then
             coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
@@ -154,8 +154,6 @@ class PlaceViewModelTest {
         assertEquals(placeList, viewModel.searchResults.value)
         coVerify { getPlacesByCategoryUseCase(categoryInput, totalPageCount) }
     }
-
-
 
     private fun mockLogClass() {
         mockkStatic(Log::class)

@@ -22,7 +22,7 @@ abstract class ViewModelModule {
     @Binds
     @ViewModelScoped
     abstract fun bindSavedSearchWordRepository(
-        savedSearchWordRepositoryImpl: DefaultSavedSearchWordRepository
+        savedSearchWordRepositoryImpl: DefaultSavedSearchWordRepository,
     ): SavedSearchWordRepository
 
     @Binds

@@ -8,7 +8,7 @@ fun LocationData.map(): LocationDomain {
         name = this.name,
         latitude = this.latitude,
         longitude = this.longitude,
-        address = this.address
+        address = this.address,
     )
 }
 

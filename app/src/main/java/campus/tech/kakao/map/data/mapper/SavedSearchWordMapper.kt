@@ -10,7 +10,7 @@ fun SavedSearchWordData.map(): SavedSearchWordDomain {
         placeId = this.placeId,
         address = this.address,
         longitude = this.longitude,
-        latitude = this.latitude
+        latitude = this.latitude,
     )
 }
 
@@ -21,6 +21,6 @@ fun SavedSearchWordDomain.map(): SavedSearchWordData {
         placeId = this.placeId,
         address = this.address,
         longitude = this.longitude,
-        latitude = this.latitude
+        latitude = this.latitude,
     )
 }

@@ -45,7 +45,7 @@ class SavedSearchWordViewModelTest {
             insertOrUpdateSearchWordUseCase,
             deleteSearchWordByIdUseCase,
             getAllSearchWordsUseCase,
-            testDispatcher
+            testDispatcher,
         )
 
         searchWord1 =
@@ -113,7 +113,9 @@ class SavedSearchWordViewModelTest {
             viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(searchWord2))
             viewModel.savedSearchWords.first { it.size == 2 }
 
-            viewModel.handleUiEvent(SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1))
+            viewModel.handleUiEvent(
+                SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(searchWord1),
+            )
             viewModel.savedSearchWords.first { it.size == 1 }
 
             // Then

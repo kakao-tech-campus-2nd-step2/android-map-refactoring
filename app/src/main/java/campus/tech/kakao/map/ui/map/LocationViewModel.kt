@@ -3,8 +3,8 @@ package campus.tech.kakao.map.ui.map
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.di.IoDispatcher
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.domain.usecase.LoadLocationUseCase
 import campus.tech.kakao.map.domain.usecase.SaveLocationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -5,8 +5,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.dataStore
 import androidx.room.Room
 import campus.tech.kakao.map.data.database.AppDatabase
-import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.data.repository.LocationSerializer
+import campus.tech.kakao.map.domain.model.LocationDomain
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,5 +44,4 @@ object DatabaseModule {
     @Provides
     @ViewModelScoped
     fun provideSavedSearchWordDao(@SearchWordDatabase database: AppDatabase) = database.savedSearchWordDao()
-
 }

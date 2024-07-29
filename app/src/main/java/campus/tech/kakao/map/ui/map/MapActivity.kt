@@ -14,8 +14,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.domain.model.LocationDomain
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_MAP_ERROR_MESSAGE
 import campus.tech.kakao.map.ui.search.SearchActivity
@@ -29,9 +29,7 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -91,11 +89,11 @@ class MapActivity : AppCompatActivity() {
             val data: Intent? = result.data
 
             val newLocation: LocationDomain? =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                data?.getParcelableExtra(EXTRA_LOCATION, LocationDomain::class.java)
-            } else {
-                data?.getParcelableExtra(EXTRA_LOCATION)
-            }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    data?.getParcelableExtra(EXTRA_LOCATION, LocationDomain::class.java)
+                } else {
+                    data?.getParcelableExtra(EXTRA_LOCATION)
+                }
 
             if (newLocation != null) {
                 saveLocationAndWaitForUpdate(newLocation)

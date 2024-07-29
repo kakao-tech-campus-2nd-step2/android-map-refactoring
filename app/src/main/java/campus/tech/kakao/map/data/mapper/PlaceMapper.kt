@@ -1,7 +1,7 @@
 package campus.tech.kakao.map.data.mapper
 
-import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.data.network.dto.PlaceDTO
+import campus.tech.kakao.map.domain.model.PlaceDomain
 
 fun PlaceDTO.map(): PlaceDomain {
     return PlaceDomain(

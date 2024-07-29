@@ -10,9 +10,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
-import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.domain.model.LocationDomain
+import campus.tech.kakao.map.domain.model.PlaceDomain
 import campus.tech.kakao.map.domain.model.SavedSearchWordDomain
 import campus.tech.kakao.map.ui.IntentKeys.EXTRA_LOCATION
 import campus.tech.kakao.map.ui.search.adapters.ResultRecyclerViewAdapter
@@ -89,7 +89,7 @@ class SearchActivity : AppCompatActivity() {
             object : OnPlaceItemClickListener {
                 override fun onPlaceItemClicked(place: PlaceDomain) {
                     savedSearchWordViewModel.handleUiEvent(
-                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWordDomain())
+                        SavedSearchWordViewModel.UiEvent.OnPlaceItemClicked(place.toSavedSearchWordDomain()),
                     )
                 }
             }
@@ -120,7 +120,7 @@ class SearchActivity : AppCompatActivity() {
             object : OnSavedSearchWordClearImageViewClickListener {
                 override fun onSavedSearchWordClearImageViewClicked(savedSearchWord: SavedSearchWordDomain) {
                     savedSearchWordViewModel.handleUiEvent(
-                        SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(savedSearchWord)
+                        SavedSearchWordViewModel.UiEvent.OnSavedSearchWordClearImageViewClicked(savedSearchWord),
                     )
                 }
             }
@@ -232,7 +232,6 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-
     /**
      * Place 객체를 SavedSearchWord 객체로 변환하는 확장 함수.
      *
@@ -253,7 +252,7 @@ class SearchActivity : AppCompatActivity() {
             name = this.name,
             latitude = this.latitude,
             longitude = this.longitude,
-            address = this.address
+            address = this.address,
         )
     }
 }

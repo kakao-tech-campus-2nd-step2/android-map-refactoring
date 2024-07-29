@@ -80,7 +80,9 @@ constructor(
     fun handleUiEvent(event: UiEvent) {
         when (event) {
             is UiEvent.OnPlaceItemClicked -> onPlaceItemClicked(event.savedSearchWord)
-            is UiEvent.OnSavedSearchWordClearImageViewClicked -> onSavedSearchWordClearImageViewClicked(event.savedSearchWord)
+            is UiEvent.OnSavedSearchWordClearImageViewClicked -> onSavedSearchWordClearImageViewClicked(
+                event.savedSearchWord,
+            )
         }
     }
 
