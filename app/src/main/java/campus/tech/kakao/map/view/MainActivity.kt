@@ -40,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
+    private val viewModel: PlaceViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,43 +102,59 @@ class MainActivity : AppCompatActivity() {
 
     private fun setCameraPosition() {
         val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
-        val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        Log.d("testt", longitude.toString())
-        kakaoMap.moveCamera(cameraUpdate)
+
+        // 데이터 로드
+        viewModel.loadPlacePreferences(sharedPreferences)
+        // LiveData 관찰
+        viewModel.longitude.observe(this, Observer { longitude ->
+            Log.d("testt", "Longitude: $longitude")
+            viewModel.latitude.observe(this, Observer { latitude ->
+                Log.d("testt", "Latitude: $latitude")
+                val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
+                kakaoMap.moveCamera(cameraUpdate)
+            })
+        })
     }
 
     private fun setMarker() {
         val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unkwon")
-        var styles = LabelStyles.from(
-            LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
-                .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
-        )
 
-        styles = kakaoMap.labelManager!!.addLabelStyles(styles!!)
-        kakaoMap.labelManager!!.layer!!.addLabel(
-            LabelOptions.from(LatLng.from(latitude, longitude))
-                .setStyles(styles)
-                .setTexts(placeName)
-        )
+        // 데이터 로드
+        viewModel.loadPlacePreferences(sharedPreferences)
+        // LiveData 관찰
+        viewModel.longitude.observe(this, Observer { longitude ->
+            Log.d("testt", "Longitude: $longitude")
+            viewModel.latitude.observe(this, Observer { latitude ->
+                Log.d("testt", "Latitude: $latitude")
+                viewModel.placeName.observe(this, Observer { placeName ->
+                    viewModel.addressName.observe(this, Observer { addressName ->
+                        var styles = LabelStyles.from(
+                            LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
+                                .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
+                        )
+                        styles = kakaoMap.labelManager!!.addLabelStyles(styles!!)
+                        kakaoMap.labelManager!!.layer!!.addLabel(
+                            LabelOptions.from(LatLng.from(latitude, longitude))
+                                .setStyles(styles)
+                                .setTexts(placeName)
+                        )
+                    })
+                })
+            })
+        })
     }
 
     private fun setBottomSheet() {
         val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unknown Place").toString()
-        val addressName =
-            sharedPreferences.getString(EXTRA_PLACE_ADDRESSNAME, "Unknown Address").toString()
 
-        binding.bottomSheetTitle.text = placeName
-        binding.bottomSheetDescription.text = addressName
+        // 데이터 로드
+        viewModel.loadPlacePreferences(sharedPreferences)
+        viewModel.placeName.observe(this, Observer { placeName ->
+            viewModel.addressName.observe(this, Observer { addressName ->
+                binding.bottomSheetTitle.text = placeName
+                binding.bottomSheetDescription.text = addressName
+            })
+        })
     }
 
     override fun onResume() {
@@ -152,4 +169,3 @@ class MainActivity : AppCompatActivity() {
         mapView.pause()
     }
 }
-

@@ -9,6 +9,7 @@ import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.model.PlaceResponse
 import campus.tech.kakao.map.model.RetrofitService
+import campus.tech.kakao.map.view.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -21,6 +22,7 @@ class PlaceViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
+    /* SearchActivity */
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
     private val _places = MutableLiveData<List<Document>>()
@@ -83,4 +85,25 @@ class PlaceViewModel @Inject constructor(
             }
         })
     }
+
+
+    /* MainActivity */
+    private val _placeName = MutableLiveData<String>()
+    private val _addressName = MutableLiveData<String>()
+    private val _longitude = MutableLiveData<Double>()
+    private val _latitude = MutableLiveData<Double>()
+
+    val placeName: LiveData<String> get() = _placeName
+    val addressName: LiveData<String> get() = _addressName
+    val longitude: LiveData<Double> get() = _longitude
+    val latitude: LiveData<Double> get() = _latitude
+
+
+    fun loadPlacePreferences(sharedPreferences: SharedPreferences) {
+        _placeName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place")
+        _addressName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address")
+        _longitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
+        _latitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+    }
+
 }
