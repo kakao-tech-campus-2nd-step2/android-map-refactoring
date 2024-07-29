@@ -24,7 +24,7 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
     private lateinit var binding: ActivityDataSearchBinding
 
     private val searchViewModel: SearchViewModel by viewModels()
-    private val recentViewModel: SearchHistoryViewModel by viewModels()  //최근 검색어 관리
+    private val searchHistoryViewModel: SearchHistoryViewModel by viewModels()  //최근 검색어 관리
 
     private lateinit var searchResultDataAdapter: SearchDataAdapter   //검색 결과 표시 위함
 
@@ -39,10 +39,10 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         //Adapter 초기화
-        searchResultDataAdapter = SearchDataAdapter(emptyList(), recentViewModel, this)
+        searchResultDataAdapter = SearchDataAdapter(emptyList(), searchHistoryViewModel, this)
         binding.searchResulListView.adapter = searchResultDataAdapter
         binding.recentSearchListView.adapter =
-            RecentSearchAdapter(emptyList(), recentViewModel, this)
+            RecentSearchAdapter(emptyList(), searchHistoryViewModel, this)
 
         resetButtonListener()   //x버튼 눌러 검색 입력 필드 내용 삭제
         setTextWatcher()    //검색 입력 필드 텍스트 변경 리스너
@@ -59,9 +59,9 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
         })
 
         //검색 history 데이터 관찰
-        recentViewModel.getRecentDataLiveData().observe(this, Observer { recentData ->
+        searchHistoryViewModel.getRecentDataLiveData().observe(this, Observer { recentData ->
             binding.recentSearchListView.adapter =
-                RecentSearchAdapter(recentData, recentViewModel, this)
+                RecentSearchAdapter(recentData, searchHistoryViewModel, this)
         })
     }
 
