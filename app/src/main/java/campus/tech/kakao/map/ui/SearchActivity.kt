@@ -1,20 +1,21 @@
 package campus.tech.kakao.map.ui
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import androidx.activity.viewModels
 import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.app.Activity
 import android.content.Intent
-import campus.tech.kakao.map.viewmodel.MapViewModel
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.model.MapItemEntity
+import campus.tech.kakao.map.viewmodel.MapViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,8 +28,9 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_search)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         setupRecyclerViews()
         setupSearchEditText()

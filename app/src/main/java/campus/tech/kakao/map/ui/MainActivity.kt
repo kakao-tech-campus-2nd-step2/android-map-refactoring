@@ -5,16 +5,17 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.*
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMainBinding
 import campus.tech.kakao.map.model.MapItemEntity
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.kakao.vectormap.camera.CameraAnimation
@@ -28,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var errorLayout: RelativeLayout
     private lateinit var errorMessage: TextView
@@ -53,10 +55,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         // 카카오 지도 초기화
-        mapView = findViewById(R.id.map_view)
+        mapView = binding.mapView
         mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 // 지도 API가 정상적으로 종료될 때 호출됨
@@ -75,8 +79,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         // 검색창 클릭 시 검색 페이지로 이동
-        val searchEditText = findViewById<EditText>(R.id.search_edit_text)
-        searchEditText.setOnClickListener {
+        binding.searchEditText.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             intent.putExtra("selectedItemsSize", selectedItems.size)
             selectedItems.forEachIndexed { index, mapItem ->
@@ -89,16 +92,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 에러 화면 초기화
-        errorLayout = findViewById(R.id.error_layout)
-        errorMessage = findViewById(R.id.error_message)
-        errorDetails = findViewById(R.id.error_details)
-        retryButton = findViewById(R.id.retry_button)
+        errorLayout = binding.errorLayout
+        errorMessage = binding.errorMessage
+        errorDetails = binding.errorDetails
+        retryButton = binding.retryButton
 
         // BottomSheet 초기화
-        bottomSheetLayout = findViewById(R.id.bottomSheetLayout)
+        bottomSheetLayout = binding.bottomSheetLayout
         bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetLayout)
-        bottomSheetTitle = findViewById(R.id.bottomSheetTitle)
-        bottomSheetAddress = findViewById(R.id.bottomSheetAddress)
+        bottomSheetTitle = binding.bottomSheetTitle
+        bottomSheetAddress = binding.bottomSheetAddress
 
         // 처음에는 BottomSheet 숨기기
         bottomSheetLayout.visibility = View.GONE
