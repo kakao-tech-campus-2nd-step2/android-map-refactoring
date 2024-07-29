@@ -2,13 +2,16 @@ package campus.tech.kakao.map.repository
 
 import campus.tech.kakao.map.retrofit.CategoryData
 import campus.tech.kakao.map.retrofit.Document
-import campus.tech.kakao.map.retrofit.RetrofitAPI.getResultFromAPI
+import campus.tech.kakao.map.retrofit.RetrofitAPI
+import javax.inject.Inject
 
-class SearchResultRepository {
+class SearchResultRepository @Inject constructor(
+    private val retrofitAPI: RetrofitAPI
+) {
 
     //검색 결과 가공
     fun loadResultMapData(data: String, callback: (List<Document>) -> Unit) {
-        getResultFromAPI(data) { response ->
+        retrofitAPI.getResultFromAPI(data) { response ->
             if (response.isSuccessful) {
                 val body = response.body()
                 body?.documents?.let { documents ->
