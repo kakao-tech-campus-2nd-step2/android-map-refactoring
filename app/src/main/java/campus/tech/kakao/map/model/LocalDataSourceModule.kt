@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
+import campus.tech.kakao.map.db.PlaceContract
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,7 +20,9 @@ class LocalDataSourceModule {
     @Singleton
     @Provides
     fun provideRoomDatabase(@ApplicationContext context: Context): SavedPlaceDatabase {
-        return SavedPlaceDatabase.getInstance(context)
+        return Room.databaseBuilder(
+            context, SavedPlaceDatabase::class.java, PlaceContract.DATABASE_NAME
+        ).build()
     }
 
     @Provides
@@ -30,7 +34,7 @@ class LocalDataSourceModule {
 
     @Singleton
     @Provides
-    fun provideDataStore(@ApplicationContext context: Context) : DataStore<Preferences>{
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences> {
         return context.dataStore
     }
 

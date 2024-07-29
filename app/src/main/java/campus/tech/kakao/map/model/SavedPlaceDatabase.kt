@@ -12,18 +12,5 @@ import kotlin.concurrent.Volatile
 abstract class SavedPlaceDatabase : RoomDatabase() {
 
     abstract fun savedPlaceDao(): SavedPlaceDao
-
-    companion object {
-        @Volatile
-        private var instance: SavedPlaceDatabase? = null
-
-        fun getInstance(context: Context): SavedPlaceDatabase {
-            return instance ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context, SavedPlaceDatabase::class.java, PlaceContract.DATABASE_NAME
-                ).build().also { instance = it }
-            }
-        }
-    }
 }
 
