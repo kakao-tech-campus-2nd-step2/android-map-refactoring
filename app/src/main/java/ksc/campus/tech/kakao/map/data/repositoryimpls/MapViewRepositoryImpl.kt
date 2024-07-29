@@ -111,7 +111,7 @@ class MapViewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun clearSelectedLocation(){
-        _selectedLocation.emit(null)
+        mapPreferenceDataSource.clearSelectedLocation(context)
     }
 
     companion object {

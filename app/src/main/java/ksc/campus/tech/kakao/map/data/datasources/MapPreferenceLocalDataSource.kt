@@ -103,6 +103,12 @@ class MapPreferenceLocalDataSource @Inject constructor() {
         Log.d("KSC", "registering setOnPreferenceChanged")
     }
 
+    fun clearSelectedLocation(context: Context){
+        val editor = getSharedPreference(context).edit()
+        editor.remove(SELECTED_LOCATION_KEY)
+        editor.apply()
+    }
+
     companion object {
         private const val PREFERENCE_NAME = "mapViewPreference"
         private const val CAMERA_POSITION_KEY = "currentPosition"
