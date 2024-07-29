@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.viewModel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,7 +41,6 @@ class DBViewModel @Inject constructor(
     }
 
     suspend fun deleteRecentData(data: String, address: String) {
-        Log.d("yeong", "DBViewModel: 여기까지 옴")
         searchHistoryRepo.deleteSearchData(data, address)
         _searchHistoryDataList.value = searchHistoryRepo.getSearchHistory()
     }

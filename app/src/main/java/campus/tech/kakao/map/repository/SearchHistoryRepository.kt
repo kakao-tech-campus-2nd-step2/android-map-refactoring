@@ -1,7 +1,6 @@
 package campus.tech.kakao.map.repository
 
 import android.content.Context
-import android.util.Log
 import campus.tech.kakao.map.data.room.SearchHistoryDao
 import campus.tech.kakao.map.data.room.SearchHistoryData
 import campus.tech.kakao.map.data.room.SearchHistoryDatabase
@@ -34,7 +33,6 @@ class SearchHistoryRepository @Inject constructor(
 
     suspend fun deleteSearchData(name: String, address: String) {
         withContext(Dispatchers.IO) {
-            Log.d("yeong","Repository: 여기 까지 옴")
             val item = searchHistoryDao.findSearchItem(name, address)
             if (item != null) {
                 searchHistoryDao.deleteSearchItem(name, address)
