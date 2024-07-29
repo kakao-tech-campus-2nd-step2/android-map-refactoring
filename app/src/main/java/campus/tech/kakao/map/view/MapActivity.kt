@@ -1,6 +1,5 @@
 package campus.tech.kakao.map.view
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences.Editor
 import android.os.Build
@@ -18,15 +17,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.model.Constants
 import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.repository.SharedPreferenceRepository
 import campus.tech.kakao.map.viewmodel.MapActivityViewModel
-import campus.tech.kakao.map.viewmodel.MapViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback

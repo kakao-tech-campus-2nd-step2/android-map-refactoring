@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.CoroutineIoDispatcher
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchActivityViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
-    private val savedPlaceRepository: SavedPlaceRepository
+    private val savedPlaceRepository: SavedPlaceRepository,
+    @CoroutineIoDispatcher private val IoDispatcher : CoroutineDispatcher
 ) : ViewModel() {
     private val _place = MutableLiveData<List<Place>>()
     private val _savedPlace = MutableLiveData<List<SavedPlace>>()
@@ -28,20 +31,20 @@ class SearchActivityViewModel @Inject constructor(
     }
 
     fun getSavedPlace() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(IoDispatcher) {
             _savedPlace.postValue(savedPlaceRepository.getAllSavedPlace())
         }
     }
 
     fun savePlace(place: Place) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(IoDispatcher) {
             savedPlaceRepository.writePlace(place)
             getSavedPlace()
         }
     }
 
     fun deleteSavedPlace(savedPlace: SavedPlace) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(IoDispatcher){
             savedPlaceRepository.deleteSavedPlace(savedPlace)
             getSavedPlace()
         }
