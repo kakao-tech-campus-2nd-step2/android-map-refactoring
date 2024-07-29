@@ -5,7 +5,7 @@
             name="savedLocation"
             type="campus.tech.kakao.map.model.SavedLocation" />
         <variable
-            name="itemSelectedListener"
+            name="onItemSelectedListener"
             type="campus.tech.kakao.map.view.search.OnItemSelectedListener" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -13,7 +13,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="10dp"
+        android:onClick="@{() -> onItemSelectedListener.onSavedLocationViewClicked(savedLocation.title)}">
 
 
         <TextView
@@ -34,8 +35,7 @@
             android:layout_height="25dp"
             android:src="@drawable/x_mark"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-<!--            android:onClick="@{() -> itemSelectedListener.onSavedLocationXButtonClicked(savedLocation)}" 작동 안함-->
-
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{() -> onItemSelectedListener.onSavedLocationClearButtonClicked(savedLocation)}"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

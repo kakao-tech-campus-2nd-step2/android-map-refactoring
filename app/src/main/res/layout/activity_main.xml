@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-
+<layout>
+    <data>
+        <variable
+            name="searchClickListener"
+            type="campus.tech.kakao.map.view.search.OnSearchClickListener" />
+    </data>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -31,7 +36,8 @@
         app:layout_constraintBottom_toBottomOf="@+id/searchEditTextMain"
         app:layout_constraintEnd_toEndOf="@+id/searchEditTextMain"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginRight="10dp"/>
+        android:layout_marginRight="10dp"
+        android:onClick="@{() -> searchClickListener.onSearchClearButtonClicked()}"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/savedLocationRecyclerView"
@@ -66,3 +72,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

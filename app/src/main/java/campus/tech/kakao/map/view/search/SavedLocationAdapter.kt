@@ -33,18 +33,13 @@ class SavedLocationAdapter(
         holder.bind(getItem(position))
     }
 
-    class SavedLocationViewHolder( // getItem을 사용하기 위해 inner로 선언
+    class SavedLocationViewHolder(
         private val itemSavedLocationBinding: ItemSavedLocationBinding,
         private val itemSelectedListener: OnItemSelectedListener
     ) : RecyclerView.ViewHolder(itemSavedLocationBinding.root) {
         fun bind(item: SavedLocation) { // ViewHolder와 itemLocationBinding 연동
             itemSavedLocationBinding.savedLocation = item
-            itemView.setOnClickListener {
-                itemSelectedListener.onSavedLocationViewClicked(item.title)
-            }
-            itemSavedLocationBinding.savedLocationXButton.setOnClickListener {
-                itemSelectedListener.onSavedLocationXButtonClicked(item)
-            } // -> item_saved_location.xml에서 data binding을 통해 ImageView에 리스너를 달았는데 작동을 안하네요..! 여기서 리스너를 달아도 괜찮은 걸까요?
+            itemSavedLocationBinding.onItemSelectedListener = itemSelectedListener
         }
     }
 }

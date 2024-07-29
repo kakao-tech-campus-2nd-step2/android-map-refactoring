@@ -5,6 +5,6 @@ import campus.tech.kakao.map.model.SavedLocation
 
 interface OnItemSelectedListener {
     fun onLocationViewClicked(location: Location)
-    fun onSavedLocationXButtonClicked(item: SavedLocation)
+    fun onSavedLocationClearButtonClicked(item: SavedLocation)
     fun onSavedLocationViewClicked(title: String)
 }

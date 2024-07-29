@@ -18,7 +18,7 @@ import campus.tech.kakao.map.viewmodel.SavedLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), OnItemSelectedListener {
+class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickListener {
     private val locationViewModel: LocationViewModel by viewModels()
     private val savedLocationViewModel: SavedLocationViewModel by viewModels()
 
@@ -57,9 +57,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
     }
 
     private fun setupClearButton() {
-        activityMainBinding.clearButton.setOnClickListener {
-            activityMainBinding.searchEditTextMain.setText("")
-        }
+        activityMainBinding.searchClickListener = this
     }
 
     private fun setupViewModels() {
@@ -104,7 +102,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         startActivity(intent)
     }
 
-    override fun onSavedLocationXButtonClicked(savedLocation: SavedLocation) {
+    override fun onSavedLocationClearButtonClicked(savedLocation: SavedLocation) {
         savedLocationViewModel.deleteSavedLocation(savedLocation)
     }
 
@@ -113,6 +111,10 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener {
         locationViewModel.searchLocationsFromKakaoAPI(title){ searchLocationsSize ->
             handleNoResultMessage(searchLocationsSize)
         }
+    }
+
+    override fun onSearchClearButtonClicked() {
+        activityMainBinding.searchEditTextMain.setText("")
     }
 
     private fun updateEditText(title: String) {

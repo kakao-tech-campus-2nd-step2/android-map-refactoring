@@ -41,10 +41,7 @@ class LocationAdapter(
     ) {
         fun bind(item: Location) { // ViewHolder와 itemLocationBinding 연동
             itemLocationBinding.location = item
-
-            itemView.setOnClickListener {
-                itemSelectedListener.onLocationViewClicked(item)
-            }
+            itemLocationBinding.onItemSelectedListener = itemSelectedListener
         }
     }
 }
