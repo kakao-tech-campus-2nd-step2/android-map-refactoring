@@ -1,6 +1,8 @@
 package ksc.campus.tech.kakao.map.data.mapper
 
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
@@ -65,4 +67,13 @@ class CameraPositionDeserializer : JsonDeserializer<CameraPosition?> {
             return null
         }
     }
+}
+
+object CameraPositionJsonMapper {
+    val cameraPositionSerializer: Gson = GsonBuilder()
+        .registerTypeAdapter(CameraPositionSerializer::class.java, CameraPositionSerializer())
+        .create()
+    val cameraPositionDeserializer: Gson = GsonBuilder()
+        .registerTypeAdapter(CameraPositionDeserializer::class.java, CameraPositionDeserializer())
+        .create()
 }

@@ -5,11 +5,9 @@ import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonSyntaxException
 import com.kakao.vectormap.camera.CameraPosition
-import ksc.campus.tech.kakao.map.data.mapper.CameraPositionDeserializer
-import ksc.campus.tech.kakao.map.data.mapper.CameraPositionSerializer
+import ksc.campus.tech.kakao.map.data.mapper.CameraPositionJsonMapper
 import ksc.campus.tech.kakao.map.domain.models.LocationInfo
 import javax.inject.Inject
 
@@ -20,12 +18,6 @@ interface OnMapPreferenceChanged {
 }
 
 class MapPreferenceLocalDataSource @Inject constructor() {
-    private val cameraPositionSerializer: Gson = GsonBuilder()
-        .registerTypeAdapter(CameraPositionSerializer::class.java, CameraPositionSerializer())
-        .create()
-    private val cameraPositionDeserializer: Gson = GsonBuilder()
-        .registerTypeAdapter(CameraPositionDeserializer::class.java, CameraPositionDeserializer())
-        .create()
     private val gson: Gson = Gson()
     private var sharedPreference:SharedPreferences? = null
 
@@ -59,7 +51,7 @@ class MapPreferenceLocalDataSource @Inject constructor() {
         }
 
         try {
-            return cameraPositionDeserializer.fromJson(data, CameraPosition::class.java)
+            return CameraPositionJsonMapper.cameraPositionDeserializer.fromJson(data, CameraPosition::class.java)
         } catch (e: JsonSyntaxException) {
             Log.e("KSC", e.message ?: "")
             return null
@@ -83,7 +75,7 @@ class MapPreferenceLocalDataSource @Inject constructor() {
 
     fun saveCameraPosition(context: Context, position: CameraPosition) {
         val editor = getSharedPreference(context).edit()
-        editor.putString(CAMERA_POSITION_KEY, cameraPositionSerializer.toJson(position))
+        editor.putString(CAMERA_POSITION_KEY, CameraPositionJsonMapper.cameraPositionSerializer.toJson(position))
         editor.apply()
         Log.d("KSC", "scp")
     }
