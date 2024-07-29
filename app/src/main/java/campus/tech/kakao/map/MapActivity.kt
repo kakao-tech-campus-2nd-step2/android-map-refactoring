@@ -21,8 +21,9 @@ import java.lang.Exception
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
 
     private lateinit var mapView: MapView

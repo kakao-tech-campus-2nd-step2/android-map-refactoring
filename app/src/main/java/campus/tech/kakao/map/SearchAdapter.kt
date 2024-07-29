@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import campus.tech.kakao.map.databinding.ItemResultBinding
 import android.util.Log
 
-class SearchAdapter(private val onItemClicked: (Document) -> Unit) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
+class SearchAdapter(private val onItemClicked: (Place) -> Unit) : RecyclerView.Adapter<SearchAdapter.ViewHolder>() {
 
-    private val results = mutableListOf<Document>()
+    private val results = mutableListOf<Place>()
 
     class ViewHolder(val binding: ItemResultBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -21,9 +21,9 @@ class SearchAdapter(private val onItemClicked: (Document) -> Unit) : RecyclerVie
         val result = results[position]
         Log.d("SearchAdapter", "Binding result at position $position: $result")
 
-        holder.binding.resultTextView.text = result.place_name
-        holder.binding.resultAddressTextView.text = result.address_name
-        holder.binding.resultCategoryTextView.text = result.category_group_name
+        holder.binding.resultTextView.text = result.name
+        holder.binding.resultAddressTextView.text = result.address
+        holder.binding.resultCategoryTextView.text = result.category
         Log.e("SearchAdapter", "Unexpected result format: $result")
 
         holder.binding.root.setOnClickListener {
@@ -33,7 +33,7 @@ class SearchAdapter(private val onItemClicked: (Document) -> Unit) : RecyclerVie
 
     override fun getItemCount() = results.size
 
-    fun updateResults(newResults: List<Document>) {
+    fun updateResults(newResults: List<Place>) {
         Log.d("SearchAdapter", "Updating results: $newResults")
         results.clear()
         results.addAll(newResults)

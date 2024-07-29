@@ -11,9 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import android.util.Log
-import com.kakao.sdk.common.util.Utility
 import android.content.Intent
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -87,12 +88,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun setupRecyclerViews() {
+    private fun setupRecyclerViews() {
         searchAdapter = SearchAdapter { result ->
-            viewModel.addSearch(result.place_name)
+            viewModel.addSearch(result.name, result.address, result.category, result.x, result.y)
             val intent = Intent(this, MapActivity::class.java).apply {
-                putExtra(EXTRA_PLACE_NAME, result.place_name)
-                putExtra(EXTRA_PLACE_ADDRESS, result.address_name)
+                putExtra(EXTRA_PLACE_NAME, result.name)
+                putExtra(EXTRA_PLACE_ADDRESS, result.address)
                 putExtra(EXTRA_PLACE_X, result.x)
                 putExtra(EXTRA_PLACE_Y, result.y)
             }
@@ -100,8 +101,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         savedSearchAdapter = SavedSearchAdapter (
-            onSearchClicked = viewModel::searchSavedPlace,
-            onDeleteClicked = viewModel::removeSearch
+            onSearchClicked = {viewModel.searchSavedPlace(it.name)},
+            onDeleteClicked = {place -> viewModel.removeSearch(place.name, place.address, place.category)}
         )
 
         binding.searchRecyclerView.layoutManager = LinearLayoutManager(this)
