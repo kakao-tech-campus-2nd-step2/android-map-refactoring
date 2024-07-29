@@ -26,7 +26,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "app_database"
         )
-            .fallbackToDestructiveMigration() //필요시 마이그레이션 재생성
+            .fallbackToDestructiveMigration() // 필요시 마이그레이션 재생성
             .build()
     }
 
