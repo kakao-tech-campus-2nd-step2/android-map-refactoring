@@ -8,13 +8,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.adapter.listener.SearchAdapterListener
-import campus.tech.kakao.map.viewModel.DBViewModel
+import campus.tech.kakao.map.viewModel.SearchHistoryViewModel
 import campus.tech.kakao.map.retrofit.Document
 import kotlinx.coroutines.launch
 
 class SearchDataAdapter(
     private var items: List<Document>,
-    private val recentViewModel: DBViewModel,
+    private val recentViewModel: SearchHistoryViewModel,
     private var adapterListener: SearchAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

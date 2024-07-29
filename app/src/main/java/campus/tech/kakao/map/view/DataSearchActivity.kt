@@ -14,7 +14,7 @@ import campus.tech.kakao.map.adapter.RecentSearchAdapter
 import campus.tech.kakao.map.adapter.SearchDataAdapter
 import campus.tech.kakao.map.data.LocationDataContract
 import campus.tech.kakao.map.databinding.ActivityDataSearchBinding
-import campus.tech.kakao.map.viewModel.DBViewModel
+import campus.tech.kakao.map.viewModel.SearchHistoryViewModel
 import campus.tech.kakao.map.viewModel.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.activity.viewModels
@@ -24,7 +24,7 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
     private lateinit var binding: ActivityDataSearchBinding
 
     private val searchViewModel: SearchViewModel by viewModels()
-    private val recentViewModel: DBViewModel by viewModels()  //최근 검색어 관리
+    private val recentViewModel: SearchHistoryViewModel by viewModels()  //최근 검색어 관리
 
     private lateinit var searchResultDataAdapter: SearchDataAdapter   //검색 결과 표시 위함
 

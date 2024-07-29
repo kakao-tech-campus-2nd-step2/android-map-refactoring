@@ -10,12 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.data.room.SearchHistoryData
 import campus.tech.kakao.map.adapter.listener.RecentAdapterListener
-import campus.tech.kakao.map.viewModel.DBViewModel
+import campus.tech.kakao.map.viewModel.SearchHistoryViewModel
 import kotlinx.coroutines.launch
 
 class RecentSearchAdapter(
     private val searchHistoryDataList: List<SearchHistoryData>,
-    private val dbViewModel: DBViewModel,
+    private val searchHistoryViewModel: SearchHistoryViewModel,
     private val adapterListener: RecentAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -38,8 +38,8 @@ class RecentSearchAdapter(
         viewHolder.name.text = item.name
 
         viewHolder.deleteBtn.setOnClickListener {
-            dbViewModel.viewModelScope.launch {
-                dbViewModel.deleteRecentData(item.name, item.address)
+            searchHistoryViewModel.viewModelScope.launch {
+                searchHistoryViewModel.deleteRecentData(item.name, item.address)
             }
         }
 
