@@ -1,8 +1,11 @@
-package campus.tech.kakao.map.data.model
+package campus.tech.kakao.map.data.remote.entity
 
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+
 data class DocumentEntity(
+    @PrimaryKey
     val id: String,
     @SerializedName("place_name")
     val placeName: String,
