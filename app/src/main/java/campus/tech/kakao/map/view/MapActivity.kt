@@ -4,45 +4,43 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.databinding.DataBindingUtil
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.model.PlaceInfo
 import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.KakaoMapSdk
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
-import com.kakao.vectormap.label.LabelLayer
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-    private lateinit var mapView: MapView
-    private lateinit var mapViewModel: MapViewModel
-    private lateinit var searchFloatingBtn: ExtendedFloatingActionButton
-    private lateinit var clickedPlaceNameView: TextView
-    private lateinit var clickedPlaceAddressView: TextView
-    private lateinit var clickedPlaceView: LinearLayoutCompat
+    private val mapViewModel: MapViewModel by viewModels()
+    private lateinit var binding: ActivityMapBinding
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<View>
-    private lateinit var errorView: ErrorView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
-        KakaoMapSdk.init(this, BuildConfig.KAKAO_APP_KEY)
-        mapViewModel = ViewModelProvider(this)[MapViewModel::class.java]
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.viewModel = mapViewModel
+        binding.lifecycleOwner = this
 
-        initView()
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_APP_KEY)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.clickedPlaceView)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         setListeners()
         observeViewModel()
         initializeMap()
@@ -50,28 +48,17 @@ class MapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        binding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        binding.mapView.pause()
         mapViewModel.saveLastPosition()
     }
 
-    private fun initView() {
-        mapView = findViewById(R.id.mapView)
-        searchFloatingBtn = findViewById(R.id.searchFloatingBtn)
-        clickedPlaceNameView = findViewById(R.id.clickedPlaceName)
-        clickedPlaceAddressView = findViewById(R.id.clickedPlaceAddress)
-        clickedPlaceView = findViewById(R.id.clickedPlaceView)
-        bottomSheetBehavior = BottomSheetBehavior.from(clickedPlaceView)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        errorView = findViewById(R.id.errorView)
-    }
-
     private fun setListeners() {
-        searchFloatingBtn.setOnClickListener {
+        binding.searchFloatingBtn.setOnClickListener {
             val intent = Intent(this, SearchActivity::class.java)
             startActivity(intent)
         }
@@ -93,7 +80,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun initializeMap() {
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 Log.d("KakaoMap", "onMapDestroy")
             }
@@ -119,18 +106,17 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showClickedPlaceInfo(clickedPlaceName: String?, clickedPlaceAddress: String?) {
-        clickedPlaceNameView.text = clickedPlaceName
-        clickedPlaceAddressView.text = clickedPlaceAddress
+        binding.clickedPlaceName.text = clickedPlaceName
+        binding.clickedPlaceAddress.text = clickedPlaceAddress
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun showLabel(latitude: Double, longitude: Double) {
         val kakaoMap = mapViewModel.kakaoMap.value ?: return
-        val styles: LabelStyles? = kakaoMap.labelManager
+        val styles = kakaoMap.labelManager
             ?.addLabelStyles(LabelStyles.from(LabelStyle.from(R.drawable.pink_marker)))
-        val options: LabelOptions =
-            LabelOptions.from(LatLng.from(latitude, longitude)).setStyles(styles)
-        val layer: LabelLayer? = kakaoMap.labelManager?.layer
+        val options = LabelOptions.from(LatLng.from(latitude, longitude)).setStyles(styles)
+        val layer = kakaoMap.labelManager?.layer
         layer?.addLabel(options)
     }
 
@@ -140,9 +126,7 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun showErrorView(error: String) {
-        errorView.showError(error)
-        mapView.visibility = View.GONE
+        binding.errorView.showError(error)
+        binding.mapView.visibility = View.GONE
     }
-
-
 }
