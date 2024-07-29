@@ -4,42 +4,34 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doAfterTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.adapter.keyword.KeywordAdapter
 import campus.tech.kakao.map.adapter.search.SearchAdapter
-import campus.tech.kakao.map.api.KakaoLocalApi
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.model.Item
 import campus.tech.kakao.map.viewmodel.keyword.KeywordViewModel
 import campus.tech.kakao.map.viewmodel.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordItemClickListener {
     private lateinit var binding: ActivitySearchBinding
 
-
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var keywordViewModel: KeywordViewModel
-    private lateinit var searchAdapter: SearchAdapter
-    private lateinit var keywordAdapter: KeywordAdapter
+    // ViewModel을 Lazy하게 제공받기
+    private val searchViewModel: SearchViewModel by viewModels()
+    private val keywordViewModel: KeywordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ViewModel 초기화
-        searchViewModel = ViewModelProvider(this).get(SearchViewModel::class.java)
-        keywordViewModel = ViewModelProvider(this).get(KeywordViewModel::class.java)
-
         // 검색 결과 RecyclerView 설정
-        searchAdapter = SearchAdapter(this)
+        var searchAdapter = SearchAdapter(this)
         binding.searchResultView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity)
             adapter = searchAdapter
@@ -47,7 +39,7 @@ class SearchActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeyword
         }
 
         // 검색어 목록 RecyclerView 설정
-        keywordAdapter = KeywordAdapter(this)
+        var keywordAdapter = KeywordAdapter(this)
         binding.keywordHistoryView.apply {
             layoutManager = LinearLayoutManager(this@SearchActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = keywordAdapter

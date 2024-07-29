@@ -55,18 +55,19 @@ class MainActivity : AppCompatActivity(), OnSearchItemClickListener, OnKeywordIt
     private lateinit var bottomSheetAddress: TextView
     private lateinit var bottomSheetLayout: FrameLayout
     private lateinit var searchResultLauncher: ActivityResultLauncher<Intent>
+
+    // ViewModel을 Lazy하게 제공받기
     private val keywordViewModel: KeywordViewModel by viewModels()
     private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
-        binding.lifecycleOwner = this // 생명주기 소유자 성정
-        binding.viewModel = mainViewModel // Viewmodel 바인딩
-        binding.keywordViewModel = keywordViewModel // Keyword viewmodel 바인딩
+        binding.lifecycleOwner = this // 생명주기 소유자 설정
+        binding.viewModel = mainViewModel // ViewModel 바인딩
+        binding.keywordViewModel = keywordViewModel // Keyword ViewModel 바인딩
 
         // View 초기화
-        // 바인딩을 활용하여 초기화하도록 변경
         initializeViews(binding)
 
         // ActivityResultLauncher 초기화
