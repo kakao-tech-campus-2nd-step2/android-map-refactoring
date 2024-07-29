@@ -14,12 +14,13 @@ class MapViewModel @Inject constructor(
 
     private val _placeInfoList = MutableLiveData<List<String>>()
     val placeInfoList: LiveData<List<String>> get() = _placeInfoList
+
     init {
-        _placeInfoList.value = listOf("NONE","NONE")
+        _placeInfoList.value = listOf("NONE", "NONE")
     }
 
-    fun updateInfo(name: String, address: String){
-        _placeInfoList.value = listOf(name,address)
+    fun updateInfo(name: String, address: String) {
+        _placeInfoList.value = listOf(name, address)
     }
 
     fun saveLocation(locationKey: String, data: String) {

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
- <layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="viewModel"
             type="campus.tech.kakao.map.viewModel.MapViewModel" />
@@ -23,11 +24,11 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="10dp"
+            android:text="@{viewModel.placeInfoList[0]}"
             android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/placeAddress"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@{viewModel.placeInfoList[0]}"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/placeAddress"
@@ -35,10 +36,10 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginBottom="20dp"
+            android:text="@{viewModel.placeInfoList[1]}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/placeName"
-            android:text="@{viewModel.placeInfoList[1]}"/>
+            app:layout_constraintTop_toBottomOf="@id/placeName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

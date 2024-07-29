@@ -42,8 +42,10 @@ class HomeMapActivity : AppCompatActivity() {
 
         val placeName = intent.getStringExtra(LocationDataContract.LOCATION_NAME).toString()
         val placeAddress = intent.getStringExtra(LocationDataContract.LOCATION_ADDRESS).toString()
-        val placeLatitude = intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
-        val placeLongitude = intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
+        val placeLatitude =
+            intent.getStringExtra(LocationDataContract.LOCATION_LATITUDE)?.toDouble()
+        val placeLongitude =
+            intent.getStringExtra(LocationDataContract.LOCATION_LONGITUDE)?.toDouble()
 
         bottomBehavior = BottomSheetBehavior.from(bottomSheet)
 
@@ -72,7 +74,8 @@ class HomeMapActivity : AppCompatActivity() {
                             )
                         )
                     val options =
-                        LabelOptions.from(LatLng.from(placeLatitude, placeLongitude)).setStyles(style)
+                        LabelOptions.from(LatLng.from(placeLatitude, placeLongitude))
+                            .setStyles(style)
                             .setTexts(placeName)
                     val layer = p0.labelManager?.layer
                     layer?.addLabel(options)
@@ -100,7 +103,7 @@ class HomeMapActivity : AppCompatActivity() {
 
         if (placeLatitude != null && placeLongitude != null) {
             bottomBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-            mapViewModel.updateInfo(placeName,placeAddress)
+            mapViewModel.updateInfo(placeName, placeAddress)
         } else {
             bottomBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
@@ -135,7 +138,7 @@ class HomeMapActivity : AppCompatActivity() {
         startActivity(intentError)
     }
 
-    private fun setBinding(){
+    private fun setBinding() {
         binding = ActivityHomeMapBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
@@ -149,7 +152,7 @@ class HomeMapActivity : AppCompatActivity() {
         bottomSheetBinding.lifecycleOwner = this
     }
 
-    private fun setViewModel(){
+    private fun setViewModel() {
         bottomSheetBinding.viewModel = mapViewModel
     }
 }
