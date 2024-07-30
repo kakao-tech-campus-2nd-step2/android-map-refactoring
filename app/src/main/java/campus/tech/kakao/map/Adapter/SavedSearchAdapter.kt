@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.Data.Place
-import campus.tech.kakao.map.Data.SearchResult
 import campus.tech.kakao.map.R
 
 class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchViewHolder>() {
@@ -30,17 +29,17 @@ class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchVi
         return savedSearches.size
     }
 
-    fun submitList(newList: List<SearchResult>) {
+    fun submitList(newList: String) {
         val diffCallback = object : DiffUtil.Callback() {
             override fun getOldListSize() = savedSearches.size
-            override fun getNewListSize() = newList.size
+            override fun getNewListSize() = newList.length
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return savedSearches[oldItemPosition].place_name == newList[newItemPosition].text
+                return savedSearches[oldItemPosition].place_name == newList[newItemPosition].toString()
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return savedSearches[oldItemPosition].address_name == newList[newItemPosition].text
+                return savedSearches[oldItemPosition].address_name == newList[newItemPosition].toString()
             }
         }
         val diffResult = DiffUtil.calculateDiff(diffCallback)

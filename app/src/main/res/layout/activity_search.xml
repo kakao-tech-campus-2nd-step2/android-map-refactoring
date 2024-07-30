@@ -8,6 +8,12 @@
         <variable
             name="viewModel"
             type="campus.tech.kakao.map.Model.SearchViewModel" />
+        <variable
+            name="SavedSearchAdapter"
+            type="campus.tech.kakao.map.Adapter.SavedSearchAdapter" />
+        <variable
+            name="searchResultAdapter"
+            type="campus.tech.kakao.map.Adapter.PlaceAdapter" />
     </data>
 
     <FrameLayout
@@ -30,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
-            app:adapter="@{viewModel.savedSearchAdapter}" />
+            app:adapter="@{SavedSearchAdapter}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecyclerVer"
@@ -38,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            app:adapter="@{viewModel.searchResultAdapter}" />
+            app:adapter="@{searchResultAdapter}" />
 
     </FrameLayout>
 </layout>

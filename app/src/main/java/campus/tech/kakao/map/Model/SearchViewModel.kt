@@ -4,9 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.Adapter.PlaceAdapter
-import campus.tech.kakao.map.Adapter.SavedSearchAdapter
+import campus.tech.kakao.map.Data.Document
 import campus.tech.kakao.map.Data.Place
+import campus.tech.kakao.map.Data.ResultSearchKeyword
 import campus.tech.kakao.map.Data.SearchRepository
 import campus.tech.kakao.map.Data.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,9 +27,6 @@ class SearchViewModel @Inject constructor(
 
     private val _savedSearches = MutableLiveData<List<Place>>()
     val savedSearches: LiveData<List<Place>> get() = _savedSearches
-
-    val savedSearchAdapter = SavedSearchAdapter()
-    val searchResultAdapter = PlaceAdapter()
 
     init {
         _isSavedSearchesVisible.value = false
@@ -52,17 +49,19 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             val results = query?.let { searchRepository.getSearchResults(it) }
             _searchResults.value = results
-            searchResultAdapter.submitList(results ?: emptyList())
         }
     }
 
     private fun loadSavedSearches() {
         viewModelScope.launch {
-            val savedSearches = searchRepository.getSearchResults(savedSearches.toString())
-            savedSearchAdapter.submitList(savedSearches)
+            val searchResults = searchRepository.getSearchResults(savedSearches.toString())
+            _savedSearches.value = searchResults
+            //여기서 자꾸 에러가 발생하는데 이걸 어떻게 해결해야할 지 모르겠습니다.
         }
     }
+
 }
+
 
 
 
