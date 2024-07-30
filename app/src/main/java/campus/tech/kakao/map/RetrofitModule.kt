@@ -17,12 +17,17 @@ object RetrofitModule {
 
 	@Provides
 	@Singleton
-	fun provideRetrofitService(): RetrofitService {
+	fun provideRetrofitService(retrofit: Retrofit): RetrofitService {
+		return retrofit.create(RetrofitService::class.java)
+	}
+
+	@Provides
+	@Singleton
+	fun provideRetrofit():Retrofit {
 		return Retrofit.Builder()
 			.baseUrl(UrlContract.BASE_URL)
 			.addConverterFactory(GsonConverterFactory.create())
 			.build()
-			.create(RetrofitService::class.java)
 	}
 
 	@Provides
