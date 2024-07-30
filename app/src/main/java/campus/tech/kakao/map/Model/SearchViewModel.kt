@@ -17,14 +17,17 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     private val searchRepository: SearchRepository
 ) : ViewModel() {
-    private val _searchQuery = MutableLiveData<String?>()
-    val searchQuery: LiveData<String?> get() = _searchQuery
+    val searchQuery = MutableLiveData<String>("")
+
     private val _isSavedSearchesVisible = MutableLiveData<Boolean>()
     val isSavedSearchesVisible: LiveData<Boolean> get() = _isSavedSearchesVisible
+
     private val _searchResults = MutableLiveData<List<SearchResult>?>()
     val searchResults: LiveData<List<SearchResult>?> get() = _searchResults
-    private var _savedSearches = MutableLiveData<List<Place>>()
+
+    private val _savedSearches = MutableLiveData<List<Place>>()
     val savedSearches: LiveData<List<Place>> get() = _savedSearches
+
     val savedSearchAdapter = SavedSearchAdapter()
     val searchResultAdapter = PlaceAdapter()
 
@@ -34,13 +37,13 @@ class SearchViewModel @Inject constructor(
     }
 
     fun onSearchQuerySubmitted() {
-        _searchQuery.value?.let { query ->
+        searchQuery.value?.let { query ->
             searchResults(query)
         }
     }
 
-    fun onSearchQueryChanged(newText: String?) {
-        _searchQuery.value = newText
+    fun onSearchQueryChanged(newText: String) { // 여기를 String 타입으로 변경
+        searchQuery.value = newText
         _isSavedSearchesVisible.value = !newText.isNullOrEmpty()
         searchResults(newText)
     }
@@ -49,7 +52,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch {
             val results = query?.let { searchRepository.getSearchResults(it) }
             _searchResults.value = results
-            searchResultAdapter.submitList(results)
+            searchResultAdapter.submitList(results ?: emptyList())
         }
     }
 
@@ -60,6 +63,7 @@ class SearchViewModel @Inject constructor(
         }
     }
 }
+
 
 
 

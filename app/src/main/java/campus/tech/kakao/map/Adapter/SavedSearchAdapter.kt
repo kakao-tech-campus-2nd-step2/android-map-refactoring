@@ -14,7 +14,6 @@ class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchVi
     private var savedSearches: List<Place> = emptyList()
 
     class SavedSearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        // View binding logic here
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedSearchViewHolder {
