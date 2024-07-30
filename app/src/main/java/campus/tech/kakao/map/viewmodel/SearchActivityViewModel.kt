@@ -3,47 +3,54 @@ package campus.tech.kakao.map.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.model.CoroutineIoDispatcher
 import campus.tech.kakao.map.model.Place
 import campus.tech.kakao.map.model.SavedPlace
 import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class SearchActivityViewModel(
+@HiltViewModel
+class SearchActivityViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
-    private val savedPlaceRepository: SavedPlaceRepository
+    private val savedPlaceRepository: SavedPlaceRepository,
+    @CoroutineIoDispatcher private val IoDispatcher : CoroutineDispatcher
 ) : ViewModel() {
-    private val _place = MutableLiveData<List<Place>>()
-    private val _savedPlace = MutableLiveData<List<SavedPlace>>()
-    val place: LiveData<List<Place>> get() = _place
-    val savedPlace: LiveData<List<SavedPlace>> get() = _savedPlace
+    private val _place = MutableStateFlow<List<Place>>(emptyList())
+    private val _savedPlace = MutableStateFlow<List<SavedPlace>>(emptyList())
+    val place: StateFlow<List<Place>> get() = _place
+    val savedPlace: StateFlow<List<SavedPlace>> get() = _savedPlace
 
     init {
         getSavedPlace()
     }
 
-    fun getPlace() {
-        _place.value = (placeRepository.getAllPlace())
-    }
-
-    fun getPlaceWithCategory(category: String) {
-        _place.value = (placeRepository.getPlaceWithCategory(category))
-    }
-
     fun getSavedPlace() {
-        _savedPlace.value = (savedPlaceRepository.getAllSavedPlace())
+        viewModelScope.launch(IoDispatcher) {
+            _savedPlace.value = savedPlaceRepository.getAllSavedPlace()
+        }
     }
 
     fun savePlace(place: Place) {
-        savedPlaceRepository.writePlace(place)
-        getSavedPlace()
+        viewModelScope.launch(IoDispatcher) {
+            savedPlaceRepository.writePlace(place)
+            getSavedPlace()
+        }
     }
 
     fun deleteSavedPlace(savedPlace: SavedPlace) {
-        savedPlaceRepository.deleteSavedPlace(savedPlace)
-        getSavedPlace()
+        viewModelScope.launch(IoDispatcher){
+            savedPlaceRepository.deleteSavedPlace(savedPlace)
+            getSavedPlace()
+        }
     }
-
 
     suspend fun getKakaoLocalData(text: String) {
         if (text.isNotEmpty()) {

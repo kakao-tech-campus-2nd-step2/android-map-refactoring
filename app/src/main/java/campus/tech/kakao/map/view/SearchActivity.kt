@@ -10,10 +10,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
@@ -27,21 +30,20 @@ import campus.tech.kakao.map.repository.PlaceRepository
 import campus.tech.kakao.map.repository.SavedPlaceRepository
 import campus.tech.kakao.map.viewmodel.SearchActivityViewModel
 import campus.tech.kakao.map.viewmodel.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPlaceListener {
     lateinit var noResultText: TextView
     lateinit var inputSearchField: EditText
-    lateinit var viewModel: SearchActivityViewModel
     lateinit var savedPlaceRecyclerView: RecyclerView
     lateinit var searchRecyclerView: RecyclerView
-    lateinit var dbHelper: PlaceDBHelper
-    lateinit var placeRepository: PlaceRepository
-    lateinit var savedPlaceRepository: SavedPlaceRepository
     lateinit var searchDeleteButton: ImageView
     lateinit var savedPlaceRecyclerViewAdapter: SavedPlaceViewAdapter
     lateinit var searchRecyclerViewAdapter: PlaceViewAdapter
+    private val viewModel: SearchActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,15 +78,7 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
         searchRecyclerView = findViewById<RecyclerView>(R.id.search_result_recyclerView)
         inputSearchField = findViewById<EditText>(R.id.input_search_field)
         savedPlaceRecyclerView = findViewById<RecyclerView>(R.id.saved_search_recyclerView)
-        dbHelper = PlaceDBHelper(this)
-        placeRepository = PlaceRepository(dbHelper)
-        savedPlaceRepository = SavedPlaceRepository(dbHelper)
         searchDeleteButton = findViewById<ImageView>(R.id.button_X)
-        viewModel =
-            ViewModelProvider(
-                this,
-                SearchViewModelFactory(placeRepository, savedPlaceRepository)
-            )[SearchActivityViewModel::class.java]
     }
 
     fun initListeners() {
@@ -146,29 +140,27 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     }
 
     fun initPlaceObserver(){
-        viewModel.place.observe(this, Observer {
-            Log.d("readData", "검색창 결과 변경 감지")
-            val placeList = viewModel.place.value
-            Log.d("testt", "${placeList}")
-            searchRecyclerViewAdapter.submitList(placeList)
-            if (placeList?.isEmpty() == true) noResultText.visibility = View.VISIBLE
-            else noResultText.visibility = View.INVISIBLE
-        })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.place.collect { placeList ->
+                    searchRecyclerViewAdapter.submitList(placeList)
+                    if (placeList.isEmpty()) noResultText.visibility = View.VISIBLE
+                    else noResultText.visibility = View.INVISIBLE
+                }
+            }
+        }
     }
 
     fun initSavedPlaceObserver(){
-        viewModel.savedPlace.observe(this, Observer {
-            Log.d("readData", "저장된 장소들 변경 감지")
-            val savedPlace = viewModel.savedPlace.value
-            savedPlaceRecyclerViewAdapter.submitList(savedPlace)
-            if (savedPlace?.isEmpty() == true) savedPlaceRecyclerView.visibility = View.GONE
-            else savedPlaceRecyclerView.visibility = View.VISIBLE
-        })
-    }
-
-    override fun onDestroy() {
-        dbHelper.close()
-        super.onDestroy()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.savedPlace.collect { savedPlaceList ->
+                    savedPlaceRecyclerViewAdapter.submitList(savedPlaceList)
+                    if (savedPlaceList.isEmpty()) savedPlaceRecyclerView.visibility = View.GONE
+                    else savedPlaceRecyclerView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }
 
