@@ -55,7 +55,7 @@ class SearchViewModel @Inject constructor(
     private fun loadSavedSearches() {
         viewModelScope.launch {
             val searchResults = searchRepository.getSearchResults(savedSearches.toString())
-            _savedSearches.value = searchResults
+            //_savedSearches.value = searchResults
             //여기서 자꾸 에러가 발생하는데 이걸 어떻게 해결해야할 지 모르겠습니다.
         }
     }
