@@ -163,6 +163,7 @@ class MapActivity : AppCompatActivity() {
 
     fun initObserver(){
         viewModel.recentPos.observe(this, Observer {
+            Log.d("testtt", viewModel.recentPos.toString())
             if(isMapDisplay) moveMapCamera(it)
         })
     }

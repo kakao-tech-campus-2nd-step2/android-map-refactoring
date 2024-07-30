@@ -11,7 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SharedPreferenceRepository @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class PositionDataSource @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         val KEY_LATITUDE = doublePreferencesKey("latitude")
