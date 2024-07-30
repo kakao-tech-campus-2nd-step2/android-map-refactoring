@@ -36,4 +36,35 @@ object SearchViewBindingAdapter {
             }
         })
     }
+
+    @BindingAdapter("app:onQueryTextSubmit")
+    @JvmStatic
+    fun setOnQueryTextSubmitListener(view: SearchView, onQueryTextSubmit: (() -> Unit)?) {
+        view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                onQueryTextSubmit?.invoke()
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+        })
+    }
+
+    @BindingAdapter("app:onQueryTextChange")
+    @JvmStatic
+    fun setOnQueryTextChangeListener(view: SearchView, onQueryTextChange: ((String) -> Unit)?) {
+        view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                onQueryTextChange?.invoke(newText ?: "")
+                return true
+            }
+        })
+    }
 }
+

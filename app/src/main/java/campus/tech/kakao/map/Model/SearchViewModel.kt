@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.util.query
 import campus.tech.kakao.map.Adapter.PlaceAdapter
 import campus.tech.kakao.map.Adapter.SavedSearchAdapter
 import campus.tech.kakao.map.Data.Place
@@ -56,12 +55,12 @@ class SearchViewModel @Inject constructor(
 
     private fun loadSavedSearches() {
         viewModelScope.launch {
-            val savedSearches = String.let { searchRepository.getSearchResults(savedSearches.toString()) }
-            _savedSearches = MutableLiveData<List<Place>>()
-            savedSearchAdapter.updateData(savedSearches.map { it.text }.toString())
+            val savedSearches = searchRepository.getSearchResults(savedSearches.toString())
+            savedSearchAdapter.submitList(savedSearches)
         }
     }
 }
+
 
 
 
