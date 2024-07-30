@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ActivityMainBinding
 import android.util.Log
 import android.content.Intent
+import android.view.View
 import campus.tech.kakao.map.adapter.SavedSearchAdapter
 import campus.tech.kakao.map.adapter.SearchAdapter
 import campus.tech.kakao.map.viewmodel.MainViewModel
@@ -67,14 +68,23 @@ class MainActivity : AppCompatActivity() {
         viewModel.searchResults.observe(this, Observer { results ->
             Log.d("MainActivity", "Search results updated: $results")
             searchAdapter.updateResults(results)
-            viewModel.setSearchRecyclerViewVisibility(results.isNotEmpty())
-            viewModel.setNoResultVisible(results.isEmpty())
-            viewModel.setSavedSearchRecyclerViewVisibility(results.isNotEmpty())
         })
 
         viewModel.savedSearches.observe(this, Observer { searches ->
             Log.d("MainActivity", "Saved searches updated: $searches")
             savedSearchAdapter.updateSearches(searches)
+        })
+
+        viewModel.noResultsVisible.observe(this, Observer { visible ->
+            binding.noResult.visibility = if(visible) View.VISIBLE else View.GONE
+        })
+
+        viewModel.searchRecyclerViewVisibility.observe(this, Observer { visible ->
+            binding.searchRecyclerView.visibility = if (visible) View.VISIBLE else View.GONE
+        })
+
+        viewModel.savedSearchRecyclerViewVisibility.observe(this, Observer { visible ->
+            binding.savedSearchRecyclerView.visibility = if (visible) View.VISIBLE else View.GONE
         })
 
         binding.inputSearch.setOnFocusChangeListener { _, hasFocus ->
@@ -91,10 +101,7 @@ class MainActivity : AppCompatActivity() {
                 if(query.isNotEmpty()) {
                     viewModel.searchPlaces(query)
                 } else {
-                    searchAdapter.updateResults(emptyList())
-                    viewModel.setSearchRecyclerViewVisibility(false)
-                    viewModel.setNoResultVisible(true)
-                    viewModel.setSavedSearchRecyclerViewVisibility(true)
+                    viewModel.clearSearchResults()
                 }
             }
             override fun afterTextChanged(s: Editable?) {}

@@ -47,6 +47,7 @@ class MainViewModel @Inject constructor(application: Application, private val pl
                     )
                 }
             _searchResults.postValue(results)
+            updateVisibility(results.isNotEmpty())
         }
     }
 
@@ -80,12 +81,15 @@ class MainViewModel @Inject constructor(application: Application, private val pl
         searchQuery.value = ""
     }
 
-    fun setNoResultVisible(visible: Boolean) {
-        _noResultsVisible.value =visible
+    fun clearSearchResults() {
+        _searchResults.value = emptyList()
+        updateVisibility(false)
     }
 
-    fun setSearchRecyclerViewVisibility(visible: Boolean) {
-        _searchRecyclerViewVisibility.value = visible
+    private fun updateVisibility(hasResults: Boolean) {
+        _searchRecyclerViewVisibility.postValue(hasResults)
+        _noResultsVisible.postValue(!hasResults)
+        _savedSearchRecyclerViewVisibility.postValue(!hasResults)
     }
 
     fun setSavedSearchRecyclerViewVisibility(visible: Boolean) {
