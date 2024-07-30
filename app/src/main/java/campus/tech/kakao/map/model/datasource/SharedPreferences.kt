@@ -1,8 +1,9 @@
 package campus.tech.kakao.map.model.datasource
 
 import android.content.Context
+import javax.inject.Inject
 
-class SharedPreferences(context: Context) {
+class SharedPreferences (context: Context) {
     private val prefs = context.getSharedPreferences("myPref", Context.MODE_PRIVATE)
 
     fun getString(key: String, defValue: String): String {

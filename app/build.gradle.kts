@@ -3,6 +3,9 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -10,6 +13,8 @@ android {
     compileSdk = 34
     buildFeatures {
         buildConfig = true
+        dataBinding = true
+        viewBinding = true
     }
     defaultConfig {
         applicationId = "campus.tech.kakao.map"
@@ -79,4 +84,11 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     androidTestImplementation("androidx.test.espresso:espresso-intents:3.3.0")
+    // room
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.4.3")
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.48.1")
+    kapt("com.google.dagger:hilt-compiler:2.48.1")
 }
