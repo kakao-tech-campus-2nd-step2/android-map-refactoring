@@ -1,11 +1,14 @@
 package campus.tech.kakao.map
 
 import android.app.Application
-import android.util.Log
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import campus.tech.kakao.map.adapter.DocumentAdapter
+import campus.tech.kakao.map.adapter.WordAdapter
+import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
@@ -98,6 +101,40 @@ class MainViewModel @Inject constructor(
 
 	fun documentClickedDone(){
 		_documentClicked.value = false
+	}
+
+	fun doOnTextChanged(query: String, searchBinding: ActivitySearchBinding){
+		if (query.isEmpty()){
+			searchBinding.noSearchResult.visibility = View.VISIBLE
+			searchBinding.searchResultRecyclerView.visibility = View.GONE
+		}else{
+			searchBinding.noSearchResult.visibility = View.GONE
+			searchBinding.searchResultRecyclerView.visibility = View.VISIBLE
+			searchLocalAPI(query)
+		}
+	}
+
+	fun documentListObserved(documents: List<Document>, searchBinding: ActivitySearchBinding, documentAdapter: DocumentAdapter){
+		if (documents.isNullOrEmpty()){
+			searchBinding.noSearchResult.visibility = View.VISIBLE
+			searchBinding.searchResultRecyclerView.visibility = View.GONE
+		}else{
+			searchBinding.noSearchResult.visibility = View.GONE
+			searchBinding.searchResultRecyclerView.visibility = View.VISIBLE
+			documentAdapter.submitList(documents)
+			searchBinding.searchResultRecyclerView.adapter = documentAdapter
+		}
+	}
+
+	fun wordListObserved(searchWords: List<SearchWord>, searchBinding: ActivitySearchBinding, wordAdapter: WordAdapter){
+		if (searchWords.isNullOrEmpty()){
+			searchBinding.searchWordRecyclerView.visibility = View.GONE
+		}
+		else{
+			searchBinding.searchWordRecyclerView.visibility = View.VISIBLE
+			wordAdapter.submitList(searchWords)
+			searchBinding.searchWordRecyclerView.adapter = wordAdapter
+		}
 	}
 
 	companion object{

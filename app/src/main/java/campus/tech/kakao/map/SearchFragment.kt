@@ -47,25 +47,10 @@ class SearchFragment : Fragment(), AdapterCallback {
 
 	private fun observeData(){
 		model.documentList.observe(this, Observer {documents ->
-			if (documents.isNullOrEmpty()){
-				searchBinding.noSearchResult.visibility = View.VISIBLE
-				searchBinding.searchResultRecyclerView.visibility = View.GONE
-			}else{
-				searchBinding.noSearchResult.visibility = View.GONE
-				searchBinding.searchResultRecyclerView.visibility = View.VISIBLE
-				documentAdapter.submitList(documents)
-				searchBinding.searchResultRecyclerView.adapter = documentAdapter
-			}
+			model.documentListObserved(documents, searchBinding, documentAdapter)
 		})
 		model.wordList.observe(this, Observer {searchWords ->
-			if (searchWords.isNullOrEmpty()){
-				searchBinding.searchWordRecyclerView.visibility = View.GONE
-			}
-			else{
-				searchBinding.searchWordRecyclerView.visibility = View.VISIBLE
-				wordAdapter.submitList(searchWords)
-				searchBinding.searchWordRecyclerView.adapter = wordAdapter
-			}
+			model.wordListObserved(searchWords, searchBinding, wordAdapter)
 		})
 	}
 	private fun setRecyclerAdapter(){
@@ -80,14 +65,7 @@ class SearchFragment : Fragment(), AdapterCallback {
 		}
 		searchBinding.search.doOnTextChanged { text, _, _, _ ->
 			val query = text.toString()
-			if (query.isEmpty()){
-				searchBinding.noSearchResult.visibility = View.VISIBLE
-				searchBinding.searchResultRecyclerView.visibility = View.GONE
-			}else{
-				searchBinding.noSearchResult.visibility = View.GONE
-				searchBinding.searchResultRecyclerView.visibility = View.VISIBLE
-				model.searchLocalAPI(query)
-			}
+			model.doOnTextChanged(query, searchBinding)
 			searchBinding.invalidateAll()
 		}
 	}
