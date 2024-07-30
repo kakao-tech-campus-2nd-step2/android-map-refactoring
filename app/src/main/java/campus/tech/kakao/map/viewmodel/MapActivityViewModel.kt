@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import campus.tech.kakao.map.data.SharedPreferenceRepository
+import campus.tech.kakao.map.data.PlaceRepository
+import campus.tech.kakao.map.data.PositionDataSource
 import com.kakao.vectormap.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MapActivityViewModel @Inject constructor(
-    private val sharedPreferenceRepository: SharedPreferenceRepository
+    private val placeRepository: PlaceRepository
 ) : ViewModel() {
     private val _recentPos = MutableLiveData<LatLng>()
     val recentPos : LiveData<LatLng> get() = _recentPos
@@ -24,15 +25,13 @@ class MapActivityViewModel @Inject constructor(
 
     fun getRecentPos(){
         viewModelScope.launch{
-            sharedPreferenceRepository.pos.collectLatest {
-                _recentPos.value = it
-            }
+            _recentPos.value = placeRepository.fetchLastPosFromDataStore()
         }
     }
 
     fun setRecentPos(latitude : Double, longitude : Double){
         viewModelScope.launch {
-            sharedPreferenceRepository.putPos(latitude, longitude)
+            placeRepository.saveCurrentPosToDataStore(latitude, longitude)
         }
     }
 }
