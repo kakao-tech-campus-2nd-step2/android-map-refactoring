@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +18,7 @@ import campus.tech.kakao.map.viewmodel.SavedLocationViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickListener {
+class MainActivity : AppCompatActivity(), ItemSelectedListener, SearchClearButtonClickListener {
     private val locationViewModel: LocationViewModel by viewModels()
     private val savedLocationViewModel: SavedLocationViewModel by viewModels()
 
@@ -91,7 +90,7 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickL
         activityMainBinding.savedLocationRecyclerView.adapter = savedLocationAdapter
     }
 
-    override fun onLocationViewClicked(location: Location) {
+    override fun onLocationItemClicked(location: Location) {
         savedLocationViewModel.addSavedLocation(location.id, location.title)
 
         val intent = Intent(this@MainActivity, MapActivity::class.java)
@@ -99,11 +98,11 @@ class MainActivity : AppCompatActivity(), OnItemSelectedListener, OnSearchClickL
         startActivity(intent)
     }
 
-    override fun onSavedLocationClearButtonClicked(savedLocation: SavedLocation) {
+    override fun onSavedLocationItemClearButtonClicked(savedLocation: SavedLocation) {
         savedLocationViewModel.deleteSavedLocation(savedLocation)
     }
 
-    override fun onSavedLocationViewClicked(title: String) {
+    override fun onSavedLocationItemClicked(title: String) {
         updateEditText(title)
         locationViewModel.searchLocationsFromKakaoAPI(title){ searchLocationsSize ->
             handleNoResultMessage(searchLocationsSize)

@@ -10,7 +10,7 @@ import campus.tech.kakao.map.view.search.LocationAdapter.LocationViewHolder
 import campus.tech.kakao.map.model.Location
 
 class LocationAdapter(
-    private val itemSelectedListener: OnItemSelectedListener
+    private val itemSelectedListener: ItemSelectedListener
 ) : ListAdapter<Location, LocationViewHolder>(
     object : DiffUtil.ItemCallback<Location>() {
         override fun areItemsTheSame(oldItem: Location, newItem: Location): Boolean {
@@ -35,7 +35,7 @@ class LocationAdapter(
 
     class LocationViewHolder( //
         private val itemLocationBinding: ItemLocationBinding,
-        private val itemSelectedListener: OnItemSelectedListener
+        private val itemSelectedListener: ItemSelectedListener
     ) : RecyclerView.ViewHolder(
         itemLocationBinding.root
     ) {

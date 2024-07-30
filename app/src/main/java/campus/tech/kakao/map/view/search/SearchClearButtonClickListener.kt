@@ -1,5 +1,5 @@
 package campus.tech.kakao.map.view.search
 
-interface OnSearchClickListener {
+interface SearchClearButtonClickListener {
     fun onSearchClearButtonClicked()
 }
