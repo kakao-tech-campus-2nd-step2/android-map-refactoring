@@ -20,10 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:hint="@string/search_hint"
-            app:queryText="@={viewModel.query}"
-            app:queryTextAttrChanged="@{() -> viewModel.onQueryTextChanged()}"
+            app:queryText="@={() -> viewModel.isSavedSearchesVisible()}"
             app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
-            app:onQueryTextChange="@{viewModel::onSearchQueryChanged}" />
+            app:onQueryTextChange="@{() -> viewModel::onSearchQueryChanged}" />
 
 
         <androidx.recyclerview.widget.RecyclerView

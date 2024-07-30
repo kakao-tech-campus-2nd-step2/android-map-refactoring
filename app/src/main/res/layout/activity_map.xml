@@ -22,7 +22,7 @@
             android:hint="@string/search_hint"
             app:queryText="@={viewModel.searchQuery}"
             app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
-            app:onQueryTextChange="@{viewModel::onSearchQueryChanged}" />
+            app:onQueryTextChange="@{() -> viewModel::onSearchQueryChanged}" />
 
         <com.google.android.gms.maps.MapView
             android:id="@+id/map_view"
