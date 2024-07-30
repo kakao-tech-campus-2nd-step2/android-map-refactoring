@@ -31,7 +31,7 @@ class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchVi
         return savedSearches.size
     }
 
-    fun submitList(newList: List<SearchResult>) {
+    fun submitList(newList: List<Place>) {
         val diffCallback = object : DiffUtil.Callback() {
             override fun getOldListSize() = savedSearches.size
             override fun getNewListSize() = newList.size
@@ -49,6 +49,7 @@ class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchVi
         diffResult.dispatchUpdatesTo(this)
     }
 }
+
 
 
 
