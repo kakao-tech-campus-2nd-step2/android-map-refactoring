@@ -10,12 +10,13 @@ import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.Data.Place
 import campus.tech.kakao.map.Data.SearchResult
 import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityPlaceItemBinding
 
 class PlaceAdapter : ListAdapter<Place, PlaceAdapter.PlaceViewHolder>(PlaceDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_place_item, parent, false)
-        return PlaceViewHolder(view)
+        val binding = ActivityPlaceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PlaceViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
@@ -23,17 +24,12 @@ class PlaceAdapter : ListAdapter<Place, PlaceAdapter.PlaceViewHolder>(PlaceDiffC
         holder.bind(place)
     }
 
-    fun submitList(results: List<SearchResult>?) {
-
-    }
-    
-    class PlaceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val nameTextView: TextView = itemView.findViewById(R.id.name)
-        private val addressTextView: TextView = itemView.findViewById(R.id.place)
+    class PlaceViewHolder(private val binding: ActivityPlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(place: Place) {
-            nameTextView.text = place.place_name
-            addressTextView.text = place.address_name
+            binding.name.text = place.place_name
+            binding.place.text = place.address_name
+            binding.category.text = place.category_group_name
         }
     }
 }
@@ -42,4 +38,5 @@ class PlaceDiffCallback : DiffUtil.ItemCallback<Place>() {
     override fun areItemsTheSame(oldItem: Place, newItem: Place): Boolean = oldItem.place_name == newItem.place_name
     override fun areContentsTheSame(oldItem: Place, newItem: Place): Boolean = oldItem == newItem
 }
+
 
