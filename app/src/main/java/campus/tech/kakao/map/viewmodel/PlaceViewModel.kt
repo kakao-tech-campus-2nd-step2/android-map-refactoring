@@ -5,12 +5,14 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.model.PlaceResponse
 import campus.tech.kakao.map.model.RetrofitService
 import campus.tech.kakao.map.view.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,8 +35,14 @@ class PlaceViewModel @Inject constructor(
     init { _savedQueries.value = loadSavedQueries() }
 
     fun loadPlaces(query: String, categoryGroupName: String) {
-        searchPlaces(query, categoryGroupName) { places ->
-            _places.value = places
+        viewModelScope.launch {
+            try {
+                val response = retrofitService.getPlaces(API_KEY, categoryGroupName, query)
+                _places.value = response.documents
+            } catch (e: Exception) {
+                Log.e("PlaceViewModel", "Failed to fetch places: ${e.message}")
+                _places.value = emptyList()
+            }
         }
     }
 
@@ -66,27 +74,6 @@ class PlaceViewModel @Inject constructor(
         }
     }
 
-    private fun searchPlaces(query: String, categoryGroupName: String, callback: (List<Document>) -> Unit) {
-        retrofitService.getPlaces(API_KEY, categoryGroupName, query).enqueue(object :
-            Callback<PlaceResponse> {
-            override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
-                if (response.isSuccessful) {
-                    val places = response.body()?.documents ?: emptyList()
-                    callback(places)
-                } else {
-                    Log.e("PlaceViewModel", "Failed to fetch places: ${response.errorBody()?.string()}")
-                    callback(emptyList())
-                }
-            }
-
-            override fun onFailure(call: Call<PlaceResponse>, t: Throwable) {
-                Log.e("PlaceViewModel", "Failed to fetch places: ${t.message}")
-                callback(emptyList())
-            }
-        })
-    }
-
-
     /* MainActivity */
     private val _placeName = MutableLiveData<String>()
     private val _addressName = MutableLiveData<String>()
@@ -100,10 +87,12 @@ class PlaceViewModel @Inject constructor(
 
 
     fun loadPlacePreferences(sharedPreferences: SharedPreferences) {
-        _placeName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place")
-        _addressName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address")
-        _longitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        _latitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+        viewModelScope.launch {
+            _placeName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place")
+            _addressName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address")
+            _longitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
+            _latitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+        }
     }
 
 }

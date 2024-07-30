@@ -26,6 +26,8 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -103,8 +105,10 @@ class MainActivity : AppCompatActivity() {
     private fun setCameraPosition() {
         val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
 
-        // 데이터 로드
-        viewModel.loadPlacePreferences(sharedPreferences)
+        // 데이터 로드 코루틴?
+        MainScope().launch {
+            viewModel.loadPlacePreferences(sharedPreferences)
+        }
         // LiveData 관찰
         viewModel.longitude.observe(this, Observer { longitude ->
             Log.d("testt", "Longitude: $longitude")
@@ -117,10 +121,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMarker() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
+
+        // val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
 
         // 데이터 로드
-        viewModel.loadPlacePreferences(sharedPreferences)
+        // viewModel.loadPlacePreferences(sharedPreferences)
+
         // LiveData 관찰
         viewModel.longitude.observe(this, Observer { longitude ->
             Log.d("testt", "Longitude: $longitude")
