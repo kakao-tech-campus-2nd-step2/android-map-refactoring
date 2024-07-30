@@ -3,25 +3,23 @@ package campus.tech.kakao.map
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelStore
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.MapPositionPreferences
 import campus.tech.kakao.map.dto.SearchWord
 import campus.tech.kakao.map.dto.SearchWordDao
 import campus.tech.kakao.map.url.RetrofitData
-import campus.tech.kakao.map.url.RetrofitService
-import io.mockk.MockK
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Assert.assertFalse
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentMatchers.any
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import javax.inject.Inject
 
 @RunWith(RobolectricTestRunner::class)
 @Config(manifest = Config.NONE)
@@ -70,9 +68,9 @@ class FunTest {
 		val expectedResult = SearchWord(
 			"이안아파트", "남양주", "아파트")
 
-		every { searchWordDao.delete(any(),any(),any()) } returns delete()
-		every { searchWordDao.getAll() } returns wordList.value!!
-		every { searchWordDao.insert(any()) } returns insert(expectedResult)
+		coEvery { searchWordDao.delete(any(),any(),any()) } returns delete()
+		coEvery { searchWordDao.getAll() } returns wordList.value!!
+		coEvery { searchWordDao.insert(any()) } returns insert(expectedResult)
 
 		model.addWord(query)
 		assert(wordList.value?.contains(expectedResult)!!)
@@ -82,9 +80,11 @@ class FunTest {
 	fun 검색어_삭제_되는지_확인(){
 		val word = SearchWord(
 			"이안아파트", "남양주", "아파트")
-		every { searchWordDao.delete(any(),any(),any()) } returns delete()
-		every { searchWordDao.getAll() } returns wordList.value!!
-		model.deleteWord(word)
+		coEvery { searchWordDao.delete(any(),any(),any()) } returns delete()
+		coEvery { searchWordDao.getAll() } returns wordList.value!!
+		CoroutineScope(Dispatchers.IO).launch {
+			model.deleteWord(word)
+		}
 		assert(wordList.value?.isEmpty()!!)
 	}
 

@@ -8,16 +8,16 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
+import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.databinding.BottomSheetBinding
+import campus.tech.kakao.map.databinding.MapErrorBinding
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.LatLng
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdate
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelOptions
@@ -28,18 +28,15 @@ import java.lang.Exception
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
-	private lateinit var mapView: MapView
 	private var map: KakaoMap? = null
-	private lateinit var searchBar: LinearLayout
 	private lateinit var model: MainViewModel
-	private lateinit var placeName:String
-	private lateinit var addressName:String
+	lateinit var placeName:String
+	lateinit var addressName:String
 	private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
-	private lateinit var bottomSheet :LinearLayout
-	private lateinit var bottomSheetName:TextView
-	private lateinit var bottomSheetAddress :TextView
 	private var longitude:Double = 0.0
 	private var latitude:Double = 0.0
+	private lateinit var binding: ActivityMapBinding
+	private lateinit var bottomBinding: BottomSheetBinding
 	companion object{
 		const val MARKER_WIDTH = 100
 		const val MARKER_HEIGHT = 100
@@ -49,20 +46,23 @@ class MapActivity : AppCompatActivity() {
 
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
-		setContentView(R.layout.activity_map)
-		mapView = findViewById(R.id.map_view)
 		model = ViewModelProvider(this)[MainViewModel::class.java]
 		getMapInfo()
+		binding = ActivityMapBinding.inflate(layoutInflater)
+		binding.map = this
+		val view = binding.root
+		setContentView(view)
+		bottomBinding = BottomSheetBinding.inflate(layoutInflater)
 		model.documentClickedDone()
-		mapView.start(object : MapLifeCycleCallback() {
+		binding.mapView.start(object : MapLifeCycleCallback() {
 			override fun onMapDestroy() {
 
 			}
 
 			override fun onMapError(p0: Exception?) {
-				setContentView(R.layout.map_error)
-				val errorText = findViewById<TextView>(R.id.map_error_text)
-				errorText.text = p0?.message
+				val errorBinding = MapErrorBinding.inflate(layoutInflater)
+				setContentView(errorBinding.root)
+				errorBinding.mapErrorText.text = p0?.message
 			}
 
 		}, object: KakaoMapReadyCallback() {
@@ -78,28 +78,30 @@ class MapActivity : AppCompatActivity() {
 				return ZOOM_LEVEL
 			}
 		})
-		searchBar = findViewById(R.id.search_bar)
-		searchBar.setOnClickListener {
-			val fragmentManager = supportFragmentManager
-			val searchFragment = SearchFragment()
-			val transaction = fragmentManager.beginTransaction()
-			transaction.replace(R.id.activity_map, searchFragment)
-			transaction.addToBackStack(null)
-			findViewById<CoordinatorLayout>(R.id.activity_map).setOnTouchListener(View.OnTouchListener { v, event -> true })
-			transaction.commit()
+		binding.searchBar.setOnClickListener {
+			onSearchBarClicked()
 		}
 		initBottomSheet()
 		documentClickedObserve()
 	}
 
+	private fun onSearchBarClicked(){
+		val fragmentManager = supportFragmentManager
+		val searchFragment = SearchFragment()
+		val transaction = fragmentManager.beginTransaction()
+		transaction.replace(binding.activityMap.id, searchFragment)
+		transaction.addToBackStack(null)
+		binding.activityMapFrameLayout.setOnTouchListener(View.OnTouchListener { v, event -> true })
+		transaction.commit()
+	}
+
 	override fun onResume() {
 		super.onResume()
-		mapView.resume()
+		binding.mapView.resume()
 	}
 	private fun documentClickedObserve(){
 		model.documentClicked.observe(this){documentClicked->
 			if(documentClicked){
-				getMapInfo()
 				makeMarker()
 				setBottomSheet()
 				val cameraUpdate: CameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
@@ -114,15 +116,22 @@ class MapActivity : AppCompatActivity() {
 
 	override fun onPause() {
 		super.onPause()
-		mapView.pause()
+		binding.mapView.pause()
 	}
 
 	private fun getMapInfo(){
-		val mapInfoList = model.getMapInfo()
-		latitude = mapInfoList[0].toDouble()
-		longitude = mapInfoList[1].toDouble()
-		placeName = mapInfoList[2]
-		addressName = mapInfoList[3]
+		model.getMapInfo()
+		model.mapInfo.observe(this) { mapInfo ->
+			if (!mapInfo.isNullOrEmpty()) {
+				latitude = mapInfo[0].toDouble()
+				longitude = mapInfo[1].toDouble()
+				placeName = mapInfo[2]
+				addressName = mapInfo[3]
+			}
+			else{
+				Log.e("testt", "getMapInfo: mapInfo is null")
+			}
+		}
 	}
 
 	private fun makeMarker(){
@@ -141,10 +150,7 @@ class MapActivity : AppCompatActivity() {
 	}
 
 	private fun initBottomSheet(){
-		bottomSheet = findViewById(R.id.bottom_sheet)
-		bottomSheetName = findViewById(R.id.name)
-		bottomSheetAddress = findViewById(R.id.address)
-		bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+		bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetInclude.bottomSheet)
 		bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback(){
 			override fun onStateChanged(bottomSheet: View, newState: Int) {
 			}
@@ -158,8 +164,7 @@ class MapActivity : AppCompatActivity() {
 
 	private fun setBottomSheet(){
 		bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-		bottomSheetName.text = placeName
-		bottomSheetAddress.text = addressName
+		binding.invalidateAll()
 	}
 	override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
 		if (keyCode == KeyEvent.KEYCODE_BACK && supportFragmentManager.backStackEntryCount > 0) {
