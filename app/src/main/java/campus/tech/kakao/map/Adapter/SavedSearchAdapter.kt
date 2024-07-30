@@ -37,15 +37,15 @@ class SavedSearchAdapter : RecyclerView.Adapter<SavedSearchAdapter.SavedSearchVi
             override fun getNewListSize() = newList.size
 
             override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return savedSearches[oldItemPosition] == newList[newItemPosition]
+                return savedSearches[oldItemPosition].place_name == newList[newItemPosition].text
             }
 
             override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-                return savedSearches[oldItemPosition] == newList[newItemPosition]
+                return savedSearches[oldItemPosition].address_name == newList[newItemPosition].text
             }
         }
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        savedSearches = newList
+        savedSearches.size
         diffResult.dispatchUpdatesTo(this)
     }
 }
