@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.adapter.AdapterCallback
 import campus.tech.kakao.map.adapter.DocumentAdapter
@@ -16,8 +17,6 @@ import campus.tech.kakao.map.databinding.ActivitySearchBinding
 import campus.tech.kakao.map.dto.Document
 import campus.tech.kakao.map.dto.SearchWord
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -31,7 +30,7 @@ class SearchFragment : Fragment(), AdapterCallback {
 	override fun onCreate(savedInstanceState: Bundle?) {
 		super.onCreate(savedInstanceState)
 		observeData()
-		CoroutineScope(Dispatchers.IO).launch{
+		lifecycleScope.launch {
 			model.loadWord()
 		}
 	}
@@ -99,7 +98,7 @@ class SearchFragment : Fragment(), AdapterCallback {
 	}
 
 	override fun onWordDeleted(searchWord: SearchWord) {
-		CoroutineScope(Dispatchers.IO).launch{
+		lifecycleScope.launch{
 			model.deleteWord(searchWord)
 		}
 	}
