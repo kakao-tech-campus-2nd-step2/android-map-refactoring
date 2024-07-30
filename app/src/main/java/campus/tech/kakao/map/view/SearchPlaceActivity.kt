@@ -7,12 +7,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.viewmodel.MyViewModel
 import campus.tech.kakao.map.model.data.Place
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivitySearchPlaceBinding
+import campus.tech.kakao.map.model.data.SavedSearch
+import campus.tech.kakao.map.model.data.toLocation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchPlaceActivity : AppCompatActivity() {
@@ -32,31 +36,46 @@ class SearchPlaceActivity : AppCompatActivity() {
         //Place 리사이클러뷰 설정
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(this)
-        placeAdapter = viewModel.vmPlaceAdapter
+
+        placeAdapter = PlaceAdapter(listOf()) { place ->  //리사이클러뷰의 아이템을 누르면
+
+            viewModel.insertSavedSearch(place)
+            viewModel.updateSavedSearch()
+            viewModel.setSharedPreferences(place)
+            viewModel.itemClick(place)
+
+        }
+
         binding.recyclerView.adapter = placeAdapter
 
         //savedSearch 저장된 검색어 설정
         val savedSearch = binding.savedSearch
         savedSearch.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
-        savedSearchAdapter = viewModel.vmSavedSearchAdapter
+
+        savedSearchAdapter = SavedSearchAdapter(listOf(),
+            onCloseClick = { SavedSearch -> //SavedSearch의 x를 누르면
+                viewModel.deleteSavedSearch(SavedSearch.id)
+                viewModel.updateSavedSearch()
+            },
+            onNameClick = { SavedSearch ->   //SavedSearch의 이름을 누르면
+                viewModel.nameClick(SavedSearch)
+                viewModel.setSearchText(SavedSearch)
+            }
+        )
+
         binding.savedSearch.adapter = savedSearchAdapter
 
         viewModel.updateSavedSearch()
-
-
 
 
         //-----viewModel observe-----------------------------------------
         val activity = this
         with(viewModel) {
 
-            //PlaceAdapter
+            //PlaceAdapter -->Parcelable 이용해보기
             itemClick.observe(activity, Observer { place ->  //Place 클릭 했을 때
                 val resultIntent = Intent()
-                resultIntent.putExtra("name", place.name)
-                resultIntent.putExtra("address", place.address)
-                resultIntent.putExtra("latitude", place.latitude)
-                resultIntent.putExtra("longitude", place.longitude)
+                resultIntent.putExtra("location", place.toLocation())
                 setResult(Activity.RESULT_OK, resultIntent)
                 finish()
             })

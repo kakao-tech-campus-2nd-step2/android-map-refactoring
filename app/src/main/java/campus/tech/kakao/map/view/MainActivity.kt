@@ -75,7 +75,11 @@ class MainActivity : AppCompatActivity() {
             ActivityResultContracts.StartActivityForResult()
         ) { result: ActivityResult ->
             if (result.resultCode == Activity.RESULT_OK) {
-                viewModel.getSharedPreferences()
+                mainLocation = result.data?.getParcelableExtra("location") ?: Location()
+                bottomSheetManager.setBottomSheetText(mainLocation)
+                updateCamera()
+                addMarker(kakaoMap, mainLocation)
+                Log.d("seyoung","ActivityResult API")
             }
         }
 
@@ -90,9 +94,10 @@ class MainActivity : AppCompatActivity() {
         //mainLocation 최신화
         viewModel.location.observe(this, Observer { location ->
             mainLocation = location
-            bottomSheetManager.setBottomSheetText(location)
+            bottomSheetManager.setBottomSheetText(mainLocation)
             updateCamera()
-            addMarker(kakaoMap, location)
+            addMarker(kakaoMap, mainLocation)
+            Log.d("seyoung","observe 로직")
         })
 
 
@@ -101,13 +106,9 @@ class MainActivity : AppCompatActivity() {
             object : MapLifeCycleCallback() {
                 override fun onMapDestroy() {
                     // 지도 API가 정상적으로 종료될 때 호출
-                    Log.d("KakaoMap", "onMapDestroy: ")
                 }
-
                 override fun onMapError(error: Exception) {
                     // 인증 실패 및 지도 사용 중 에러가 발생할 때 호출
-                    Log.d("KakaoMap", "onMapError")
-                    Log.e("KakaoMap", "onMapError: ", error)
                     val intent = Intent(this@MainActivity, MapErrorActivity::class.java)
                     intent.putExtra("error", error.toString().substring(20))
                     startActivity(intent)
@@ -134,7 +135,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mapView?.pause()
-        Log.d("KakaoMap", "onMapPause")
     }
 
     //카메라(화면) 움직이기
@@ -150,7 +150,7 @@ class MainActivity : AppCompatActivity() {
 
     //mainLocation에 들어갈 데이터 받아오기
     private fun getSharedPreferences() {
-        viewModel.getSharedPreferences()
+        viewModel.getSharedPreferencesToLocation()
     }
 
     private fun addMarker(kakaoMap: KakaoMap?, location: Location) {
