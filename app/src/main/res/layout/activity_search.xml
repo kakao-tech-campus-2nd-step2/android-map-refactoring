@@ -22,19 +22,15 @@
             android:hint="@string/search_hint"
             app:queryText="@={viewModel.searchQuery}"
             app:onQueryTextSubmit="@{() -> viewModel.onSearchQuerySubmitted()}"
-            app:onQueryTextChange="@{() -> viewModel::onSearchQueryChanged}" />
-
+            app:onQueryTextChange="@{(newText) -> viewModel.onSearchQueryChanged(newText)}" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerHor"
             android:layout_marginTop="55dp"
-            android:visibility="@{viewModel.isSavedSearchesVisible ? @android:visibility/visible : @android:visibility/gone}"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
             app:adapter="@{viewModel.savedSearchAdapter}" />
-
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/RecyclerVer"
@@ -46,3 +42,4 @@
 
     </FrameLayout>
 </layout>
+

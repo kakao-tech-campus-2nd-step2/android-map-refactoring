@@ -42,9 +42,9 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    fun onSearchQueryChanged(newText: String) { // 여기를 String 타입으로 변경
+    fun onSearchQueryChanged(newText: String) {
         searchQuery.value = newText
-        _isSavedSearchesVisible.value = !newText.isNullOrEmpty()
+        _isSavedSearchesVisible.value = newText.isNotEmpty()
         searchResults(newText)
     }
 
