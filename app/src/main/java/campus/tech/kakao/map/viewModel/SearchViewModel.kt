@@ -1,17 +1,28 @@
 package campus.tech.kakao.map.viewModel
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import campus.tech.kakao.map.dataRepository.SearchDataRepository
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import campus.tech.kakao.map.repository.SearchResultRepository
+import campus.tech.kakao.map.retrofit.Document
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: SearchDataRepository = SearchDataRepository()
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    private val repository: SearchResultRepository
+) : ViewModel() {
 
-    //"DataSearchActivity"에서 사용할 LiveData
-    val searchResults = repository.searchResults
+    private val _searchDataList = MutableLiveData<List<Document>>()
+    private val searchResults: LiveData<List<Document>> get() = _searchDataList
 
-    //검색 결과를 LiveData에 저장
-    fun loadResultData(searchQuery:String){
-        repository.loadResultMapData(searchQuery)
+    fun loadResultData(searchQuery: String) {
+        repository.loadResultMapData(searchQuery) { documents ->
+            _searchDataList.postValue(documents)
+        }
+    }
+
+    fun getSearchDataLiveData(): LiveData<List<Document>> {
+        return searchResults
     }
 }

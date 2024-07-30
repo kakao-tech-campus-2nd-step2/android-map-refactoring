@@ -5,15 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.data.RecentSearchData
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.listener.RecentAdapterListener
-import campus.tech.kakao.map.viewModel.RecentViewModel
+import campus.tech.kakao.map.data.room.SearchHistoryData
+import campus.tech.kakao.map.adapter.listener.RecentAdapterListener
+import campus.tech.kakao.map.viewModel.SearchHistoryViewModel
+import kotlinx.coroutines.launch
 
 class RecentSearchAdapter(
-    private val recentDataList: List<RecentSearchData>,
-    private val viewModel: RecentViewModel,
+    private val searchHistoryDataList: List<SearchHistoryData>,
+    private val searchHistoryViewModel: SearchHistoryViewModel,
     private val adapterListener: RecentAdapterListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -28,14 +30,17 @@ class RecentSearchAdapter(
         return RecentViewHolder(view)
     }
 
-    override fun getItemCount(): Int = recentDataList.count()
+    override fun getItemCount(): Int = searchHistoryDataList.count()
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = recentDataList[position]
+        val item = searchHistoryDataList[position]
         val viewHolder = holder as RecentViewHolder
         viewHolder.name.text = item.name
+
         viewHolder.deleteBtn.setOnClickListener {
-            viewModel.deleteRecentData(item.name, item.address)
+            searchHistoryViewModel.viewModelScope.launch {
+                searchHistoryViewModel.deleteRecentData(item.name, item.address)
+            }
         }
 
         viewHolder.name.setOnClickListener {

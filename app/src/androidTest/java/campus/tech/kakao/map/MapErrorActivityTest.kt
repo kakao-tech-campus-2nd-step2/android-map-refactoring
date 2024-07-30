@@ -7,8 +7,8 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import campus.tech.kakao.map.activity.HomeMapActivity
-import campus.tech.kakao.map.activity.MapErrorActivity
+import campus.tech.kakao.map.view.HomeMapActivity
+import campus.tech.kakao.map.view.MapErrorActivity
 import org.junit.Rule
 import org.junit.Test
 

@@ -1,32 +1,29 @@
-package campus.tech.kakao.map.dataRepository
+package campus.tech.kakao.map.repository
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import campus.tech.kakao.map.retrofit.CategoryData
 import campus.tech.kakao.map.retrofit.Document
-import campus.tech.kakao.map.retrofit.RetrofitAPI.getResultFromAPI
+import campus.tech.kakao.map.retrofit.RetrofitAPI
+import javax.inject.Inject
 
-class SearchDataRepository(){
-    private val _searchDataList = MutableLiveData<List<Document>>()
-    val searchResults: LiveData<List<Document>>
-        get() = _searchDataList
+class SearchResultRepository @Inject constructor(
+    private val retrofitAPI: RetrofitAPI
+) {
 
-    //검색 결과 가공 후 LiveData에 저장
-    fun loadResultMapData(data: String) {
-        getResultFromAPI(data) { response ->
+    //검색 결과 가공
+    fun loadResultMapData(data: String, callback: (List<Document>) -> Unit) {
+        retrofitAPI.getResultFromAPI(data) { response ->
             if (response.isSuccessful) {
                 val body = response.body()
                 body?.documents?.let { documents ->
                     val updatedDocuments = documents.map { document ->
                         val descriptionFromCode = CategoryData.descriptions[document.categoryCode]
                         val descriptionFromCategory = getTailCategory(document.category)
-                        val updateDocument = document.copy(
+                        document.copy(
                             categoryDescription = descriptionFromCode,
                             categoryTail = descriptionFromCategory
                         )
-                        updateDocument
                     }
-                    _searchDataList.postValue(updatedDocuments)
+                    callback(updatedDocuments)
                 }
             }
         }
