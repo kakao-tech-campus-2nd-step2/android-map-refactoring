@@ -28,11 +28,12 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerHor"
             android:layout_marginTop="55dp"
-            android:visibility="@{viewModel.isSavedSearchesVisible ? recyclerHor.VISIBLE : recyclerHor.GONE}"
+            android:visibility="@{viewModel.isSavedSearchesVisible ? @android:visibility/visible : @android:visibility/gone}"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:orientation="horizontal"
             app:adapter="@{viewModel.savedSearchAdapter}" />
+
 
 
         <androidx.recyclerview.widget.RecyclerView
