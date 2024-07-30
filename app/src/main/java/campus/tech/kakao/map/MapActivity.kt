@@ -30,8 +30,8 @@ import java.lang.Exception
 class MapActivity : AppCompatActivity() {
 	private var map: KakaoMap? = null
 	private lateinit var model: MainViewModel
-	lateinit var placeName:String
-	lateinit var addressName:String
+	private var placeName:String = resources.getString(R.string.bottom_sheet_default_name)
+	private var addressName:String = resources.getString(R.string.bottom_sheet_default_address)
 	private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 	private var longitude:Double = 0.0
 	private var latitude:Double = 0.0
@@ -102,7 +102,6 @@ class MapActivity : AppCompatActivity() {
 	private fun documentClickedObserve(){
 		model.documentClicked.observe(this){documentClicked->
 			if(documentClicked){
-				getMapInfo()
 				makeMarker()
 				setBottomSheet()
 				val cameraUpdate: CameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
@@ -121,11 +120,18 @@ class MapActivity : AppCompatActivity() {
 	}
 
 	private fun getMapInfo(){
-		val mapInfoList = model.getMapInfo()
-		latitude = mapInfoList[0].toDouble()
-		longitude = mapInfoList[1].toDouble()
-		placeName = mapInfoList[2]
-		addressName = mapInfoList[3]
+		model.getMapInfo()
+		model.mapInfo.observe(this) { mapInfo ->
+			if (!mapInfo.isNullOrEmpty()) {
+				latitude = mapInfo[0].toDouble()
+				longitude = mapInfo[1].toDouble()
+				placeName = mapInfo[2]
+				addressName = mapInfo[3]
+			}
+			else{
+				Log.e("testt", "getMapInfo: mapInfo is null")
+			}
+		}
 	}
 
 	private fun makeMarker(){

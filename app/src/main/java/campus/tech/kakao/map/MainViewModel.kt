@@ -32,6 +32,9 @@ class MainViewModel @Inject constructor(
 	private val _documentClicked = MutableLiveData<Boolean>()
 	val documentClicked: LiveData<Boolean> get() = _documentClicked
 
+	private val _mapInfo = MutableLiveData<List<String>>()
+	val mapInfo: LiveData<List<String>> get() = _mapInfo
+
 
 	fun addWord(document: Document){
 		val word = wordFromDocument(document)
@@ -74,14 +77,16 @@ class MainViewModel @Inject constructor(
 
 	private fun setMapInfo(document: Document){
 		mapPosition.setMapInfo(document)
+		getMapInfo()
 	}
 
-	fun getMapInfo():List<String>{
+	fun getMapInfo(){
+		_mapInfo.value = listOf()
 		val latitude = mapPosition.getPreferences(LATITUDE,INIT_LATITUDE)
 		val longitude = mapPosition.getPreferences(LONGITUDE,INIT_LONGITUDE)
 		val placeName = mapPosition.getPreferences(PLACE_NAME,"")
 		val addressName = mapPosition.getPreferences(ADDRESS_NAME,"")
-		return listOf(latitude, longitude, placeName, addressName)
+		_mapInfo.value = listOf(latitude, longitude, placeName, addressName)
 	}
 
 	fun placeClicked(document: Document){
