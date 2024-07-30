@@ -31,7 +31,7 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setBind()
+        setBinding()
 
         //RecyclerView Layout 매니저 설정 (스크롤 방향 설정)
         binding.searchResulListView.layoutManager = LinearLayoutManager(this)
@@ -65,7 +65,7 @@ class DataSearchActivity : AppCompatActivity(), RecentAdapterListener, SearchAda
         })
     }
 
-    private fun setBind() {
+    private fun setBinding() {
         binding = ActivityDataSearchBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
