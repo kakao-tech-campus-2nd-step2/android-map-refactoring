@@ -11,10 +11,10 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.espresso.contrib.RecyclerViewActions
-import campus.tech.kakao.map.presentation.MapActivity
-import campus.tech.kakao.map.presentation.PlaceActivity
-import campus.tech.kakao.map.presentation.PlaceAdapter
-import campus.tech.kakao.map.presentation.SearchHistoryAdapter
+import campus.tech.kakao.map.presentation.view.MapActivity
+import campus.tech.kakao.map.presentation.view.PlaceActivity
+import campus.tech.kakao.map.presentation.adapter.PlaceAdapter
+import campus.tech.kakao.map.presentation.adapter.SearchHistoryAdapter
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
 import org.junit.Test

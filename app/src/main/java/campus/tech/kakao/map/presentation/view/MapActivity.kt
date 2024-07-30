@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.view
 
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +11,7 @@ import androidx.cardview.widget.CardView
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.domain.dto.PlaceVO
+import campus.tech.kakao.map.presentation.viewmodel.MapViewModel
 import campus.tech.kakao.map.utils.ApiKeyProvider
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.kakao.vectormap.KakaoMap
@@ -46,6 +47,7 @@ class MapActivity : AppCompatActivity() {
         binding.lifecycleOwner = this
 
         handleIntentData()
+
         setUpMap()
         setUpSearchBox()
     }
@@ -65,8 +67,10 @@ class MapActivity : AppCompatActivity() {
 
     private fun setUpMap() {
         if (mapViewModel.lastPlace.value != null) {
+            Log.d("testt", "last place: ${mapViewModel.lastPlace.value}")
             startMap(mapViewModel.lastPlace.value as PlaceVO)
         } else {
+            Log.d("testt", "디폴트 맵")
             startDefaultMap()
         }
     }
@@ -75,7 +79,9 @@ class MapActivity : AppCompatActivity() {
         val placeFromIntent = intent.getSerializableExtra("place")
         if (placeFromIntent != null) {
             mapViewModel.setLastPlace(placeFromIntent)
+            Log.d("testt", "place from intent: $placeFromIntent")
         }
+        Log.d("testt", "null 임")
     }
 
     private fun startMap(place: PlaceVO) {
@@ -90,6 +96,7 @@ class MapActivity : AppCompatActivity() {
             }
         }, object : KakaoMapReadyCallback() {
             override fun onMapReady(kakaoMap: KakaoMap) {
+                Log.d("testt", "지도 마커 표시 준비됨")
                 this@MapActivity.kakaoMap = kakaoMap
                 setCameraPosition(place.latitude, place.longitude)
                 addMarker(place)

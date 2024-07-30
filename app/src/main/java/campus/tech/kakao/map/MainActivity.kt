@@ -3,8 +3,7 @@ package campus.tech.kakao.map
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import campus.tech.kakao.map.presentation.MapActivity
-import campus.tech.kakao.map.presentation.PlaceActivity
+import campus.tech.kakao.map.presentation.view.MapActivity
 
 
 class MainActivity : AppCompatActivity() {

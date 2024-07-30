@@ -1,25 +1,21 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.SearchHistoryItemBinding
+import campus.tech.kakao.map.domain.dto.PlaceVO
+import campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel
 
 class SearchHistoryAdapter(
-    private var historyList: MutableList<String>,
-    private val onDeleteClick: (String) -> Unit,
-    private val onItemClick: (String) -> Unit,
+    private val viewModel: PlaceViewModel
 ) : RecyclerView.Adapter<SearchHistoryAdapter.HistoryViewHolder>() {
+    private var historyList: List<String> = emptyList()
     class HistoryViewHolder(private val binding: SearchHistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String, onDeleteClick: (String) -> Unit, onItemClick: (String) -> Unit) {
-            binding.history = item
-            binding.clickListener = View.OnClickListener {
-                onItemClick(item)
-            }
-            binding.deleteListener = View.OnClickListener {
-                onDeleteClick(item)
-            }
+        fun bind(viewModel: PlaceViewModel, history: String) {
+            binding.history = history
+            binding.viewModel = viewModel
             binding.executePendingBindings()
         }
     }
@@ -40,12 +36,11 @@ class SearchHistoryAdapter(
         holder: HistoryViewHolder,
         position: Int,
     ) {
-        holder.bind(historyList[position], onDeleteClick, onItemClick)
+        holder.bind(viewModel, historyList[position])
     }
 
     fun updateData(newHistoryList: List<String>) {
-        historyList.clear()
-        historyList.addAll(newHistoryList)
+        historyList = newHistoryList
         notifyDataSetChanged()
     }
 }

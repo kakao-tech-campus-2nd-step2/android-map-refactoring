@@ -6,7 +6,7 @@
     <data>
         <variable
             name="viewModel"
-            type="campus.tech.kakao.map.presentation.PlaceViewModel" />
+            type="campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel" />
     </data>
 
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:orientation="vertical"
-        tools:context=".presentation.PlaceActivity">
+        tools:context=".presentation.view.PlaceActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -53,6 +53,8 @@
                 android:id="@+id/historyRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                app:histories="@{viewModel.searchHistory}"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="horizontal" />
         </HorizontalScrollView>
 
@@ -73,6 +75,8 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical"
+            app:items="@{viewModel.places}"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:visibility="gone" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>

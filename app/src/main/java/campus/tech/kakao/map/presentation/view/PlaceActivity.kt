@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,10 +8,12 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ActivityPlaceBinding
 import campus.tech.kakao.map.domain.dto.PlaceVO
+import campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel
+import campus.tech.kakao.map.presentation.adapter.PlaceAdapter
+import campus.tech.kakao.map.presentation.adapter.SearchHistoryAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,7 +21,6 @@ class PlaceActivity : AppCompatActivity() {
     private val placeViewModel: PlaceViewModel by viewModels()
     private lateinit var placeAdapter: PlaceAdapter
     private lateinit var historyAdapter: SearchHistoryAdapter
-
     private lateinit var binding: ActivityPlaceBinding
 
 
@@ -29,7 +30,6 @@ class PlaceActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         initializeAdapters()
-        initializeRecyclerView()
 
         setUpSearchEditText()
         setUpRemoveButton()
@@ -56,7 +56,7 @@ class PlaceActivity : AppCompatActivity() {
         if (places.isNullOrEmpty()) {
             showEmptyMessage()
         } else {
-            showRecyclerView(places!!)
+            showRecyclerView(places)
         }
     }
 
@@ -70,40 +70,27 @@ class PlaceActivity : AppCompatActivity() {
             historyAdapter.updateData(history)
         }
 
+        placeViewModel.navigateToMap.observe(this) { place ->
+            place?.let {
+                sendPositiontoMap(it)
+                placeViewModel.doneNavigating()
+            }
+        }
+
         placeViewModel.loadSearchHistory()
     }
 
-    private fun initializeRecyclerView() {
-        binding.placeRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.placeRecyclerView.adapter = placeAdapter
+    private fun initializeAdapters() {
+        // 어댑터 초기화
+        placeAdapter = PlaceAdapter(viewModel = placeViewModel)
+        historyAdapter = SearchHistoryAdapter(viewModel = placeViewModel)
 
-        binding.historyRecyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        // RecyclerView에 어댑터 설정
+        binding.placeRecyclerView.adapter = placeAdapter
         binding.historyRecyclerView.adapter = historyAdapter
     }
-
-    private fun initializeAdapters() {
-        Log.d("testt","initializeAdapters")
-        placeAdapter = PlaceAdapter { place ->
-            Log.d("testt", "place $place")
-            placeViewModel.saveSearchQuery(place)
-            sendPositiontoMap(place)
-        }
-
-        historyAdapter = SearchHistoryAdapter(
-            historyList = mutableListOf(),
-            onDeleteClick = { query ->
-                placeViewModel.removeSearchQuery(query)
-            },
-            onItemClick = { query ->
-                Log.d("testt", "search $query")
-                binding.searchEditText.setText(query)
-                placeViewModel.searchPlaces(query)
-            }
-        )
-    }
     private fun sendPositiontoMap(place: PlaceVO) {
-        val latlng = placeViewModel.getPlaceLocation(place)
+        placeViewModel.getPlaceLocation(place)
         val intent = Intent(this, MapActivity::class.java).apply {
             putExtra("place", place)
         }
@@ -114,7 +101,7 @@ class PlaceActivity : AppCompatActivity() {
         binding.searchEditText.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //no-op}
+                    //no-op}
                 }
 
                 override fun onTextChanged(
@@ -128,7 +115,7 @@ class PlaceActivity : AppCompatActivity() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-                //no-op
+                    //no-op
                 }
             },
         )

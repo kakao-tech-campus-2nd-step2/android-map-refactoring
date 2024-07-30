@@ -1,4 +1,4 @@
-package campus.tech.kakao.map.presentation
+package campus.tech.kakao.map.presentation.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,19 +6,26 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.PlaceItemBinding
 import campus.tech.kakao.map.domain.dto.PlaceVO
+import campus.tech.kakao.map.presentation.viewmodel.PlaceViewModel
 
 class PlaceAdapter(
-    private val onItemClick: (PlaceVO) -> Unit,
+    private val viewModel: PlaceViewModel
 ) : RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>() {
     private var places: List<PlaceVO> = emptyList()
 
     class PlaceViewHolder(private val binding: PlaceItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(place: PlaceVO, onItemClick: (PlaceVO) -> Unit) {
+        fun bind(viewModel: PlaceViewModel, place: PlaceVO) {
             binding.place = place
-            binding.clickListener = View.OnClickListener {
-                onItemClick(place)
-            }
+            binding.viewModel = viewModel
             binding.executePendingBindings()
+        }
+
+        companion object {
+            fun from(parent: ViewGroup): PlaceAdapter.PlaceViewHolder {
+                val layoutInflater = LayoutInflater.from(parent.context)
+                val binding = PlaceItemBinding.inflate(layoutInflater, parent, false)
+                return PlaceViewHolder(binding)
+            }
         }
     }
 
@@ -26,8 +33,7 @@ class PlaceAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): PlaceViewHolder {
-        val binding = PlaceItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return PlaceViewHolder(binding)
+        return PlaceViewHolder.from(parent)
     }
 
     override fun getItemCount(): Int {
@@ -38,7 +44,7 @@ class PlaceAdapter(
         holder: PlaceViewHolder,
         position: Int,
     ) {
-        holder.bind(places[position], onItemClick)
+        holder.bind(viewModel, places[position])
     }
 
     fun updateData(newPlaces: List<PlaceVO>) {
