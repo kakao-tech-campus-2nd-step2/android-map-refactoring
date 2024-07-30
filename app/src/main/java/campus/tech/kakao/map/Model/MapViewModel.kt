@@ -14,16 +14,30 @@ class MapViewModel @Inject constructor() : ViewModel(), OnMapReadyCallback {
     val mapReady: LiveData<GoogleMap> get() = _mapReady
 
     fun onSearchQuerySubmitted() {
-        // Search query submitted logic here
+        val query = searchQuery.value ?: return
+
+        mapReady.value?.let { googleMap ->
+            searchLocation(query, googleMap)
+        }
     }
 
     fun onSearchQueryChanged(query: String) {
-        // Search query changed logic here
+        if (query.isBlank()) return
+
+        mapReady.value?.let { googleMap ->
+            searchLocation(query, googleMap)
+        }
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         _mapReady.value = googleMap
     }
+
+    private fun searchLocation(query: String, googleMap: GoogleMap) {
+        // 검색 로직 구현
+    }
 }
+
+
 
 

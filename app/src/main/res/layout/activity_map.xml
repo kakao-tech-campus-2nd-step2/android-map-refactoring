@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:importantForAccessibility="no"
             android:layout_marginTop="50dp"
-            app:mapReady="@{viewModel}" />
+            app:mapReady="@{viewModel.onMapReady()}" />
 
     </FrameLayout>
 </layout>
