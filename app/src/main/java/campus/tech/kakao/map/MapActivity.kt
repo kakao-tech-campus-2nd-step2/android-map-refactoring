@@ -30,8 +30,8 @@ import java.lang.Exception
 class MapActivity : AppCompatActivity() {
 	private var map: KakaoMap? = null
 	private lateinit var model: MainViewModel
-	private var placeName:String = resources.getString(R.string.bottom_sheet_default_name)
-	private var addressName:String = resources.getString(R.string.bottom_sheet_default_address)
+	lateinit var placeName:String
+	lateinit var addressName:String
 	private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
 	private var longitude:Double = 0.0
 	private var latitude:Double = 0.0
