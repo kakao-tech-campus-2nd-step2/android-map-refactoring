@@ -54,7 +54,7 @@
             android:id="@+id/savedSearchRecyclerView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:visibility="@{viewModel.savedSearchRecyclerViewVisibility ? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.uiState.savedSearchRecyclerViewVisible ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/inputSearch"
@@ -77,13 +77,13 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0.5"
             app:layout_constraintHorizontal_bias="0.5"
-            android:visibility="@{viewModel.noResultsVisible ? View.VISIBLE : View.GONE}"/>
+            android:visibility="@{viewModel.uiState.noResultsVisible ? View.VISIBLE : View.GONE}"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/searchRecyclerView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="@{viewModel.searchRecyclerViewVisibility ? View.VISIBLE : View.GONE}"
+            android:visibility="@{viewModel.uiState.searchRecyclerViewVisible ? View.VISIBLE : View.GONE}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/savedSearchRecyclerView"
