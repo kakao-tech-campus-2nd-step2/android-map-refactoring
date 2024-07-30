@@ -74,29 +74,6 @@ class MainActivity : AppCompatActivity() {
             binding.savedSearchRecyclerView.visibility = if(uiState.savedSearchRecyclerViewVisible) View.VISIBLE else View.GONE
         })
 
-        /*
-        viewModel.searchResults.observe(this, Observer { results ->
-            Log.d("MainActivity", "Search results updated: $results")
-            searchAdapter.updateResults(results)
-        })
-
-        viewModel.savedSearches.observe(this, Observer { searches ->
-            Log.d("MainActivity", "Saved searches updated: $searches")
-            savedSearchAdapter.updateSearches(searches)
-        })
-
-        viewModel.noResultsVisible.observe(this, Observer { visible ->
-            binding.noResult.visibility = if(visible) View.VISIBLE else View.GONE
-        })
-
-        viewModel.searchRecyclerViewVisibility.observe(this, Observer { visible ->
-            binding.searchRecyclerView.visibility = if (visible) View.VISIBLE else View.GONE
-        })
-
-        viewModel.savedSearchRecyclerViewVisibility.observe(this, Observer { visible ->
-            binding.savedSearchRecyclerView.visibility = if (visible) View.VISIBLE else View.GONE
-        })*/
-
         binding.inputSearch.setOnFocusChangeListener { _, hasFocus ->
             if(hasFocus && binding.inputSearch.text.isEmpty()) {
                 viewModel.setSavedSearchRecyclerViewVisibility(true)

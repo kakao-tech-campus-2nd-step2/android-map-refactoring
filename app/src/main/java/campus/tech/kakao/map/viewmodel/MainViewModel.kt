@@ -15,24 +15,6 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(application: Application, private val placeRepository: PlaceRepository) : AndroidViewModel(application) {
 
-    /*
-    private val _searchResults = MutableLiveData<List<Place>>()
-    val searchResults: LiveData<List<Place>> get() = _searchResults
-
-    private val _savedSearches = MutableLiveData<List<Place>>()
-    val savedSearches: LiveData<List<Place>> get() = _savedSearches
-
-    private val _noResultsVisible = MutableLiveData<Boolean>()
-    val noResultsVisible: LiveData<Boolean> get() = _noResultsVisible
-
-    private val _searchRecyclerViewVisibility = MutableLiveData<Boolean>()
-    val searchRecyclerViewVisibility: LiveData<Boolean> get() = _searchRecyclerViewVisibility
-
-    private val _savedSearchRecyclerViewVisibility = MutableLiveData<Boolean>()
-    val savedSearchRecyclerViewVisibility: LiveData<Boolean> get() = _savedSearchRecyclerViewVisibility
-
-     */
-
     private val _uiState = MutableLiveData(UIState())
     val uiState: LiveData<UIState> get() = _uiState
 
@@ -53,8 +35,6 @@ class MainViewModel @Inject constructor(application: Application, private val pl
                         y = document.y
                     )
                 }
-            //_searchResults.postValue(results)
-            //updateVisibility(results.isNotEmpty())
             _uiState.postValue(_uiState.value?.copy(
                 searchResults = results,
                 noResultsVisible = results.isEmpty(),
@@ -82,7 +62,6 @@ class MainViewModel @Inject constructor(application: Application, private val pl
     fun loadSavedSearches() {
         viewModelScope.launch {
             val searches = placeRepository.getSavedPlaces()
-            //_savedSearches.postValue(searches.reversed())
             _uiState.postValue(_uiState.value?.copy(
                 savedSearches = searches.reversed()
             ))
@@ -98,8 +77,6 @@ class MainViewModel @Inject constructor(application: Application, private val pl
     }
 
     fun clearSearchResults() {
-        //_searchResults.value = emptyList()
-        //updateVisibility(false)
         _uiState.postValue(_uiState.value?.copy(
             searchResults = emptyList(),
             noResultsVisible = true,
@@ -107,13 +84,6 @@ class MainViewModel @Inject constructor(application: Application, private val pl
             savedSearchRecyclerViewVisible = true
         ))
     }
-
-    /*
-    private fun updateVisibility(hasResults: Boolean) {
-        _searchRecyclerViewVisibility.postValue(hasResults)
-        _noResultsVisible.postValue(!hasResults)
-        _savedSearchRecyclerViewVisibility.postValue(!hasResults)
-    }*/
 
     fun setSavedSearchRecyclerViewVisibility(visible: Boolean) {
         //_savedSearchRecyclerViewVisibility.value = visible
