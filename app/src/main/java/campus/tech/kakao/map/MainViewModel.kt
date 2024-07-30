@@ -115,7 +115,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun documentListObserved(documents: List<Document>, searchBinding: ActivitySearchBinding, documentAdapter: DocumentAdapter){
-		if (documents.isNullOrEmpty()){
+		if (documents.isEmpty()){
 			searchBinding.noSearchResult.visibility = View.VISIBLE
 			searchBinding.searchResultRecyclerView.visibility = View.GONE
 		}else{
@@ -127,7 +127,7 @@ class MainViewModel @Inject constructor(
 	}
 
 	fun wordListObserved(searchWords: List<SearchWord>, searchBinding: ActivitySearchBinding, wordAdapter: WordAdapter){
-		if (searchWords.isNullOrEmpty()){
+		if (searchWords.isEmpty()){
 			searchBinding.searchWordRecyclerView.visibility = View.GONE
 		}
 		else{
