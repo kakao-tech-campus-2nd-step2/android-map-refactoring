@@ -56,7 +56,7 @@ class PlaceActivity : AppCompatActivity() {
         if (places.isNullOrEmpty()) {
             showEmptyMessage()
         } else {
-            showRecyclerView(places!!)
+            showRecyclerView(places)
         }
     }
 
@@ -101,7 +101,7 @@ class PlaceActivity : AppCompatActivity() {
         binding.searchEditText.addTextChangedListener(
             object : TextWatcher {
                 override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                //no-op}
+                    //no-op}
                 }
 
                 override fun onTextChanged(
@@ -115,7 +115,7 @@ class PlaceActivity : AppCompatActivity() {
                 }
 
                 override fun afterTextChanged(p0: Editable?) {
-                //no-op
+                    //no-op
                 }
             },
         )

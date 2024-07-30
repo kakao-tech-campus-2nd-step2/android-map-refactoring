@@ -12,7 +12,7 @@ class SearchHistoryAdapter(
     private val viewModel: PlaceViewModel
 ) : RecyclerView.Adapter<SearchHistoryAdapter.HistoryViewHolder>() {
     private var historyList: List<String> = emptyList()
-        class HistoryViewHolder(private val binding: SearchHistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class HistoryViewHolder(private val binding: SearchHistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(viewModel: PlaceViewModel, history: String) {
             binding.history = history
             binding.viewModel = viewModel

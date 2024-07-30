@@ -21,9 +21,9 @@ fun PlaceVO.toVisitedPlaceEntity() = VisitedPlaceEntity(
 )
 
 fun VisitedPlaceEntity.toPlaceVO() = PlaceVO(
-        placeName = this.placeName,
-        addressName = this.addressName,
-        categoryName = this.categoryName,
-        latitude = this.latitude,
-        longitude = this.longitude
+    placeName = this.placeName,
+    addressName = this.addressName,
+    categoryName = this.categoryName,
+    latitude = this.latitude,
+    longitude = this.longitude
 )
