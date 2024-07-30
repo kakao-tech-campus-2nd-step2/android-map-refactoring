@@ -1,10 +1,9 @@
 package campus.tech.kakao.map.model.datasource
 
-import campus.tech.kakao.map.App
 import campus.tech.kakao.map.model.Location
 import javax.inject.Inject
 
-class LastLocationlSharedPreferences @Inject constructor(
+class LastLocationSharedPreferences @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) {
     fun putLastLocation(location: Location) {

@@ -2,7 +2,7 @@ package campus.tech.kakao.map
 
 import android.content.Context
 import campus.tech.kakao.map.model.datasource.KakaoAPI
-import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
+import campus.tech.kakao.map.model.datasource.LastLocationSharedPreferences
 import campus.tech.kakao.map.model.datasource.LocationRemoteDataSource
 import campus.tech.kakao.map.model.datasource.SharedPreferences
 import dagger.Module
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class LocationModule {
+object LocationModule {
 
     @Singleton
     @Provides
@@ -38,7 +38,7 @@ class LocationModule {
 
     @Provides
     @Singleton
-    fun provideLastLocationSharedPreferences(sharedPreferences: SharedPreferences): LastLocationlSharedPreferences {
-        return LastLocationlSharedPreferences(sharedPreferences)
+    fun provideLastLocationSharedPreferences(sharedPreferences: SharedPreferences): LastLocationSharedPreferences {
+        return LastLocationSharedPreferences(sharedPreferences)
     }
 }

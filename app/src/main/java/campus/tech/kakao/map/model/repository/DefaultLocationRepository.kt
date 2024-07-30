@@ -3,7 +3,7 @@ package campus.tech.kakao.map.model.repository
 import campus.tech.kakao.map.model.Location
 import campus.tech.kakao.map.model.Location.Companion.toLocation
 import campus.tech.kakao.map.model.LocationDto
-import campus.tech.kakao.map.model.datasource.LastLocationlSharedPreferences
+import campus.tech.kakao.map.model.datasource.LastLocationSharedPreferences
 import campus.tech.kakao.map.model.datasource.LocationRemoteDataSource
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class DefaultLocationRepository @Inject constructor(
     private val locationRemoteDataSource: LocationRemoteDataSource,
-    private val lastLocationlSharedPreferences: LastLocationlSharedPreferences
+    private val lastLocationSharedPreferences: LastLocationSharedPreferences
 ): LocationRepository {
     override suspend fun getLocationAll(query: String): List<Location> {
         val searchFromKeywordResponse = locationRemoteDataSource.getLocations(query)
@@ -24,10 +24,10 @@ class DefaultLocationRepository @Inject constructor(
             it.toLocation()
         }
     override fun addLastLocation(location: Location){
-        lastLocationlSharedPreferences.putLastLocation(location)
+        lastLocationSharedPreferences.putLastLocation(location)
     }
 
     override fun getLastLocation(): Location? {
-        return lastLocationlSharedPreferences.getLastLocation()
+        return lastLocationSharedPreferences.getLastLocation()
     }
 }
