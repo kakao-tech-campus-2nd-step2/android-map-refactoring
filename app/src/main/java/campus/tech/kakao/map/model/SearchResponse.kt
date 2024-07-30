@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.model
 
 data class SearchResponse(
     val meta: Meta,

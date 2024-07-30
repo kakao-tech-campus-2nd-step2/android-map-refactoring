@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.network
 
 import okhttp3.Interceptor
 import okhttp3.Response

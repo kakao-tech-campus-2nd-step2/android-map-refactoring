@@ -10,6 +10,10 @@ import org.junit.*
 import org.junit.rules.TestRule
 import android.app.Application
 import android.content.Context
+import campus.tech.kakao.map.model.Document
+import campus.tech.kakao.map.repository.PlaceRepository
+import campus.tech.kakao.map.repository.PreferencesRepository
+import campus.tech.kakao.map.viewmodel.MainViewModel
 import io.mockk.junit4.MockKRule
 import org.junit.Assert.*
 

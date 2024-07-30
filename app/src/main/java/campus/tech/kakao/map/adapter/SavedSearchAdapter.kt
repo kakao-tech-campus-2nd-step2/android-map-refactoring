@@ -1,12 +1,13 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.databinding.ItemSavedSearchBinding
+import campus.tech.kakao.map.model.Place
 
-class SavedSearchAdapter(private val onSearchClicked: (String) -> Unit, private val onDeleteClicked: (String) -> Unit) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
-    private val searches = mutableListOf<String>()
+class SavedSearchAdapter(private val onSearchClicked: (Place) -> Unit, private val onDeleteClicked: (Place) -> Unit) : RecyclerView.Adapter<SavedSearchAdapter.ViewHolder>() {
+    private val searches = mutableListOf<Place>()
 
     class ViewHolder(val binding: ItemSavedSearchBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -17,7 +18,7 @@ class SavedSearchAdapter(private val onSearchClicked: (String) -> Unit, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val search = searches[position]
-        holder.binding.savedTextView.text = search
+        holder.binding.savedTextView.text = search.name
         holder.binding.savedTextView.setOnClickListener {
             onSearchClicked(search)
         }
@@ -30,7 +31,7 @@ class SavedSearchAdapter(private val onSearchClicked: (String) -> Unit, private 
         return searches.size
     }
 
-    fun updateSearches(newSearches: List<String>) {
+    fun updateSearches(newSearches: List<Place>) {
         searches.clear()
         searches.addAll(newSearches)
         notifyDataSetChanged()

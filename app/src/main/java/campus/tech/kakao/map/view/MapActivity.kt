@@ -1,4 +1,4 @@
-package campus.tech.kakao.map
+package campus.tech.kakao.map.view
 
 import android.content.Context
 import android.content.Intent
@@ -7,62 +7,57 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import campus.tech.kakao.map.R
+import campus.tech.kakao.map.databinding.ActivityMapBinding
+import campus.tech.kakao.map.viewmodel.MapViewModel
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
 import com.kakao.vectormap.MapLifeCycleCallback
-import com.kakao.vectormap.MapView
 import com.kakao.vectormap.camera.CameraUpdateFactory
 import com.kakao.vectormap.label.LabelStyles
 import java.lang.Exception
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.LatLng
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
 
-    private lateinit var mapView: MapView
-    private lateinit var errorLayout: LinearLayout
-    private lateinit var errorMessage: TextView
-    private lateinit var placeNameTextView: TextView
-    private lateinit var placeAddressTextView: TextView
-    private lateinit var bottomSheet: LinearLayout
+    private lateinit var binding: ActivityMapBinding
+    private val viewModel: MapViewModel by viewModels()
+
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_map)
+        //setContentView(R.layout.activity_map)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_map)
+        binding.mapViewModel = viewModel
+        binding.lifecycleOwner = this
 
         sharedPreferences = getSharedPreferences("map_prefs", Context.MODE_PRIVATE)
 
-        mapView = findViewById(R.id.map_view)
-        errorLayout = findViewById(R.id.error_layout)
-        errorMessage = findViewById(R.id.error_message)
-        placeNameTextView = findViewById(R.id.place_name)
-        placeAddressTextView = findViewById(R.id.place_address)
-        bottomSheet = findViewById(R.id.bottomSheet)
-        val inputMap = findViewById<TextView>(R.id.inputSearchMap)
-        val refreshImageView = findViewById<ImageView>(R.id.refreshImageView)
 
-        startMapView()
-
-        refreshImageView.setOnClickListener {
+        binding.refreshImageView.setOnClickListener {
             retryMapLoad()
         }
 
-        inputMap.setOnClickListener {
+        binding.inputSearchMap.setOnClickListener {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }
 
+        startMapView()
+
     }
 
     private fun startMapView() {
-        mapView.start(object : MapLifeCycleCallback() {
+        binding.mapView.start(object : MapLifeCycleCallback() {
             override fun onMapDestroy() {
                 //지도 API가 정상적으로 종료될 때 호출됨
             }
@@ -103,15 +98,15 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun retryMapLoad() {
-        errorLayout.visibility = View.GONE
-        mapView.visibility = View.VISIBLE
+        viewModel.setErrorVisible(false)
+        binding.mapView.visibility = View.VISIBLE
         startMapView()
     }
 
     private fun showErrorLayout(error: Exception) {
-        mapView.visibility = View.GONE
-        errorLayout.visibility = View.VISIBLE
-        errorMessage.text = error.toString()
+        binding.mapView.visibility = View.GONE
+        viewModel.setErrorVisible(true)
+        viewModel.setErrorMessage(error.toString())
     }
 
     private fun handleIntent(kakaoMap: KakaoMap) {
@@ -121,9 +116,9 @@ class MapActivity : AppCompatActivity() {
             val placeX = it.getStringExtra("place_x") ?: return
             val placeY = it.getStringExtra("place_y") ?: return
 
-            placeNameTextView.text = placeName
-            placeAddressTextView.text = placeAddress
-            bottomSheet.visibility = View.VISIBLE
+            viewModel.setPlaceName(placeName)
+            viewModel.setPlaceAddress(placeAddress)
+            viewModel.setBottomSheetVisible(true)
 
             val markerBitmap = BitmapFactory.decodeResource(resources, R.drawable.marker)
             val scaledBitmap = Bitmap.createScaledBitmap(markerBitmap, 50, 50, true)
@@ -140,11 +135,11 @@ class MapActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        mapView.resume()
+        binding.mapView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.pause()
+        binding.mapView.pause()
     }
 }
