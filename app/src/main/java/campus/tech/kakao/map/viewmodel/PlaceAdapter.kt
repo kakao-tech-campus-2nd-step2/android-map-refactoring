@@ -25,6 +25,7 @@ class PlaceAdapter(
                 onItemClick(document)
 
 
+                // 이 부분은 좀더 학습해보고 다시 해보겠습니다.
                 val context = binding.root.context
                 val sharedPreferences = context.getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
                 val editor = sharedPreferences.edit()
