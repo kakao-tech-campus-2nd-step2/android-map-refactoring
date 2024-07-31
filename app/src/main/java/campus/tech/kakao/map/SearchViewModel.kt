@@ -6,22 +6,32 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class SearchViewModel(context: Context) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(
+    context: Context,
+    private val preferenceManager: PreferenceManager,
+    var repository: RetrofitRepository,
+    private val searchHistoryRepository: SearchHistoryRepository
+) : ViewModel() {
     private val dbHelper: DBHelper = DBHelper(context)
     private val db = dbHelper.writableDatabase
-    private val preferenceManager = MapApplication.prefs
-    var repository = RetrofitRepository()
 
     private var _placeList = MutableLiveData<List<Place>>()
     private val _searchHistoryList = MutableLiveData<List<SearchHistory>>()
     private var _locationList = MutableLiveData<List<Document>>()
+    private val _emptyMainTextVisibility = MutableLiveData<Boolean>()
+
 
     init {
-        _searchHistoryList.value = getSearchHistory()
+        getAllSearchHistory()
+        _emptyMainTextVisibility.value = false
     }
 
     val searchHistoryList: LiveData<List<SearchHistory>>
@@ -32,6 +42,9 @@ class SearchViewModel(context: Context) : ViewModel() {
 
     val locationList: LiveData<List<Document>>
         get() = _locationList
+
+    val emptyMainTextVisibility: LiveData<Boolean>
+        get() = _emptyMainTextVisibility
 
     fun insertPlace(place: Place) {
         dbHelper.insert(db, place)
@@ -92,6 +105,41 @@ class SearchViewModel(context: Context) : ViewModel() {
                 repository.getPlace(query)
             }
             _locationList.postValue(places)
+            updateEmptyTextVisibility(places.isEmpty())
+        }
+    }
+
+    fun getLastCategory(input: String): String {
+        val categories = input.split(">")
+        val lastCategory = categories.lastOrNull()?.trim()
+        return lastCategory ?: ""
+    }
+
+    fun insert(searchHistory: SearchHistory) = viewModelScope.launch(Dispatchers.IO) {
+        searchHistoryRepository.insert(searchHistory)
+        val updatedList = searchHistoryRepository.getAllSearchHistories()
+        withContext(Dispatchers.Main) {
+            _searchHistoryList.value = updatedList
+        }
+        Log.d("insert", "inserted: " + searchHistory)
+    }
+
+    fun delete(searchHistory: SearchHistory) = viewModelScope.launch(Dispatchers.IO) {
+        searchHistoryRepository.delete(searchHistory)
+        val updatedList = searchHistoryRepository.getAllSearchHistories()
+        withContext(Dispatchers.Main) {
+            _searchHistoryList.value = updatedList
+        }
+    }
+
+    fun updateEmptyTextVisibility(isVisible: Boolean) {
+        _emptyMainTextVisibility.value = isVisible
+    }
+
+    fun getAllSearchHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val histories = searchHistoryRepository.getAllSearchHistories()
+            _searchHistoryList.postValue(histories)
         }
     }
 }

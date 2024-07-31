@@ -1,8 +1,12 @@
 package campus.tech.kakao.map
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+//@Entity
 data class Place (
+//    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val address: String,
     val category: String,

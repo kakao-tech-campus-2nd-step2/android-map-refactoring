@@ -1,182 +1,230 @@
-//package campus.tech.kakao.map
-//
-//import android.content.Context
-//import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-//import androidx.lifecycle.Observer
-//import androidx.test.core.app.ApplicationProvider
-//import androidx.test.ext.junit.runners.AndroidJUnit4
-//import kotlinx.coroutines.test.UnconfinedTestDispatcher
-//import kotlinx.coroutines.test.advanceUntilIdle
-//import kotlinx.coroutines.test.runTest
-//import org.junit.*
-//import org.junit.Assert.*
-//import org.junit.runner.RunWith
-//import org.robolectric.annotation.Config
-//
-//@RunWith(AndroidJUnit4::class)
-//@Config(manifest = Config.NONE)
-//class SearchViewModelTest {
-//
-//    @get:Rule
-//    val instantTaskExecutorRule = InstantTaskExecutorRule()
-//
-//    private lateinit var viewModel: SearchViewModel
-//    private lateinit var context: Context
-//    private lateinit var preferenceManager: FakePreferenceManager
-//    private lateinit var repository: FakeRetrofitRepository
-//
-//    @Before
-//    fun setUp() {
-//        context = ApplicationProvider.getApplicationContext<Context>()
-//        preferenceManager = FakePreferenceManager(context)
-//        repository = FakeRetrofitRepository()
-//        MapApplication.prefs = preferenceManager
-//
-//        viewModel = SearchViewModel(context)
-//        viewModel.repository = repository  // repository를 설정합니다.
-//    }
-//
-//    @Test
-//    fun getSearchHistoryList_setsSearchHistory() {
-//        val document = Document(
-//            addressName = "Address1",
-//            categoryGroupCode = "CategoryGroupCode1",
-//            categoryGroupName = "CategoryGroupName1",
-//            categoryName = "CategoryName1",
-//            distance = "Distance1",
-//            id = "Id1",
-//            phone = "Phone1",
-//            placeName = "Place1",
-//            placeUrl = "PlaceUrl1",
-//            roadAddressName = "RoadAddressName1",
-//            x = "X1",
-//            y = "Y1"
-//        )
-//        val searchHistory = SearchHistory("Search1", document)
-//        preferenceManager.addSearchHistory(searchHistory)
-//
-//        val observer = Observer<List<SearchHistory>> {}
-//        viewModel.searchHistoryList.observeForever(observer)
-//
-//        viewModel.getSearchHistoryList()
-//        assertEquals(1, viewModel.searchHistoryList.value!!.size)
-//        assertEquals("Search1", viewModel.searchHistoryList.value!![0].searchHistory)
-//    }
-//
-//    @Test
-//    fun saveSearchHistory_updatesSearchHistory() {
-//        val document = Document(
-//            addressName = "Address1",
-//            categoryGroupCode = "CategoryGroupCode1",
-//            categoryGroupName = "CategoryGroupName1",
-//            categoryName = "CategoryName1",
-//            distance = "Distance1",
-//            id = "Id1",
-//            phone = "Phone1",
-//            placeName = "Place1",
-//            placeUrl = "PlaceUrl1",
-//            roadAddressName = "RoadAddressName1",
-//            x = "X1",
-//            y = "Y1"
-//        )
-//        val searchHistory = SearchHistory("Search1", document)
-//
-//        viewModel.saveSearchHistory(searchHistory)
-//
-//        assertEquals(1, preferenceManager.getArrayList(Constants.SEARCH_HISTORY_KEY).size)
-//        assertEquals("Search1", preferenceManager.getArrayList(Constants.SEARCH_HISTORY_KEY)[0].searchHistory)
-//    }
-//
-//    @Test
-//    fun deleteSearchHistory_removesItemFromSearchHistory() {
-//        val document = Document(
-//            addressName = "Address1",
-//            categoryGroupCode = "CategoryGroupCode1",
-//            categoryGroupName = "CategoryGroupName1",
-//            categoryName = "CategoryName1",
-//            distance = "Distance1",
-//            id = "Id1",
-//            phone = "Phone1",
-//            placeName = "Place1",
-//            placeUrl = "PlaceUrl1",
-//            roadAddressName = "RoadAddressName1",
-//            x = "X1",
-//            y = "Y1"
-//        )
-//        val searchHistory = SearchHistory("Search1", document)
-//        preferenceManager.addSearchHistory(searchHistory)
-//
-//        viewModel.deleteSearchHistory(0)
-//
-//        assertTrue(preferenceManager.getArrayList(Constants.SEARCH_HISTORY_KEY).isEmpty())
-//    }
-//
-//    @Test
-//    fun getPlace_setsLocationList() = runTest(UnconfinedTestDispatcher()) {
-//        val searchText = "Place"
-//        val documents = listOf(
-//            Document(
-//                addressName = "Address1",
-//                categoryGroupCode = "CategoryGroupCode1",
-//                categoryGroupName = "CategoryGroupName1",
-//                categoryName = "CategoryName1",
-//                distance = "Distance1",
-//                id = "Id1",
-//                phone = "Phone1",
-//                placeName = "Place1",
-//                placeUrl = "PlaceUrl1",
-//                roadAddressName = "RoadAddressName1",
-//                x = "X1",
-//                y = "Y1"
-//            )
-//        )
-//        repository.setPlaces(documents)
-//
-//        val observer = Observer<List<Document>> {}
-//        viewModel.locationList.observeForever(observer)
-//
-//        viewModel.getPlace(searchText)
-//        advanceUntilIdle()
-//
-//        assertEquals(1, viewModel.locationList.value!!.size)
-//        assertEquals("Place1", viewModel.locationList.value!![0].placeName)
-//    }
-//}
-//
-//class FakePreferenceManager(context: Context) : PreferenceManager(context) {
-//    private val searchHistory = mutableListOf<SearchHistory>()
-//
-//    override fun getArrayList(key: String): ArrayList<SearchHistory> {
-//        return ArrayList(searchHistory)
-//    }
-//
-//    override fun savePreference(key: String, searchHistory: SearchHistory, currentList: ArrayList<SearchHistory>) {
-//        this.searchHistory.add(searchHistory)
-//    }
-//
-//    override fun deleteArrayListItem(key: String, index: Int) {
-//        if (index >= 0 && index < searchHistory.size) {
-//            searchHistory.removeAt(index)
-//        }
-//    }
-//
-//    fun addSearchHistory(searchHistory: SearchHistory) {
-//        this.searchHistory.add(searchHistory)
-//    }
-//
-//    fun clearSearchHistory() {
-//        this.searchHistory.clear()
-//    }
-//}
-//
-//class FakeRetrofitRepository : RetrofitRepository() {
-//    private var places = listOf<Document>()
-//
-//    fun setPlaces(places: List<Document>) {
-//        this.places = places
-//    }
-//
-//    override suspend fun getPlace(query: String): List<Document> {
-//        return places
-//    }
-//}
+
+package campus.tech.kakao.map
+
+import android.content.Context
+import android.os.Looper
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.test.core.app.ApplicationProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.TestCoroutineScope
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.*
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows
+import org.robolectric.annotation.Config
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
+
+@ExperimentalCoroutinesApi
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [28])
+class SearchViewModelTest {
+
+    private lateinit var viewModel: SearchViewModel
+    private lateinit var preferenceManager: FakePreferenceManager
+    private lateinit var repository: FakeRetrofitRepository
+    private lateinit var fakeSearchHistoryRepository: FakeSearchHistoryRepository
+    private lateinit var fakeSearchHistoryDao: FakeSearchHistoryDao
+
+
+    @get:Rule
+    val instantExecutorRule = InstantTaskExecutorRule()
+
+    private val testDispatcher = TestCoroutineDispatcher()
+    private val testScope = TestCoroutineScope(testDispatcher)
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        preferenceManager = FakePreferenceManager(context)
+        repository = FakeRetrofitRepository()
+        viewModel = SearchViewModel(context, preferenceManager, repository, fakeSearchHistoryRepository)
+        fakeSearchHistoryDao = FakeSearchHistoryDao()
+        fakeSearchHistoryRepository = FakeSearchHistoryRepository(fakeSearchHistoryDao)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+        testScope.cleanupTestCoroutines()
+    }
+
+    @Test
+    fun getPlace_setsLocationList_and_updatesEmptyTextVisibility() = testScope.runBlockingTest {
+        // Given
+        val searchText = "Place"
+        val documents = listOf(
+            Document(
+                addressName = "Address1",
+                categoryGroupCode = "CategoryGroupCode1",
+                categoryGroupName = "CategoryGroupName1",
+                categoryName = "CategoryName1",
+                distance = "Distance1",
+                id = "Id1",
+                phone = "Phone1",
+                placeName = "Place1",
+                placeUrl = "PlaceUrl1",
+                roadAddressName = "RoadAddressName1",
+                x = "X1",
+                y = "Y1"
+            )
+        )
+        repository.setPlaces(documents)
+
+        // When
+        viewModel.getPlace(searchText)
+
+        // Then
+        advanceUntilIdle() // 모든 코루틴이 완료될 때까지 기다립니다.
+
+        val locationList = viewModel.locationList.value
+        assertEquals(1, locationList?.size)
+        assertEquals("Place1", locationList?.get(0)?.placeName)
+
+        val emptyTextVisibility = viewModel.emptyMainTextVisibility.value
+        assertFalse(emptyTextVisibility ?: true)
+    }
+
+    @Test
+    fun getPlace_withEmptyResult_updatesEmptyTextVisibility() = testScope.runBlockingTest {
+        // Given
+        val searchText = "NonExistentPlace"
+        repository.setPlaces(emptyList())
+
+        // When
+        viewModel.getPlace(searchText)
+
+        // Then
+        advanceUntilIdle() // 모든 코루틴이 완료될 때까지 기다립니다.
+
+        val locationList = viewModel.locationList.value
+        assertTrue(locationList?.isEmpty() ?: false)
+
+        val emptyTextVisibility = viewModel.emptyMainTextVisibility.value
+        assertTrue(emptyTextVisibility ?: false)
+    }
+
+    @Test
+    fun saveSearchHistory_addsToRepository() = testScope.runBlockingTest {
+        // Given
+        val searchHistory = SearchHistory(0, "Test", "1.0", "1.0")
+
+        // When
+        viewModel.saveSearchHistory(searchHistory)
+
+        // Then
+        advanceUntilIdle()
+        val allHistories = fakeSearchHistoryRepository.allSearchHistories
+        assertTrue(allHistories.contains(searchHistory))
+    }
+
+    @Test
+    fun deleteSearchHistory_removesFromRepository() = testScope.runBlockingTest {
+        // Given
+        val searchHistory = SearchHistory(0, "Test", "1.0", "1.0")
+        fakeSearchHistoryRepository.insert(searchHistory)
+
+        // When
+        viewModel.delete(searchHistory)
+
+        // Then
+        advanceUntilIdle()
+        val allHistories = fakeSearchHistoryRepository.allSearchHistories
+        assertFalse(allHistories.contains(searchHistory))
+    }
+
+    // FakePreferenceManager 클래스 추가
+    class FakePreferenceManager(context: Context) : PreferenceManager(context) {
+        private val searchHistory = mutableListOf<SearchHistory>()
+
+        override fun getArrayList(key: String): ArrayList<SearchHistory> {
+            return ArrayList(searchHistory)
+        }
+
+        override fun savePreference(key: String, searchHistory: SearchHistory, currentList: ArrayList<SearchHistory>) {
+            this.searchHistory.add(searchHistory)
+        }
+
+        override fun deleteArrayListItem(key: String, index: Int) {
+            if (index >= 0 && index < searchHistory.size) {
+                searchHistory.removeAt(index)
+            }
+        }
+
+        fun addSearchHistory(searchHistory: SearchHistory) {
+            this.searchHistory.add(searchHistory)
+        }
+
+        fun clearSearchHistory() {
+            this.searchHistory.clear()
+        }
+    }
+
+    // FakeRetrofitRepository 클래스 추가
+    class FakeRetrofitRepository : RetrofitRepository(RetrofitInstance.retrofitService) {
+        private var places = listOf<Document>()
+
+        fun setPlaces(places: List<Document>) {
+            this.places = places
+        }
+
+        override suspend fun getPlace(query: String): List<Document> {
+            return places
+        }
+    }
+
+    class FakeSearchHistoryDao : SearchHistoryDao {
+        private val searchHistories = mutableListOf<SearchHistory>()
+
+        override suspend fun insert(searchHistory: SearchHistory) {
+            searchHistories.add(searchHistory)
+        }
+
+        override suspend fun update(searchHistory: SearchHistory) {
+            val index = searchHistories.indexOfFirst { it.id == searchHistory.id }
+            if (index != -1) {
+                searchHistories[index] = searchHistory
+            }
+        }
+
+        override suspend fun delete(searchHistory: SearchHistory) {
+            searchHistories.remove(searchHistory)
+        }
+
+        override fun getAllHistories(): List<SearchHistory> = searchHistories
+    }
+
+    class FakeSearchHistoryRepository(private val fakeSearchHistoryDao: FakeSearchHistoryDao) : SearchHistoryRepository(FakeSearchHistoryDao()) {
+        override val allSearchHistories = mutableListOf<SearchHistory>()
+
+        override suspend fun insert(searchHistory: SearchHistory) {
+            allSearchHistories.add(searchHistory)
+        }
+
+        override suspend fun delete(searchHistory: SearchHistory) {
+            allSearchHistories.remove(searchHistory)
+        }
+
+        override suspend fun update(searchHistory: SearchHistory) {
+            val index = allSearchHistories.indexOfFirst { it.id == searchHistory.id }
+            if (index != -1) {
+                allSearchHistories[index] = searchHistory
+            }
+        }
+    }
+}

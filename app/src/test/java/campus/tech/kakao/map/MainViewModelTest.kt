@@ -8,8 +8,9 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config@RunWith(RobolectricTestRunner::class)
+import org.robolectric.annotation.Config
 
+@RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
 class MainViewModelTest {
 
@@ -20,9 +21,9 @@ class MainViewModelTest {
     fun setUp() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         preferenceManager = FakePreferenceManager(context)
-        MapApplication.prefs = preferenceManager
-        viewModel = MainViewModel(preferenceManager)
+        viewModel = MainViewModel(context, preferenceManager)
     }
+
     @Test
     fun setLocation_withCoordinates_returnsLatLng() {
         // given
@@ -55,7 +56,7 @@ class MainViewModelTest {
             x = "-122.4194",
             y = "37.7749"
         )
-        val searchHistory = SearchHistory("Some history", document)
+        val searchHistory = SearchHistory(0, "Some history", document.x, document.y)
         preferenceManager.addSearchHistory(searchHistory)
 
         // when
@@ -66,7 +67,6 @@ class MainViewModelTest {
         assertEquals(expected.latitude, result?.latitude)
         assertEquals(expected.longitude, result?.longitude)
     }
-
 
     // FakePreferenceManager 클래스 추가
     class FakePreferenceManager(context: Context) : PreferenceManager(context) {
@@ -95,5 +95,3 @@ class MainViewModelTest {
         }
     }
 }
-
-
