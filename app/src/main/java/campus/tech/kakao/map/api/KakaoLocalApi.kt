@@ -1,10 +1,7 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.api
 
-import campus.tech.kakao.map.model.ResultSearch
-import retrofit2.Call
-import retrofit2.Response
+import campus.tech.kakao.map.data.ResultSearch
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface KakaoLocalApi {

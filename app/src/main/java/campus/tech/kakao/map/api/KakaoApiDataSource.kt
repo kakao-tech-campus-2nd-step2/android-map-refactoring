@@ -1,8 +1,8 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.api
 
 import android.util.Log
 import campus.tech.kakao.map.BuildConfig
-import campus.tech.kakao.map.model.Place
+import campus.tech.kakao.map.data.Place
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

@@ -1,20 +1,16 @@
-package campus.tech.kakao.map.adapter
+package campus.tech.kakao.map.view
 
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.annotation.VisibleForTesting
-import androidx.lifecycle.LiveData
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import campus.tech.kakao.map.view.OnClickSavedPlaceListener
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
+import campus.tech.kakao.map.databinding.SavedPlaceItemBinding
+import campus.tech.kakao.map.data.SavedPlace
 
 class SavedPlaceViewAdapter(
     val listener: OnClickSavedPlaceListener
@@ -23,9 +19,9 @@ class SavedPlaceViewAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SavedPlaceViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.saved_place_item, parent, false)
+        val binding = DataBindingUtil.inflate<SavedPlaceItemBinding>(inflater, R.layout.saved_place_item, parent, false)
         Log.d("testt", "저장된 장소를 띄우는 뷰 홀더 생성")
-        return SavedPlaceViewHolder(view, listener)
+        return SavedPlaceViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: SavedPlaceViewHolder, position: Int) {
@@ -52,27 +48,15 @@ class SavedPlaceDiffCallBack : DiffUtil.ItemCallback<SavedPlace>() {
     }
 }
 
-class SavedPlaceViewHolder(itemView: View, val listener: OnClickSavedPlaceListener) :
-    RecyclerView.ViewHolder(itemView) {
-    val name = itemView.findViewById<TextView>(R.id.saved_place_name)
-    val deleteButton = itemView.findViewById<ImageView>(R.id.button_saved_delete)
-    var currentSavedPlace: SavedPlace? = null
+class SavedPlaceViewHolder(private val binding: SavedPlaceItemBinding, listener: OnClickSavedPlaceListener) :
+    RecyclerView.ViewHolder(binding.root) {
 
     init {
-        deleteButton.setOnClickListener {
-            val position = absoluteAdapterPosition
-            Log.d("testt", "삭제 콜백함수 호출")
-            currentSavedPlace?.let { listener.deleteSavedPlace(it, position) }
-        }
-        itemView.setOnClickListener {
-            currentSavedPlace?.let { listener.loadPlace(it) }
-        }
-
+        binding.listener = listener
     }
 
     fun bind(savedPlace: SavedPlace) {
-        currentSavedPlace = savedPlace
-        name.text = savedPlace.name
+        binding.savedPlace = savedPlace
     }
 
 }

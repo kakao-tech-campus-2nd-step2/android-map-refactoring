@@ -6,7 +6,6 @@ import android.app.Instrumentation
 import android.content.Intent
 import android.view.View
 import android.widget.EditText
-import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.*
@@ -21,19 +20,14 @@ import androidx.test.espresso.intent.matcher.IntentMatchers.*
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import campus.tech.kakao.map.R
-import campus.tech.kakao.map.adapter.PlaceViewAdapter
-import campus.tech.kakao.map.adapter.PlaceViewHolder
-import campus.tech.kakao.map.adapter.SavedPlaceViewAdapter
-import campus.tech.kakao.map.model.Constants
-import campus.tech.kakao.map.model.Place
-import campus.tech.kakao.map.model.SavedPlace
-import org.hamcrest.core.AllOf.*
+import campus.tech.kakao.map.utilities.Constants
+import campus.tech.kakao.map.data.Place
+import campus.tech.kakao.map.data.SavedPlace
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import java.util.regex.Matcher
 
 
 class SearchActivityTest {

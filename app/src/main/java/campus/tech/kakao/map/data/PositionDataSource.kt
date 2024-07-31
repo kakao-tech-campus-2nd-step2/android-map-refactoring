@@ -1,14 +1,18 @@
-package campus.tech.kakao.map.repository
+package campus.tech.kakao.map.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import campus.tech.kakao.map.utilities.Constants
 import campus.tech.kakao.map.view.MapActivity
 import com.kakao.vectormap.LatLng
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class SharedPreferenceRepository(private val dataStore: DataStore<Preferences>) {
+@Singleton
+class PositionDataSource @Inject constructor(private val dataStore: DataStore<Preferences>) {
 
     companion object {
         val KEY_LATITUDE = doublePreferencesKey("latitude")
@@ -23,8 +27,8 @@ class SharedPreferenceRepository(private val dataStore: DataStore<Preferences>) 
     }
 
     val pos = dataStore.data.map { preferences ->
-        val latitude = preferences[KEY_LATITUDE] ?: MapActivity.LATITUDE.toDouble()
-        val longitude = preferences[KEY_LONGITUDE] ?: MapActivity.LONGITUDE.toDouble()
+        val latitude = preferences[KEY_LATITUDE] ?: Constants.ChonnamUnivLocation.LATITUDE.toDouble()
+        val longitude = preferences[KEY_LONGITUDE] ?: Constants.ChonnamUnivLocation.LONGITUDE.toDouble()
         LatLng.from(latitude, longitude)
     }
 }
