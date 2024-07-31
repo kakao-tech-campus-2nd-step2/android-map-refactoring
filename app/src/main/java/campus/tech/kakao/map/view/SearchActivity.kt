@@ -11,8 +11,10 @@ import android.widget.ImageView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import campus.tech.kakao.map.R
@@ -124,22 +126,25 @@ class SearchActivity : AppCompatActivity(), OnClickPlaceListener, OnClickSavedPl
     }
 
     fun initPlaceObserver(){
-        viewModel.place.observe(this, Observer {
-            Log.d("readData", "검색창 결과 변경 감지")
-            val placeList = viewModel.place.value
-            Log.d("testt", "${placeList}")
-            searchRecyclerViewAdapter.submitList(placeList)
-        })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.place.collect { placeList ->
+                    searchRecyclerViewAdapter.submitList(placeList)
+                }
+            }
+        }
     }
 
     fun initSavedPlaceObserver(){
-        viewModel.savedPlace.observe(this, Observer {
-            Log.d("readData", "저장된 장소들 변경 감지")
-            val savedPlace = viewModel.savedPlace.value
-            savedPlaceRecyclerViewAdapter.submitList(savedPlace)
-            if (savedPlace?.isEmpty() == true) binding.savedSearchRecyclerView.visibility = View.GONE
-            else binding.savedSearchRecyclerView.visibility = View.VISIBLE
-        })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.savedPlace.collect { savedPlaceList ->
+                    savedPlaceRecyclerViewAdapter.submitList(savedPlaceList)
+                    if (savedPlaceList.isEmpty()) binding.savedSearchRecyclerView.visibility = View.GONE
+                    else binding.savedSearchRecyclerView.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 }
 
