@@ -20,6 +20,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 @AndroidEntryPoint
@@ -33,8 +35,8 @@ class SearchActivity : AppCompatActivity() {
             object : PlaceAdapter.OnItemClickListener {
                 override fun onItemClick(position: Int) {
                     val item = placeAdapter.getItem(position)
-                    val searchHistory = SearchHistory(item.placeName, item)
-                    viewModel.saveSearchHistory(searchHistory)
+                    val searchHistory = SearchHistory(0, item.placeName, item.x, item.y)
+                    viewModel.insert(searchHistory)
 
                     val intent = Intent(this@SearchActivity, MainActivity::class.java).apply {
                         putExtra("longitude", item.x)
@@ -60,7 +62,10 @@ class SearchActivity : AppCompatActivity() {
                     }
                 }
                 override fun onXMarkClick(position: Int) {
-                    viewModel.deleteSearchHistory(position)
+                    val item = viewModel.searchHistoryList.value?.get(position)
+                    if (item != null) {
+                        viewModel.delete(item)
+                    }
                 }
             }
         )
@@ -71,7 +76,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         searchViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_search)
-        searchViewBinding.activity = this
         searchViewBinding.viewModel = viewModel
         searchViewBinding.lifecycleOwner = this
 
@@ -113,8 +117,9 @@ class SearchActivity : AppCompatActivity() {
     private fun observeViewModel(searchBinding: ActivitySearchBinding) {
         viewModel.searchHistoryList.observe(this@SearchActivity, Observer {
             historyAdapter.setData(it)
+            Log.d("insert", "아이템 변경됨!")
         })
-        viewModel.getSearchHistoryList()
+        viewModel.getAllSearchHistory()
 
         viewModel.locationList.observe(this@SearchActivity, Observer {
             placeAdapter.setData(it)

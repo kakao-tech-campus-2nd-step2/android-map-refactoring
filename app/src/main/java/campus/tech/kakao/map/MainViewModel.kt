@@ -34,9 +34,13 @@ class MainViewModel @Inject constructor(
             if (historyList.isNullOrEmpty()) {
                 null
             } else {
-                val historyLongitude = historyList[0].document.x.toDouble()
-                val historyLatitude = historyList[0].document.y.toDouble()
-                LatLng.from(historyLatitude, historyLongitude)
+                val historyLongitude = historyList[0].x?.toDoubleOrNull()
+                val historyLatitude = historyList[0].y?.toDoubleOrNull()
+                if (historyLongitude != null && historyLatitude != null) {
+                    LatLng.from(historyLatitude, historyLongitude)
+                } else {
+                    null
+                }
             }
         }
     }

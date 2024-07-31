@@ -36,6 +36,12 @@ object RepositoryModule {
         fun provideRetrofitRepository(retrofitService: RetrofitService): RetrofitRepository {
             return RetrofitRepository(retrofitService)
         }
+
+        @Provides
+        @Singleton
+        fun provideSearchHistoryRepository(dao: SearchHistoryDao): SearchHistoryRepository {
+            return SearchHistoryRepository(dao)
+        }
     }
 
 }

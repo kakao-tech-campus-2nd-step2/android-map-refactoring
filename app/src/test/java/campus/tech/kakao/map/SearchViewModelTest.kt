@@ -4,11 +4,8 @@ package campus.tech.kakao.map
 import android.content.Context
 import android.os.Looper
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.databinding.DataBindingComponent
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.test.core.app.ApplicationProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,6 +37,9 @@ class SearchViewModelTest {
     private lateinit var viewModel: SearchViewModel
     private lateinit var preferenceManager: FakePreferenceManager
     private lateinit var repository: FakeRetrofitRepository
+    private lateinit var fakeSearchHistoryRepository: FakeSearchHistoryRepository
+    private lateinit var fakeSearchHistoryDao: FakeSearchHistoryDao
+
 
     @get:Rule
     val instantExecutorRule = InstantTaskExecutorRule()
@@ -53,7 +53,9 @@ class SearchViewModelTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         preferenceManager = FakePreferenceManager(context)
         repository = FakeRetrofitRepository()
-        viewModel = SearchViewModel(context, preferenceManager, repository)
+        viewModel = SearchViewModel(context, preferenceManager, repository, fakeSearchHistoryRepository)
+        fakeSearchHistoryDao = FakeSearchHistoryDao()
+        fakeSearchHistoryRepository = FakeSearchHistoryRepository(fakeSearchHistoryDao)
     }
 
     @After
@@ -117,6 +119,35 @@ class SearchViewModelTest {
         assertTrue(emptyTextVisibility ?: false)
     }
 
+    @Test
+    fun saveSearchHistory_addsToRepository() = testScope.runBlockingTest {
+        // Given
+        val searchHistory = SearchHistory(0, "Test", "1.0", "1.0")
+
+        // When
+        viewModel.saveSearchHistory(searchHistory)
+
+        // Then
+        advanceUntilIdle()
+        val allHistories = fakeSearchHistoryRepository.allSearchHistories
+        assertTrue(allHistories.contains(searchHistory))
+    }
+
+    @Test
+    fun deleteSearchHistory_removesFromRepository() = testScope.runBlockingTest {
+        // Given
+        val searchHistory = SearchHistory(0, "Test", "1.0", "1.0")
+        fakeSearchHistoryRepository.insert(searchHistory)
+
+        // When
+        viewModel.delete(searchHistory)
+
+        // Then
+        advanceUntilIdle()
+        val allHistories = fakeSearchHistoryRepository.allSearchHistories
+        assertFalse(allHistories.contains(searchHistory))
+    }
+
     // FakePreferenceManager 클래스 추가
     class FakePreferenceManager(context: Context) : PreferenceManager(context) {
         private val searchHistory = mutableListOf<SearchHistory>()
@@ -154,6 +185,46 @@ class SearchViewModelTest {
 
         override suspend fun getPlace(query: String): List<Document> {
             return places
+        }
+    }
+
+    class FakeSearchHistoryDao : SearchHistoryDao {
+        private val searchHistories = mutableListOf<SearchHistory>()
+
+        override suspend fun insert(searchHistory: SearchHistory) {
+            searchHistories.add(searchHistory)
+        }
+
+        override suspend fun update(searchHistory: SearchHistory) {
+            val index = searchHistories.indexOfFirst { it.id == searchHistory.id }
+            if (index != -1) {
+                searchHistories[index] = searchHistory
+            }
+        }
+
+        override suspend fun delete(searchHistory: SearchHistory) {
+            searchHistories.remove(searchHistory)
+        }
+
+        override fun getAllHistories(): List<SearchHistory> = searchHistories
+    }
+
+    class FakeSearchHistoryRepository(private val fakeSearchHistoryDao: FakeSearchHistoryDao) : SearchHistoryRepository(FakeSearchHistoryDao()) {
+        override val allSearchHistories = mutableListOf<SearchHistory>()
+
+        override suspend fun insert(searchHistory: SearchHistory) {
+            allSearchHistories.add(searchHistory)
+        }
+
+        override suspend fun delete(searchHistory: SearchHistory) {
+            allSearchHistories.remove(searchHistory)
+        }
+
+        override suspend fun update(searchHistory: SearchHistory) {
+            val index = allSearchHistories.indexOfFirst { it.id == searchHistory.id }
+            if (index != -1) {
+                allSearchHistories[index] = searchHistory
+            }
         }
     }
 }

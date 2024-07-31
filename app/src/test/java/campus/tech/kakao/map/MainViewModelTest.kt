@@ -56,7 +56,7 @@ class MainViewModelTest {
             x = "-122.4194",
             y = "37.7749"
         )
-        val searchHistory = SearchHistory("Some history", document)
+        val searchHistory = SearchHistory(0, "Some history", document.x, document.y)
         preferenceManager.addSearchHistory(searchHistory)
 
         // when

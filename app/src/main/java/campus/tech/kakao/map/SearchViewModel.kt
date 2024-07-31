@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -15,7 +16,8 @@ import javax.inject.Inject
 class SearchViewModel @Inject constructor(
     context: Context,
     private val preferenceManager: PreferenceManager,
-    var repository: RetrofitRepository
+    var repository: RetrofitRepository,
+    private val searchHistoryRepository: SearchHistoryRepository
 ) : ViewModel() {
     private val dbHelper: DBHelper = DBHelper(context)
     private val db = dbHelper.writableDatabase
@@ -25,8 +27,9 @@ class SearchViewModel @Inject constructor(
     private var _locationList = MutableLiveData<List<Document>>()
     private val _emptyMainTextVisibility = MutableLiveData<Boolean>()
 
+
     init {
-        _searchHistoryList.value = getSearchHistory()
+        getAllSearchHistory()
         _emptyMainTextVisibility.value = false
     }
 
@@ -111,7 +114,31 @@ class SearchViewModel @Inject constructor(
         return lastCategory ?: ""
     }
 
+    fun insert(searchHistory: SearchHistory) = viewModelScope.launch(Dispatchers.IO) {
+        searchHistoryRepository.insert(searchHistory)
+        val updatedList = searchHistoryRepository.getAllSearchHistories()
+        withContext(Dispatchers.Main) {
+            _searchHistoryList.value = updatedList
+        }
+        Log.d("insert", "inserted: " + searchHistory)
+    }
+
+    fun delete(searchHistory: SearchHistory) = viewModelScope.launch(Dispatchers.IO) {
+        searchHistoryRepository.delete(searchHistory)
+        val updatedList = searchHistoryRepository.getAllSearchHistories()
+        withContext(Dispatchers.Main) {
+            _searchHistoryList.value = updatedList
+        }
+    }
+
     fun updateEmptyTextVisibility(isVisible: Boolean) {
         _emptyMainTextVisibility.value = isVisible
+    }
+
+    fun getAllSearchHistory() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val histories = searchHistoryRepository.getAllSearchHistories()
+            _searchHistoryList.postValue(histories)
+        }
     }
 }

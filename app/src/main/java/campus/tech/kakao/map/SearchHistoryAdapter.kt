@@ -1,5 +1,6 @@
 package campus.tech.kakao.map
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class HistoryAdapter(
     fun setData(searchHistory: List<SearchHistory>) {
         items = searchHistory
         notifyDataSetChanged()
+        Log.d("insert", "리스트에 추가됨!")
     }
 
     inner class HistoryViewHolder(private val binding: SearchHistoryItemBinding) : RecyclerView.ViewHolder(binding.root) {
