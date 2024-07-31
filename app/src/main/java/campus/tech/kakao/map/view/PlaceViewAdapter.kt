@@ -18,12 +18,12 @@ class PlaceViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<PlaceItemBinding>(inflater, R.layout.place_item, parent, false)
-        return PlaceViewHolder(binding)
+        return PlaceViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         val currentPlace = getItem(position)
-        holder.bind(currentPlace, listener)
+        holder.bind(currentPlace)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -42,11 +42,13 @@ class PlaceDiffCallBack : DiffUtil.ItemCallback<Place>() {
     }
 }
 
-class PlaceViewHolder(private val binding : PlaceItemBinding) :
+class PlaceViewHolder(private val binding : PlaceItemBinding, listener : OnClickPlaceListener) :
     RecyclerView.ViewHolder(binding.root) {
-
-    fun bind(place : Place, listener : OnClickPlaceListener){
-        binding.place = place
+    init {
         binding.listener = listener
+    }
+
+    fun bind(place : Place){
+        binding.place = place
     }
 }

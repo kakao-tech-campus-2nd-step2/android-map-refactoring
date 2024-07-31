@@ -21,12 +21,12 @@ class SavedPlaceViewAdapter(
         val inflater = LayoutInflater.from(parent.context)
         val binding = DataBindingUtil.inflate<SavedPlaceItemBinding>(inflater, R.layout.saved_place_item, parent, false)
         Log.d("testt", "저장된 장소를 띄우는 뷰 홀더 생성")
-        return SavedPlaceViewHolder(binding)
+        return SavedPlaceViewHolder(binding, listener)
     }
 
     override fun onBindViewHolder(holder: SavedPlaceViewHolder, position: Int) {
         val currentSavedPlace = getItem(position)
-        holder.bind(currentSavedPlace, listener)
+        holder.bind(currentSavedPlace)
     }
 
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
@@ -48,12 +48,15 @@ class SavedPlaceDiffCallBack : DiffUtil.ItemCallback<SavedPlace>() {
     }
 }
 
-class SavedPlaceViewHolder(private val binding: SavedPlaceItemBinding) :
+class SavedPlaceViewHolder(private val binding: SavedPlaceItemBinding, listener: OnClickSavedPlaceListener) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(savedPlace: SavedPlace, listener: OnClickSavedPlaceListener) {
-        binding.savedPlace = savedPlace
+    init {
         binding.listener = listener
+    }
+
+    fun bind(savedPlace: SavedPlace) {
+        binding.savedPlace = savedPlace
     }
 
 }
