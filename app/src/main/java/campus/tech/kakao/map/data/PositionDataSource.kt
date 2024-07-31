@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
+import campus.tech.kakao.map.utilities.Constants
 import campus.tech.kakao.map.view.MapActivity
 import com.kakao.vectormap.LatLng
 import kotlinx.coroutines.flow.map
@@ -26,8 +27,8 @@ class PositionDataSource @Inject constructor(private val dataStore: DataStore<Pr
     }
 
     val pos = dataStore.data.map { preferences ->
-        val latitude = preferences[KEY_LATITUDE] ?: MapActivity.LATITUDE.toDouble()
-        val longitude = preferences[KEY_LONGITUDE] ?: MapActivity.LONGITUDE.toDouble()
+        val latitude = preferences[KEY_LATITUDE] ?: Constants.ChonnamUnivLocation.LATITUDE.toDouble()
+        val longitude = preferences[KEY_LONGITUDE] ?: Constants.ChonnamUnivLocation.LONGITUDE.toDouble()
         LatLng.from(latitude, longitude)
     }
 }

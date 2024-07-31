@@ -14,7 +14,10 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMapBinding
 import campus.tech.kakao.map.databinding.BottomSheetBinding
@@ -32,6 +35,7 @@ import com.kakao.vectormap.label.LabelOptions
 import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MapActivity : AppCompatActivity() {
@@ -45,11 +49,6 @@ class MapActivity : AppCompatActivity() {
     private val viewModel : MapActivityViewModel by viewModels()
     var isMapDisplay = false
     var isInitState = true
-
-    companion object ChonnamUnivLocation {
-        const val LATITUDE = "35.175487"
-        const val LONGITUDE = "126.907163"
-    }
 
     enum class ErrorCode(val code: String, val errorMessage : String){
         UNKNOWN_ERROR("-1", "인증 과정 중 원인을 알 수 없는 에러가 발생했습니다"),
@@ -138,11 +137,11 @@ class MapActivity : AppCompatActivity() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 if (result.resultCode == RESULT_OK) {
                     val place = getPlaceToResult(result)
-                    val latitude = place?.y?.toDouble() ?: LATITUDE.toDouble()
-                    val longitude = place?.x?.toDouble()?: LONGITUDE.toDouble()
+                    val latitude = place?.y?.toDouble() ?: Constants.ChonnamUnivLocation.LATITUDE.toDouble()
+                    val longitude = place?.x?.toDouble()?: Constants.ChonnamUnivLocation.LONGITUDE.toDouble()
                     val pos = LatLng.from(latitude, longitude)
+                    Log.d("testtt", "LAT" + pos.toString())
                     isInitState = false
-                    moveMapCamera(pos)
                     bottomSheetBinding.place = place
                     Log.d("placeTest", "Place : ${place}, Binding : ${bottomSheetBinding.place}")
                     viewModel.setRecentPos(latitude, longitude)
@@ -151,14 +150,20 @@ class MapActivity : AppCompatActivity() {
     }
 
     fun initObserver(){
-        viewModel.recentPos.observe(this, Observer {
-            if(isMapDisplay and !isInitState) {
-                moveMapCamera(it)
-                createLabel(it)
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.recentPos.collect{
+                    Log.d("testtt", "밖" + it.toString())
+                    if(isMapDisplay and !isInitState) {
+                        Log.d("testtt", "안" + it.toString())
+                        moveMapCamera(it)
+                        createLabel(it)
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+                    else if (isMapDisplay) moveMapCamera(it)
+                }
             }
-            else if (isMapDisplay) moveMapCamera(it)
-        })
+        }
     }
 
     private fun moveSearchPage(view: View) {
