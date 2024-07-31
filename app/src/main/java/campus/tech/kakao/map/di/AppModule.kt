@@ -29,17 +29,9 @@ object AppModule {
     @Singleton
     @Provides
     fun provideSharedPreferences(@ApplicationContext context: Context): SharedPreferences {
-        // 기본 공유 환경 설정 생성
         Log.d("testt", "Providing SharedPreferences")
-        return PreferenceManager.getDefaultSharedPreferences(context)
+        // Module로 빼냄
+        return context.getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
     }
 
-    @Provides
-    fun providePlaceViewModel(
-        retrofitService: RetrofitService,
-        sharedPreferences: SharedPreferences
-    ): PlaceViewModel {
-        Log.d("testt", "Providing PlaceViewModel with RetrofitService and SharedPreferences")
-        return PlaceViewModel(retrofitService, sharedPreferences)
-    }
 }

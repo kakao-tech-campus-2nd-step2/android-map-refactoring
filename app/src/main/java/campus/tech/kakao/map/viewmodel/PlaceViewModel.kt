@@ -1,3 +1,4 @@
+// PlaceViewModel.kt
 package campus.tech.kakao.map.viewmodel
 
 import android.content.SharedPreferences
@@ -8,14 +9,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
-import campus.tech.kakao.map.model.PlaceResponse
+import campus.tech.kakao.map.model.PlaceData
 import campus.tech.kakao.map.model.RetrofitService
 import campus.tech.kakao.map.view.MainActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,7 +22,6 @@ class PlaceViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
-    /* SearchActivity */
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
     private val _places = MutableLiveData<List<Document>>()
@@ -32,7 +29,13 @@ class PlaceViewModel @Inject constructor(
     val places: LiveData<List<Document>> get() = _places
     val savedQueries: LiveData<MutableList<String>> get() = _savedQueries
 
-    init { _savedQueries.value = loadSavedQueries() }
+    private val _placeData = MutableLiveData<PlaceData>()
+    val placeData: LiveData<PlaceData> get() = _placeData
+
+    init {
+        _savedQueries.value = loadSavedQueries()
+        loadPlacePreferences()
+    }
 
     fun loadPlaces(query: String, categoryGroupName: String) {
         viewModelScope.launch {
@@ -74,25 +77,19 @@ class PlaceViewModel @Inject constructor(
         }
     }
 
-    /* MainActivity */
-    private val _placeName = MutableLiveData<String>()
-    private val _addressName = MutableLiveData<String>()
-    private val _longitude = MutableLiveData<Double>()
-    private val _latitude = MutableLiveData<Double>()
-
-    val placeName: LiveData<String> get() = _placeName
-    val addressName: LiveData<String> get() = _addressName
-    val longitude: LiveData<Double> get() = _longitude
-    val latitude: LiveData<Double> get() = _latitude
-
-
-    fun loadPlacePreferences(sharedPreferences: SharedPreferences) {
+    private fun loadPlacePreferences() {
         viewModelScope.launch {
-            _placeName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place")
-            _addressName.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address")
-            _longitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-            _latitude.value = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+            val placeName = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place") ?: "Unknown Place"
+            val addressName = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address") ?: "Unknown Address"
+            val longitude = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
+            val latitude = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
+
+            _placeData.value = PlaceData(
+                longitude,
+                latitude,
+                placeName,
+                addressName
+            )
         }
     }
-
 }

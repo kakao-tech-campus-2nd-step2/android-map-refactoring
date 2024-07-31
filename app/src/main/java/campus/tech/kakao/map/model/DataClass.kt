@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.model
 
+import androidx.lifecycle.LiveData
 import com.google.gson.annotations.SerializedName
 
 
@@ -22,4 +23,12 @@ data class Meta(
     @SerializedName("pageable_count") val pageableCount: Int,
     @SerializedName("same_name") val sameName: Any,
     @SerializedName("total_count") val totalCount: Int
+)
+
+// 담길 객체
+data class PlaceData(
+    val longitude: Double,
+    val latitude: Double,
+    val placeName: String,
+    val addressName: String
 )

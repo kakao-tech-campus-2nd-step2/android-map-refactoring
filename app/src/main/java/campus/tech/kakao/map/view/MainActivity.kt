@@ -103,63 +103,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setCameraPosition() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-
-        // 데이터 로드 코루틴?
-        MainScope().launch {
-            viewModel.loadPlacePreferences(sharedPreferences)
-        }
         // LiveData 관찰
-        viewModel.longitude.observe(this, Observer { longitude ->
-            Log.d("testt", "Longitude: $longitude")
-            viewModel.latitude.observe(this, Observer { latitude ->
-                Log.d("testt", "Latitude: $latitude")
-                val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-                kakaoMap.moveCamera(cameraUpdate)
-            })
+        viewModel.placeData.observe(this, Observer { placeData ->
+            val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(placeData.latitude, placeData.longitude))
+            kakaoMap.moveCamera(cameraUpdate)
         })
     }
 
     private fun setMarker() {
 
-        // val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-
-        // 데이터 로드
-        // viewModel.loadPlacePreferences(sharedPreferences)
-
         // LiveData 관찰
-        viewModel.longitude.observe(this, Observer { longitude ->
-            Log.d("testt", "Longitude: $longitude")
-            viewModel.latitude.observe(this, Observer { latitude ->
-                Log.d("testt", "Latitude: $latitude")
-                viewModel.placeName.observe(this, Observer { placeName ->
-                    viewModel.addressName.observe(this, Observer { addressName ->
-                        var styles = LabelStyles.from(
-                            LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
-                                .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
-                        )
-                        styles = kakaoMap.labelManager!!.addLabelStyles(styles!!)
-                        kakaoMap.labelManager!!.layer!!.addLabel(
-                            LabelOptions.from(LatLng.from(latitude, longitude))
-                                .setStyles(styles)
-                                .setTexts(placeName)
-                        )
-                    })
-                })
-            })
+        viewModel.placeData.observe(this, Observer { placeData ->
+            val styles = LabelStyles.from(
+                LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
+                    .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
+            ).let {
+                kakaoMap.labelManager!!.addLabelStyles(it)
+            }
+
+            kakaoMap.labelManager!!.layer!!.addLabel(
+                LabelOptions.from(LatLng.from(placeData.latitude, placeData.longitude))
+                    .setStyles(styles)
+                    .setTexts(placeData.placeName)
+            )
         })
     }
 
     private fun setBottomSheet() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
 
         // 데이터 로드
-        viewModel.loadPlacePreferences(sharedPreferences)
-        viewModel.placeName.observe(this, Observer { placeName ->
-            viewModel.addressName.observe(this, Observer { addressName ->
-                binding.bottomSheetTitle.text = placeName
-                binding.bottomSheetDescription.text = addressName
-            })
+        viewModel.placeData.observe(this, Observer { placeData ->
+            binding.bottomSheetTitle.text = placeData.placeName
+            binding.bottomSheetDescription.text = placeData.addressName
         })
     }
 
