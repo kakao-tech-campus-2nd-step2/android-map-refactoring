@@ -15,12 +15,14 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class UiState {
-    EMPTY, SUCCESS
-}
+data class UiState(
+    val isPlaceListEmpty : Boolean = true
+)
 
 
 @HiltViewModel
@@ -31,14 +33,14 @@ class SearchActivityViewModel @Inject constructor(
 ) : ViewModel() {
     private val _place = MutableStateFlow<List<Place>>(emptyList())
     private val _savedPlace = MutableStateFlow<List<SavedPlace>>(emptyList())
-    val place: StateFlow<List<Place>> get() = _place
-    val savedPlace: StateFlow<List<SavedPlace>> get() = _savedPlace
-    private val _uiState = MutableLiveData<UiState>()
-    val uiState : LiveData<UiState>get() = _uiState
+    val place: StateFlow<List<Place>> get() = _place.asStateFlow()
+    val savedPlace: StateFlow<List<SavedPlace>> get() = _savedPlace.asStateFlow()
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState : StateFlow<UiState>get() = _uiState.asStateFlow()
 
     init {
-        _uiState.value = UiState.EMPTY
         getSavedPlace()
+
     }
 
     fun getSavedPlace() {
@@ -67,7 +69,11 @@ class SearchActivityViewModel @Inject constructor(
             _place.value = (placeList)
         } else _place.value = listOf<Place>()
 
-        _uiState.value = if(_place.value?.isEmpty() == false) UiState.SUCCESS else UiState.EMPTY
+        _uiState.update {currentState ->
+            currentState.copy(
+                isPlaceListEmpty = if(_place.value.isEmpty()) true else false
+            )
+        }
         Log.d("testt", "value : ${uiState.value}")
     }
 }
