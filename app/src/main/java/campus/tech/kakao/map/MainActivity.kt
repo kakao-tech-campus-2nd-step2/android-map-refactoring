@@ -109,15 +109,4 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this@MainActivity, SearchActivity::class.java)
         startActivity(intent)
     }
-
-    private fun setBottomSheet(name: String?, address: String?) {
-        if (!name.isNullOrEmpty() && !address.isNullOrEmpty()) {
-            mainViewBinding.place.text = name
-            mainViewBinding.address.text = address
-            mainViewBinding.mapBottomSheet.visibility = View.VISIBLE
-        } else {
-            mainViewBinding.mapBottomSheet.visibility = View.GONE
-        }
-    }
-
 }

@@ -7,20 +7,14 @@ import androidx.lifecycle.ViewModel
 import com.kakao.vectormap.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val context: Context,
     private val preferenceManager: PreferenceManager
 ) : ViewModel() {
 
-    private val _placeName = MutableLiveData<String>("")
-    val placeName: LiveData<String>
-        get() = _placeName
-
-    private val _placeAddress = MutableLiveData<String>("")
-    val placeAddress: LiveData<String>
-        get() = _placeAddress
+    private val _placeInfo = MutableLiveData<MainPlaceInfo>()
+    val placeInfo: LiveData<MainPlaceInfo>
+        get() = _placeInfo
 
     private val _isBottomSheetVisible = MutableLiveData<Boolean>(false)
     val isBottomSheetVisible: LiveData<Boolean>
@@ -46,8 +40,11 @@ class MainViewModel @Inject constructor(
     }
 
     fun updatePlaceInfo(name: String?, address: String?) {
-        _placeName.value = name ?: ""
-        _placeAddress.value = address ?: ""
-        _isBottomSheetVisible.value = !name.isNullOrEmpty() && !address.isNullOrEmpty()
+        if (!name.isNullOrEmpty() && !address.isNullOrEmpty()) {
+            _placeInfo.value = MainPlaceInfo(name, address)
+            _isBottomSheetVisible.value = true
+        } else {
+            _isBottomSheetVisible.value = false
+        }
     }
 }

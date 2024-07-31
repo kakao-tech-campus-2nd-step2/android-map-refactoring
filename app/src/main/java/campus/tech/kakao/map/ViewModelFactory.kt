@@ -16,7 +16,7 @@ class ViewModelFactory(private val context: Context
             return SearchViewModel(context, preferenceManager, retrofitRepository, searchHistoryRepository) as T
         }
         else if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(context, preferenceManager) as T
+            return MainViewModel(preferenceManager) as T
         }
         else {
             throw IllegalArgumentException("Failed to create ViewModel : ${modelClass.name}")
