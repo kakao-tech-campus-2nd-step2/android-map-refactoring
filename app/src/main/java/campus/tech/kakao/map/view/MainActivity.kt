@@ -5,20 +5,13 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.BindingAdapter
-import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import campus.tech.kakao.map.R
 import campus.tech.kakao.map.databinding.ActivityMainBinding
-import campus.tech.kakao.map.databinding.BottomSheetBinding
-import campus.tech.kakao.map.model.BottomSheetData
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-//import campus.tech.kakao.map.viewmodel.PlaceViewModelFactory
 import com.kakao.sdk.common.util.Utility
 import com.kakao.vectormap.KakaoMap
 import com.kakao.vectormap.KakaoMapReadyCallback
@@ -33,6 +26,8 @@ import com.kakao.vectormap.label.LabelStyle
 import com.kakao.vectormap.label.LabelStyles
 import com.kakao.vectormap.label.LabelTextStyle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -47,16 +42,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var mapView: MapView
     private lateinit var kakaoMap: KakaoMap
-    private lateinit var bottomSheetBehavior: BottomSheetBehavior<*>
+    private val viewModel: PlaceViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
 
         initKakaoMap()
         initSearchEditText()
         initMapView()
+
     }
 
     private fun initKakaoMap() {
@@ -99,55 +97,45 @@ class MainActivity : AppCompatActivity() {
                 setCameraPosition()
                 setMarker()
                 setBottomSheet()
+
             }
         })
     }
 
     private fun setCameraPosition() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
-        Log.d("testt", longitude.toString())
-        val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(latitude, longitude))
-        Log.d("testt", longitude.toString())
-        kakaoMap.moveCamera(cameraUpdate)
+        // LiveData 관찰
+        viewModel.placeData.observe(this, Observer { placeData ->
+            val cameraUpdate = CameraUpdateFactory.newCenterPosition(LatLng.from(placeData.latitude, placeData.longitude))
+            kakaoMap.moveCamera(cameraUpdate)
+        })
     }
 
     private fun setMarker() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        val longitude =
-            sharedPreferences.getString(EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
-        val latitude =
-            sharedPreferences.getString(EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unkwon")
-        var styles = LabelStyles.from(
-            LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
-                .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
-        )
 
-        styles = kakaoMap.labelManager!!.addLabelStyles(styles!!)
-        kakaoMap.labelManager!!.layer!!.addLabel(
-            LabelOptions.from(LatLng.from(latitude, longitude))
-                .setStyles(styles)
-                .setTexts(placeName)
-        )
+        // LiveData 관찰
+        viewModel.placeData.observe(this, Observer { placeData ->
+            val styles = LabelStyles.from(
+                LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
+                    .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
+            ).let {
+                kakaoMap.labelManager?.addLabelStyles(it)
+            }
+
+            kakaoMap.labelManager?.layer?.addLabel(
+                LabelOptions.from(LatLng.from(placeData.latitude, placeData.longitude))
+                    .setStyles(styles)
+                    .setTexts(placeData.placeName)
+            )
+        })
     }
 
-    /* DataBing */
     private fun setBottomSheet() {
-        val sharedPreferences = getSharedPreferences("PlacePreferences", MODE_PRIVATE)
-        val placeName = sharedPreferences.getString(EXTRA_PLACE_NAME, "Unknown Place").toString()
-        val addressName =
-            sharedPreferences.getString(EXTRA_PLACE_ADDRESSNAME, "Unknown Address").toString()
 
-        val bottomSheetData = BottomSheetData(
-            title = placeName,
-            description = addressName
-        )
-        val bottomSheetFragment = BottomSheetFragment.newInstance(bottomSheetData)
-        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        // 데이터 로드
+        viewModel.placeData.observe(this, Observer { placeData ->
+            binding.bottomSheetTitle.text = placeData.placeName
+            binding.bottomSheetDescription.text = placeData.addressName
+        })
     }
 
     override fun onResume() {
@@ -162,4 +150,3 @@ class MainActivity : AppCompatActivity() {
         mapView.pause()
     }
 }
-

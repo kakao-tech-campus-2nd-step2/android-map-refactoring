@@ -1,9 +1,8 @@
 package campus.tech.kakao.map.viewmodel
 
-import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -17,12 +16,29 @@ class PlaceAdapter(
     private val onItemClick: (Document) -> Unit
 ) : RecyclerView.Adapter<PlaceAdapter.ViewHolder>() {
 
+
     inner class ViewHolder(private val binding: ItemPlaceBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(document: Document, onItemClick: (Document) -> Unit) {
             binding.placeName.text = document.placeName
             binding.placeLocation.text = document.addressName
             binding.root.setOnClickListener {
                 onItemClick(document)
+
+
+                // 이 부분은 좀더 학습해보고 다시 해보겠습니다.
+                val context = binding.root.context
+                val sharedPreferences = context.getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
+                val editor = sharedPreferences.edit()
+                editor.putString(MainActivity.EXTRA_PLACE_LONGITUDE, document.x)
+                editor.putString(MainActivity.EXTRA_PLACE_LATITUDE, document.y)
+                editor.putString(MainActivity.EXTRA_PLACE_NAME, document.placeName)
+                editor.putString(MainActivity.EXTRA_PLACE_ADDRESSNAME, document.addressName)
+                editor.apply()
+
+
+                val intent = Intent(context, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                context.startActivity(intent)
             }
         }
     }

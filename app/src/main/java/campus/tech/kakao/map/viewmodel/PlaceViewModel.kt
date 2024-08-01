@@ -1,58 +1,65 @@
+// PlaceViewModel.kt
 package campus.tech.kakao.map.viewmodel
 
-import android.app.Application
-import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import campus.tech.kakao.map.BuildConfig
 import campus.tech.kakao.map.model.Document
-import campus.tech.kakao.map.model.PlaceResponse
-import campus.tech.kakao.map.model.RetrofitInstance
+import campus.tech.kakao.map.model.PlaceData
+import campus.tech.kakao.map.model.RetrofitService
 import campus.tech.kakao.map.view.MainActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class PlaceViewModel (
-    private val application: Application
-) : AndroidViewModel(application) {
+@HiltViewModel
+class PlaceViewModel @Inject constructor(
+    private val retrofitService: RetrofitService,
+    private val sharedPreferences: SharedPreferences
+) : ViewModel() {
 
     companion object { private const val API_KEY = "KakaoAK ${BuildConfig.KAKAO_REST_API_KEY}" }
 
-    private val retrofit = RetrofitInstance.api
-    private val sharedPreferences: SharedPreferences = application.getSharedPreferences("SavedQueries", Context.MODE_PRIVATE)
     private val _places = MutableLiveData<List<Document>>()
     private val _savedQueries = MutableLiveData<MutableList<String>>()
     val places: LiveData<List<Document>> get() = _places
     val savedQueries: LiveData<MutableList<String>> get() = _savedQueries
 
-    init { _savedQueries.value = loadSavedQueries() }
+    private val _placeData = MutableLiveData<PlaceData>()
+    val placeData: LiveData<PlaceData> get() = _placeData
+
+    init {
+        _savedQueries.value = loadSavedQueries()
+        loadPlacePreferences()
+    }
 
     fun loadPlaces(query: String, categoryGroupName: String) {
-        searchPlaces(query, categoryGroupName) { places ->
-            _places.value = places
+        viewModelScope.launch {
+            try {
+                val response = retrofitService.getPlaces(API_KEY, categoryGroupName, query)
+                _places.value = response.documents
+            } catch (e: Exception) {
+                Log.e("PlaceViewModel", "Failed to fetch places: ${e.message}")
+                _places.value = emptyList()
+            }
         }
     }
 
     fun addSavedQuery(query: String) {
-        val updatedList = _savedQueries.value.orEmpty().toMutableList()
-        updatedList.add(query)
+        val updatedList = _savedQueries.value.orEmpty().toMutableList().apply { add(query) }
         _savedQueries.value = updatedList
         saveQueries(updatedList)
     }
 
     fun removeSavedQuery(query: String) {
-        val updatedList = _savedQueries.value.orEmpty().toMutableList()
-        updatedList.remove(query)
+        val updatedList = _savedQueries.value.orEmpty().toMutableList().apply { remove(query) }
         _savedQueries.value = updatedList
         saveQueries(updatedList)
     }
-
 
     private fun loadSavedQueries(): MutableList<String> {
         val savedQueriesString = sharedPreferences.getString("queries", null)
@@ -64,40 +71,25 @@ class PlaceViewModel (
     }
 
     private fun saveQueries(queries: MutableList<String>) {
-        val editor = sharedPreferences.edit()
-        editor.putString("queries", queries.joinToString(","))
-        editor.apply()
-    }
-
-    fun saveRecentLocation(document: Document) {
-        val sharedPreferences = getApplication<Application>().getSharedPreferences("PlacePreferences", Context.MODE_PRIVATE)
-        Log.d("testt", document.x)
-        with(sharedPreferences.edit()) {
-            putString(MainActivity.EXTRA_PLACE_LONGITUDE, document.x)
-            putString(MainActivity.EXTRA_PLACE_LATITUDE, document.y)
-            putString(MainActivity.EXTRA_PLACE_NAME, document.placeName)
-            putString(MainActivity.EXTRA_PLACE_ADDRESSNAME, document.addressName)
+        sharedPreferences.edit().apply {
+            putString("queries", queries.joinToString(","))
             apply()
         }
     }
 
-    private fun searchPlaces(query: String, categoryGroupName: String, callback: (List<Document>) -> Unit) {
-        retrofit.getPlaces(API_KEY, categoryGroupName, query).enqueue(object :
-            Callback<PlaceResponse> {
-            override fun onResponse(call: Call<PlaceResponse>, response: Response<PlaceResponse>) {
-                if (response.isSuccessful) {
-                    val places = response.body()?.documents ?: emptyList()
-                    callback(places)
-                } else {
-                    Log.e("PlaceViewModel", "Failed to fetch places: ${response.errorBody()?.string()}")
-                    callback(emptyList())
-                }
-            }
+    private fun loadPlacePreferences() {
+        viewModelScope.launch {
+            val placeName = sharedPreferences.getString(MainActivity.EXTRA_PLACE_NAME, "Unknown Place") ?: "Unknown Place"
+            val addressName = sharedPreferences.getString(MainActivity.EXTRA_PLACE_ADDRESSNAME, "Unknown Address") ?: "Unknown Address"
+            val longitude = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LONGITUDE, "127.108621")?.toDouble() ?: 0.0
+            val latitude = sharedPreferences.getString(MainActivity.EXTRA_PLACE_LATITUDE, "37.402005")?.toDouble() ?: 0.0
 
-            override fun onFailure(call: Call<PlaceResponse>, t: Throwable) {
-                Log.e("PlaceViewModel", "Failed to fetch places: ${t.message}")
-                callback(emptyList())
-            }
-        })
+            _placeData.value = PlaceData(
+                longitude,
+                latitude,
+                placeName,
+                addressName
+            )
+        }
     }
 }

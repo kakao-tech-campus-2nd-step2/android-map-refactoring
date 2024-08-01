@@ -1,5 +1,6 @@
 package campus.tech.kakao.map.model
 
+import androidx.lifecycle.LiveData
 import com.google.gson.annotations.SerializedName
 
 
@@ -11,15 +12,8 @@ data class PlaceResponse(
 
 data class Document(
     @SerializedName("address_name") val addressName: String,
-    @SerializedName("category_group_code") val categoryGroupCode: String,
-    @SerializedName("category_group_name") val categoryGroupName: String,
-    @SerializedName("category_name") val categoryName: String,
-    @SerializedName("distance") val distance: String,
     @SerializedName("id") val id: String,
-    @SerializedName("phone") val phone: String,
     @SerializedName("place_name") val placeName: String,
-    @SerializedName("place_url") val placeUrl: String,
-    @SerializedName("road_address_name") val roadAddressName: String,
     @SerializedName("x") val x: String,
     @SerializedName("y") val y: String
 )
@@ -29,4 +23,12 @@ data class Meta(
     @SerializedName("pageable_count") val pageableCount: Int,
     @SerializedName("same_name") val sameName: Any,
     @SerializedName("total_count") val totalCount: Int
+)
+
+// 담길 객체
+data class PlaceData(
+    val longitude: Double,
+    val latitude: Double,
+    val placeName: String,
+    val addressName: String
 )

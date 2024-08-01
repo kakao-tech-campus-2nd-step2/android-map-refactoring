@@ -7,11 +7,9 @@ import retrofit2.http.Query
 
 interface RetrofitService {
     @GET("v2/local/search/keyword.json")
-    fun getPlaces(
+    suspend fun getPlaces(
         @Header("Authorization") apiKey: String,
-        @Query("category_group_name") categoryGroupName: String,
-        @Query("query") query: String,
-        @Query("page") page: Int = 1,
-        @Query("size") size: Int = 15
-    ): Call<PlaceResponse>
+        @Query("category_group_code") categoryGroupName: String,
+        @Query("query") query: String
+    ): PlaceResponse
 }

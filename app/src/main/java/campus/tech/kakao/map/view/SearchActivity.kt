@@ -1,16 +1,16 @@
 package campus.tech.kakao.map.view
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import campus.tech.kakao.map.databinding.ActivitySearchBinding
-import campus.tech.kakao.map.model.Document
 import campus.tech.kakao.map.viewmodel.PlaceAdapter
 import campus.tech.kakao.map.viewmodel.PlaceViewModel
 import campus.tech.kakao.map.viewmodel.SavedPlaceAdapter
@@ -40,8 +40,6 @@ class SearchActivity : AppCompatActivity() {
 
         placeAdapter = PlaceAdapter(emptyList()) { place ->
             viewModel.addSavedQuery(place.placeName)
-            viewModel.saveRecentLocation(place)
-            navigateToMainActivity(place)
         }
         binding.recyclerViewSearchResults.adapter = placeAdapter
 
@@ -49,17 +47,6 @@ class SearchActivity : AppCompatActivity() {
             viewModel.removeSavedQuery(query)
         }
         binding.recyclerViewSavedSearches.adapter = savedPlaceAdapter
-    }
-
-    private fun navigateToMainActivity(place: Document) {
-        val intent = Intent(this, MainActivity::class.java).apply {
-            putExtra(MainActivity.EXTRA_PLACE_LONGITUDE, place.x)
-            putExtra(MainActivity.EXTRA_PLACE_LATITUDE, place.y)
-            putExtra(MainActivity.EXTRA_PLACE_NAME, place.placeName)
-            putExtra(MainActivity.EXTRA_PLACE_ADDRESSNAME, place.addressName)
-        }
-        startActivity(intent)
-        finish()
     }
 
     private fun observeViewModel() {
