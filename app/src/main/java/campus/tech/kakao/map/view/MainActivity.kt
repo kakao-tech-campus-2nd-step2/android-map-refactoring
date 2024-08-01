@@ -118,10 +118,10 @@ class MainActivity : AppCompatActivity() {
                 LabelStyle.from(R.drawable.marker_128).setZoomLevel(10)
                     .setTextStyles(LabelTextStyle.from(32, Color.parseColor("#000000")))
             ).let {
-                kakaoMap.labelManager!!.addLabelStyles(it)
+                kakaoMap.labelManager?.addLabelStyles(it)
             }
 
-            kakaoMap.labelManager!!.layer!!.addLabel(
+            kakaoMap.labelManager?.layer?.addLabel(
                 LabelOptions.from(LatLng.from(placeData.latitude, placeData.longitude))
                     .setStyles(styles)
                     .setTexts(placeData.placeName)
